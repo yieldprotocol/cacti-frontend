@@ -1,0 +1,12 @@
+.chat-room {
+    display: flex;
+    align-content: flex-start;
+    justify-content: center;
+    padding: 5rem 20rem;
+    animation: fadeChatApp 0.6s ease-in-out;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeChatApp {
+    0% { opacity: 0; transform: translateY(1rem); }
+    100% { opacity: 1; transform: translateY(0px); }
+}
