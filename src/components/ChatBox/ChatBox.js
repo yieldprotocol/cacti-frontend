@@ -1,14 +1,14 @@
 import React from "react";
-import {InputMessage} from "../InputMessage/InputMessage";
-import {TypingIndicator} from "../TypingIndicator/TypingIndicator";
-import {MessageList} from "../MessageList/MessageList";
-import {Title} from "../Title/Title";
-import './ChatBox.css'
+import { InputMessage } from "../InputMessage/InputMessage";
+import { TypingIndicator } from "../TypingIndicator/TypingIndicator";
+import { MessageList } from "../MessageList/MessageList";
+import { Title } from "../Title/Title";
+import styles from "./ChatBox.module.css";
 export class ChatBox extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      isLoading: false
+      isLoading: false,
     };
     this.sendMessageLoading = this.sendMessageLoading.bind(this);
     var timeout = null;
@@ -23,15 +23,10 @@ export class ChatBox extends React.Component {
   }
   render() {
     return (
-      <div className={"chat-box"}>
-        <Title
-          owner={this.props.owner}
-        />
-        <MessageList
-          owner={this.props.owner}
-          messages={this.props.messages}
-        />
-        <div className={"chat-box-message clearfix"}>
+      <div className={styles["chat-box"]}>
+        <Title owner={this.props.owner} />
+        <MessageList owner={this.props.owner} messages={this.props.messages} />
+        <div className={(styles["chat-box-message"], styles.clearfix)}>
           <TypingIndicator
             owner={this.props.owner}
             isTyping={this.props.isTyping}

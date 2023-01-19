@@ -1,0 +1,27 @@
+.chat-box {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  float: left;
+  margin: 0 2.5rem;
+  box-shadow: 0 35px 20px -30px rgba(0, 0, 0, 0.1);
+}
+.chat-box-message {
+  position: relative;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: #fff;
+}
+.chat-box-message {
+  padding: 1rem;
+}
+
+.chat-box-message--typing .chatApp__convTyping {
+  display: block;
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}

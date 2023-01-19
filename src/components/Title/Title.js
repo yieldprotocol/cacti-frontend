@@ -1,12 +1,10 @@
 import React from "react";
-import './Title.css'
+import styles from "./Title.module.css";
 export class Title extends React.Component {
   constructor(props, context) {
     super(props, context);
   }
   render() {
-    return (
-      <div className={"title"}>{this.props.owner}</div>
-    );
+    return <div className={styles["title"]}>{this.props.owner}</div>;
   }
 }

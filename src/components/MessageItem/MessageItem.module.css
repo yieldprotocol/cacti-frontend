@@ -1,0 +1,95 @@
+.message-item--left .message-item-avatar {
+    float: left;
+}
+.message-item--left .message-item-message-value {
+    float: left;
+    text-align: left;
+    margin: 0 0 0 1rem;
+    color: #fff;
+    background-color: #4870df;
+}
+.message-item--left .message-item-message-value::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px 10px 6px 0;
+    border-color: transparent #4870df transparent transparent;
+}
+.message-item--right .message-item-avatar {
+    float: right;
+}
+.message-item--right .message-item-message-value {
+    float: right;
+    text-align: right;
+    margin: 0 1rem 0 0;
+    background-color: #fafafa;
+}
+.message-item--right .message-item-message-value::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: -8px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px 0 6px 10px;
+    border-color: transparent transparent transparent #fafafa;
+}
+.message-item--left .message-item-message-value a {
+    color: #91ffb1;
+}
+.message-item--left .message-item-message-value a:hover,
+.message-item--left .message-item-message-value a:focus {
+    color: #75ff9e;
+}
+.message-item--right .message-item-message-value a {
+    color: #09f;
+}
+.message-item--right .message-item-message-value a:hover,
+.message-item--right .message-item-message-value a:focus {
+    color: #007dd1;
+}
+.message-item {
+    padding: 1rem 0 0 0;
+    opacity: 0;
+    transition: all 0.15s ease-in-out;
+    animation: fadeNewMessage 0.5s;
+    animation-fill-mode: forwards;
+}
+
+
+.message-item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    image-rendering: -webkit-optimize-contrast;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.message-item-message-value {
+    position: relative;
+    max-width: 50%;
+    min-height: 40px;
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: bold;
+    box-shadow: 0px 10px 10px -8px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes fadeNewMessage {
+    0% { opacity: 0; transform: translateY(1rem); }
+    100% { opacity: 1; transform: translateY(0px); }
+}
