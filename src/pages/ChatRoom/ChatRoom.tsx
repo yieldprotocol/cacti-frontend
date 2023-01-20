@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ChatBox } from "../../components/ChatBox/ChatBox";
-import styles from "./ChatRoom.module.css";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 function detectURL(message) {
   var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -77,7 +76,6 @@ export const ChatRoom = () => {
         typing={typing}
         resetTyping={resetTyping}
         messages={messages}
-        isTyping={isTyping}
       />
     </div>
   );
