@@ -26,20 +26,22 @@ export class ChatBox extends React.Component {
       <div className={styles["chat-box"]}>
         <Title owner={this.props.owner} />
         <MessageList owner={this.props.owner} messages={this.props.messages} />
-        <div className={(styles["chat-box-message"], styles.clearfix)}>
+        <div className={styles["chat-box-message"]}>
           <TypingIndicator
             owner={this.props.owner}
             isTyping={this.props.isTyping}
           />
-          <InputMessage
-            isLoading={this.state.isLoading}
-            owner={this.props.owner}
-            ownerAvatar={this.props.ownerAvatar}
-            sendMessage={this.props.sendMessage}
-            sendMessageLoading={this.sendMessageLoading}
-            typing={this.props.typing}
-            resetTyping={this.props.resetTyping}
-          />
+          <div className="">
+            <InputMessage
+              isLoading={this.state.isLoading}
+              owner={this.props.owner}
+              ownerAvatar={this.props.ownerAvatar}
+              sendMessage={this.props.sendMessage}
+              sendMessageLoading={this.sendMessageLoading}
+              typing={this.props.typing}
+              resetTyping={this.props.resetTyping}
+            />
+          </div>
         </div>
       </div>
     );
