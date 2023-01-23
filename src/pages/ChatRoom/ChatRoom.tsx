@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChatBox } from "../../components/ChatBox/ChatBox";
+import { ChatBox } from "../../components/ChatBox";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 function detectURL(message) {
   var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;

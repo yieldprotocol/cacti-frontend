@@ -7,10 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <>
-      <div className="h-screen bg-gray-900">
-        <div className="flex justify-end pr-2 pt-2">
-          <ConnectButton />
-        </div>
+      <div className="h-screen bg-gray-900 pt-32">
         <ChatRoom />
       </div>
     </>

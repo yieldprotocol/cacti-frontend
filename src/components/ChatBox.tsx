@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { InputMessage } from "../InputMessage/InputMessage";
-import { TypingIndicator } from "../TypingIndicator/TypingIndicator";
-import { MessageList } from "../MessageList/MessageList";
-import { Title } from "../Title/Title";
+import { InputMessage } from "./InputMessage";
+import { MessageList } from "./MessageList";
+import { Title } from "./Title";
 
 export const ChatBox = ({
   sendMessage,
@@ -21,12 +20,11 @@ export const ChatBox = ({
     }, 400);
   };
   return (
-    <div className="float-left flex-shrink flex-grow">
+    <div className="float-left flex-shrink flex-grow ">
       <Title owner={owner} />
-      <MessageList owner={owner} messages={messages} />
-      <div className="p-4">
-        <TypingIndicator owner={owner} isTyping={typing} />
-        <div className="">
+      <div className="rounded-lg bg-white">
+        <MessageList owner={owner} messages={messages} />
+        <div className="p-4">
           <InputMessage
             isLoading={isLoading}
             owner={owner}

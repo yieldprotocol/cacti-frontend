@@ -62,21 +62,23 @@ export const InputMessage = ({
         onChange={(e) => setOwnerAvatarInput(e.target.value)}
         value={ownerAvatarInput}
       />
-      <input
-        type="text"
-        onChange={(e) => setMessageInput(e.target.value)}
-        className="float-left box-border h-10 bg-gray-300 text-sm font-bold"
-        placeholder="Text message"
-        onKeyDown={handleTyping}
-        onKeyUp={handleTyping}
-        tabIndex={0}
-        value={messageInput}
-      />
-      <div
-        className="relative float-right box-border h-10 w-10 cursor-pointer select-none bg-indigo-600 p-2 text-center text-white"
-        onClick={handleSendMessage}
-      >
-        {sendButtonIcon}
+      <div className="flex">
+        <input
+          type="text"
+          onChange={(e) => setMessageInput(e.target.value)}
+          className="form-control mr-4 block w-full rounded-full border border-solid border-gray-300 bg-gray-300 bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-gray-300 focus:text-gray-700 focus:outline-none"
+          placeholder="Text message"
+          onKeyDown={handleTyping}
+          onKeyUp={handleTyping}
+          tabIndex={0}
+          value={messageInput}
+        />
+        <div
+          className="relative float-right box-border h-10 w-10 cursor-pointer select-none rounded-full bg-indigo-600 p-2 text-center text-white"
+          onClick={handleSendMessage}
+        >
+          {sendButtonIcon}
+        </div>
       </div>
     </form>
   );
