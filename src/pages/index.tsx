@@ -1,4 +1,4 @@
-import { ChatRoom } from "src/pages/ChatRoom/ChatRoom";
+import { ChatRoom } from "src/pages/ChatRoom";
 
 export default function Home() {
   return (
