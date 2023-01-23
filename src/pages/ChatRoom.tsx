@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
 import { ChatBox } from "@/components/ChatBox";
+import { useEffect, useState } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+
 function detectURL(message) {
   var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
   return message.replace(urlRegex, function (urlMatch) {
