@@ -1,8 +1,7 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-
-import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import type { AppProps } from "next/app";
 import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
 // import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
