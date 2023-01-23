@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { InputMessage } from "./InputMessage";
-import { MessageList } from "./MessageList";
-import { Title } from "./Title";
+import { InputMessage } from "@/components/InputMessage";
+import { MessageList } from "@/components/MessageList";
+import { Title } from "@/components/Title";
 
 export const ChatBox = ({
   sendMessage,

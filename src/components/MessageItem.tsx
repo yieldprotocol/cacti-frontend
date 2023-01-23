@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export const MessageItem = ({ owner, sender, senderAvatar, message }) => {
   // orient right if I'm sender
   const isSender = owner === sender;

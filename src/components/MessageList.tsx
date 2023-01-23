@@ -1,4 +1,4 @@
-import { MessageItem } from "./MessageItem";
+import { MessageItem } from "@/components/MessageItem";
 
 export const MessageList = ({ messages, owner }) => {
   return (
