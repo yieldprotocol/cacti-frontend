@@ -9,24 +9,34 @@ import {
   UseContractConfig,
 } from "wagmi";
 
-type Props = {
-  token: string;
+interface Props {
+  token?: string;
   amount: string;
   receiver: string;
-};
+}
 
-export default function Transfer({ token, amount, receiver }: Props) {
-  const isEth =
-    token === ("ETH" || "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
-  console.log("is eth is", isEth);
-  // Send ETH
+export function TransferEth({ amount, receiver }: Props) {
   const { config } = usePrepareSendTransaction({
     request: { to: receiver, value: BigNumber.from(amount) },
   });
   const { data, isLoading, isSuccess, sendTransaction } =
     useSendTransaction(config);
 
-  // Send ERC20
+  return (
+    <div>
+      <button
+        disabled={!sendTransaction}
+        onClick={() => sendTransaction?.()}
+        className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight  rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+      >
+        Send {utils.formatEther(amount)} ETH to{" "}
+        {receiver.slice(0, 4) + "..." + receiver.slice(-4)}
+      </button>
+    </div>
+  );
+}
+
+export function TransferToken({ token, amount, receiver }: Props) {
   const { config: tokenConfig, error } = usePrepareContractWrite({
     address: `0x${token.replace(/^0x/, "")}`,
     abi: erc20ABI,
@@ -50,26 +60,14 @@ export default function Transfer({ token, amount, receiver }: Props) {
 
   return (
     <div>
-      {isEth && (
-        <button
-          disabled={!sendTransaction}
-          onClick={() => sendTransaction?.()}
-          className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight  rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-        >
-          Send {utils.formatEther(amount)} ETH to{" "}
-          {receiver.slice(0, 4) + "..." + receiver.slice(-4)}
-        </button>
-      )}
-      {!isEth && (
-        <button
-          disabled={!tokenWrite}
-          onClick={() => tokenWrite?.()}
-          className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight  rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-        >
-          Send {utils.formatEther(amount)} {tokenSymbol} to{" "}
-          {receiver.slice(0, 4) + "..." + receiver.slice(-4)}
-        </button>
-      )}
+      <button
+        disabled={!tokenWrite}
+        onClick={() => tokenWrite?.()}
+        className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight  rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+      >
+        Send {utils.formatEther(amount)} {tokenSymbol} to{" "}
+        {receiver.slice(0, 4) + "..." + receiver.slice(-4)}
+      </button>
     </div>
   );
 }
