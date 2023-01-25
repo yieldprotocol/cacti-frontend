@@ -1,3 +1,5 @@
+import { Button } from "@/components/Button";
+import { shortenAddress } from "@/utils";
 import { BigNumber, utils } from "ethers";
 import {
   usePrepareSendTransaction,
@@ -7,8 +9,6 @@ import {
   erc20ABI,
   useContractRead,
 } from "wagmi";
-import { Button } from "@/components/Button";
-import { shortenAddress } from "@/utils";
 
 interface TransferButtonProps {
   token?: string;
