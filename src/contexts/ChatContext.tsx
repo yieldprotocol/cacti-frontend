@@ -11,7 +11,8 @@ type UserMessage =  Omit<Message, "avatar">
 export type ChatContextType = {
   messages: Message[]
   addMessage: (msg: UserMessage) => void,
-  getAvatar: (isBot: boolean) => string
+  getAvatar: (isBot: boolean) => string,
+  isBotThinking: boolean
 };
 
 const userAvatar = "https://i.pravatar.cc/150?img=56";
@@ -24,13 +25,15 @@ const initialContext = {
     payload: "Hello 👋,How can I help you?"
   }],
   addMessage: (msg: UserMessage) => {},
-  getAvatar
+  getAvatar,
+  isBotThinking: false
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
+  const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking)
   const {
     sendMessage: wsSendMessage,
     lastMessage,
@@ -43,17 +46,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       payload: lastMessage.data,
       isBot: true
     }
+    setIsBotThinking(false);
     setMessages(messages => [...messages, msg])
   }, [lastMessage]);
 
   const addMessage = (msg: UserMessage) => {
+    setIsBotThinking(true);
     wsSendMessage(msg.payload)
     setMessages([...messages, msg])
   }
   return (
     <ChatContext.Provider
       value={{
-        messages, addMessage, getAvatar
+        messages, addMessage, getAvatar, isBotThinking
       }}
     >
       {children}
