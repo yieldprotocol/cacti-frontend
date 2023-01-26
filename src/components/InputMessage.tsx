@@ -74,7 +74,7 @@ export const InputMessage = ({
           value={messageInput}
         />
         <div
-          className="relative float-right box-border h-10 w-10 cursor-pointer select-none rounded-full bg-indigo-600 p-2 text-center text-white"
+          className="relative float-right box-border h-10 w-10 cursor-pointer select-none rounded-full bg-blue-600 p-2 text-center text-white"
           onClick={handleSendMessage}
         >
           {sendButtonIcon}
