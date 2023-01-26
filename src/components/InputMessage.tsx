@@ -1,40 +1,22 @@
 import { useState } from "react";
+import { useChatContext } from "@/contexts/ChatContext";
 
 export const InputMessage = ({
-  sendMessageLoading,
-  typing,
-  resetTyping,
-  isLoading,
-  owner,
-  ownerAvatar,
-  sendMessage,
 }) => {
   const [messageInput, setMessageInput] = useState<string>("");
-  const [ownerInput, setOwnerInput] = useState<string>(owner);
-  const [ownerAvatarInput, setOwnerAvatarInput] = useState<string>(ownerAvatar);
 
-  const handleSendMessage = (event) => {
-    event.preventDefault();
-    /* Disable sendMessage if the message is empty */
+  const { addMessage } = useChatContext();
+  
+  const handleSendMessage = (e) => {
+    e.preventDefault();
     if (messageInput.length > 0) {
-      sendMessageLoading(ownerInput, ownerAvatarInput, messageInput);
-      /* Reset input after send*/
+      // TODO: await
+      addMessage({ isBot: false, payload: messageInput });
       setMessageInput("");
     }
   };
-  const handleTyping = (event) => {
-    /* Tell users when another user has at least started to write */
-    if (messageInput.length > 0) {
-      typing(ownerInput);
-    } else {
-      /* When there is no more character, the user no longer writes */
-      resetTyping(ownerInput);
-    }
-  };
 
-  /* If the chatbox state is loading, loading class for display */
-  var loadingClass = isLoading ? "input-message-button--loading" : "";
-  let sendButtonIcon = (
+  const sendButtonIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -50,35 +32,24 @@ export const InputMessage = ({
       />
     </svg>
   );
+
   return (
     <form onSubmit={handleSendMessage}>
-      <input
-        type="hidden"
-        onChange={(e) => setOwnerInput(e.target.value)}
-        value={ownerInput}
-      />
-      <input
-        type="hidden"
-        onChange={(e) => setOwnerAvatarInput(e.target.value)}
-        value={ownerAvatarInput}
-      />
       <div className="flex">
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
           className="form-control mr-4 block w-full rounded-full border border-solid border-gray-300 bg-gray-300 bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-gray-300 focus:text-gray-700 focus:outline-none"
-          placeholder="Text message"
-          onKeyDown={handleTyping}
-          onKeyUp={handleTyping}
+          placeholder="Enter your message..."
           tabIndex={0}
           value={messageInput}
         />
-        <div
+        <button
           className="relative float-right box-border h-10 w-10 cursor-pointer select-none rounded-full bg-blue-600 p-2 text-center text-white"
           onClick={handleSendMessage}
         >
           {sendButtonIcon}
-        </div>
+        </button>
       </div>
     </form>
   );

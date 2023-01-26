@@ -1,18 +1,15 @@
 import { MessageItem } from "@/components/MessageItem";
+import { useChatContext } from "@/contexts/ChatContext";
 
-export const MessageList = ({ messages, owner }) => {
+export const MessageList = () => {
+  const { messages } = useChatContext();
   return (
-    <div className="flex flex-col-reverse gap-4 overflow-y-auto w-full max-h-full rounded-md p-4">
+    <div className="flex flex-col gap-4 overflow-y-auto w-full max-h-full rounded-md p-4">
       {messages
-        .slice(0)
-        .reverse()
-        .map((messageItem) => (
+        .map((message, i) => (
           <MessageItem
-            key={messageItem.id}
-            owner={owner}
-            sender={messageItem.sender}
-            senderAvatar={messageItem.senderAvatar}
-            message={messageItem.message}
+            key={`m${i}`}
+            message={message}
           />
         ))}
     </div>
