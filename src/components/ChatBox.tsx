@@ -1,6 +1,5 @@
 import { InputMessage } from "@/components/InputMessage";
 import { MessageList } from "@/components/MessageList";
-import { Title } from "@/components/Title";
 import { useState } from "react";
 
 export const ChatBox = ({
