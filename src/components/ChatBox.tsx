@@ -20,21 +20,21 @@ export const ChatBox = ({
     }, 400);
   };
   return (
-    <div className="float-left flex-shrink flex-grow ">
+    <div className="grow h-full">
       <Title owner={owner} />
-      <div className="rounded-lg bg-white">
+      <div className="rounded-lg bg-white w-full h-full overflow-y-auto">
         <MessageList owner={owner} messages={messages} />
-        <div className="p-4">
-          <InputMessage
-            isLoading={isLoading}
-            owner={owner}
-            ownerAvatar={ownerAvatar}
-            sendMessage={sendMessage}
-            sendMessageLoading={sendMessageLoading}
-            typing={typing}
-            resetTyping={resetTyping}
-          />
-        </div>
+      </div>
+      <div className="p-4">
+        <InputMessage
+          isLoading={isLoading}
+          owner={owner}
+          ownerAvatar={ownerAvatar}
+          sendMessage={sendMessage}
+          sendMessageLoading={sendMessageLoading}
+          typing={typing}
+          resetTyping={resetTyping}
+        />
       </div>
     </div>
   );

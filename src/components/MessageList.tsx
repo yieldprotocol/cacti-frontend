@@ -2,7 +2,7 @@ import { MessageItem } from "@/components/MessageItem";
 
 export const MessageList = ({ messages, owner }) => {
   return (
-    <div className="flex h-96 flex-col-reverse gap-4 overflow-y-auto rounded-md p-4">
+    <div className="flex flex-col-reverse gap-4 rounded-md p-4 h-auto ">
       {messages
         .slice(0)
         .reverse()
