@@ -20,9 +20,8 @@ export const ChatBox = ({
     }, 400);
   };
   return (
-    <div className="grow h-full">
-      <Title owner={owner} />
-      <div className="rounded-lg bg-white w-full h-full overflow-y-auto">
+    <div className="flex flex-col rounded-md w-full max-h-full bg-white justify-between mb-10">
+      <div className="rounded-lg w-full overflow-auto">
         <MessageList owner={owner} messages={messages} />
       </div>
       <div className="p-4">

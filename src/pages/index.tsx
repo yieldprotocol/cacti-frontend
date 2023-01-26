@@ -6,7 +6,7 @@ export const Home = () => {
   return (
     <>
       <div className="h-screen bg-gray-900 pt-10">
-        <div className="h-full -mb-20">
+        <div className="h-full">
           <ChatRoom />
         </div>
       </div>
