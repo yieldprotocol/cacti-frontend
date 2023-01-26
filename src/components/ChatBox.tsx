@@ -1,6 +1,5 @@
 import { InputMessage } from "@/components/InputMessage";
 import { MessageList } from "@/components/MessageList";
-import { Title } from "@/components/Title";
 import { useState } from "react";
 
 export const ChatBox = ({
@@ -20,21 +19,20 @@ export const ChatBox = ({
     }, 400);
   };
   return (
-    <div className="float-left flex-shrink flex-grow ">
-      <Title owner={owner} />
-      <div className="rounded-lg bg-white">
+    <div className="flex flex-col rounded-md w-full max-h-full bg-white justify-between mb-10">
+      <div className="rounded-lg w-full overflow-auto">
         <MessageList owner={owner} messages={messages} />
-        <div className="p-4">
-          <InputMessage
-            isLoading={isLoading}
-            owner={owner}
-            ownerAvatar={ownerAvatar}
-            sendMessage={sendMessage}
-            sendMessageLoading={sendMessageLoading}
-            typing={typing}
-            resetTyping={resetTyping}
-          />
-        </div>
+      </div>
+      <div className="p-4">
+        <InputMessage
+          isLoading={isLoading}
+          owner={owner}
+          ownerAvatar={ownerAvatar}
+          sendMessage={sendMessage}
+          sendMessageLoading={sendMessageLoading}
+          typing={typing}
+          resetTyping={resetTyping}
+        />
       </div>
     </div>
   );

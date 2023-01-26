@@ -69,7 +69,7 @@ export const ChatRoom = () => {
   let bot = { name: "Bot", avatar: "https://i.pravatar.cc/150?img=32" };
 
   return (
-    <div className="flex content-start justify-center px-80">
+    <div className="flex justify-center h-full">
       <ChatBox
         owner={user.name}
         ownerAvatar={user.avatar}
