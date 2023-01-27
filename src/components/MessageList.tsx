@@ -5,14 +5,10 @@ export const MessageList = () => {
   const { messages, isBotThinking } = useChatContext();
   return (
     <div className="flex flex-col gap-4 overflow-y-auto w-full max-h-full rounded-md p-4">
-      {messages
-        .map((message, i) => (
-          <MessageItem
-            key={`m${i}`}
-            message={message}
-          />
-        ))}
-        { isBotThinking && <div>Bot is thinking...</div> }
+      {messages.map((message, i) => (
+        <MessageItem key={`m${i}`} message={message} />
+      ))}
+      {isBotThinking && <div>Bot is thinking...</div>}
     </div>
   );
 };

@@ -1,9 +1,9 @@
-import { Button } from "./Button"
+import { Button } from "./Button";
 
 export const DebugPanel = () => {
-    return (
-        <div>
-            <Button></Button>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Button></Button>
+    </div>
+  );
+};

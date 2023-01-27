@@ -1,3 +1,4 @@
+import { ChatContextProvider } from "@/contexts/ChatContext";
 import "@/styles/globals.css";
 import {
   getDefaultWallets,
@@ -10,7 +11,6 @@ import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
 // import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
-import { ChatContextProvider } from "@/contexts/ChatContext";
 
 const { chains, provider } = configureChains(
   [goerli],
@@ -35,8 +35,8 @@ export default function App({ Component, pageProps }: AppProps) {
         chains={chains}
         theme={lightTheme({ accentColor: "#2563eb" })}
       >
-      <ChatContextProvider>
-        <Component {...pageProps} />
+        <ChatContextProvider>
+          <Component {...pageProps} />
         </ChatContextProvider>
       </RainbowKitProvider>
     </WagmiConfig>

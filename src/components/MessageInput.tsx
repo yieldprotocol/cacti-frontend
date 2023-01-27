@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useState } from "react";
 
-export const MessageInput = ({
-}) => {
+export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>("");
 
   const { addMessage } = useChatContext();
-  
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (messageInput.length > 0) {

@@ -1,5 +1,5 @@
-import { DebugButton } from "@/components/DebugButton";
 import { ChatBox } from "@/components/ChatBox";
+import { DebugButton } from "@/components/DebugButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export const Home = () => {
