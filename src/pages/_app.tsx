@@ -1,3 +1,4 @@
+import { ChatContextProvider } from "@/contexts/ChatContext";
 import "@/styles/globals.css";
 import {
   getDefaultWallets,
@@ -34,7 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
         chains={chains}
         theme={lightTheme({ accentColor: "#2563eb" })}
       >
-        <Component {...pageProps} />
+        <ChatContextProvider>
+          <Component {...pageProps} />
+        </ChatContextProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );

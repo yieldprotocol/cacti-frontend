@@ -1,6 +1,6 @@
+import { ChatBox } from "@/components/ChatBox";
 import { DebugButton } from "@/components/DebugButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { ChatRoom } from "src/pages/ChatRoom";
 
 export const Home = () => {
   return (
@@ -11,7 +11,7 @@ export const Home = () => {
           <ConnectButton />
         </div>
         <div className="h-full">
-          <ChatRoom />
+          <ChatBox />
         </div>
       </div>
     </>

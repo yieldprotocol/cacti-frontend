@@ -1,15 +1,22 @@
-export const MessageItem = ({ owner, sender, senderAvatar, message }) => {
-  // orient right if I'm sender
-  const isSender = owner === sender;
+import { Message, useChatContext } from "@/contexts/ChatContext";
 
+export const MessageItem = ({ message }: { message: Message }) => {
+  const { isBot, payload } = message;
+  const { getAvatar } = useChatContext();
+
+  const avatar = getAvatar(isBot);
   return (
-    <div className={`flex  ${isSender ? "flex-row-reverse ml-auto" : ""}`}>
-      <img src={senderAvatar} alt={sender} className="rounded-full w-10 h-10" />
+    <div className={`flex  ${isBot ? "" : "flex-row-reverse ml-auto"}`}>
+      <img
+        src={avatar}
+        alt={isBot ? "Bot avatar" : "My avatar"}
+        className="rounded-full w-10 h-10"
+      />
       <div
         className={`overflow-hidden rounded-md mx-2 p-2 text-sm ${
-          isSender ? "text-white bg-blue-600" : "text-black bg-gray-200"
+          isBot ? "text-black bg-gray-200" : "text-white bg-blue-600"
         }`}
-        dangerouslySetInnerHTML={{ __html: message }}
+        dangerouslySetInnerHTML={{ __html: payload }}
       ></div>
     </div>
   );
