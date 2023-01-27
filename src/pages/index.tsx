@@ -5,12 +5,12 @@ import { DebugButton } from '@/components/DebugButton';
 export const Home = () => {
   return (
     <>
-      <div className="flex h-screen flex-col bg-gray-900 px-8">
+      <div className="flex min-h-screen flex-col bg-gray-900">
         <div className="my-4 flex justify-end gap-2">
           <DebugButton />
           <ConnectButton />
         </div>
-        <div className="h-full">
+        <div className="">
           <ChatBox />
         </div>
       </div>

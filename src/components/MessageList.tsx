@@ -4,11 +4,13 @@ import { useChatContext } from '@/contexts/ChatContext';
 export const MessageList = () => {
   const { messages, isBotThinking } = useChatContext();
   return (
-    <div className="flex max-h-full w-full flex-col gap-4 overflow-y-auto rounded-md p-4">
+    <div className="flex flex-col rounded-md">
       {messages.map((message, i) => (
         <MessageItem key={`m${i}`} message={message} />
       ))}
-      {isBotThinking && <div>Bot is thinking...</div>}
+      {isBotThinking && (
+        <div className="flex justify-center bg-gray-600 p-6 text-white">Bot is thinking...</div>
+      )}
     </div>
   );
 };
