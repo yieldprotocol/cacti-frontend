@@ -1,11 +1,11 @@
-import { MessageInput } from "@/components/MessageInput";
-import { MessageList } from "@/components/MessageList";
+import { MessageInput } from '@/components/MessageInput';
+import { MessageList } from '@/components/MessageList';
 
 export const ChatBox = () => {
   return (
-    <div className="flex justify-center h-full">
-      <div className="flex flex-col rounded-md w-full max-h-full bg-white justify-between mb-10">
-        <div className="rounded-lg w-full overflow-auto">
+    <div className="flex h-full justify-center">
+      <div className="mb-10 flex max-h-full w-full flex-col justify-between rounded-md bg-white">
+        <div className="w-full overflow-auto rounded-lg">
           <MessageList />
         </div>
         <div className="p-4">

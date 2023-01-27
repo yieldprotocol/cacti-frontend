@@ -1,8 +1,8 @@
-import { useChatContext } from "@/contexts/ChatContext";
-import { useState } from "react";
+import { useState } from 'react';
+import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
-  const [messageInput, setMessageInput] = useState<string>("");
+  const [messageInput, setMessageInput] = useState<string>('');
 
   const { addMessage } = useChatContext();
 
@@ -11,7 +11,7 @@ export const MessageInput = ({}) => {
     if (messageInput.length > 0) {
       // TODO: await
       addMessage({ isBot: false, payload: messageInput });
-      setMessageInput("");
+      setMessageInput('');
     }
   };
 

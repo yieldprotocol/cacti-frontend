@@ -1,18 +1,12 @@
-import {
-  useState,
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-} from "react";
-import useWebSocket from "react-use-websocket";
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import useWebSocket from 'react-use-websocket';
 
 export type Message = {
   isBot: boolean;
   payload: string;
 };
 
-type UserMessage = Omit<Message, "avatar">;
+type UserMessage = Omit<Message, 'avatar'>;
 
 export type ChatContextType = {
   messages: Message[];
@@ -21,15 +15,15 @@ export type ChatContextType = {
   isBotThinking: boolean;
 };
 
-const userAvatar = "https://i.pravatar.cc/150?img=56";
-const botAvatar = "https://i.pravatar.cc/150?img=32";
+const userAvatar = 'https://i.pravatar.cc/150?img=56';
+const botAvatar = 'https://i.pravatar.cc/150?img=32';
 const getAvatar = (isBot: boolean) => (isBot ? botAvatar : userAvatar);
 
 const initialContext = {
   messages: [
     {
       isBot: true,
-      payload: "Hello 👋,How can I help you?",
+      payload: 'Hello 👋,How can I help you?',
     },
   ],
   addMessage: (msg: UserMessage) => {},
@@ -41,14 +35,12 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
-  const [isBotThinking, setIsBotThinking] = useState<boolean>(
-    initialContext.isBotThinking
-  );
+  const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const {
     sendMessage: wsSendMessage,
     lastMessage,
     readyState,
-  } = useWebSocket("ws://localhost:9999");
+  } = useWebSocket('ws://localhost:9999');
 
   useEffect(() => {
     if (!lastMessage) return;

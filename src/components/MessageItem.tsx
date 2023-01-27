@@ -1,4 +1,4 @@
-import { Message, useChatContext } from "@/contexts/ChatContext";
+import { Message, useChatContext } from '@/contexts/ChatContext';
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { isBot, payload } = message;
@@ -6,15 +6,15 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   const avatar = getAvatar(isBot);
   return (
-    <div className={`flex  ${isBot ? "" : "flex-row-reverse ml-auto"}`}>
+    <div className={`flex  ${isBot ? '' : 'ml-auto flex-row-reverse'}`}>
       <img
         src={avatar}
-        alt={isBot ? "Bot avatar" : "My avatar"}
-        className="rounded-full w-10 h-10"
+        alt={isBot ? 'Bot avatar' : 'My avatar'}
+        className="h-10 w-10 rounded-full"
       />
       <div
-        className={`overflow-hidden rounded-md mx-2 p-2 text-sm ${
-          isBot ? "text-black bg-gray-200" : "text-white bg-blue-600"
+        className={`mx-2 overflow-hidden rounded-md p-2 text-sm ${
+          isBot ? 'bg-gray-200 text-black' : 'bg-blue-600 text-white'
         }`}
         dangerouslySetInnerHTML={{ __html: payload }}
       ></div>
