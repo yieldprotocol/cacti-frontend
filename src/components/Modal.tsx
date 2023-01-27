@@ -1,6 +1,6 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment } from "react";
+import { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   openState: boolean;
@@ -47,22 +47,16 @@ export const Modal = ({ openState, handleClose }: Props) => {
                     </button>
                   </div>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <CheckIcon
-                      className="h-6 w-6 text-green-600"
-                      aria-hidden="true"
-                    />
+                    <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-gray-900"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                       Debug Mode
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequatur amet labore.
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet
+                        labore.
                       </p>
                     </div>
                   </div>

@@ -1,14 +1,14 @@
-import { Button } from "@/components/Button";
-import { shortenAddress } from "@/utils";
-import { BigNumber, utils } from "ethers";
+import { BigNumber, utils } from 'ethers';
 import {
-  usePrepareSendTransaction,
-  useSendTransaction,
-  useContractWrite,
-  usePrepareContractWrite,
   erc20ABI,
   useContractRead,
-} from "wagmi";
+  useContractWrite,
+  usePrepareContractWrite,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from 'wagmi';
+import { Button } from '@/components/Button';
+import { shortenAddress } from '@/utils';
 
 interface TransferButtonProps {
   token?: string;
@@ -40,7 +40,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   const { config: tokenConfig } = usePrepareContractWrite({
     address: token as `0x${string}`,
     abi: erc20ABI,
-    functionName: "transfer",
+    functionName: 'transfer',
     args: [receiver as `0x${string}`, BigNumber.from(amount)],
   });
 
@@ -50,13 +50,12 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   const { data: tokenSymbol, isFetchedAfterMount } = useContractRead({
     address: token as `0x${string}`,
     abi: erc20ABI,
-    functionName: "symbol",
+    functionName: 'symbol',
   });
   return (
     <div>
       <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-        Send {utils.formatEther(amount)}{" "}
-        {isFetchedAfterMount ? tokenSymbol : "token"} to{" "}
+        Send {utils.formatEther(amount)} {isFetchedAfterMount ? tokenSymbol : 'token'} to{' '}
         {shortenAddress(receiver)}
       </Button>
     </div>
