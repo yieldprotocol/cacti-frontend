@@ -4,7 +4,7 @@ import { Button } from './Button';
 export const DebugPanel = ({ handleClose }) => {
   const { spoofBotMessage } = useChatContext();
   return (
-    <div>
+    <div className="grid grid-cols-2">
       <Button
         onClick={(e) => {
           handleClose();
@@ -15,6 +15,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest an ETH transfer
       </Button>
+      <div className='text-xs flex flex-col justify-center'><p>{`<|transfer('ETH', 1000000000000000000, 'vitalik.eth')|>`}</p></div>
     </div>
   );
 };
