@@ -9,7 +9,7 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me transfer that ETH. <|transfer('ETH', 100000000000, 'vitalik.eth')|> Click the above button to make the transfer.`
+            `Sure, let me transfer that ETH. <|transfer('ETH', 1000000000000000000, 'vitalik.eth')|> Click the above button to make the transfer.`
           );
         }}
       >
