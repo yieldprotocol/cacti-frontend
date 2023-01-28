@@ -1,4 +1,5 @@
 import { Message, useChatContext } from '@/contexts/ChatContext';
+import { MessageTranslator } from './MessageTranslator';
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { isBot, payload } = message;
@@ -6,7 +7,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   const avatar = getAvatar(isBot);
   return (
-    <div className={`flex  ${isBot ? '' : 'ml-auto flex-row-reverse'}`}>
+    <div className={`flex ${isBot ? '' : 'ml-auto flex-row-reverse'}`}>
       <img
         src={avatar}
         alt={isBot ? 'Bot avatar' : 'My avatar'}
@@ -16,8 +17,9 @@ export const MessageItem = ({ message }: { message: Message }) => {
         className={`mx-2 overflow-hidden rounded-md p-2 text-sm ${
           isBot ? 'bg-gray-200 text-black' : 'bg-blue-600 text-white'
         }`}
-        dangerouslySetInnerHTML={{ __html: payload }}
-      ></div>
+      >
+        <MessageTranslator message={payload} />
+      </div>
     </div>
   );
 };

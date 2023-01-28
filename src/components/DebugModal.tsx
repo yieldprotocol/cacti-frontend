@@ -1,13 +1,14 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { DebugPanel } from './DebugPanel';
 
 interface Props {
   openState: boolean;
   handleClose: () => void;
 }
 
-export const Modal = ({ openState, handleClose }: Props) => {
+export const DebugModal = ({ openState, handleClose }: Props) => {
   return (
     <Transition.Root show={openState} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={handleClose}>
@@ -46,18 +47,13 @@ export const Modal = ({ openState, handleClose }: Props) => {
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
-                  </div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                       Debug Mode
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet
-                        labore.
-                      </p>
+                      <p className="m-4">In debug mode, you can spoof messages from the bot.</p>
+                      <DebugPanel handleClose={handleClose} />
                     </div>
                   </div>
                 </div>

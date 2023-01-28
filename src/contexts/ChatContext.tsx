@@ -6,11 +6,12 @@ export type Message = {
   payload: string;
 };
 
-type UserMessage = Omit<Message, 'avatar'>;
+// type UserMessage = Omit<Message, 'avatar'>;
 
 export type ChatContextType = {
   messages: Message[];
-  addMessage: (msg: UserMessage) => void;
+  sendMessage: (msg: string) => void;
+  spoofBotMessage: (msg: string) => void;
   getAvatar: (isBot: boolean) => string;
   isBotThinking: boolean;
 };
@@ -26,7 +27,8 @@ const initialContext = {
       payload: 'Hello 👋,How can I help you?',
     },
   ],
-  addMessage: (msg: UserMessage) => {},
+  sendMessage: (msg: string) => {},
+  spoofBotMessage: (msg: string) => {},
   getAvatar,
   isBotThinking: false,
 };
@@ -52,18 +54,40 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setMessages((messages) => [...messages, msg]);
   }, [lastMessage]);
 
-  const addMessage = (msg: UserMessage) => {
+  const sendMessage = (msg: string) => {
     setIsBotThinking(true);
-    wsSendMessage(msg.payload);
-    setMessages([...messages, msg]);
+    wsSendMessage(msg);
+    setMessages([
+      ...messages,
+      {
+        isBot: false,
+        payload: msg,
+      },
+    ]);
   };
+
+  const spoofBotMessage = (msg: string) => {
+    setIsBotThinking(true);
+    setTimeout(() => {
+      setMessages([
+        ...messages,
+        {
+          isBot: true,
+          payload: msg,
+        },
+      ]);
+      setIsBotThinking(false);
+    }, 2000);
+  };
+
   return (
     <ChatContext.Provider
       value={{
         messages,
-        addMessage,
+        sendMessage,
         getAvatar,
         isBotThinking,
+        spoofBotMessage,
       }}
     >
       {children}
