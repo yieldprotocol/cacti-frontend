@@ -11,13 +11,15 @@ export const parseMessage = (str: string) => {
     const [_, capture1, capture2] = match;
     // destructure the first element of the indices (tuple of 2 items referring to string start, end)
     const [[start, end]] = match['indices'] as [[number, number]];
-    console.log(capture2)
+    console.log(capture2);
     return {
       start,
       end,
       fnName: capture1,
       args: capture2
-        ? JSON.parse(JSON.stringify(capture2.split(',').map((str) => str.trim().replaceAll('\'', ''))))
+        ? JSON.parse(
+            JSON.stringify(capture2.split(',').map((str) => str.trim().replaceAll("'", '')))
+          )
         : [],
     };
   });

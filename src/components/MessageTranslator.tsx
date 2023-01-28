@@ -7,16 +7,23 @@ const widgetize = (widget: Widget) => {
     case 'transfer':
       const [token, amount, receiver] = args;
       // TODO: ask for them to send token address
-      const tokenAddress = token === "ETH" ? undefined : "not implemented"
+      const tokenAddress = token === 'ETH' ? undefined : 'not implemented';
       return <TransferButton {...{ amount, receiver, token: tokenAddress }} />;
     default:
-      return <div className="bg-red-800 p-5 text-white">No acceptable widget found</div>;
+      return (
+        <div className="bg-red-800 p-5 text-white">
+          Widget not implemented for{' '}
+          <code>
+            {fnName}({args.join(',')})
+          </code>
+        </div>
+      );
   }
 };
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = parseMessage(message);
-  console.log(stringsAndWidgets)
+  console.log(stringsAndWidgets);
   return (
     <div className="flex flex-col gap-3">
       {stringsAndWidgets.map((item) => {
