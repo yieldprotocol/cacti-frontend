@@ -15,7 +15,9 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest an ETH transfer
       </Button>
-      <div className='text-xs flex flex-col justify-center'><p>{`<|transfer('ETH', 1000000000000000000, 'vitalik.eth')|>`}</p></div>
+      <div className="flex flex-col justify-center text-xs">
+        <p>{`<|transfer('ETH', 1000000000000000000, 'vitalik.eth')|>`}</p>
+      </div>
     </div>
   );
 };
