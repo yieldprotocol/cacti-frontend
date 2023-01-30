@@ -8,7 +8,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
   return (
     <div
       className={`flex items-start py-4 px-64 ${
-        isBot ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
+        isBot ? 'bg-gray-600 text-white' : 'bg-gray-800 text-white'
       }`}
     >
       <img src={avatar} alt={isBot ? 'Bot avatar' : 'My avatar'} className="h-10 w-10" />

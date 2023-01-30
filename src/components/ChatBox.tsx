@@ -3,11 +3,11 @@ import { MessageList } from '@/components/MessageList';
 
 export const ChatBox = () => {
   return (
-    <div className="flex flex-col justify-between overflow-y-auto bg-gray-700">
-      <div className="">
+    <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
+      <div className="min-h-full overflow-auto">
         <MessageList />
       </div>
-      <div className="relative bottom-0 py-4 px-64">
+      <div className="w-full px-64 py-5">
         <MessageInput />
       </div>
     </div>
