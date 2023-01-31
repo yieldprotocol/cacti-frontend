@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, utils } from 'ethers';
 import {
   erc20ABI,
+  useAccount,
+  useBalance,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -17,6 +21,14 @@ interface TransferButtonProps {
 }
 
 export const TransferButton = (props: TransferButtonProps) => {
+  const [connected, setConnected] = useState(false);
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    setConnected(isConnected);
+  }, [isConnected]);
+
+  if (!connected) return <ConnectButton />;
   if (props.token) return <TransferToken {...props} />;
   return <TransferEth {...props} />;
 };
@@ -26,6 +38,15 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
     request: { to: receiver, value: BigNumber.from(amount) },
   });
   const { sendTransaction } = useSendTransaction(config);
+
+  const { address } = useAccount();
+  const { data: balance } = useBalance({
+    address: address,
+  });
+
+  // Check Balance
+  if (balance && BigNumber.from(balance.value) < BigNumber.from(amount))
+    return <Button>Not enough ETH</Button>;
 
   return (
     <div>
@@ -45,6 +66,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   });
 
   const { write: tokenWrite } = useContractWrite(tokenConfig);
+  const { address } = useAccount();
 
   // Get token symbol
   const { data: tokenSymbol, isFetchedAfterMount } = useContractRead({
@@ -52,6 +74,18 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     abi: erc20ABI,
     functionName: 'symbol',
   });
+
+  const { data: tokenBalance } = useContractRead({
+    address: token as `0x${string}`,
+    abi: erc20ABI,
+    functionName: 'balanceOf',
+    args: [address],
+  });
+
+  if (tokenBalance && tokenBalance < BigNumber.from(amount)) {
+    return <Button>Not enough {tokenSymbol}</Button>;
+  }
+
   return (
     <div>
       <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
