@@ -12,14 +12,8 @@ export const MessageItem = ({ message }: { message: Message }) => {
         isBot ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
       }`}
     >
-      <img
-        src={avatar}
-        alt={isBot ? 'Bot avatar' : 'My avatar'}
-        className="h-10 w-10"
-      />
-      <div
-        className={`text-md overflow-hidden rounded-md pl-4 leading-7`}
-      >
+      <img src={avatar} alt={isBot ? 'Bot avatar' : 'My avatar'} className="h-10 w-10" />
+      <div className={`text-md overflow-hidden rounded-md pl-4 leading-7`}>
         <MessageTranslator message={payload} />
       </div>
     </div>
