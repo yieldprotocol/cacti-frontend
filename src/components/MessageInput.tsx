@@ -22,7 +22,7 @@ export const MessageInput = ({}) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="h-6 w-6"
+      className="h-5 w-5 focus:bg-gray-800"
     >
       <path
         strokeLinecap="round"
@@ -38,16 +38,16 @@ export const MessageInput = ({}) => {
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
-          className="form-control mr-4 block w-full rounded-full border border-solid border-gray-300 bg-gray-300 bg-clip-padding px-3 py-1.5 text-base font-normal text-gray-700 transition ease-in-out focus:border-blue-600 focus:bg-gray-300 focus:text-gray-700 focus:outline-none"
+          className="form-control mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
           placeholder="Enter your message..."
           tabIndex={0}
           value={messageInput}
         />
         <button
-          className="relative float-right box-border h-10 w-10 cursor-pointer select-none rounded-full bg-blue-600 p-2 text-center text-white"
+          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
           onClick={handleSendMessage}
         >
-          {sendButtonIcon}
+          <div className="flex justify-center">{sendButtonIcon}</div>
         </button>
       </div>
     </form>

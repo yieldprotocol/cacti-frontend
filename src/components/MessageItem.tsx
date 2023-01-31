@@ -6,16 +6,14 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   const avatar = getAvatar(isBot);
   return (
-    <div className={`flex  ${isBot ? '' : 'ml-auto flex-row-reverse'}`}>
-      <img
-        src={avatar}
-        alt={isBot ? 'Bot avatar' : 'My avatar'}
-        className="h-10 w-10 rounded-full"
-      />
+    <div
+      className={`flex items-start py-4 px-64 ${
+        isBot ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
+      }`}
+    >
+      <img src={avatar} alt={isBot ? 'Bot avatar' : 'My avatar'} className="h-10 w-10" />
       <div
-        className={`mx-2 overflow-hidden rounded-md p-2 text-sm ${
-          isBot ? 'bg-gray-200 text-black' : 'bg-blue-600 text-white'
-        }`}
+        className={`text-md overflow-hidden rounded-md pl-4 leading-7`}
         dangerouslySetInnerHTML={{ __html: payload }}
       ></div>
     </div>
