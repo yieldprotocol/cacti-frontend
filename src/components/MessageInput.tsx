@@ -4,13 +4,12 @@ import { useChatContext } from '@/contexts/ChatContext';
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
 
-  const { addMessage } = useChatContext();
+  const { sendMessage } = useChatContext();
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (messageInput.length > 0) {
-      // TODO: await
-      addMessage({ isBot: false, payload: messageInput });
+      sendMessage(messageInput);
       setMessageInput('');
     }
   };

@@ -1,4 +1,5 @@
 import { Message, useChatContext } from '@/contexts/ChatContext';
+import { MessageTranslator } from './MessageTranslator';
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { isBot, payload } = message;
@@ -12,10 +13,9 @@ export const MessageItem = ({ message }: { message: Message }) => {
       }`}
     >
       <img src={avatar} alt={isBot ? 'Bot avatar' : 'My avatar'} className="h-10 w-10" />
-      <div
-        className={`text-md overflow-hidden rounded-md pl-4 leading-7`}
-        dangerouslySetInnerHTML={{ __html: payload }}
-      ></div>
+      <div className={`text-md overflow-hidden rounded-md pl-4 leading-7`}>
+        <MessageTranslator message={payload} />
+      </div>
     </div>
   );
 };

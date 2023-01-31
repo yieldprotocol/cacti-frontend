@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import { Modal } from '@/components/Modal';
+import { DebugModal } from '@/components/DebugModal';
 
 export const DebugButton = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -13,7 +13,7 @@ export const DebugButton = () => {
       >
         Debug <ArrowTopRightOnSquareIcon className="ml-1 h-5 w-5" />
       </button>
-      <Modal openState={openModal} handleClose={() => setOpenModal(false)} />
+      <DebugModal openState={openModal} handleClose={() => setOpenModal(false)} />
     </div>
   );
 };
