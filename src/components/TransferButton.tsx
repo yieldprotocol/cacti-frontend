@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, utils } from 'ethers';
 import {
   erc20ABI,
@@ -21,14 +19,6 @@ interface TransferButtonProps {
 }
 
 export const TransferButton = (props: TransferButtonProps) => {
-  const [connected, setConnected] = useState(false);
-  const { isConnected } = useAccount();
-
-  useEffect(() => {
-    setConnected(isConnected);
-  }, [isConnected]);
-
-  if (!connected) return <ConnectButton />;
   if (props.token) return <TransferToken {...props} />;
   return <TransferEth {...props} />;
 };

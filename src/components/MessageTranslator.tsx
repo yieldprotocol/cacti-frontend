@@ -1,8 +1,19 @@
+import { useEffect, useState } from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
 import { parseMessage } from '@/utils/parse-message';
 import { TransferButton } from './TransferButton';
 
-const widgetize = (widget: Widget) => {
+const Widgetize = (widget: Widget) => {
   const { fnName, args } = widget;
+  const [connected, setConnected] = useState(false);
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    setConnected(isConnected);
+  }, [isConnected]);
+  if (!connected) return <ConnectButton />;
+
   switch (fnName) {
     case 'transfer':
       const [token, amount, receiver] = args;
@@ -30,7 +41,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
         // if it's a string, just return the string in a fragment
         if (typeof item === 'string') return <>{item}</>;
         // otherwise, let's try to translate the widget
-        return widgetize(item);
+        return Widgetize(item);
       })}
     </div>
   );
