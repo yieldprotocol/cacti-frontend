@@ -36,11 +36,11 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
   const { sendTransaction } = useSendTransaction(config);
 
   const { address } = useAccount();
+
+  // Check Balance
   const { data: balance } = useBalance({
     address: address,
   });
-
-  // Check Balance
   if (balance && BigNumber.from(balance.value) < BigNumber.from(amount))
     return <Button>Not enough ETH</Button>;
 
@@ -77,14 +77,13 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     functionName: 'symbol',
   });
 
+  // Check Balance
   const { data: tokenBalance } = useContractRead({
     address: token as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: [address],
   });
-
-  // Check Balance
   if (tokenBalance && tokenBalance < BigNumber.from(amount)) {
     return <Button>Not enough {tokenSymbol}</Button>;
   }
