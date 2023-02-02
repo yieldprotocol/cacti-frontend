@@ -42,7 +42,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     sendMessage: wsSendMessage,
     lastMessage,
     readyState,
-  } = useWebSocket('ws://23.20.190.128:9999');
+  } = useWebSocket('wss://23.20.190.128:9999');
 
   useEffect(() => {
     if (!lastMessage) return;
