@@ -3,6 +3,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { parseMessage } from '@/utils/parse-message';
 import { TransferButton } from './TransferButton';
+import { UniswapButton } from './UniswapButton';
 
 const Widgetize = (widget: Widget) => {
   const { fnName, args } = widget;
@@ -20,6 +21,9 @@ const Widgetize = (widget: Widget) => {
       // TODO: ask for them to send token address
       const tokenAddress = token === 'ETH' ? undefined : token;
       return <TransferButton {...{ amount, receiver, token: tokenAddress }} />;
+    case 'swap':
+      const [tokenIn, tokenOut, amountIn] = args;
+      return <UniswapButton {...{ tokenIn, tokenOut, amountIn }} />;
     default:
       return (
         <div className="bg-red-800 p-5 text-white">

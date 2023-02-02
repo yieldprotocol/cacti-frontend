@@ -22,6 +22,19 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
+            `Sure, let me swap that wETH into UNI. <|swap('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', '1000000000000000000')|> Click the above button to make the swap.`
+          );
+        }}
+      >
+        Suggest a token swap on Uniswap
+      </Button>
+      <div className="flex flex-col justify-center text-xs">
+        <p>{`<|transfer('ETH', 1000000000000000000, 'vitalik.eth')|>`}</p>
+      </div>
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(
             `Sure, let me transfer that wETH. <|transfer('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 1000000000000000000, 'vitalik.eth')|> Click the above button to make the transfer.`
           );
         }}
