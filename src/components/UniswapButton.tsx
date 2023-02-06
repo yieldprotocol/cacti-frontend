@@ -35,6 +35,8 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
+  const [ApprovalSuccess, setApprovalSuccess] = useState(false);
+  const [SwapSuccess, setSwapSuccess] = useState(false);
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
@@ -91,6 +93,17 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   return (
     <div>
+      {
+        <p>
+          <p>balance is: {balance?.toString()}</p>
+          <p>hasBalance is: {hasBalance.toString()}</p>
+          <p>hasAllowance is: {hasAllowance.toString()}</p>
+          <p>
+            isApprovalSuccess is:{isApprovalSuccess.toString()} isSwapSuccess is:{' '}
+            {isSwapSuccess.toString()}
+          </p>
+        </p>
+      }
       {!hasBalance && <Button disabled>Insufficient Balance</Button>}
       {hasBalance && !hasAllowance && (
         <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
