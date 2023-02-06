@@ -41,8 +41,7 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
   const { data: balance } = useBalance({
     address: address,
   });
-  if (balance && BigNumber.from(balance.value) < BigNumber.from(amount))
-    return <Button>Not enough ETH</Button>;
+  if (balance && balance.value.lte(amount)) return <Button>Not enough ETH</Button>;
 
   return (
     <div>
@@ -84,7 +83,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     functionName: 'balanceOf',
     args: [address],
   });
-  if (tokenBalance && tokenBalance < BigNumber.from(amount)) {
+  if (tokenBalance && tokenBalance.lte(amount)) {
     return <Button>Not enough {tokenSymbol}</Button>;
   }
 
