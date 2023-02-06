@@ -1,8 +1,12 @@
 import { BigNumber, utils } from 'ethers';
+import { Logger } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
+  useAccount,
+  useBalance,
   useContractRead,
   useContractWrite,
+  useEnsAddress,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -22,29 +26,46 @@ export const TransferButton = (props: TransferButtonProps) => {
 };
 
 const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
-  const { config } = usePrepareSendTransaction({
-    request: { to: receiver, value: BigNumber.from(amount) },
+  // Resolve ENS name
+  const { data: resolvedAddress } = useEnsAddress({
+    name: receiver,
+  });
+
+  const { config, error } = usePrepareSendTransaction({
+    request: { to: resolvedAddress ? resolvedAddress : receiver, value: BigNumber.from(amount) },
   });
   const { sendTransaction } = useSendTransaction(config);
+
+  if (error) {
+    const err: Error & { reason?: string } = error;
+    return <Button disabled={!sendTransaction}>Error: {err.reason || err.message}</Button>;
+  }
 
   return (
     <div>
       <Button disabled={!sendTransaction} onClick={() => sendTransaction?.()}>
-        Send {utils.formatEther(amount)} ETH to {shortenAddress(receiver)}
+        Send {utils.formatEther(amount)} ETH to{' '}
+        {resolvedAddress ? receiver : shortenAddress(receiver)}
       </Button>
     </div>
   );
 };
 
 const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
-  const { config: tokenConfig } = usePrepareContractWrite({
+  // Resolve ENS name
+  const { data: receiverAddress } = useEnsAddress({
+    name: receiver,
+  });
+
+  const { config: tokenConfig, error } = usePrepareContractWrite({
     address: token as `0x${string}`,
     abi: erc20ABI,
     functionName: 'transfer',
-    args: [receiver as `0x${string}`, BigNumber.from(amount)],
+    args: [receiverAddress ? receiverAddress : (receiver as `0x${string}`), BigNumber.from(amount)],
   });
 
   const { write: tokenWrite } = useContractWrite(tokenConfig);
+  const { address } = useAccount();
 
   // Get token symbol
   const { data: tokenSymbol, isFetchedAfterMount } = useContractRead({
@@ -52,11 +73,17 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     abi: erc20ABI,
     functionName: 'symbol',
   });
+
+  if (error) {
+    const err: Error & { reason?: string } = error;
+    return <Button disabled={!tokenWrite}>{err.reason || err.message}</Button>;
+  }
+
   return (
     <div>
       <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
         Send {utils.formatEther(amount)} {isFetchedAfterMount ? tokenSymbol : 'token'} to{' '}
-        {shortenAddress(receiver)}
+        {receiverAddress ? receiver : shortenAddress(receiver)}
       </Button>
     </div>
   );
