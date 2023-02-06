@@ -18,7 +18,7 @@ const Widgetize = (widget: Widget) => {
     case 'transfer':
       const [token, amount, receiver] = args;
       // TODO: ask for them to send token address
-      const tokenAddress = token === 'ETH' ? undefined : 'not implemented';
+      const tokenAddress = token === 'ETH' ? undefined : token;
       return <TransferButton {...{ amount, receiver, token: tokenAddress }} />;
     default:
       return (

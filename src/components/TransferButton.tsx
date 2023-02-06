@@ -1,4 +1,5 @@
 import { BigNumber, utils } from 'ethers';
+import { Logger } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
   useAccount,
@@ -30,18 +31,15 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
     name: receiver,
   });
 
-  const { config } = usePrepareSendTransaction({
+  const { config, error } = usePrepareSendTransaction({
     request: { to: resolvedAddress ? resolvedAddress : receiver, value: BigNumber.from(amount) },
   });
   const { sendTransaction } = useSendTransaction(config);
 
-  const { address } = useAccount();
-
-  // Check Balance
-  const { data: balance } = useBalance({
-    address: address,
-  });
-  if (balance && balance.value.lte(amount)) return <Button>Not enough ETH</Button>;
+  if (error) {
+    const err: Error & { reason?: string } = error;
+    return <Button disabled={!sendTransaction}>Error: {err.reason || err.message}</Button>;
+  }
 
   return (
     <div>
@@ -59,7 +57,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     name: receiver,
   });
 
-  const { config: tokenConfig } = usePrepareContractWrite({
+  const { config: tokenConfig, error } = usePrepareContractWrite({
     address: token as `0x${string}`,
     abi: erc20ABI,
     functionName: 'transfer',
@@ -76,15 +74,9 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     functionName: 'symbol',
   });
 
-  // Check Balance
-  const { data: tokenBalance } = useContractRead({
-    address: token as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: [address],
-  });
-  if (tokenBalance && tokenBalance.lte(amount)) {
-    return <Button>Not enough {tokenSymbol}</Button>;
+  if (error) {
+    const err: Error & { reason?: string } = error;
+    return <Button disabled={!tokenWrite}>{err.reason || err.message}</Button>;
   }
 
   return (
