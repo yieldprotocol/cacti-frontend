@@ -1,9 +1,7 @@
 import { BigNumber, utils } from 'ethers';
-import { Logger } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
   useAccount,
-  useBalance,
   useContractRead,
   useContractWrite,
   useEnsAddress,

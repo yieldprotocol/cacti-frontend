@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { parseMessage } from '@/utils/parse-message';
-import { TransferButton } from './TransferButton';
 import { UniswapButton } from './UniswapButton';
+import { TransferButton } from './widgets/Transfer';
 
 const Widgetize = (widget: Widget) => {
   const { fnName, args } = widget;
   const [connected, setConnected] = useState(false);
   const { isConnected } = useAccount();
+
+  const inputString = `${fnName}(${args.join(',')})`;
 
   useEffect(() => {
     setConnected(isConnected);
@@ -27,10 +29,7 @@ const Widgetize = (widget: Widget) => {
     default:
       return (
         <div className="bg-red-800 p-5 text-white">
-          Widget not implemented for{' '}
-          <code>
-            {fnName}({args.join(',')})
-          </code>
+          Widget not implemented for <code>{inputString}</code>
         </div>
       );
   }
@@ -41,9 +40,9 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   console.log(stringsAndWidgets);
   return (
     <div className="flex flex-col gap-3">
-      {stringsAndWidgets.map((item) => {
+      {stringsAndWidgets.map((item, i) => {
         // if it's a string, just return the string in a fragment
-        if (typeof item === 'string') return <>{item}</>;
+        if (typeof item === 'string') return <Fragment key={`i${i}`}>{item}</Fragment>;
         // otherwise, let's try to translate the widget
         return Widgetize(item);
       })}
