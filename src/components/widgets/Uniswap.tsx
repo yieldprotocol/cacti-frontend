@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import {
   erc20ABI,
   useAccount,
@@ -118,7 +118,7 @@ const ApproveTokens = ({
 
   return (
     <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-      {isLoading ? <div>Approving...</div> : `Approve ${amountIn} ${tokenIn}`}
+      {isLoading ? <div>Approving...</div> : `Approve ${utils.formatEther(amountIn)} ${tokenIn}`}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </Button>
   );
@@ -171,7 +171,7 @@ const SwapTokens = ({
         <Button>Swapping...</Button>
       ) : (
         <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-          Swap {amountIn} {tokenIn} for {tokenOut}
+          Swap {utils.formatEther(amountIn)} {tokenIn} for {tokenOut}
         </Button>
       )}
     </>
