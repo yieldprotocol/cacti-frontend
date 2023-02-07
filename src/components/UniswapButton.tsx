@@ -33,6 +33,7 @@ const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
+  const isEth = tokenIn == 'ETH';
 
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
@@ -61,6 +62,16 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
       allowanceAmount && BigNumber.from(allowanceAmount).gte(BigNumber.from(amountIn))
     );
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+
+  if (isEth)
+    return (
+      <SwapTokens
+        tokenIn={tokenIn}
+        tokenOut={tokenOut}
+        amountIn={amountIn}
+        setIsSwapSuccess={setIsSwapSuccess}
+      />
+    );
 
   return (
     <div>
@@ -121,9 +132,11 @@ const SwapTokens = ({
 }: Props & { setIsSwapSuccess: React.Dispatch<React.SetStateAction<boolean>> }) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
+  const isEth = tokenIn == 'ETH';
+  const WETH = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; // Goerli WETH address
 
   const params: ExactInputSingleParams = {
-    tokenIn: tokenIn,
+    tokenIn: isEth ? WETH : tokenIn,
     tokenOut: tokenOut,
     fee: BigNumber.from(3000),
     recipient: receiver,
@@ -138,6 +151,9 @@ const SwapTokens = ({
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
     args: [params],
+    overrides: {
+      value: isEth ? BigNumber.from(amountIn) : 0,
+    },
   });
 
   const { write: swapWrite, data } = useContractWrite(swapConfig);
