@@ -9,6 +9,8 @@ const Widgetize = (widget: Widget) => {
   const [connected, setConnected] = useState(false);
   const { isConnected } = useAccount();
 
+  const inputString = `${fnName}(${args.join(',')})`;
+
   useEffect(() => {
     setConnected(isConnected);
   }, [isConnected]);
@@ -23,10 +25,7 @@ const Widgetize = (widget: Widget) => {
     default:
       return (
         <div className="bg-red-800 p-5 text-white">
-          Widget not implemented for{' '}
-          <code>
-            {fnName}({args.join(',')})
-          </code>
+          Widget not implemented for <code>{inputString}</code>
         </div>
       );
   }
