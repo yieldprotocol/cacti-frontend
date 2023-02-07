@@ -1,5 +1,5 @@
+import { Button } from '@/components/Button';
 import { useChatContext } from '@/contexts/ChatContext';
-import { Button } from './Button';
 
 export const DebugPanel = ({ handleClose }) => {
   const { spoofBotMessage } = useChatContext();

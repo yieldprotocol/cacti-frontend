@@ -9,7 +9,7 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
-import SwapRouter02Abi from '../abi/SwapRouter02.json';
+import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
   tokenIn: string;
