@@ -42,7 +42,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     sendMessage: wsSendMessage,
     lastMessage,
     readyState,
-  } = useWebSocket('wss://chatweb3.func.ai:9998');
+  } = useWebSocket('wss://chatweb3.func.ai:9998', {
+    shouldReconnect: (closeEvent) => true,
+  });
 
   useEffect(() => {
     if (!lastMessage) return;
