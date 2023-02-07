@@ -9,6 +9,7 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -118,7 +119,7 @@ const ApproveTokens = ({
 
   return (
     <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-      {isLoading ? <div>Approving...</div> : `Approve ${utils.formatEther(amountIn)} ${tokenIn}`}
+      {isLoading ? <div>Approving...</div> : `Approve ${formatToEther(amountIn)} ${tokenIn}`}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </Button>
   );
@@ -171,7 +172,7 @@ const SwapTokens = ({
         <Button>Swapping...</Button>
       ) : (
         <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-          Swap {utils.formatEther(amountIn)} {tokenIn} for {tokenOut}
+          Swap {formatToEther(amountIn)} {tokenIn} for {tokenOut}
         </Button>
       )}
     </>

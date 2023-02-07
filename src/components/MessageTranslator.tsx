@@ -4,6 +4,7 @@ import { utils } from 'ethers';
 import { useAccount } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
+import { formatToWei } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 
 const Widgetize = (widget: Widget) => {
@@ -23,18 +24,10 @@ const Widgetize = (widget: Widget) => {
       const [token, amount, receiver] = args;
       // TODO: ask for them to send token address
       const tokenAddress = token === 'ETH' ? undefined : token;
-      return (
-        <TransferButton
-          {...{ amount: utils.parseEther(amount).toString(), receiver, token: tokenAddress }}
-        />
-      );
+      return <TransferButton {...{ amount: formatToWei(amount), receiver, token: tokenAddress }} />;
     case 'swap':
       const [tokenIn, tokenOut, amountIn] = args;
-      return (
-        <UniswapButton
-          {...{ tokenIn, tokenOut, amountIn: utils.parseEther(amountIn).toString() }}
-        />
-      );
+      return <UniswapButton {...{ tokenIn, tokenOut, amountIn: formatToWei(amountIn) }} />;
     default:
       return (
         <div className="bg-red-800 p-5 text-white">
