@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
+import { useModalContext } from '@/contexts/ModalContext';
 
 export type Message = {
   isBot: boolean;
@@ -24,7 +25,7 @@ const initialContext = {
   messages: [
     {
       isBot: true,
-      payload: 'Hello 👋,How can I help you?',
+      payload: 'Hello 👋, how can I help you?',
     },
   ],
   sendMessage: (msg: string) => {},
@@ -38,11 +39,15 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
+  const { setModal } = useModalContext();
   const {
     sendMessage: wsSendMessage,
     lastMessage,
     readyState,
-  } = useWebSocket('wss://chatweb3.func.ai:9998');
+  } = useWebSocket('wss://chatweb3.func.ai:9998', {
+    onError: (evt) => setModal(<div>Websocket error</div>),
+    shouldReconnect: (closeEvent) => true,
+  });
 
   useEffect(() => {
     if (!lastMessage) return;
