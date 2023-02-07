@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
+import { TransferButton } from '@/components/widgets/Transfer';
+import { UniswapButton } from '@/components/widgets/Uniswap';
 import { parseMessage } from '@/utils/parse-message';
-import { UniswapButton } from './UniswapButton';
-import { TransferButton } from './widgets/Transfer';
 
 const Widgetize = (widget: Widget) => {
   const { fnName, args } = widget;

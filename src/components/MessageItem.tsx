@@ -1,5 +1,5 @@
+import { MessageTranslator } from '@/components/MessageTranslator';
 import { Message, useChatContext } from '@/contexts/ChatContext';
-import { MessageTranslator } from './MessageTranslator';
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { isBot, payload } = message;
