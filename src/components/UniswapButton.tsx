@@ -6,6 +6,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import SwapRouter02Abi from '../abi/SwapRouter02.json';
@@ -64,14 +65,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   return (
     <div>
       {!hasBalance && <Button disabled>Insufficient Balance</Button>}
-      {hasBalance && !hasAllowance && (
+      {hasBalance && !hasAllowance && !isApprovalSuccess && (
         <ApproveTokens
           tokenIn={tokenIn}
           amountIn={amountIn}
           setIsApprovalSuccess={setIsApprovalSuccess}
         />
       )}
-      {hasBalance && hasAllowance && (
+      {hasBalance && (hasAllowance || isApprovalSuccess) && (
         <SwapTokens
           tokenIn={tokenIn}
           tokenOut={tokenOut}
@@ -97,17 +98,8 @@ const ApproveTokens = ({
     functionName: 'approve',
     args: [swapRouter02Address, BigNumber.from(amountIn)],
   });
-  const {
-    write: tokenWrite,
-    data,
-    isSuccess: isApprovalSuccess,
-    isLoading,
-  } = useContractWrite({
-    ...tokenConfig,
-    onSettled(data, error) {
-      console.log('Settled', { data, error });
-    },
-  });
+  const { write: tokenWrite, data } = useContractWrite(tokenConfig);
+  const { isLoading, isSuccess: isApprovalSuccess } = useWaitForTransaction({ hash: data?.hash });
 
   useEffect(() => {
     setIsApprovalSuccess(isApprovalSuccess);
@@ -115,9 +107,8 @@ const ApproveTokens = ({
 
   return (
     <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-      {!isLoading && `Approve ${amountIn} ${tokenIn}`}
-      {isLoading && <div>Check Wallet</div>}
-      {isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
+      {isLoading ? <div>Approving...</div> : `Approve ${amountIn} ${tokenIn}`}
+      {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </Button>
   );
 };
@@ -149,7 +140,8 @@ const SwapTokens = ({
     args: [params],
   });
 
-  const { write: swapWrite, isSuccess: isSwapSuccess } = useContractWrite(swapConfig);
+  const { write: swapWrite, data } = useContractWrite(swapConfig);
+  const { isLoading, isSuccess: isSwapSuccess } = useWaitForTransaction({ hash: data?.hash });
 
   useEffect(() => {
     setIsSwapSuccess(isSwapSuccess);
@@ -158,8 +150,14 @@ const SwapTokens = ({
   if (isSwapSuccess) return <Button>Swap Successful</Button>;
 
   return (
-    <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-      Swap {amountIn} {tokenIn} for {tokenOut}
-    </Button>
+    <>
+      {isLoading ? (
+        <Button>Swapping...</Button>
+      ) : (
+        <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+          Swap {amountIn} {tokenIn} for {tokenOut}
+        </Button>
+      )}
+    </>
   );
 };
