@@ -35,8 +35,8 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
-  const [ApprovalSuccess, setApprovalSuccess] = useState(false);
-  const [SwapSuccess, setSwapSuccess] = useState(false);
+  const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
+  const [isSwapSuccess, setIsSwapSuccess] = useState(false);
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
@@ -54,6 +54,42 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     args: [receiver, swapRouter02Address],
   });
 
+  useEffect(() => {
+    setHasBalance(balance && BigNumber.from(balance).gte(BigNumber.from(amountIn)));
+    setHasAllowance(
+      allowanceAmount && BigNumber.from(allowanceAmount).gte(BigNumber.from(amountIn))
+    );
+  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+
+  return (
+    <div>
+      {!hasBalance && <Button disabled>Insufficient Balance</Button>}
+      {hasBalance && !hasAllowance && (
+        <ApproveTokens
+          tokenIn={tokenIn}
+          amountIn={amountIn}
+          setIsApprovalSuccess={setIsApprovalSuccess}
+        />
+      )}
+      {hasBalance && hasAllowance && (
+        <SwapTokens
+          tokenIn={tokenIn}
+          tokenOut={tokenOut}
+          amountIn={amountIn}
+          setIsSwapSuccess={setIsSwapSuccess}
+        />
+      )}
+    </div>
+  );
+};
+
+const ApproveTokens = ({
+  tokenIn,
+  amountIn,
+  setIsApprovalSuccess,
+}: Pick<Props, 'tokenIn' | 'amountIn'> & {
+  setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
     address: tokenIn as `0x${string}`,
@@ -61,9 +97,40 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     functionName: 'approve',
     args: [swapRouter02Address, BigNumber.from(amountIn)],
   });
-  const { write: tokenWrite, isSuccess: isApprovalSuccess } = useContractWrite(tokenConfig);
+  const {
+    write: tokenWrite,
+    data,
+    isSuccess: isApprovalSuccess,
+    isLoading,
+  } = useContractWrite({
+    ...tokenConfig,
+    onSettled(data, error) {
+      console.log('Settled', { data, error });
+    },
+  });
 
-  // Get swap ready
+  useEffect(() => {
+    setIsApprovalSuccess(isApprovalSuccess);
+  }, [setIsApprovalSuccess, isApprovalSuccess]);
+
+  return (
+    <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
+      {!isLoading && `Approve ${amountIn} ${tokenIn}`}
+      {isLoading && <div>Check Wallet</div>}
+      {isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
+    </Button>
+  );
+};
+
+const SwapTokens = ({
+  tokenIn,
+  tokenOut,
+  amountIn,
+  setIsSwapSuccess,
+}: Props & { setIsSwapSuccess: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  // Owner is the receiver
+  const { address: receiver } = useAccount();
+
   const params: ExactInputSingleParams = {
     tokenIn: tokenIn,
     tokenOut: tokenOut,
@@ -85,36 +152,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { write: swapWrite, isSuccess: isSwapSuccess } = useContractWrite(swapConfig);
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(BigNumber.from(amountIn)));
-    setHasAllowance(
-      allowanceAmount && BigNumber.from(allowanceAmount).gte(BigNumber.from(amountIn))
-    );
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, isSwapSuccess]);
+    setIsSwapSuccess(isSwapSuccess);
+  }, [setIsSwapSuccess, isSwapSuccess]);
+
+  if (isSwapSuccess) return <Button>Swap Successful</Button>;
 
   return (
-    <div>
-      {
-        <p>
-          <p>balance is: {balance?.toString()}</p>
-          <p>hasBalance is: {hasBalance.toString()}</p>
-          <p>hasAllowance is: {hasAllowance.toString()}</p>
-          <p>
-            isApprovalSuccess is:{isApprovalSuccess.toString()} isSwapSuccess is:{' '}
-            {isSwapSuccess.toString()}
-          </p>
-        </p>
-      }
-      {!hasBalance && <Button disabled>Insufficient Balance</Button>}
-      {hasBalance && !hasAllowance && (
-        <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-          Approve Tokens
-        </Button>
-      )}
-      {hasBalance && hasAllowance && (
-        <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-          Swap Tokens
-        </Button>
-      )}
-    </div>
+    <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+      Swap {amountIn} {tokenIn} for {tokenOut}
+    </Button>
   );
 };
