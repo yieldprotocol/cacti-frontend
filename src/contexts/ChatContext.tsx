@@ -25,7 +25,7 @@ const initialContext = {
   messages: [
     {
       isBot: true,
-      payload: 'Hello 👋,How can I help you?',
+      payload: 'Hello 👋, how can I help you?',
     },
   ],
   sendMessage: (msg: string) => {},
