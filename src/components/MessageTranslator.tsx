@@ -30,9 +30,9 @@ const Grid = ({ children }) => {
 };
 
 const Widgetize = (widget: Widget) => {
-  const { fnName, args } = widget;
+  const { fnName: fn, args } = widget;
   const { chain } = useNetwork();
-
+  const fnName = fn.toLowerCase();
   const inputString = `${fnName}(${args.join(',')})`;
 
   try {
