@@ -23,7 +23,8 @@ const Widgetize = (widget: Widget) => {
     case 'transfer':
       const [token, amount, receiver] = args;
       // TODO: ask for them to send token address
-      const tokenAddress = token === 'ETH' ? undefined : token;
+      const tokenAddress =
+        token === 'ETH' ? undefined : findTokenBySymbol(token, chain.id)?.address || token;
       return <TransferButton {...{ amount: formatToWei(amount), receiver, token: tokenAddress }} />;
     case 'swap':
       const [tokenIn, tokenOut, amountIn] = args;

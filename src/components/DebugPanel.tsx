@@ -22,14 +22,14 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me transfer that wETH. <|transfer('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 0.1, 'vitalik.eth')|> Click the above button to make the transfer.`
+            `Sure, let me transfer that wETH. <|transfer('WETH', 0.1, 'vitalik.eth')|> Click the above button to make the transfer.`
           );
         }}
       >
         Suggest an wETH transfer
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|transfer('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 0.1, 'vitalik.eth')|>`}</p>
+        <p>{`<|transfer('wETH', 0.1, 'vitalik.eth')|>`}</p>
       </div>
       <Button
         onClick={(e) => {
