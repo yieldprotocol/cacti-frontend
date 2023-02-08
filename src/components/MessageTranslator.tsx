@@ -1,16 +1,16 @@
 import { Fragment, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { utils } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { formatToWei } from '@/utils';
+import { findTokenBySymbol, formatToWei } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 
 const Widgetize = (widget: Widget) => {
   const { fnName, args } = widget;
   const [connected, setConnected] = useState(false);
   const { isConnected } = useAccount();
+  const { chain } = useNetwork();
 
   const inputString = `${fnName}(${args.join(',')})`;
 
@@ -27,7 +27,18 @@ const Widgetize = (widget: Widget) => {
       return <TransferButton {...{ amount: formatToWei(amount), receiver, token: tokenAddress }} />;
     case 'swap':
       const [tokenIn, tokenOut, amountIn] = args;
-      return <UniswapButton {...{ tokenIn, tokenOut, amountIn: formatToWei(amountIn) }} />;
+      const tokenInAddress =
+        tokenIn === 'ETH' ? 'ETH' : findTokenBySymbol(tokenIn, chain.id)?.address;
+      const tokenOutAddress = findTokenBySymbol(tokenOut, chain.id)?.address;
+      return (
+        <UniswapButton
+          {...{
+            tokenIn: tokenInAddress,
+            tokenOut: tokenOutAddress,
+            amountIn: formatToWei(amountIn),
+          }}
+        />
+      );
     default:
       return (
         <div className="bg-red-800 p-5 text-white">
