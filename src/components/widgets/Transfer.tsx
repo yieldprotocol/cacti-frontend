@@ -2,15 +2,15 @@ import { BigNumber, utils } from 'ethers';
 import {
   erc20ABI,
   useAccount,
-  useContractRead,
   useContractWrite,
   useEnsAddress,
+  useNetwork,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
-import { shortenAddress } from '@/utils';
+import { findTokenByAddress, shortenAddress } from '@/utils';
 
 interface TransferButtonProps {
   token?: string;
@@ -54,6 +54,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   const { data: receiverAddress } = useEnsAddress({
     name: receiver,
   });
+  const { chain } = useNetwork();
 
   const { config: tokenConfig, error } = usePrepareContractWrite({
     address: token as `0x${string}`,
@@ -63,14 +64,6 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   });
 
   const { write: tokenWrite } = useContractWrite(tokenConfig);
-  const { address } = useAccount();
-
-  // Get token symbol
-  const { data: tokenSymbol, isFetchedAfterMount } = useContractRead({
-    address: token as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'symbol',
-  });
 
   if (error) {
     const err: Error & { reason?: string } = error;
@@ -80,7 +73,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   return (
     <div>
       <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-        Send {utils.formatEther(amount)} {isFetchedAfterMount ? tokenSymbol : 'token'} to{' '}
+        Send {utils.formatEther(amount)} {findTokenByAddress(token, chain.id)?.symbol || token} to{' '}
         {receiverAddress ? receiver : shortenAddress(receiver)}
       </Button>
     </div>

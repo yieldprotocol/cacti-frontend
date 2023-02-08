@@ -5,11 +5,12 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
+  useNetwork,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
-import { formatToEther } from '@/utils';
+import { findTokenByAddress, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -103,6 +104,7 @@ const ApproveTokens = ({
 }: Pick<Props, 'tokenIn' | 'amountIn'> & {
   setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { chain } = useNetwork();
   // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
     address: tokenIn as `0x${string}`,
@@ -119,7 +121,11 @@ const ApproveTokens = ({
 
   return (
     <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-      {isLoading ? <div>Approving...</div> : `Approve ${formatToEther(amountIn)} ${tokenIn}`}
+      {isLoading ? (
+        <div>Approving...</div>
+      ) : (
+        `Approve ${formatToEther(amountIn)} ${findTokenByAddress(tokenIn, chain?.id || 1).symbol}`
+      )}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </Button>
   );
@@ -133,6 +139,7 @@ const SwapTokens = ({
 }: Props & { setIsSwapSuccess: React.Dispatch<React.SetStateAction<boolean>> }) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
+  const { chain } = useNetwork();
   const isEth = tokenIn == 'ETH';
   const WETH = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; // Goerli WETH address
 
@@ -172,7 +179,9 @@ const SwapTokens = ({
         <Button>Swapping...</Button>
       ) : (
         <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-          Swap {formatToEther(amountIn)} {tokenIn} for {tokenOut}
+          Swap {formatToEther(amountIn)}{' '}
+          {isEth ? 'ETH' : findTokenByAddress(tokenIn, chain?.id || 1)?.symbol} for{' '}
+          {findTokenByAddress(tokenOut, chain?.id | 1)?.symbol}
         </Button>
       )}
     </>
