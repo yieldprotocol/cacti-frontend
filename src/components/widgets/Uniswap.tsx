@@ -10,13 +10,13 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
-import { findTokenByAddress, formatToEther } from '@/utils';
+import { findTokenByAddress, findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
-  tokenIn: string;
-  tokenOut: string;
-  amountIn: string;
+  tokenInAddress: string;
+  tokenOutAddress: string;
+  amountIn: BigNumber;
 }
 
 interface ExactInputSingleParams {
@@ -32,10 +32,10 @@ interface ExactInputSingleParams {
 
 const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 
-export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
+export const UniswapButton = ({ tokenInAddress, tokenOutAddress, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
-  const isEth = tokenIn == 'ETH';
+  const isEth = tokenInAddress == 'ETH';
 
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
@@ -44,7 +44,7 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
-    address: tokenIn as `0x${string}`,
+    address: tokenInAddress as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: [receiver],
@@ -52,7 +52,7 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   // Get allowance amount
   const { data: allowanceAmount } = useContractRead({
-    address: tokenIn as `0x${string}`,
+    address: tokenInAddress as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [receiver, swapRouter02Address],
@@ -68,9 +68,7 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   if (isEth)
     return (
       <SwapTokens
-        tokenIn={tokenIn}
-        tokenOut={tokenOut}
-        amountIn={amountIn}
+        {...{ tokenInAddress, tokenOutAddress, amountIn }}
         setIsSwapSuccess={setIsSwapSuccess}
       />
     );
@@ -79,16 +77,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     <div>
       {!hasAllowance && !isApprovalSuccess && (
         <ApproveTokens
-          tokenIn={tokenIn}
+          tokenInAddress={tokenInAddress}
           amountIn={amountIn}
           setIsApprovalSuccess={setIsApprovalSuccess}
         />
       )}
       {(hasAllowance || isApprovalSuccess) && (
         <SwapTokens
-          tokenIn={tokenIn}
-          tokenOut={tokenOut}
-          amountIn={amountIn}
+          {...{ tokenInAddress, tokenOutAddress, amountIn }}
           setIsSwapSuccess={setIsSwapSuccess}
         />
       )}
@@ -97,16 +93,16 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 };
 
 const ApproveTokens = ({
-  tokenIn,
+  tokenInAddress,
   amountIn,
   setIsApprovalSuccess,
-}: Pick<Props, 'tokenIn' | 'amountIn'> & {
+}: Pick<Props, 'tokenInAddress' | 'amountIn'> & {
   setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { chain } = useNetwork();
   // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: tokenIn as `0x${string}`,
+    address: tokenInAddress as `0x${string}`,
     abi: erc20ABI,
     functionName: 'approve',
     args: [swapRouter02Address, BigNumber.from(amountIn)],
@@ -119,32 +115,33 @@ const ApproveTokens = ({
   }, [setIsApprovalSuccess, isApprovalSuccess]);
 
   return (
-    <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-      {isLoading ? (
-        <div>Approving...</div>
-      ) : (
-        `Approve ${formatToEther(amountIn)} ${findTokenByAddress(tokenIn, chain?.id || 1).symbol}`
-      )}
+    <div>
+      <div>
+        <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
+          {isLoading ? 'Pending...' : 'Approve'}
+        </Button>
+      </div>
+      First, approve Uniswap router for {formatToEther(amountIn.toString())}{' '}
+      {findTokenByAddress(tokenInAddress, chain?.id || 1).symbol}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
-    </Button>
+    </div>
   );
 };
 
 const SwapTokens = ({
-  tokenIn,
-  tokenOut,
+  tokenInAddress,
+  tokenOutAddress,
   amountIn,
   setIsSwapSuccess,
 }: Props & { setIsSwapSuccess: React.Dispatch<React.SetStateAction<boolean>> }) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
-  const isEth = tokenIn == 'ETH';
-  const WETH = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; // Goerli WETH address
+  const isEth = tokenInAddress == 'ETH';
 
   const params: ExactInputSingleParams = {
-    tokenIn: isEth ? WETH : tokenIn,
-    tokenOut: tokenOut,
+    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenInAddress,
+    tokenOut: tokenOutAddress,
     fee: BigNumber.from(3000),
     recipient: receiver,
     deadline: BigNumber.from(0),
@@ -180,9 +177,7 @@ const SwapTokens = ({
       ) : (
         <div>
           <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-            Swap {formatToEther(amountIn)}{' '}
-            {isEth ? 'ETH' : findTokenByAddress(tokenIn, chain?.id || 1)?.symbol} for{' '}
-            {findTokenByAddress(tokenOut, chain?.id | 1)?.symbol}
+            Send
           </Button>
           {err && (
             <div className="pt-2 text-sm text-red-800">

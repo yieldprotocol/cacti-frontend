@@ -60,10 +60,13 @@ const Widgetize = (widget: Widget) => {
         );
       // Swap widget
       case 'uniswap':
-        const [tokenIn, tokenOut, amountIn] = args;
+        const [tokenIn, tokenOut, buyOrSell, amountIn] = args;
         const tokenInAddress =
           tokenIn === 'ETH' ? 'ETH' : findTokenBySymbol(tokenIn, chain.id)?.address;
-        const tokenOutAddress = findTokenBySymbol(tokenOut, chain.id)?.address;
+        const tokenOutAddress =
+          tokenIn === 'ETH'
+            ? findTokenBySymbol('WETH', chain.id)?.address
+            : findTokenBySymbol(tokenOut, chain.id)?.address;
         return (
           <div className="flex w-full flex-col bg-slate-300">
             <Grid>
@@ -76,9 +79,9 @@ const Widgetize = (widget: Widget) => {
               <ConnectFirst>
                 <UniswapButton
                   {...{
-                    tokenIn: tokenInAddress,
-                    tokenOut: tokenOutAddress,
-                    amountIn: formatToWei(amountIn),
+                    tokenInAddress,
+                    tokenOutAddress,
+                    amountIn: BigNumber.from(formatToWei(amountIn)),
                   }}
                 />
               </ConnectFirst>
@@ -93,6 +96,13 @@ const Widgetize = (widget: Widget) => {
         );
     }
   } catch (e) {
-    return <div>Error: {e.message}</div>;
+    return (
+      <div className="grid grid-cols-2 bg-slate-300 p-5 text-white">
+        <div>
+          <code>{inputString}</code>
+        </div>
+        <div>Error: {e.message}</div>
+      </div>
+    );
   }
 };
