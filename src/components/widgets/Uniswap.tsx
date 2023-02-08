@@ -77,15 +77,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   return (
     <div>
-      {!hasBalance && <Button disabled>Insufficient Balance</Button>}
-      {hasBalance && !hasAllowance && !isApprovalSuccess && (
+      {!hasAllowance && !isApprovalSuccess && (
         <ApproveTokens
           tokenIn={tokenIn}
           amountIn={amountIn}
           setIsApprovalSuccess={setIsApprovalSuccess}
         />
       )}
-      {hasBalance && (hasAllowance || isApprovalSuccess) && (
+      {(hasAllowance || isApprovalSuccess) && (
         <SwapTokens
           tokenIn={tokenIn}
           tokenOut={tokenOut}
@@ -154,7 +153,7 @@ const SwapTokens = ({
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
-  const { config: swapConfig } = usePrepareContractWrite({
+  const { config: swapConfig, error } = usePrepareContractWrite({
     address: swapRouter02Address,
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
@@ -163,6 +162,7 @@ const SwapTokens = ({
       value: isEth ? BigNumber.from(amountIn) : 0,
     },
   });
+  const err: Error & { reason?: string } = error;
 
   const { write: swapWrite, data } = useContractWrite(swapConfig);
   const { isLoading, isSuccess: isSwapSuccess } = useWaitForTransaction({ hash: data?.hash });
@@ -178,11 +178,18 @@ const SwapTokens = ({
       {isLoading ? (
         <Button>Swapping...</Button>
       ) : (
-        <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-          Swap {formatToEther(amountIn)}{' '}
-          {isEth ? 'ETH' : findTokenByAddress(tokenIn, chain?.id || 1)?.symbol} for{' '}
-          {findTokenByAddress(tokenOut, chain?.id | 1)?.symbol}
-        </Button>
+        <div>
+          <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+            Swap {formatToEther(amountIn)}{' '}
+            {isEth ? 'ETH' : findTokenByAddress(tokenIn, chain?.id || 1)?.symbol} for{' '}
+            {findTokenByAddress(tokenOut, chain?.id | 1)?.symbol}
+          </Button>
+          {err && (
+            <div className="pt-2 text-sm text-red-800">
+              Error simulating transaction: {err.reason || err.message}
+            </div>
+          )}
+        </div>
       )}
     </>
   );
