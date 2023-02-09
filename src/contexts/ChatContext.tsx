@@ -55,11 +55,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (!lastMessage) return;
     let payload = lastMessage.data;
     let actor = 'bot';
+    let doneThinking = true;
     try {
       const obj = JSON.parse(payload);
-      if (obj?.actor && obj?.type == 'text') {
+      if (obj && obj.actor && obj.type == 'text') {
         payload = obj.payload;
         actor = obj.actor;
+        if (actor != 'bot' || obj.stillThinking) {
+          doneThinking = false;
+        }
       }
     } catch (e) {
       // legacy message format, do nothing
@@ -68,7 +72,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       payload,
       actor,
     };
-    if (actor == 'bot') {
+    if (doneThinking) {
       setIsBotThinking(false);
     }
     setMessages((messages) => [...messages, msg]);
