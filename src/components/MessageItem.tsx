@@ -13,7 +13,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
       }`}
     >
       <img src={avatar} alt={isBot ? 'Bot avatar' : 'My avatar'} className="h-10 w-10" />
-      <div className={`text-md overflow-hidden rounded-md pl-4 leading-7`}>
+      <div className={`text-md w-full overflow-hidden rounded-md pl-4 leading-7`}>
         <MessageTranslator message={payload} />
       </div>
     </div>

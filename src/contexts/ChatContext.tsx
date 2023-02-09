@@ -82,7 +82,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         },
       ]);
       setIsBotThinking(false);
-    }, 2000);
+    }, 500);
   };
 
   return (
