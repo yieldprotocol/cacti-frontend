@@ -26,7 +26,7 @@ export const DebugPanel = ({ handleClose }) => {
           );
         }}
       >
-        Suggest an wETH transfer
+        Suggest a WETH transfer
       </Button>
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|transfer("WETH", 0.01, "vitalik.eth")|>`}</p>
@@ -39,7 +39,7 @@ export const DebugPanel = ({ handleClose }) => {
           );
         }}
       >
-        Suggest a wETH to UNI token swap on Uniswap
+        Suggest a WETH to UNI token swap on Uniswap
       </Button>
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|uniswap("WETH", "UNI", "SELLAMOUNT", 0.01)|>`}</p>

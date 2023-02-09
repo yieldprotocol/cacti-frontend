@@ -9,6 +9,7 @@ import {
   useSendTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { WidgetError } from '@/components/widgets/helpers';
 
 interface TransferButtonProps {
   tokenAddress?: string;
@@ -39,11 +40,7 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
       <Button disabled={!sendTransaction} onClick={() => sendTransaction?.()}>
         Send
       </Button>
-      {err && (
-        <div className="pt-2 text-sm text-red-800">
-          Error simulating transaction: {err.reason || err.message}
-        </div>
-      )}
+      {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );
 };
@@ -70,11 +67,7 @@ const TransferToken = ({ tokenAddress, amount, receiver }: TransferButtonProps) 
       <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
         Send
       </Button>
-      {err && (
-        <div className="pt-2 text-sm text-red-800">
-          Error simulating transaction: {err.reason || err.message}
-        </div>
-      )}
+      {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );
 };

@@ -1,12 +1,10 @@
-import { Fragment, useEffect, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Fragment } from 'react';
 import { BigNumber } from 'ethers';
-import { useAccount, useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol, formatToWei } from '@/utils';
+import { formatToWei } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
-import { ConnectFirst } from './widgets/wrappers/ConnectFirst';
+import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = parseMessage(message);
@@ -31,7 +29,6 @@ const Grid = ({ children }) => {
 
 const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
-  const { chain } = useNetwork();
   const fnName = fn.toLowerCase();
   const inputString = `${fnName}(${args.join(',')})`;
 
@@ -41,10 +38,8 @@ const Widgetize = (widget: Widget) => {
       case 'transfer':
         const [tokenSymbol, amtString, receiver] = args;
         const amount = BigNumber.from(formatToWei(amtString));
-        const tokenAddress =
-          tokenSymbol === 'ETH' ? undefined : findTokenBySymbol(tokenSymbol, chain.id)?.address;
         return (
-          <div className="flex w-full flex-col bg-slate-300">
+          <div className="flex w-full flex-col bg-slate-500">
             <Grid>
               <div>
                 <p>
@@ -53,34 +48,29 @@ const Widgetize = (widget: Widget) => {
                 <code className="text-xs">{inputString}</code>
               </div>
               <ConnectFirst>
-                <TransferButton {...{ amount, receiver, tokenAddress }} />
+                <TransferButton {...{ amount, receiver, tokenSymbol }} />
               </ConnectFirst>
             </Grid>
           </div>
         );
       // Swap widget
       case 'uniswap':
-        const [tokenIn, tokenOut, buyOrSell, amountIn] = args;
-        const tokenInAddress =
-          tokenIn === 'ETH' ? 'ETH' : findTokenBySymbol(tokenIn, chain.id)?.address;
-        const tokenOutAddress =
-          tokenOut === 'ETH'
-            ? findTokenBySymbol('WETH', chain.id)?.address
-            : findTokenBySymbol(tokenOut, chain.id)?.address;
+        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountIn] = args;
+
         return (
-          <div className="flex w-full flex-col bg-slate-300">
+          <div className="flex w-full flex-col bg-slate-500">
             <Grid>
               <div>
                 <p>
-                  Swap {amountIn} of {tokenIn} to {tokenOut}
+                  Swap {amountIn} of {tokenInSymbol} to {tokenOutSymbol}
                 </p>{' '}
                 <code className="text-xs">{inputString}</code>
               </div>
               <ConnectFirst>
                 <UniswapButton
                   {...{
-                    tokenInAddress,
-                    tokenOutAddress,
+                    tokenInSymbol,
+                    tokenOutSymbol,
                     amountIn: BigNumber.from(formatToWei(amountIn)),
                   }}
                 />
@@ -90,14 +80,14 @@ const Widgetize = (widget: Widget) => {
         );
       default:
         return (
-          <div className="inline-block bg-slate-300 p-5 text-white">
+          <div className="inline-block bg-slate-500 p-5 text-white">
             Widget not implemented for <code>{inputString}</code>
           </div>
         );
     }
   } catch (e) {
     return (
-      <div className="grid grid-cols-2 bg-slate-300 p-5 text-white">
+      <div className="grid grid-cols-2 bg-slate-500 p-5 text-white">
         <div>
           <code>{inputString}</code>
         </div>
