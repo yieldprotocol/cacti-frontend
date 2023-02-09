@@ -41,7 +41,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const { setModal } = useModalContext();
   const {
-    sendMessage: wsSendMessage,
+    sendJsonMessage: wsSendMessage,
     lastMessage,
     readyState,
   } = useWebSocket('wss://chatweb3.func.ai:9998', {
@@ -51,8 +51,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!lastMessage) return;
+    let payload = lastMessage.data;
+    try {
+      const obj = JSON.parse(payload);
+      if (obj?.actor == 'bot' && obj?.type == 'text') {
+        payload = obj.payload;
+      }
+    } catch (e) {
+      // legacy message format, do nothing
+    }
     const msg = {
-      payload: lastMessage.data,
+      payload,
       isBot: true,
     };
     setIsBotThinking(false);
@@ -61,7 +70,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const sendMessage = (msg: string) => {
     setIsBotThinking(true);
-    wsSendMessage(msg);
+    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
     setMessages([
       ...messages,
       {
