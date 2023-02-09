@@ -64,7 +64,7 @@ const Widgetize = (widget: Widget) => {
         const tokenInAddress =
           tokenIn === 'ETH' ? 'ETH' : findTokenBySymbol(tokenIn, chain.id)?.address;
         const tokenOutAddress =
-          tokenIn === 'ETH'
+          tokenOut === 'ETH'
             ? findTokenBySymbol('WETH', chain.id)?.address
             : findTokenBySymbol(tokenOut, chain.id)?.address;
         return (

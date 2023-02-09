@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import {
   erc20ABI,
   useAccount,
@@ -66,27 +66,15 @@ export const UniswapButton = ({ tokenInAddress, tokenOutAddress, amountIn }: Pro
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
 
   if (isEth)
-    return (
-      <SwapTokens
-        {...{ tokenInAddress, tokenOutAddress, amountIn }}
-        setIsSwapSuccess={setIsSwapSuccess}
-      />
-    );
+    return <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />;
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens
-          tokenInAddress={tokenInAddress}
-          amountIn={amountIn}
-          setIsApprovalSuccess={setIsApprovalSuccess}
-        />
+        <ApproveTokens {...{ tokenInAddress, amountIn, setIsApprovalSuccess }} />
       )}
       {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens
-          {...{ tokenInAddress, tokenOutAddress, amountIn }}
-          setIsSwapSuccess={setIsSwapSuccess}
-        />
+        <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />
       )}
     </div>
   );
@@ -137,6 +125,7 @@ const SwapTokens = ({
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
+  console.log(tokenInAddress);
   const isEth = tokenInAddress == 'ETH';
 
   const params: ExactInputSingleParams = {
@@ -149,6 +138,7 @@ const SwapTokens = ({
     amountOutMinimum: BigNumber.from(0),
     sqrtPriceLimitX96: BigNumber.from(0),
   };
+  console.log(params);
 
   const { config: swapConfig, error } = usePrepareContractWrite({
     address: swapRouter02Address,
