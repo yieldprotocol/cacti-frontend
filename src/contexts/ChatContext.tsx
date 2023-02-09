@@ -3,7 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { useModalContext } from '@/contexts/ModalContext';
 
 export type Message = {
-  isBot: boolean;
+  actor: string;
   payload: string;
 };
 
@@ -13,18 +13,20 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   spoofBotMessage: (msg: string) => void;
-  getAvatar: (isBot: boolean) => string;
+  getAvatar: (actor: string) => string;
   isBotThinking: boolean;
 };
 
 const userAvatar = 'https://i.pravatar.cc/150?img=56';
 const botAvatar = 'https://i.pravatar.cc/150?img=32';
-const getAvatar = (isBot: boolean) => (isBot ? botAvatar : userAvatar);
+const systemAvatar = 'https://i.pravatar.cc/150?img=58';
+const getAvatar = (actor: string) =>
+  actor == 'bot' ? botAvatar : actor == 'user' ? userAvatar : systemAvatar;
 
 const initialContext = {
   messages: [
     {
-      isBot: true,
+      actor: 'bot',
       payload: 'Hello 👋, how can I help you?',
     },
   ],
@@ -52,19 +54,23 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!lastMessage) return;
     let payload = lastMessage.data;
+    let actor = 'bot';
     try {
       const obj = JSON.parse(payload);
-      if (obj?.actor == 'bot' && obj?.type == 'text') {
+      if (obj?.actor && obj?.type == 'text') {
         payload = obj.payload;
+        actor = obj.actor;
       }
     } catch (e) {
       // legacy message format, do nothing
     }
     const msg = {
       payload,
-      isBot: true,
+      actor,
     };
-    setIsBotThinking(false);
+    if (actor == 'bot') {
+      setIsBotThinking(false);
+    }
     setMessages((messages) => [...messages, msg]);
   }, [lastMessage]);
 
@@ -74,7 +80,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setMessages([
       ...messages,
       {
-        isBot: false,
+        actor: 'user',
         payload: msg,
       },
     ]);
@@ -86,7 +92,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setMessages([
         ...messages,
         {
-          isBot: true,
+          actor: 'bot',
           payload: msg,
         },
       ]);
