@@ -3,7 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { useModalContext } from '@/contexts/ModalContext';
 
 export type Message = {
-  isBot: boolean;
+  actor: string;
   payload: string;
 };
 
@@ -13,18 +13,20 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   spoofBotMessage: (msg: string) => void;
-  getAvatar: (isBot: boolean) => string;
+  getAvatar: (actor: string) => string;
   isBotThinking: boolean;
 };
 
 const userAvatar = 'https://i.pravatar.cc/150?img=56';
 const botAvatar = 'https://i.pravatar.cc/150?img=32';
-const getAvatar = (isBot: boolean) => (isBot ? botAvatar : userAvatar);
+const systemAvatar = 'https://i.pravatar.cc/150?img=58';
+const getAvatar = (actor: string) =>
+  actor == 'bot' ? botAvatar : actor == 'user' ? userAvatar : systemAvatar;
 
 const initialContext = {
   messages: [
     {
-      isBot: true,
+      actor: 'bot',
       payload: 'Hello 👋, how can I help you?',
     },
   ],
@@ -41,7 +43,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const { setModal } = useModalContext();
   const {
-    sendMessage: wsSendMessage,
+    sendJsonMessage: wsSendMessage,
     lastMessage,
     readyState,
   } = useWebSocket('wss://chatweb3.func.ai:9998', {
@@ -51,21 +53,38 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!lastMessage) return;
+    let payload = lastMessage.data;
+    let actor = 'bot';
+    let doneThinking = true;
+    try {
+      const obj = JSON.parse(payload);
+      if (obj && obj.actor && obj.type == 'text') {
+        payload = obj.payload;
+        actor = obj.actor;
+        if (actor != 'bot' || obj.stillThinking) {
+          doneThinking = false;
+        }
+      }
+    } catch (e) {
+      // legacy message format, do nothing
+    }
     const msg = {
-      payload: lastMessage.data,
-      isBot: true,
+      payload,
+      actor,
     };
-    setIsBotThinking(false);
+    if (doneThinking) {
+      setIsBotThinking(false);
+    }
     setMessages((messages) => [...messages, msg]);
   }, [lastMessage]);
 
   const sendMessage = (msg: string) => {
     setIsBotThinking(true);
-    wsSendMessage(msg);
+    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
     setMessages([
       ...messages,
       {
-        isBot: false,
+        actor: 'user',
         payload: msg,
       },
     ]);
@@ -77,7 +96,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setMessages([
         ...messages,
         {
-          isBot: true,
+          actor: 'bot',
           payload: msg,
         },
       ]);
