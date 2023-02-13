@@ -19,7 +19,7 @@ export const parseMessage = (str: string) => {
       args: capture2
         ? JSON.parse(
             JSON.stringify(
-              capture2.split(',').map((str) => str.trim().replaceAll('"', '').replaceAll("'", ''))
+              capture2.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), ''))
             )
           )
         : [],
