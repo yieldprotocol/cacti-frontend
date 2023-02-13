@@ -7,7 +7,7 @@ export const ChatBox = () => {
       <div className="min-h-full overflow-auto">
         <MessageList />
       </div>
-      <div className="w-full px-64 py-5">
+      <div className="w-full py-5 md:px-64">
         <MessageInput />
       </div>
     </div>
