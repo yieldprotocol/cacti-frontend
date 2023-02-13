@@ -18,7 +18,9 @@ export const parseMessage = (str: string) => {
       fnName: capture1,
       args: capture2
         ? JSON.parse(
-            JSON.stringify(capture2.split(',').map((str) => str.trim().replaceAll('"', '')))
+            JSON.stringify(
+              capture2.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), ''))
+            )
           )
         : [],
     };
