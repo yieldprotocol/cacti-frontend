@@ -5,6 +5,7 @@ export const DebugPanel = ({ handleClose }) => {
   const { spoofBotMessage } = useChatContext();
   return (
     <div className="grid grid-cols-2 gap-4">
+      {/* Start ETH transfer */}
       <Button
         onClick={(e) => {
           handleClose();
@@ -18,6 +19,7 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|transfer("ETH", 0.01, "vitalik.eth")|>`}</p>
       </div>
+      {/* Start WETH transfer */}
       <Button
         onClick={(e) => {
           handleClose();
@@ -31,6 +33,7 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|transfer("WETH", 0.01, "vitalik.eth")|>`}</p>
       </div>
+      {/* Start WETH -> UNI swap */}
       <Button
         onClick={(e) => {
           handleClose();
@@ -44,6 +47,7 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|uniswap("WETH", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
       </div>
+      {/* Start ETH -> UNI swap */}
       <Button
         onClick={(e) => {
           handleClose();
@@ -56,6 +60,18 @@ export const DebugPanel = ({ handleClose }) => {
       </Button>
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|uniswap("ETH", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
+      </div>
+      {/* Start NFT dog search */}
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(`OK, dog NFTs! <|nftsearch("dogs")|>`);
+        }}
+      >
+        Browse some dog NFTs
+      </Button>
+      <div className="flex flex-col justify-center text-xs">
+        <p>{`<|nftsearch("dogs")|>`}</p>
       </div>
     </div>
   );

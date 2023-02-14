@@ -11,6 +11,7 @@
     "format": "yarn prettier --write ."
   },
   "dependencies": {
+    "@center-inc/react": "^1.1.7",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.14",
     "@next/font": "13.1.2",
