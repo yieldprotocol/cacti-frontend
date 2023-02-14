@@ -8,7 +8,7 @@ import { ChatContextProvider } from '@/contexts/ChatContext';
 import { ModalContextProvider } from '@/contexts/ModalContext';
 import '@/styles/globals.css';
 
-const mainnetForkURL = process.env.MAINNET_FORK_URL;
+const mainnetForkURL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
 const mainnetFork = {
   id: 1,
   name: 'Mainnet Fork',
@@ -30,7 +30,7 @@ const { chains, provider } = configureChains(
     jsonRpcProvider({
       priority: 0,
       rpc: (chain) => ({
-        http: process.env.NEXT_PUBLIC_MAINNET_FORK_URL,
+        http: mainnetForkURL,
       }),
     }),
   ]
