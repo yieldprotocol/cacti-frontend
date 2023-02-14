@@ -8,7 +8,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
   const avatar = getAvatar(actor);
   return (
     <div
-      className={`flex items-start py-4 px-64 ${
+      className={`flex items-start py-4 px-4 lg:px-64 ${
         actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
       }`}
     >
