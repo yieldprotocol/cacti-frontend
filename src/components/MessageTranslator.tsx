@@ -58,7 +58,7 @@ const Widgetize = (widget: Widget) => {
                 {...{
                   tokenInSymbol,
                   tokenOutSymbol,
-                  amountIn: BigNumber.from(formatToWei(amountIn)),
+                  amountIn: amountIn,
                 }}
               />
             </ConnectFirst>

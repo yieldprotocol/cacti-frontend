@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
   useAccount,
@@ -41,7 +42,7 @@ export const UniswapButton = ({
 }: {
   tokenInSymbol: string;
   tokenOutSymbol: string;
-  amountIn: BigNumber;
+  amountIn: string;
 }) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
@@ -51,13 +52,16 @@ export const UniswapButton = ({
   const [hasAllowance, setHasAllowance] = useState(false);
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
   const [isSwapSuccess, setIsSwapSuccess] = useState(false);
+
   const tokenInAddress =
     tokenInSymbol === 'ETH' ? 'ETH' : findTokenBySymbol(tokenInSymbol, chain?.id)?.address;
   const tokenOutAddress =
     tokenOutSymbol === 'ETH'
       ? findTokenBySymbol('WETH', chain?.id)?.address
       : findTokenBySymbol(tokenOutSymbol, chain?.id)?.address;
-
+  const tokenInDecimals =
+    tokenInSymbol === 'ETH' ? '18' : findTokenBySymbol(tokenInSymbol, chain?.id).decimals;
+  const parsedAmountIn = parseUnits(amountIn, tokenInDecimals);
   // Check if balance is enough
   const { data: balance } = useContractRead({
     address: tokenInAddress as `0x${string}`,
@@ -75,20 +79,26 @@ export const UniswapButton = ({
   });
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(amountIn));
-    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+    setHasBalance(balance && BigNumber.from(balance).gte(parsedAmountIn));
+    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(parsedAmountIn));
+  }, [balance, allowanceAmount, parsedAmountIn, isApprovalSuccess, receiver]);
 
   if (isEth)
-    return <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />;
+    return (
+      <SwapTokens
+        {...{ tokenInAddress, tokenOutAddress, amountIn: parsedAmountIn, setIsSwapSuccess }}
+      />
+    );
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ tokenInAddress, amountIn, setIsApprovalSuccess }} />
+        <ApproveTokens {...{ tokenInAddress, amountIn: parsedAmountIn, setIsApprovalSuccess }} />
       )}
       {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />
+        <SwapTokens
+          {...{ tokenInAddress, tokenOutAddress, amountIn: parsedAmountIn, setIsSwapSuccess }}
+        />
       )}
     </div>
   );
