@@ -38,11 +38,9 @@ const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
-  const { chain } = useNetwork();
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
-  const [isSwapSuccess, setIsSwapSuccess] = useState(false);
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
@@ -65,17 +63,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
 
-  if (tokenIn.symbol === 'ETH')
-    return <SwapTokens {...{ tokenIn, tokenOut, amountIn, setIsSwapSuccess }} />;
+  if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
         <ApproveTokens {...{ tokenIn, amountIn, setIsApprovalSuccess }} />
       )}
-      {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens {...{ tokenIn, tokenOut, amountIn, setIsSwapSuccess }} />
-      )}
+      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
     </div>
   );
 };

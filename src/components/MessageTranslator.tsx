@@ -39,7 +39,7 @@ const Widgetize = (widget: Widget) => {
         const isEth = tokenSymbol === 'ETH';
         const token = isEth
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : (findTokenBySymbol(tokenSymbol, chain.id) as Token);
+          : findTokenBySymbol(tokenSymbol, chain.id);
         const amount = parseUnits(amtString, token.decimals);
 
         return (
@@ -59,11 +59,11 @@ const Widgetize = (widget: Widget) => {
         const tokenIn =
           tokenInSymbol === 'ETH'
             ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : (findTokenBySymbol(tokenInSymbol, chain.id) as Token);
+            : findTokenBySymbol(tokenInSymbol, chain.id);
         const tokenOut =
           tokenOutSymbol === 'ETH'
             ? findTokenBySymbol('WETH', chain.id)
-            : (findTokenBySymbol(tokenOutSymbol, chain.id) as Token);
+            : findTokenBySymbol(tokenOutSymbol, chain.id);
 
         const amountIn = parseUnits(amountInString, tokenIn.decimals);
 
