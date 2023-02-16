@@ -10,7 +10,6 @@ if (address === undefined || address.substring(0, 2) !== '0x')
 const forkRPC = `https://rpc.tenderly.co/fork/${forkId}`;
 
 const provider = new ethers.providers.JsonRpcProvider(forkRPC);
-const signer = provider.getSigner();
 
 const params = [
   [address],
