@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
   useAccount,
@@ -67,20 +66,16 @@ export const UniswapButton = ({ tokenInAddress, tokenOutAddress, amountIn }: Pro
 
   if (tokenInAddress === 'undefined')
     return (
-      <SwapTokens
-        {...{ tokenInAddress: 'ETH', tokenOutAddress, amountIn: amountIn, setIsSwapSuccess }}
-      />
+      <SwapTokens {...{ tokenInAddress: 'ETH', tokenOutAddress, amountIn, setIsSwapSuccess }} />
     );
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ tokenInAddress, amountIn: amountIn, setIsApprovalSuccess }} />
+        <ApproveTokens {...{ tokenInAddress, amountIn, setIsApprovalSuccess }} />
       )}
       {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens
-          {...{ tokenInAddress, tokenOutAddress, amountIn: amountIn, setIsSwapSuccess }}
-        />
+        <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />
       )}
     </div>
   );
@@ -169,7 +164,7 @@ const SwapTokens = ({
           </Button>
         ) : data?.hash ? (
           <div className="flex items-center disabled:border-0 disabled:bg-green-700">
-            <CheckCircleIcon className="h-5 h-5 text-green-600" />
+            <CheckCircleIcon className="h-5 text-green-600" />
             <div className="p-1 text-green-600">Success</div>
           </div>
         ) : (
