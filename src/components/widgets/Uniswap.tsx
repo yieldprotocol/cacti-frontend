@@ -12,8 +12,8 @@ import {
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import { WidgetError } from '@/components/widgets/helpers';
+import { Token } from '@/types/index.d';
 import { Spinner, findTokenBySymbol, formatToEther } from '@/utils';
-import { Token } from '@/utils/types';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {

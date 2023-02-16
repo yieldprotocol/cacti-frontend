@@ -9,7 +9,7 @@ import {
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import { WidgetError } from '@/components/widgets/helpers';
-import { Token } from '@/utils/types';
+import { Token } from '@/types/index.d';
 
 interface TransferButtonProps {
   token?: Token;

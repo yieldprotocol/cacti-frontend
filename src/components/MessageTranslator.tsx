@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
+import { Token } from '@/types/index.d';
 import { findTokenBySymbol } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { NftSearch } from './widgets/NftSearch';
@@ -36,14 +37,9 @@ const Widgetize = (widget: Widget) => {
       case 'transfer':
         const [tokenSymbol, amtString, receiver] = args;
         const isEth = tokenSymbol === 'ETH';
-        const tokenItem = isEth
+        const token = isEth
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chain.id);
-        const token = {
-          address: tokenItem.address,
-          symbol: tokenSymbol,
-          decimals: tokenItem.decimals,
-        };
+          : (findTokenBySymbol(tokenSymbol, chain.id) as Token);
         const amount = parseUnits(amtString, token.decimals);
 
         return (
@@ -60,24 +56,14 @@ const Widgetize = (widget: Widget) => {
       case 'uniswap':
         const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] = args;
 
-        const tokenInItem =
+        const tokenIn =
           tokenInSymbol === 'ETH'
             ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenInSymbol, chain.id);
-        const tokenIn = {
-          address: tokenInItem.address,
-          symbol: tokenInItem.symbol,
-          decimals: tokenInItem.decimals,
-        };
-        const tokenOutItem =
+            : (findTokenBySymbol(tokenInSymbol, chain.id) as Token);
+        const tokenOut =
           tokenOutSymbol === 'ETH'
             ? findTokenBySymbol('WETH', chain.id)
-            : findTokenBySymbol(tokenOutSymbol, chain.id);
-        const tokenOut = {
-          address: tokenOutItem.address,
-          symbol: tokenOutItem.symbol,
-          decimals: tokenOutItem.decimals,
-        };
+            : (findTokenBySymbol(tokenOutSymbol, chain.id) as Token);
 
         const amountIn = parseUnits(amountInString, tokenIn.decimals);
 
@@ -94,7 +80,7 @@ const Widgetize = (widget: Widget) => {
                 {...{
                   tokenIn,
                   tokenOut,
-                  amountIn: amountIn,
+                  amountIn,
                 }}
               />
             </ConnectFirst>
