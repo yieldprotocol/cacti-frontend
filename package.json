@@ -9,7 +9,7 @@
     "lint": "next lint",
     "checkFormat": "yarn prettier --check .",
     "format": "yarn prettier --write .",
-    "mint": "NEXT_PUBLIC_TENDERLY_FORK_ID=$(grep NEXT_PUBLIC_TENDERLY_FORK_ID .env | cut -d '=' -f2) && yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/mint.ts",
+    "mint": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/mint.ts",
     "changeNetwork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/network.ts"
   },
   "dependencies": {

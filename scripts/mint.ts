@@ -1,4 +1,7 @@
+import { config } from 'dotenv';
 import { ethers } from 'ethers';
+
+config();
 
 const forkId = process.env.NEXT_PUBLIC_TENDERLY_FORK_ID;
 const forkRPC = `https://rpc.tenderly.co/fork/${forkId}`;
