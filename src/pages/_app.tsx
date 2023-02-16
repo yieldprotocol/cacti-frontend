@@ -10,7 +10,7 @@ import '@/styles/globals.css';
 
 const mainnetForkURL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
 const mainnetFork = {
-  id: 1,
+  id: 36963,
   name: 'Mainnet Fork',
   network: 'mainnetFork',
   nativeCurrency: {

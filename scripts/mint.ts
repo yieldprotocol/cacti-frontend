@@ -1,4 +1,4 @@
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 
 const forkId = process.env.NEXT_PUBLIC_TENDERLY_FORK_ID;
 const forkRPC = `https://rpc.tenderly.co/fork/${forkId}`;
@@ -8,7 +8,7 @@ const signer = provider.getSigner();
 
 const params = [
   ['0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080'],
-  ethers.utils.hexValue(100), // hex encoded wei amount
+  ethers.utils.parseEther('10').toHexString(), // hex encoded wei amount
 ];
 
 const mint = async () => {
