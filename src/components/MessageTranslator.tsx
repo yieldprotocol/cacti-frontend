@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
@@ -36,9 +36,14 @@ const Widgetize = (widget: Widget) => {
       case 'transfer':
         const [tokenSymbol, amtString, receiver] = args;
         const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: undefined, decimals: 18 }
+        const tokenItem = isEth
+          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
           : findTokenBySymbol(tokenSymbol, chain.id);
+        const token = {
+          address: tokenItem.address,
+          symbol: tokenSymbol,
+          decimals: tokenItem.decimals,
+        };
         const tokenAddress = token.address;
         const amount = parseUnits(amtString, token.decimals);
 
@@ -48,7 +53,7 @@ const Widgetize = (widget: Widget) => {
             msg={inputString}
           >
             <ConnectFirst>
-              <TransferButton {...{ amount, receiver, tokenAddress }} />
+              <TransferButton {...{ amount, receiver, token }} />
             </ConnectFirst>
           </ActionPanel>
         );
@@ -56,31 +61,40 @@ const Widgetize = (widget: Widget) => {
       case 'uniswap':
         const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] = args;
 
-        const tokenIn =
+        const tokenInItem =
           tokenInSymbol === 'ETH'
-            ? { address: 'undefined', decimals: 18 }
+            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
             : findTokenBySymbol(tokenInSymbol, chain.id);
-        const tokenOut =
+        const tokenIn = {
+          address: tokenInItem.address,
+          symbol: tokenInItem.symbol,
+          decimals: tokenInItem.decimals,
+        };
+        const tokenOutItem =
           tokenOutSymbol === 'ETH'
             ? findTokenBySymbol('WETH', chain.id)
             : findTokenBySymbol(tokenOutSymbol, chain.id);
-        const tokenInAddress = tokenIn.address;
-        const tokenOutAddress = tokenOut.address;
+        const tokenOut = {
+          address: tokenOutItem.address,
+          symbol: tokenOutItem.symbol,
+          decimals: tokenOutItem.decimals,
+        };
 
         const amountIn = parseUnits(amountInString, tokenIn.decimals);
 
         return (
           <ActionPanel
-            header={`Swap ${formatToEther(
-              amountIn.toString()
+            header={`Swap ${formatUnits(
+              amountIn.toString(),
+              tokenIn.decimals
             )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
           >
             <ConnectFirst>
               <UniswapButton
                 {...{
-                  tokenInAddress,
-                  tokenOutAddress,
+                  tokenIn,
+                  tokenOut,
                   amountIn: amountIn,
                 }}
               />
