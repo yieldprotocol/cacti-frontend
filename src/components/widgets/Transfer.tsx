@@ -3,7 +3,6 @@ import {
   erc20ABI,
   useContractWrite,
   useEnsAddress,
-  useNetwork,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -50,7 +49,6 @@ const TransferToken = ({ tokenAddress, amount, receiver }: TransferButtonProps) 
   const { data: receiverAddress } = useEnsAddress({
     name: receiver,
   });
-  const { chain } = useNetwork();
 
   const { config: tokenConfig, error } = usePrepareContractWrite({
     address: tokenAddress as `0x${string}`,
