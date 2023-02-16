@@ -52,21 +52,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
+    const q = window.location.search;
+    if (q) {
+      wsSendMessage({ actor: 'system', type: 'init', payload: q });
+    }
+  }, []);
+
+  useEffect(() => {
     if (!lastMessage) return;
-    let payload = lastMessage.data;
-    let actor = 'bot';
     let doneThinking = true;
-    try {
-      const obj = JSON.parse(payload);
-      if (obj && obj.actor && obj.type == 'text') {
-        payload = obj.payload;
-        actor = obj.actor;
-        if (actor != 'bot' || obj.stillThinking) {
-          doneThinking = false;
-        }
-      }
-    } catch (e) {
-      // legacy message format, do nothing
+    const obj = JSON.parse(lastMessage.data);
+    const payload = obj.payload;
+    const actor = obj.actor;
+    if (obj.type == 'uuid') {
+      window.history.replaceState(null, '', `?s=${obj.payload}`);
+      return;
+    }
+    if (actor != 'bot' || obj.stillThinking) {
+      doneThinking = false;
     }
     const msg = {
       payload,
