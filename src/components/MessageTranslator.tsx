@@ -3,7 +3,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol, formatToEther } from '@/utils';
+import { findTokenBySymbol } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
@@ -44,7 +44,6 @@ const Widgetize = (widget: Widget) => {
           symbol: tokenSymbol,
           decimals: tokenItem.decimals,
         };
-        const tokenAddress = token.address;
         const amount = parseUnits(amtString, token.decimals);
 
         return (
