@@ -3,7 +3,6 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { Token } from '@/types/index.d';
 import { findTokenBySymbol } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { NftSearch } from './widgets/NftSearch';
