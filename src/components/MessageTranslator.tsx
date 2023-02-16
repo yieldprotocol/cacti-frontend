@@ -4,6 +4,7 @@ import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { formatToWei } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
+import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
@@ -61,6 +62,13 @@ const Widgetize = (widget: Widget) => {
                 }}
               />
             </ConnectFirst>
+          </ActionPanel>
+        );
+      case 'nftsearch':
+        const [query] = args;
+        return (
+          <ActionPanel header={`Query for ${query} NFTs`} msg={inputString}>
+            <NftSearch {...{ query }} />
           </ActionPanel>
         );
       default:
