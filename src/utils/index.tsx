@@ -6,7 +6,7 @@ export const findTokenBySymbol = (symbol: string, chainId: number) => {
   const found = tokenListJson.tokens.find(
     (token) => token.symbol == symbol && token.chainId == chainId
   );
-  if (!found) throw new Error(`No token address found for symbol ${symbol} on chainId ${chainId}`);
+  if (!found) alert(`No token address found for symbol ${symbol} on chainId ${chainId}`);
   return found;
 };
 export const findTokenByAddress = (address: string, chainId: number) => {
