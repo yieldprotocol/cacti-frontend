@@ -8,17 +8,17 @@ const TENDERLY_FORK_API = `https://api.tenderly.co/api/v1/account/${TENDERLY_USE
 
 const body = {
   network_id: '1', // network you wish to fork
-  block_number: 14386016,
+  // block_number: 'latest',
   chain_config: {
     chain_id: 36963, // chain_id used in the forked enviroment
   },
 };
 
-const resp = async () =>
+const createFork = async () =>
   axios.post(TENDERLY_FORK_API, body, {
     headers: {
       'X-Access-Key': TENDERLY_ACCESS_KEY || '',
       'Content-Type': 'application/json',
     },
   });
-resp();
+createFork();

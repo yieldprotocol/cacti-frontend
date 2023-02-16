@@ -10,7 +10,7 @@
     "checkFormat": "yarn prettier --check .",
     "format": "yarn prettier --write .",
     "mint": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/mint.ts",
-    "changeNetwork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/network.ts"
+    "createFork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/createFork.ts"
   },
   "dependencies": {
     "@center-inc/react": "^1.1.7",
