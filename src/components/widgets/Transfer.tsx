@@ -9,10 +9,10 @@ import {
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import { WidgetError } from '@/components/widgets/helpers';
-import { Token } from '@/types/index.d';
+import { Token } from '@/types';
 
 interface TransferButtonProps {
-  token?: Token;
+  token: Token;
   amount: BigNumber;
   receiver: string;
 }
@@ -22,7 +22,7 @@ export const TransferButton = ({ token, amount, receiver }: TransferButtonProps)
   return <TransferToken {...{ token, amount, receiver }} />;
 };
 
-const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
+const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) => {
   // Resolve ENS name
   const { data: resolvedAddress } = useEnsAddress({
     name: receiver,
