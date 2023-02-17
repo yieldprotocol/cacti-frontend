@@ -15,6 +15,7 @@ import { WidgetError } from '@/components/widgets/helpers';
 import { Token } from '@/types/index.d';
 import { Spinner, findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
+import WETHAbi from '../../abi/WETH.json';
 
 interface Props {
   tokenIn: Token;
@@ -63,6 +64,13 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
 
+  // Wrap ETH
+  if (tokenIn.symbol === 'ETH' && tokenOut.symbol === 'WETH')
+    return <WrapUnwrapETH {...{ tokenIn, amountIn }} />;
+  // Unwrap WETH
+  if (tokenIn.symbol === 'WETH' && tokenOut.symbol === 'ETH')
+    return <WrapUnwrapETH {...{ tokenIn, amountIn }} />;
+  // ETH to token swap
   if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
 
   return (
@@ -134,6 +142,62 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     args: [params],
     overrides: {
       value: isEth ? amountIn : 0,
+    },
+  });
+  const err: Error & { reason?: string } = error;
+
+  const { write: swapWrite, data } = useContractWrite(swapConfig);
+  const { isLoading } = useWaitForTransaction({ hash: data?.hash });
+
+  return (
+    <>
+      <div>
+        {isLoading ? (
+          <Button className="flex items-center" disabled>
+            <Spinner /> Swapping...
+          </Button>
+        ) : data?.hash ? (
+          <div className="flex items-center disabled:border-0 disabled:bg-green-700">
+            <CheckCircleIcon className="h-5 text-green-600" />
+            <div className="p-1 text-green-600">Success</div>
+          </div>
+        ) : (
+          <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+            Send
+          </Button>
+        )}
+        {data?.hash && (
+          <div>
+            <a
+              className="text-blue-200 underline"
+              href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View on Etherscan
+            </a>
+          </div>
+        )}
+        {err && (
+          <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
+        )}
+      </div>
+    </>
+  );
+};
+
+const WrapUnwrapETH = ({ tokenIn, amountIn }: Pick<Props, 'tokenIn' | 'amountIn'>) => {
+  const { chain } = useNetwork();
+  const WETH = findTokenBySymbol('WETH', chain.id).address;
+  const isTokenInEth = tokenIn.symbol == 'ETH';
+
+  const { config: swapConfig, error } = usePrepareContractWrite({
+    address: WETH as `0x${string}`,
+    abi: WETHAbi,
+    functionName: isTokenInEth ? 'deposit' : 'withdraw',
+    args: isTokenInEth ? [] : [amountIn],
+    overrides: {
+      value: isTokenInEth ? amountIn : 0,
     },
   });
   const err: Error & { reason?: string } = error;

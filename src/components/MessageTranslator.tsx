@@ -40,7 +40,6 @@ const Widgetize = (widget: Widget) => {
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
           : findTokenBySymbol(tokenSymbol, chain.id);
         const amount = parseUnits(amtString, token.decimals);
-
         return (
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${receiver}`}
@@ -61,7 +60,7 @@ const Widgetize = (widget: Widget) => {
             : findTokenBySymbol(tokenInSymbol, chain.id);
         const tokenOut =
           tokenOutSymbol === 'ETH'
-            ? findTokenBySymbol('WETH', chain.id)
+            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
             : findTokenBySymbol(tokenOutSymbol, chain.id);
 
         const amountIn = parseUnits(amountInString, tokenIn.decimals);

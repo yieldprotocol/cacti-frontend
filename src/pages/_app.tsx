@@ -3,7 +3,9 @@ import { CenterProvider } from '@center-inc/react';
 import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
+import { goerli } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 import { ChatContextProvider } from '@/contexts/ChatContext';
 import { ModalContextProvider } from '@/contexts/ModalContext';
 import '@/styles/globals.css';
@@ -25,7 +27,7 @@ const mainnetFork = {
 } as Chain;
 
 const { chains, provider } = configureChains(
-  [mainnetFork],
+  [mainnetFork, goerli],
   [
     jsonRpcProvider({
       priority: 0,
@@ -33,6 +35,7 @@ const { chains, provider } = configureChains(
         http: mainnetForkURL,
       }),
     }),
+    publicProvider(),
   ]
 );
 
