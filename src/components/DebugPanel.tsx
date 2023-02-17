@@ -10,28 +10,28 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me transfer that ETH. <|transfer("ETH", 0.01, "vitalik.eth")|> Click the above button to make the transfer.`
+            `Sure, let me transfer that ETH. <|transfer("ETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|> Click the above button to make the transfer.`
           );
         }}
       >
         Suggest an ETH transfer
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|transfer("ETH", 0.01, "vitalik.eth")|>`}</p>
+        <p>{`<|transfer("ETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
       {/* Start WETH transfer */}
       <Button
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me transfer that wETH. <|transfer("WETH", 0.01, "vitalik.eth")|> Click the above button to make the transfer.`
+            `Sure, let me transfer that wETH. <|transfer("WETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|> Click the above button to make the transfer.`
           );
         }}
       >
         Suggest a WETH transfer
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|transfer("WETH", 0.01, "vitalik.eth")|>`}</p>
+        <p>{`<|transfer("WETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
       {/* Start WETH -> UNI swap */}
       <Button
