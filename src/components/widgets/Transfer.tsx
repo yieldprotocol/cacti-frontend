@@ -3,26 +3,26 @@ import {
   erc20ABI,
   useContractWrite,
   useEnsAddress,
-  useNetwork,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import { WidgetError } from '@/components/widgets/helpers';
+import { Token } from '@/types';
 
 interface TransferButtonProps {
-  tokenAddress?: string;
+  token: Token;
   amount: BigNumber;
   receiver: string;
 }
 
-export const TransferButton = ({ tokenAddress, amount, receiver }: TransferButtonProps) => {
-  if (tokenAddress) return <TransferToken {...{ tokenAddress, amount, receiver }} />;
-  return <TransferEth {...{ amount, receiver }} />;
+export const TransferButton = ({ token, amount, receiver }: TransferButtonProps) => {
+  if (token.symbol === 'ETH') return <TransferEth {...{ amount, receiver }} />;
+  return <TransferToken {...{ token, amount, receiver }} />;
 };
 
-const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
+const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) => {
   // Resolve ENS name
   const { data: resolvedAddress } = useEnsAddress({
     name: receiver,
@@ -45,15 +45,14 @@ const TransferEth = ({ amount, receiver }: TransferButtonProps) => {
   );
 };
 
-const TransferToken = ({ tokenAddress, amount, receiver }: TransferButtonProps) => {
+const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   // Resolve ENS name
   const { data: receiverAddress } = useEnsAddress({
     name: receiver,
   });
-  const { chain } = useNetwork();
 
   const { config: tokenConfig, error } = usePrepareContractWrite({
-    address: tokenAddress as `0x${string}`,
+    address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'transfer',
     args: [receiverAddress ? receiverAddress : (receiver as `0x${string}`), amount],

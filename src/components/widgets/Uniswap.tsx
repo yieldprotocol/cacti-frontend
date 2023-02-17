@@ -12,12 +12,13 @@ import {
 } from 'wagmi';
 import { Button } from '@/components/Button';
 import { WidgetError } from '@/components/widgets/helpers';
-import { Spinner, findTokenByAddress, findTokenBySymbol, formatToEther } from '@/utils';
+import { Token } from '@/types';
+import { Spinner, findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
-  tokenInAddress: string;
-  tokenOutAddress: string;
+  tokenIn: Token;
+  tokenOut: Token;
   amountIn: BigNumber;
 }
 
@@ -34,33 +35,16 @@ interface ExactInputSingleParams {
 
 const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 
-export const UniswapButton = ({
-  tokenInSymbol,
-  tokenOutSymbol,
-  amountIn,
-}: {
-  tokenInSymbol: string;
-  tokenOutSymbol: string;
-  amountIn: BigNumber;
-}) => {
+export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
-  const isEth = tokenInSymbol == 'ETH';
-  const { chain } = useNetwork();
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
-  const [isSwapSuccess, setIsSwapSuccess] = useState(false);
-  const tokenInAddress =
-    tokenInSymbol === 'ETH' ? 'ETH' : findTokenBySymbol(tokenInSymbol, chain?.id)?.address;
-  const tokenOutAddress =
-    tokenOutSymbol === 'ETH'
-      ? findTokenBySymbol('WETH', chain?.id)?.address
-      : findTokenBySymbol(tokenOutSymbol, chain?.id)?.address;
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
-    address: tokenInAddress as `0x${string}`,
+    address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: [receiver],
@@ -68,7 +52,7 @@ export const UniswapButton = ({
 
   // Get allowance amount
   const { data: allowanceAmount } = useContractRead({
-    address: tokenInAddress as `0x${string}`,
+    address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [receiver, swapRouter02Address],
@@ -79,32 +63,30 @@ export const UniswapButton = ({
     setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
 
-  if (isEth)
-    return <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />;
+  // ETH to token swap
+  if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ tokenInAddress, amountIn, setIsApprovalSuccess }} />
+        <ApproveTokens {...{ tokenIn, amountIn, setIsApprovalSuccess }} />
       )}
-      {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens {...{ tokenInAddress, tokenOutAddress, amountIn, setIsSwapSuccess }} />
-      )}
+      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
     </div>
   );
 };
 
 const ApproveTokens = ({
-  tokenInAddress,
+  tokenIn,
   amountIn,
   setIsApprovalSuccess,
-}: Pick<Props, 'tokenInAddress' | 'amountIn'> & {
+}: Pick<Props, 'tokenIn' | 'amountIn'> & {
   setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { chain } = useNetwork();
   // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: tokenInAddress as `0x${string}`,
+    address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'approve',
     args: [swapRouter02Address, amountIn],
@@ -123,28 +105,21 @@ const ApproveTokens = ({
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve Uniswap router for {formatToEther(amountIn.toString())}{' '}
-      {findTokenByAddress(tokenInAddress, chain?.id || 1).symbol}
+      First, approve Uniswap router for {formatToEther(amountIn.toString())} {tokenIn.symbol}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
 };
 
-const SwapTokens = ({
-  tokenInAddress,
-  tokenOutAddress,
-  amountIn,
-  setIsSwapSuccess,
-}: Props & { setIsSwapSuccess: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
-  console.log(tokenInAddress);
-  const isEth = tokenInAddress == 'ETH';
+  const isEth = tokenIn.symbol == 'ETH';
 
   const params: ExactInputSingleParams = {
-    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenInAddress,
-    tokenOut: tokenOutAddress,
+    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
+    tokenOut: tokenOut.address,
     fee: BigNumber.from(3000),
     recipient: receiver,
     deadline: BigNumber.from(0),
@@ -152,7 +127,6 @@ const SwapTokens = ({
     amountOutMinimum: BigNumber.from(0),
     sqrtPriceLimitX96: BigNumber.from(0),
   };
-  console.log(params);
 
   const { config: swapConfig, error } = usePrepareContractWrite({
     address: swapRouter02Address,
@@ -166,7 +140,7 @@ const SwapTokens = ({
   const err: Error & { reason?: string } = error;
 
   const { write: swapWrite, data } = useContractWrite(swapConfig);
-  const { isLoading, isSuccess: isSwapSuccess } = useWaitForTransaction({ hash: data?.hash });
+  const { isLoading } = useWaitForTransaction({ hash: data?.hash });
 
   return (
     <>
@@ -177,7 +151,7 @@ const SwapTokens = ({
           </Button>
         ) : data?.hash ? (
           <div className="flex items-center disabled:border-0 disabled:bg-green-700">
-            <CheckCircleIcon className="h-5 h-5 text-green-600" />
+            <CheckCircleIcon className="h-5 text-green-600" />
             <div className="p-1 text-green-600">Success</div>
           </div>
         ) : (
