@@ -27,7 +27,7 @@ const mainnetFork = {
 } as Chain;
 
 const { chains, provider } = configureChains(
-  [mainnetFork, goerli],
+  [mainnetFork],
   [
     jsonRpcProvider({
       priority: 0,
@@ -35,7 +35,6 @@ const { chains, provider } = configureChains(
         http: mainnetForkURL,
       }),
     }),
-    publicProvider(),
   ]
 );
 
