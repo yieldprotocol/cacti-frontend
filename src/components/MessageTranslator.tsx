@@ -29,6 +29,7 @@ const Widgetize = (widget: Widget) => {
   const fnName = fn.toLowerCase();
   const inputString = `${fnName}(${args.join(',')})`;
   const { chain } = useNetwork();
+  const chainId = chain?.id || 36963;
 
   try {
     switch (fnName) {
@@ -38,7 +39,7 @@ const Widgetize = (widget: Widget) => {
         const isEth = tokenSymbol === 'ETH';
         const token = isEth
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chain.id);
+          : findTokenBySymbol(tokenSymbol, chainId);
         const amount = parseUnits(amtString, token.decimals);
         return (
           <ActionPanel
@@ -57,11 +58,11 @@ const Widgetize = (widget: Widget) => {
         const tokenIn =
           tokenInSymbol === 'ETH'
             ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenInSymbol, chain.id);
+            : findTokenBySymbol(tokenInSymbol, chainId);
         const tokenOut =
           tokenOutSymbol === 'ETH'
             ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenOutSymbol, chain.id);
+            : findTokenBySymbol(tokenOutSymbol, chainId);
 
         const amountIn = parseUnits(amountInString, tokenIn.decimals);
 
