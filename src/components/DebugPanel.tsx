@@ -19,47 +19,47 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center text-xs">
         <p>{`<|transfer("ETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
-      {/* Start WETH transfer */}
+      {/* Start DAI transfer */}
       <Button
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me transfer that wETH. <|transfer("WETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|> Click the above button to make the transfer.`
+            `Sure, let me transfer that DAI. <|transfer("DAI", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|> Click the above button to make the transfer.`
           );
         }}
       >
-        Suggest a WETH transfer
+        Suggest a DAI transfer
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|transfer("WETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
+        <p>{`<|transfer("DAI", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
-      {/* Start WETH -> UNI swap */}
+      {/* Start DAI -> UNI swap */}
       <Button
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me swap that WETH into UNI. <|uniswap("WETH", "UNI", "SELLAMOUNT", 0.01)|> Click the above button to make the swap.`
+            `Sure, let me swap that DAI into UNI. <|uniswap("DAI", "UNI", "SELLAMOUNT", 0.01)|> Click the above button to make the swap.`
           );
         }}
       >
-        Suggest a WETH to UNI token swap on Uniswap
+        Suggest a DAI to UNI token swap on Uniswap
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|uniswap("WETH", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
+        <p>{`<|uniswap("DAI", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
       </div>
-      {/* Start ETH -> UNI swap */}
+      {/* Start ETH -> DAI swap */}
       <Button
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure, let me swap that ETH into UNI. <|uniswap("ETH", "UNI", "SELLAMOUNT", 0.01)|> Click the above button to make the swap.`
+            `Sure, let me swap that ETH into DAI. <|uniswap("ETH", "DAI", "SELLAMOUNT", 0.01)|> Click the above button to make the swap.`
           );
         }}
       >
-        Suggest a ETH to UNI token swap on Uniswap
+        Suggest a ETH to DAI token swap on Uniswap
       </Button>
       <div className="flex flex-col justify-center text-xs">
-        <p>{`<|uniswap("ETH", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
+        <p>{`<|uniswap("ETH", "DAI", "SELLAMOUNT", 0.01)|>`}</p>
       </div>
       {/* Start NFT dog search */}
       <Button
