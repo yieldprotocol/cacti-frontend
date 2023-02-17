@@ -16,7 +16,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest an ETH transfer
       </Button>
-      <div className="flex flex-col justify-center text-xs">
+      <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|transfer("ETH", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
       {/* Start DAI transfer */}
@@ -30,7 +30,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest a DAI transfer
       </Button>
-      <div className="flex flex-col justify-center text-xs">
+      <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|transfer("DAI", 0.01, "0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080")|>`}</p>
       </div>
       {/* Start DAI -> UNI swap */}
@@ -44,7 +44,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest a DAI to UNI token swap on Uniswap
       </Button>
-      <div className="flex flex-col justify-center text-xs">
+      <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|uniswap("DAI", "UNI", "SELLAMOUNT", 0.01)|>`}</p>
       </div>
       {/* Start ETH -> DAI swap */}
@@ -58,7 +58,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Suggest a ETH to DAI token swap on Uniswap
       </Button>
-      <div className="flex flex-col justify-center text-xs">
+      <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|uniswap("ETH", "DAI", "SELLAMOUNT", 0.01)|>`}</p>
       </div>
       {/* Start NFT dog search */}
@@ -70,7 +70,7 @@ export const DebugPanel = ({ handleClose }) => {
       >
         Browse some dog NFTs
       </Button>
-      <div className="flex flex-col justify-center text-xs">
+      <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|nftsearch("dogs")|>`}</p>
       </div>
     </div>
