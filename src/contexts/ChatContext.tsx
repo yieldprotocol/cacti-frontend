@@ -71,14 +71,27 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (actor != 'bot' || obj.stillThinking) {
       doneThinking = false;
     }
+    if (doneThinking) {
+      setIsBotThinking(false);
+    }
     const msg = {
       payload,
       actor,
     };
-    if (doneThinking) {
-      setIsBotThinking(false);
-    }
-    setMessages((messages) => [...messages, msg]);
+    setMessages((messages) => {
+      if (obj.operation == 'append') {
+        const lastMsg = messages[messages.length - 1];
+        const appendedMsg = {
+          payload: lastMsg.payload + msg.payload,
+          actor: lastMsg.actor,
+        };
+        return [...messages.slice(0, -1), appendedMsg];
+      } else if (obj.operation == 'replace') {
+        return [...messages.slice(0, -1), msg];
+      } else {
+        return [...messages, msg];
+      }
+    });
   }, [lastMessage]);
 
   const sendMessage = (msg: string) => {
