@@ -60,7 +60,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!lastMessage) return;
-    let doneThinking = true;
     const obj = JSON.parse(lastMessage.data);
     const payload = obj.payload;
     const actor = obj.actor;
@@ -68,12 +67,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       window.history.replaceState(null, '', `?s=${obj.payload}`);
       return;
     }
-    if (actor != 'bot' || obj.stillThinking) {
-      doneThinking = false;
-    }
-    if (doneThinking) {
-      setIsBotThinking(false);
-    }
+    setIsBotThinking(obj.stillThinking);
     const msg = {
       payload,
       actor,
