@@ -10,11 +10,11 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
-import { TxState } from '../TxState';
 
 interface Props {
   tokenIn: Token;
@@ -149,7 +149,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
             Send
           </Button>
         )}
-        {isSuccess && <TxState hash={data?.hash} />}
+        {isSuccess && <TxStatus hash={data?.hash} />}
         {err && (
           <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
         )}

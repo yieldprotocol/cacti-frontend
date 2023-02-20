@@ -8,9 +8,9 @@ import {
   useSendTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Token } from '@/types';
-import { TxState } from '../TxState';
 
 interface TransferButtonProps {
   token: Token;
@@ -43,7 +43,7 @@ const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) =
           Send
         </Button>
       )}
-      {isSuccess && <TxState hash={data?.hash} />}
+      {isSuccess && <TxStatus hash={data?.hash} />}
       {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );
@@ -72,7 +72,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
           Send
         </Button>
       )}
-      {isSuccess && <TxState hash={data?.hash} />}
+      {isSuccess && <TxStatus hash={data?.hash} />}
       {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );
