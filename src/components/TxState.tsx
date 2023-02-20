@@ -16,7 +16,7 @@ export const TxState = ({ hash }: Props) => {
     <div>
       {isLoading && (
         <Button className="flex items-center" disabled>
-          <Spinner /> Swapping...
+          <Spinner /> Pending...
         </Button>
       )}
       {isSuccess && (
