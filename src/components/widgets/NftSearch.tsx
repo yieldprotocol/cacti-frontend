@@ -14,31 +14,42 @@ export const NftSearch = ({ query }) => {
   });
   return (
     <>
-      <div className="columns-1 text-black sm:columns-2">
-        {loading && <span>Results loading</span>}
-        <ul role="list" className="divide-y divide-gray-200">
-          {results?.map(({ id, address, relevance, name, previewImageUrl }: Result) => (
-            <div key={id}>
-              <a
-                href={`https://center.app/collections/${address}`}
-                className="flex items-center py-4"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {previewImageUrl ? (
-                  <img className="h-32 w-32 rounded-md" src={previewImageUrl} alt="" />
-                ) : (
-                  <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
-                    ?
-                  </div>
-                )}
-                <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
-              </a>
+      {loading && <span>Results loading</span>}
+      <ul
+        role="list"
+        className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
+      >
+        {' '}
+        {results?.map(({ id, address, relevance, name, previewImageUrl }: Result) => (
+          <li key={id} className="relative">
+            <div className="group block w-32 overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
+              {previewImageUrl ? (
+                <div className="items-center justify-center">
+                  <a
+                    href={`https://center.app/collections/${address}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img
+                      className="pointer-events-none h-32 w-32 rounded-md object-cover group-hover:opacity-75"
+                      src={previewImageUrl}
+                      alt=""
+                    />
+                  </a>
+                </div>
+              ) : (
+                <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
+                  ?
+                </div>
+              )}
+              <p className="pointer-events-none mt-2 block truncate text-center text-sm font-medium text-gray-900">
+                {name}
+              </p>
             </div>
-          )) || ''}
-        </ul>
-        {error && 'There was an unexpected center.app API error'}
-      </div>
+          </li>
+        )) || ''}
+      </ul>
+      {error && 'There was an unexpected center.app API error'}
     </>
   );
 };
