@@ -45,18 +45,22 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const {
     sendJsonMessage: wsSendMessage,
     lastMessage,
-    readyState,
   } = useWebSocket('wss://chatweb3.func.ai:9998', {
-    onError: (evt) => setModal(<div>Websocket error</div>),
+    onOpen: (evt) => onOpen(),
+    onError: (evt) => onError(),
     shouldReconnect: (closeEvent) => true,
   });
 
-  useEffect(() => {
+  const onOpen = () => {
     const q = window.location.search;
     if (q) {
       wsSendMessage({ actor: 'system', type: 'init', payload: q });
     }
-  }, []);
+  };
+
+  const onError = () => {
+    setModal(<div>Websocket error</div>);
+  };
 
   useEffect(() => {
     if (!lastMessage) return;
