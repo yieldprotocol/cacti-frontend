@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
+  const inputRef = useRef(null);
 
   const { sendMessage } = useChatContext();
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -41,6 +46,7 @@ export const MessageInput = ({}) => {
           placeholder="Enter your message..."
           tabIndex={0}
           value={messageInput}
+          ref={inputRef}
         />
         <button
           className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
