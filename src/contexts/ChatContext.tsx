@@ -19,6 +19,8 @@ export type ChatContextType = {
   spoofBotMessage: (msg: string) => void;
   getAvatar: (actor: string) => string;
   isBotThinking: boolean;
+  debugMessages: boolean;
+  updateDebugMessages: (arg0: boolean) => void;
 };
 
 const userAvatar = 'https://i.pravatar.cc/150?img=56';
@@ -49,6 +51,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
+  const [debugMessages, setDebugMessages] = useState(true);
   const { setModal } = useModalContext();
   const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
     'wss://chatweb3.func.ai:9998',
@@ -112,6 +115,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       actor,
       feedback: obj.feedback || 'none',
     };
+    console.log(obj);
     setMessages((messages) => {
       if (obj.operation == 'append') {
         const lastMsg = messages[messages.length - 1];
@@ -124,11 +128,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...messages.slice(0, -1), appendedMsg];
       } else if (obj.operation == 'replace') {
         return [...messages.slice(0, -1), msg];
+      } else if (obj.actor === 'system' && !debugMessages) {
+        return [...messages.slice(0, -1), msg];
       } else {
         return [...messages, msg];
       }
     });
-  }, [lastMessage]);
+  }, [lastMessage, debugMessages]);
 
   const sendMessage = (msg: string) => {
     setIsBotThinking(true);
@@ -164,6 +170,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }, 500);
   };
 
+  const updateDebugMessages = (show: boolean) => {
+    setDebugMessages(show);
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -173,6 +183,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         getAvatar,
         isBotThinking,
         spoofBotMessage,
+        debugMessages: debugMessages,
+        updateDebugMessages,
       }}
     >
       {children}
