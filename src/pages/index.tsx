@@ -1,4 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { BuyNFT } from '@/components/BuyNFT';
 import { ChatBox } from '@/components/ChatBox';
 import { DevToolsButton } from '@/components/devTools/DevToolsButton';
 
