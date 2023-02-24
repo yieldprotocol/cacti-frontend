@@ -41,12 +41,14 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
+  const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
   const { setModal } = useModalContext();
   const {
     sendJsonMessage: wsSendMessage,
     lastMessage,
   } = useWebSocket('wss://chatweb3.func.ai:9998', {
     onOpen: (evt) => onOpen(),
+    onClose: (evt) => onClose(),
     onError: (evt) => onError(),
     shouldReconnect: (closeEvent) => true,
   });
@@ -54,8 +56,20 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const onOpen = () => {
     const q = window.location.search;
     if (q) {
-      wsSendMessage({ actor: 'system', type: 'init', payload: q });
+      // websocket is re-establishing an existing session
+      // load the historical session stored within the backend
+      const params = new URLSearchParams(q);
+      const payload = {
+        'sessionId': params.get('s'),
+        'resumeFromMessageId': lastBotMessageId,
+      }
+      wsSendMessage({ actor: 'system', type: 'init', payload: payload });
     }
+  };
+
+  // unused in production, but useful in debugging
+  const onClose = () => {
+    // console.log('websocket closed');
   };
 
   const onError = () => {
@@ -72,6 +86,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setIsBotThinking(obj.stillThinking);
+    setLastBotMessageId(obj.messageId);
     const msg = {
       payload,
       actor,

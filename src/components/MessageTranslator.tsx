@@ -11,7 +11,6 @@ import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = parseMessage(message);
-  console.log(stringsAndWidgets);
   return (
     <div className="flex flex-col gap-3">
       {stringsAndWidgets.map((item, i) => {
