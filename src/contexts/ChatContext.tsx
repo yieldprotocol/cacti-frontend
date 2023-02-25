@@ -1,10 +1,13 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
+import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useModalContext } from '@/contexts/ModalContext';
 
 export type Message = {
+  messageId: string;
   actor: string;
   payload: string;
+  feedback: string;
 };
 
 // type UserMessage = Omit<Message, 'avatar'>;
@@ -12,6 +15,7 @@ export type Message = {
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
+  sendAction: (action: JsonValue) => void;
   spoofBotMessage: (msg: string) => void;
   getAvatar: (actor: string) => string;
   isBotThinking: boolean;
@@ -26,11 +30,14 @@ const getAvatar = (actor: string) =>
 const initialContext = {
   messages: [
     {
+      messageId: '',
       actor: 'bot',
       payload: 'Hello 👋, how can I help you?',
+      feedback: 'n/a',
     },
   ],
   sendMessage: (msg: string) => {},
+  sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
   getAvatar,
   isBotThinking: false,
@@ -88,15 +95,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setIsBotThinking(obj.stillThinking);
     setLastBotMessageId(obj.messageId);
     const msg = {
+      messageId: obj.messageId || '',
       payload,
       actor,
+      feedback: obj.feedback || 'none',
     };
     setMessages((messages) => {
       if (obj.operation == 'append') {
         const lastMsg = messages[messages.length - 1];
         const appendedMsg = {
+          messageId: lastMsg.messageId,
           payload: lastMsg.payload + msg.payload,
           actor: lastMsg.actor,
+          feedback: lastMsg.feedback,
         };
         return [...messages.slice(0, -1), appendedMsg];
       } else if (obj.operation == 'replace') {
@@ -113,10 +124,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setMessages([
       ...messages,
       {
+        messageId: '',
         actor: 'user',
         payload: msg,
+        feedback: 'n/a',
       },
     ]);
+  };
+
+  const sendAction = (action: JsonValue) => {
+    wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
   const spoofBotMessage = (msg: string) => {
@@ -125,8 +142,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setMessages([
         ...messages,
         {
+          messageId: '',
           actor: 'bot',
           payload: msg,
+          feedback: 'n/a',
         },
       ]);
       setIsBotThinking(false);
@@ -138,6 +157,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       value={{
         messages,
         sendMessage,
+        sendAction,
         getAvatar,
         isBotThinking,
         spoofBotMessage,

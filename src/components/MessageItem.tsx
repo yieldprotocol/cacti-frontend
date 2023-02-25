@@ -1,3 +1,4 @@
+import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessageTranslator } from '@/components/MessageTranslator';
 import { Message, useChatContext } from '@/contexts/ChatContext';
 
@@ -19,6 +20,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
       />
       <div className={`text-md w-full overflow-hidden rounded-md pl-4 leading-7`}>
         <MessageTranslator message={payload} />
+        <FeedbackButton message={message} />
       </div>
     </div>
   );
