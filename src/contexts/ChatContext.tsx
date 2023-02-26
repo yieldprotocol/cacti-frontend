@@ -19,6 +19,8 @@ export type ChatContextType = {
   spoofBotMessage: (msg: string) => void;
   getAvatar: (actor: string) => string;
   isBotThinking: boolean;
+  showDebugMessages: boolean;
+  setShowDebugMessages: (arg0: boolean) => void;
 };
 
 const userAvatar = 'https://i.pravatar.cc/150?img=56';
@@ -41,6 +43,8 @@ const initialContext = {
   spoofBotMessage: (msg: string) => {},
   getAvatar,
   isBotThinking: false,
+  showDebugMessages: true,
+  setShowDebugMessages: (arg0: boolean) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -49,6 +53,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
+  const [showDebugMessages, setShowDebugMessages] = useState(true);
   const { setModal } = useModalContext();
   const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
     'wss://chatweb3.func.ai:9998',
@@ -173,6 +178,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         getAvatar,
         isBotThinking,
         spoofBotMessage,
+        showDebugMessages,
+        setShowDebugMessages,
       }}
     >
       {children}
