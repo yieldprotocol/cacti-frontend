@@ -64,13 +64,22 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const q = window.location.search;
     if (q) {
       // websocket is re-establishing an existing session
-      // load the historical session stored within the backend
       const params = new URLSearchParams(q);
-      const payload = {
-        sessionId: params.get('s'),
-        resumeFromMessageId: lastBotMessageId,
-      };
-      wsSendMessage({ actor: 'system', type: 'init', payload: payload });
+      if (params.get('s')) {
+        // load the historical session stored within the backend
+        const payload = {
+          sessionId: params.get('s'),
+          resumeFromMessageId: lastBotMessageId,
+        };
+        wsSendMessage({ actor: 'system', type: 'init', payload: payload });
+      }
+      if (params.get('cfg')) {
+        // set the system config to use on the backend
+        const payload = {
+          systemConfigId: params.get('cfg'),
+        };
+        wsSendMessage({ actor: 'system', type: 'cfg', payload: payload });
+      }
     }
   };
 
@@ -89,7 +98,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const payload = obj.payload;
     const actor = obj.actor;
     if (obj.type == 'uuid') {
-      window.history.replaceState(null, '', `?s=${obj.payload}`);
+      const q = window.location.search;
+      const params = new URLSearchParams(q);
+      params.set('s', obj.payload);
+      window.history.replaceState(null, '', '?' + params.toString());
       return;
     }
     setIsBotThinking(obj.stillThinking);
