@@ -8,6 +8,7 @@ import {
   useSendTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Token } from '@/types';
 
@@ -31,15 +32,18 @@ const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) =
   const { config, error } = usePrepareSendTransaction({
     request: { to: resolvedAddress ? resolvedAddress : receiver, value: amount },
   });
-  const { sendTransaction } = useSendTransaction(config);
+  const { sendTransaction, isSuccess, data } = useSendTransaction(config);
 
   const err: Error & { reason?: string } = error;
 
   return (
     <div>
-      <Button disabled={!sendTransaction} onClick={() => sendTransaction?.()}>
-        Send
-      </Button>
+      {!isSuccess && (
+        <Button disabled={!sendTransaction} onClick={() => sendTransaction?.()}>
+          Send
+        </Button>
+      )}
+      {isSuccess && <TxStatus hash={data?.hash} />}
       {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );
@@ -58,14 +62,17 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     args: [receiverAddress ? receiverAddress : (receiver as `0x${string}`), amount],
   });
 
-  const { write: tokenWrite } = useContractWrite(tokenConfig);
+  const { write: tokenWrite, isSuccess, data } = useContractWrite(tokenConfig);
   const err: Error & { reason?: string } = error;
 
   return (
     <div>
-      <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-        Send
-      </Button>
+      {!isSuccess && (
+        <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
+          Send
+        </Button>
+      )}
+      {isSuccess && <TxStatus hash={data?.hash} />}
       {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
     </div>
   );

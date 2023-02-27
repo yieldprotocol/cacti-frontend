@@ -8,7 +8,7 @@ export const WidgetError = ({ children }) => {
           <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
         </div>
         <div className="ml-3">
-          <h3 className="text-sm font-medium text-red-800">{children}</h3>
+          <h3 className="break-all text-sm font-medium text-red-800">{children}</h3>
           <div className="mt-2 text-sm text-red-700">
             <ul role="list" className="list-disc space-y-1 pl-5"></ul>
           </div>

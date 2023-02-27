@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { BigNumber } from 'ethers';
 import {
   erc20ABI,
@@ -11,9 +10,10 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { Button } from '@/components/Button';
+import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Token } from '@/types';
-import { Spinner, findTokenBySymbol, formatToEther } from '@/utils';
+import { findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -139,38 +139,17 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   });
   const err: Error & { reason?: string } = error;
 
-  const { write: swapWrite, data } = useContractWrite(swapConfig);
-  const { isLoading } = useWaitForTransaction({ hash: data?.hash });
+  const { write: swapWrite, data, isSuccess } = useContractWrite(swapConfig);
 
   return (
     <>
       <div>
-        {isLoading ? (
-          <Button className="flex items-center" disabled>
-            <Spinner /> Swapping...
-          </Button>
-        ) : data?.hash ? (
-          <div className="flex items-center disabled:border-0 disabled:bg-green-700">
-            <CheckCircleIcon className="h-5 text-green-600" />
-            <div className="p-1 text-green-600">Success</div>
-          </div>
-        ) : (
+        {!isSuccess && (
           <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
             Send
           </Button>
         )}
-        {data?.hash && (
-          <div>
-            <a
-              className="text-blue-200 underline"
-              href={`https://goerli.etherscan.io/tx/${data?.hash}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View on Etherscan
-            </a>
-          </div>
-        )}
+        {isSuccess && <TxStatus hash={data?.hash} />}
         {err && (
           <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
         )}
