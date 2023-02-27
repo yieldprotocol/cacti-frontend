@@ -34,7 +34,7 @@ interface BasicOrderParameters {
   offererConduitKey: string;
   fulfillerConduitKey: string;
   totalOriginalAdditionalRecipients: BigNumberish;
-  additionalRecipients: [string];
+  additionalRecipients: [any];
   signature: string;
 }
 export const BuyNFT = (props: Props) => {
@@ -75,7 +75,12 @@ export const BuyNFT = (props: Props) => {
     offererConduitKey: '',
     fulfillerConduitKey: '',
     totalOriginalAdditionalRecipients: 0,
-    additionalRecipients: ['0x00000000006c3852cbEf3e08E8dF289169EdE581'],
+    additionalRecipients: [
+      {
+        amount: 459950000000000,
+        recipient: '0x0000a26b00c1f0df003000390027140000faa719',
+      },
+    ],
     signature: '',
   };
 
