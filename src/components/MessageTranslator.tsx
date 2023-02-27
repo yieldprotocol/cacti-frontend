@@ -44,6 +44,7 @@ const Widgetize = (widget: Widget) => {
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${receiver}`}
             msg={inputString}
+            key={inputString}
           >
             <ConnectFirst>
               <TransferButton {...{ amount, receiver, token }} />
@@ -72,6 +73,7 @@ const Widgetize = (widget: Widget) => {
               tokenIn.decimals
             )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
+            key={inputString}
           >
             <ConnectFirst>
               <UniswapButton
