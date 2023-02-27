@@ -16,7 +16,7 @@ export const Home = () => {
           <DebugButton />
           <ConnectButton />
         </div>
-        <div className="min-h-full w-full">
+        <div className="w-full">
           <ChatBox />
         </div>
       </div>
