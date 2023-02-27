@@ -1,4 +1,4 @@
-import { Fragment, useId } from 'react';
+import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
@@ -30,9 +30,6 @@ const Widgetize = (widget: Widget) => {
   const inputString = `${fnName}(${args.join(',')})`;
   const { chain } = useNetwork();
   const chainId = chain?.id || 36963;
-  const id = useId();
-  const transferId = `transfer-${id}`;
-  const uniswapId = `uniswap-${id}`;
 
   try {
     switch (fnName) {
@@ -48,7 +45,7 @@ const Widgetize = (widget: Widget) => {
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${receiver}`}
             msg={inputString}
-            key={transferId}
+            key={inputString}
           >
             <ConnectFirst>
               <TransferButton {...{ amount, receiver, token }} />
@@ -77,7 +74,7 @@ const Widgetize = (widget: Widget) => {
               tokenIn.decimals
             )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
-            key={uniswapId}
+            key={inputString}
           >
             <ConnectFirst>
               <UniswapButton
