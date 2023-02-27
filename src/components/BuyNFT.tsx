@@ -22,7 +22,7 @@ interface BasicOrderParameters {
   considerationIdentifier: BigNumberish;
   considerationAmount: BigNumberish;
   offerer: string;
-  zone: string;
+  zone?: string;
   offerToken: string;
   offerIdentifier: BigNumberish;
   offerAmount: BigNumberish;
@@ -63,11 +63,11 @@ export const BuyNFT = (props: Props) => {
     considerationIdentifier: 8652,
     considerationAmount: 1,
     offerer: receiver,
-    zone: '',
+    zone: '0x0000000000000000000000000000000000000000',
     offerToken: '0x0000000000000000000000000000000000000000',
     offerIdentifier: '3',
     offerAmount: parseEther('6.99'),
-    basicOrderType: 'FULL_OPEN',
+    basicOrderType: '3',
     startTime: timeStamp,
     endTime: timeStamp + 86400,
     zoneHash: '0x3000000000000000000000000000000000000000000000000000000000000000',
@@ -75,9 +75,11 @@ export const BuyNFT = (props: Props) => {
     offererConduitKey: '',
     fulfillerConduitKey: '',
     totalOriginalAdditionalRecipients: 0,
-    additionalRecipients: [''],
+    additionalRecipients: ['0x00000000006c3852cbEf3e08E8dF289169EdE581'],
     signature: '',
   };
+
+  console.log('the receiver is', receiver);
 
   const { config: swapConfig, error } = usePrepareContractWrite({
     address: '0x00000000006c3852cbEf3e08E8dF289169EdE581',
