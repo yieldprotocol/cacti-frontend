@@ -73,6 +73,18 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|nftsearch("dogs")|>`}</p>
       </div>
+      {/* Start ETH price in terms of USDC */}
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(`Sure let me pull that price. <|price("ETH", "USDC")|>`);
+        }}
+      >
+        Get price of ETH in USDC
+      </Button>
+      <div className="flex flex-col justify-center break-words text-xs">
+        <p>{`<|nftsearch("dogs")|>`}</p>
+      </div>
     </div>
   );
 };

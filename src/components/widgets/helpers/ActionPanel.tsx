@@ -1,7 +1,7 @@
 interface Props {
   header: string;
   msg: string;
-  children: JSX.Element;
+  children?: JSX.Element;
 }
 
 export const ActionPanel = ({ header, msg, children }: Props) => {
