@@ -292,6 +292,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.6.2, @babel/runtime@npm:^7.7.2":
+  version: 7.21.0
+  resolution: "@babel/runtime@npm:7.21.0"
+  dependencies:
+    regenerator-runtime: ^0.13.11
+  checksum: 7b33e25bfa9e0e1b9e8828bb61b2d32bdd46b41b07ba7cb43319ad08efc6fda8eb89445193e67d6541814627df0ca59122c0ea795e412b99c5183a0540d338ab
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.16.7, @babel/template@npm:^7.18.10, @babel/template@npm:^7.20.7":
   version: 7.20.7
   resolution: "@babel/template@npm:7.20.7"
@@ -3300,6 +3309,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"broadcast-channel@npm:^3.4.1":
+  version: 3.7.0
+  resolution: "broadcast-channel@npm:3.7.0"
+  dependencies:
+    "@babel/runtime": ^7.7.2
+    detect-node: ^2.1.0
+    js-sha3: 0.8.0
+    microseconds: 0.2.0
+    nano-time: 1.0.0
+    oblivious-set: 1.0.0
+    rimraf: 3.0.2
+    unload: 2.2.0
+  checksum: 803794c48dcce7f03aca69797430bd8b1c4cfd70b7de22079cd89567eeffaa126a1db98c7c2d86af8131d9bb41ed367c0fef96dfb446151c927b831572c621fc
+  languageName: node
+  linkType: hard
+
 "brorand@npm:^1.1.0":
   version: 1.1.0
   resolution: "brorand@npm:1.1.0"
@@ -3618,6 +3643,7 @@ __metadata:
     prettier-plugin-tailwindcss: ^0.2.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-query: ^3.39.3
     react-use-websocket: ^4.2.0
     swr: ^2.0.4
     tailwindcss: ^3.2.4
@@ -4091,6 +4117,13 @@ __metadata:
   version: 1.1.0
   resolution: "detect-node-es@npm:1.1.0"
   checksum: e46307d7264644975b71c104b9f028ed1d3d34b83a15b8a22373640ce5ea630e5640b1078b8ea15f202b54641da71e4aa7597093bd4b91f113db520a26a37449
+  languageName: node
+  linkType: hard
+
+"detect-node@npm:^2.0.4, detect-node@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "detect-node@npm:2.1.0"
+  checksum: 832184ec458353e41533ac9c622f16c19f7c02d8b10c303dfd3a756f56be93e903616c0bb2d4226183c9351c15fc0b3dba41a17a2308262afabcfa3776e6ae6e
   languageName: node
   linkType: hard
 
@@ -6517,6 +6550,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"match-sorter@npm:^6.0.2":
+  version: 6.3.1
+  resolution: "match-sorter@npm:6.3.1"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    remove-accents: 0.4.2
+  checksum: a4b02b676ac4ce64a89a091539ee4a70a802684713bcf06f2b70787927f510fe8a2adc849f9288857a90906083ad303467e530e8723b4a9756df9994fc164550
+  languageName: node
+  linkType: hard
+
 "md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
@@ -6551,6 +6594,13 @@ __metadata:
     braces: ^3.0.2
     picomatch: ^2.3.1
   checksum: 02a17b671c06e8fefeeb6ef996119c1e597c942e632a21ef589154f23898c9c6a9858526246abb14f8bca6e77734aa9dcf65476fca47cedfb80d9577d52843fc
+  languageName: node
+  linkType: hard
+
+"microseconds@npm:0.2.0":
+  version: 0.2.0
+  resolution: "microseconds@npm:0.2.0"
+  checksum: 22bfa8553f92c7d95afff6de0aeb2aecf750680d41b8c72b02098ccc5bbbb0a384380ff539292dbd3788f5dfc298682f9d38a2b4c101f5ee2c9471d53934c5fa
   languageName: node
   linkType: hard
 
@@ -7730,6 +7780,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-query@npm:^3.39.3":
+  version: 3.39.3
+  resolution: "react-query@npm:3.39.3"
+  dependencies:
+    "@babel/runtime": ^7.5.5
+    broadcast-channel: ^3.4.1
+    match-sorter: ^6.0.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: d2de6a0992dbf039ff2de564de1ae6361f8ac7310159dae42ec16f833b79c05caedced187235c42373ac331cc5f2fe9e2b31b14ae75a815e86d86e30ca9887ad
+  languageName: node
+  linkType: hard
+
 "react-remove-scroll-bar@npm:^2.3.3":
   version: 2.3.4
   resolution: "react-remove-scroll-bar@npm:2.3.4"
@@ -7862,6 +7930,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"remove-accents@npm:0.4.2":
+  version: 0.4.2
+  resolution: "remove-accents@npm:0.4.2"
+  checksum: 84a6988555dea24115e2d1954db99509588d43fe55a1590f0b5894802776f7b488b3151c37ceb9e4f4b646f26b80b7325dcea2fae58bc3865df146e1fa606711
+  languageName: node
+  linkType: hard
+
 "require-directory@npm:^2.1.1":
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
@@ -7956,7 +8031,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^3.0.2":
+"rimraf@npm:3.0.2, rimraf@npm:^3.0.2":
   version: 3.0.2
   resolution: "rimraf@npm:3.0.2"
   dependencies:
@@ -8864,6 +8939,16 @@ __metadata:
   dependencies:
     imurmurhash: ^0.1.4
   checksum: 49f8d915ba7f0101801b922062ee46b7953256c93ceca74303bd8e6413ae10aa7e8216556b54dc5382895e8221d04f1efaf75f945c2e4a515b4139f77aa6640c
+  languageName: node
+  linkType: hard
+
+"unload@npm:2.2.0":
+  version: 2.2.0
+  resolution: "unload@npm:2.2.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    detect-node: ^2.0.4
+  checksum: 88ba950c5ff83ab4f9bbd8f63bbf19ba09687ed3c434efd43b7338cc595bc574df8f9b155ee6eee7a435de3d3a4a226726988428977a68ba4907045f1fac5d41
   languageName: node
   linkType: hard
 
