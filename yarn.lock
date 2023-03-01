@@ -2783,13 +2783,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"add@npm:^2.0.6":
-  version: 2.0.6
-  resolution: "add@npm:2.0.6"
-  checksum: e2d23d40494565dfed4acd65e478570c444db5ac6c053551ed429c39ea0f2c99d83df63e7befec936df601827d2254d06a2fb6f7dcfd2022e810b25eab818b8c
-  languageName: node
-  linkType: hard
-
 "aes-js@npm:3.0.0":
   version: 3.0.0
   resolution: "aes-js@npm:3.0.0"
@@ -3613,7 +3606,6 @@ __metadata:
     "@uniswap/sdk-core": ^3.1.2
     "@uniswap/smart-order-router": ^3.5.0
     "@uniswap/v3-periphery": ^1.4.3
-    add: ^2.0.6
     autoprefixer: ^10.4.13
     axios: ^1.3.3
     dotenv: ^16.0.3

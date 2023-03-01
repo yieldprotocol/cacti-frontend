@@ -3,11 +3,9 @@ import { AlphaRouter } from '@uniswap/smart-order-router';
 import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import { BigNumber, ethers } from 'ethers';
 import useSWR from 'swr';
-import { useProvider } from 'wagmi';
-import { erc20ABI, useAccount, useContract, useNetwork } from 'wagmi';
+import { erc20ABI, useAccount, useContract, useNetwork, useProvider } from 'wagmi';
 import { findTokenBySymbol } from '@/utils';
 import { MAINNET_CHAIN_ID } from '@/utils/constants';
-import { fetchPools } from '@/utils/uniswap';
 
 const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 
@@ -27,7 +25,7 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
         ? findTokenBySymbol('WETH', chain.id)
         : findTokenBySymbol(props.quoteTokenSymbol, chain.id);
       const router = new AlphaRouter({
-        chainId: 1,
+        chainId: MAINNET_CHAIN_ID,
         provider: provider,
       });
       const route = await router.route(
@@ -51,9 +49,6 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
         ),
         TradeType.EXACT_INPUT
       );
-      console.log(route);
-      console.log(route.quote);
-      console.log(route.quote.toFixed(6));
 
       return {
         humanReadableAmount: route.quote.toFixed(4),
