@@ -83,7 +83,7 @@ export const DebugPanel = ({ handleClose }) => {
         Get price of ETH in USDC
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nftsearch("dogs")|>`}</p>
+        <p>{`<|price("ETH", "USDC")|>`}</p>
       </div>
     </div>
   );

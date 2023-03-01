@@ -1,9 +1,9 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
+import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { Price } from '@/components/widgets/helpers/Price';
 import { findTokenBySymbol } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { NftSearch } from './widgets/NftSearch';

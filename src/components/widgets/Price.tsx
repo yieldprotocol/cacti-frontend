@@ -1,6 +1,3 @@
-// 1. Open action panel
-// 2. Get token based on symbol
-// 3. Fetch from uniswap the price
 //   based on the returned token
 import { useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
@@ -12,8 +9,6 @@ type PriceProps = {
 };
 
 export const Price = (props: PriceProps) => {
-  // Hook to quote price
-  // assume fee of 3000
   const { data, error } = useUniswapQuote({
     baseTokenSymbol: props.baseToken,
     quoteTokenSymbol: props.queryToken,
