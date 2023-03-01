@@ -12,7 +12,7 @@ const fetchCollectionAttributes = async (nftAddress: string) => {
     .get(`${nftAddress}/traits`, {
       headers: {
         Accept: 'application/json',
-        'X-API-Key': 'keyf3d186ab56cd4148783854f3',
+        'X-API-Key': process.env.CENTER_APP_KEY,
       },
     })
     .then((res) => {
