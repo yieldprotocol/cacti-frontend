@@ -4,7 +4,6 @@ import { DebugButton } from '@/components/DebugButton';
 import { DebugMessageToggle } from '@/components/DebugMessageToggle';
 import { MintButton } from '@/components/MintButton';
 import { ResetButton } from '@/components/ResetButton';
-import NftAttributes from '@/components/widgets/NftAttributes';
 
 export const Home = () => {
   return (
