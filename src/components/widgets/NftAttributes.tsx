@@ -1,25 +1,31 @@
 import { useQuery } from 'react-query';
+import axios from 'axios';
 
 type Props = {
   nftAddress: string;
 };
 
-const fetchNftAttributes = async ({ nftAddress }: Props) => {
-  return fetch(`https://api.center.dev/v1/ethereum-mainnet/${nftAddress}/traits`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
+axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
+
+const fetchCollectionAttributes = async (nftAddress: string) => {
+  return axios
+    .get(`${nftAddress}/traits`, {
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': 'keyf3d186ab56cd4148783854f3',
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
 const NftCollectionAttributes = ({ nftAddress }: Props) => {
-  const { isLoading, isError, error, data } = useQuery(['nftAttributes'], () =>
-    fetchNftAttributes({ nftAddress })
+  const { isLoading, isError, error, data } = useQuery(['nftAttributes'], async () =>
+    fetchCollectionAttributes(nftAddress)
   );
 
   if (isLoading) return <h1>Loading..</h1>;
@@ -30,7 +36,6 @@ const NftCollectionAttributes = ({ nftAddress }: Props) => {
       {data?.items.map((item) => {
         return <li key={item.trait}>{item.trait}</li>;
       })}
-      <div>{isLoading && <p>return is Loading</p>}</div>
     </>
   );
 };
