@@ -3,7 +3,7 @@ export const parseMessage = (str: string) => {
    * 2 capture groups, one being the function name, and the other being all the params.
    * If there are no params, the second group will be empty.
    */
-  const regex = new RegExp(/<\|(\w*)\((.*)\)\|>/g, 'dg');
+  const regex = new RegExp(/<\|([\w\-]*)\(([^)]*)\)\|>/g, 'dg');
   const matches = Array.from(str.matchAll(regex));
   if (!matches.length) return [str];
   const parsedMatches = Array.from(matches).map((match) => {
@@ -29,17 +29,17 @@ export const parseMessage = (str: string) => {
   return parsedMatches.reduce((acc, match, i) => {
     const { fnName, args, start, end } = match;
     if (acc.length === 0 && parsedMatches.length === i + 1)
-      return [str.substring(0, start), { fnName, args }, str.substring(end + 1)];
+      return [str.substring(0, start), { fnName, args }, str.substring(end)];
     if (acc.length === 0) return [str.substring(0, start), { fnName, args }];
-    const lastIndexEnd = parsedMatches[i - 1].end + 1;
+    const lastIndexEnd = parsedMatches[i - 1].end;
     if (parsedMatches.length === i + 1) {
       return [
         ...acc,
-        str.substring(lastIndexEnd + 1, match.start),
+        str.substring(lastIndexEnd, match.start),
         { fnName, args },
         str.substring(end),
       ];
     }
-    return [...acc, str.substring(lastIndexEnd + 1, match.start - 1), { fnName, args }];
+    return [...acc, str.substring(lastIndexEnd, match.start), { fnName, args }];
   }, [] as (string | Widget)[]);
 };
