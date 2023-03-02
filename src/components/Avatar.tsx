@@ -12,9 +12,9 @@ const Avatar = ({ actor }: Props) => {
   return (
     <div className="h-8 w-8 rounded-md bg-gray-300 shadow-md">
       {actor === 'user' ? (
-        <UserIcon />
+        <UserIcon className="text-gray-600" />
       ) : actor === 'system' ? (
-        <CommandLineIcon color="black" />
+        <CommandLineIcon className="text-black" />
       ) : (
         <img className="h-full w-full rounded-md" src={botAvatar} alt="bot avatar" />
       )}
