@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { useAccount } from 'wagmi';
 import { useModalContext } from '@/contexts/ModalContext';
 
 export type Message = {
@@ -65,6 +66,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
+  // Connected wallet status
+  const {
+    isConnected: walletIsConnected,
+    status: walletStatus,
+    address: walletAddress,
+  } = useAccount();
+  const sendWalletMessage = () => {
+    const walletPayload = {
+      walletIsConnected,
+      walletStatus,
+      walletAddress,
+    };
+    wsSendMessage({ actor: 'system', type: 'wallet', payload: walletPayload });
+  };
+  useEffect(() => {
+    sendWalletMessage();
+  }, [walletIsConnected, walletStatus, walletAddress]);
+
   const onOpen = () => {
     const q = window.location.search;
     if (q) {
@@ -86,6 +105,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         wsSendMessage({ actor: 'system', type: 'cfg', payload: payload });
       }
     }
+    sendWalletMessage();
   };
 
   // unused in production, but useful in debugging
