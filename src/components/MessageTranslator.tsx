@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork } from 'wagmi';
+import { Chain, useNetwork } from 'wagmi';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol } from '@/utils';
@@ -10,6 +10,7 @@ import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
+  const { chain } = useNetwork();
   const stringsAndWidgets = parseMessage(message);
   return (
     <div className="flex flex-col gap-3">
@@ -17,17 +18,16 @@ export const MessageTranslator = ({ message }: { message: string }) => {
         // if it's a string, just return the string in a fragment
         if (typeof item === 'string') return <Fragment key={`i${i}`}>{item}</Fragment>;
         // otherwise, let's try to translate the widget
-        return Widgetize(item);
+        return Widgetize(item, chain);
       })}
     </div>
   );
 };
 
-const Widgetize = (widget: Widget) => {
+const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase();
   const inputString = `${fnName}(${args.join(',')})`;
-  const { chain } = useNetwork();
   const chainId = chain?.id || 36963;
 
   try {
