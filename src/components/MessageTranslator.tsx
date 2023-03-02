@@ -26,7 +26,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
 
 const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
-  const fnName = fn.toLowerCase();
+  const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args.join(',')})`;
   const chainId = chain?.id || 36963;
 
