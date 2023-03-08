@@ -1,12 +1,21 @@
+import { ReactNode } from 'react';
 import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { useChatContext } from '@/contexts/ChatContext';
 
 const WelcomeColumn = ({ children }) => {
   return <div className="flex flex-col">{children}</div>;
 };
 
-const WelcomeBox = ({ children }) => {
+const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) => {
+  let onClickClasses = '';
+  if (onClick) {
+    onClickClasses = 'cursor-pointer hover:bg-gray-500';
+  }
   return (
-    <div className="my-4 max-w-[250px]  rounded-lg bg-gray-600 p-4 text-center text-white">
+    <div
+      className={`my-4 max-w-[250px]  rounded-lg bg-gray-600 p-4 text-center text-white ${onClickClasses}`}
+      onClick={onClick}
+    >
       <p className="flex min-h-[48px] items-center justify-center">{children}</p>
     </div>
   );
@@ -17,6 +26,7 @@ const WelcomeBoxSubtitle = ({ children }) => {
 };
 
 const WelcomeMessage = () => {
+  const { sendMessage } = useChatContext();
   return (
     <div className="mt-4 md:px-6">
       <h1 className="mb-8 py-5 text-center text-4xl font-bold text-white">ChatWeb3</h1>
@@ -24,9 +34,15 @@ const WelcomeMessage = () => {
         <WelcomeColumn>
           <BoltIcon className="mt-3 h-12 text-gray-300" />
           <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>
-          <WelcomeBox>&rdquo;Browse some dog nfts&rdquo;</WelcomeBox>
-          <WelcomeBox>&rdquo;Swap 0.1 ETH for DAI on Uniswap&rdquo;</WelcomeBox>
-          <WelcomeBox>&rdquo;Get the price of ETH in terms of USDC&rdquo;</WelcomeBox>
+          <WelcomeBox onClick={() => sendMessage('Find some dog nfts')}>
+            &rdquo;Browse some dog nfts&rdquo;
+          </WelcomeBox>
+          <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
+            &rdquo;Swap 0.1 ETH for DAI on Uniswap&rdquo;
+          </WelcomeBox>
+          <WelcomeBox onClick={() => sendMessage('Get the price of ETH in terms of USDC')}>
+            &rdquo;Get the price of ETH in terms of USDC&rdquo;
+          </WelcomeBox>
         </WelcomeColumn>
         <WelcomeColumn>
           <RocketLaunchIcon className="mt-3 h-12 text-gray-300" />
