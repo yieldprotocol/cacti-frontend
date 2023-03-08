@@ -18,17 +18,10 @@ export type ChatContextType = {
   sendMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
   spoofBotMessage: (msg: string) => void;
-  getAvatar: (actor: string) => string;
   isBotThinking: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
 };
-
-const userAvatar = 'https://i.pravatar.cc/150?img=56';
-const botAvatar = 'https://i.pravatar.cc/150?img=32';
-const systemAvatar = 'https://i.pravatar.cc/150?img=58';
-const getAvatar = (actor: string) =>
-  actor == 'bot' ? botAvatar : actor == 'user' ? userAvatar : systemAvatar;
 
 const initialContext = {
   messages: [
@@ -42,7 +35,6 @@ const initialContext = {
   sendMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
-  getAvatar,
   isBotThinking: false,
   showDebugMessages: true,
   setShowDebugMessages: (arg0: boolean) => {},
@@ -195,7 +187,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         messages,
         sendMessage,
         sendAction,
-        getAvatar,
         isBotThinking,
         spoofBotMessage,
         showDebugMessages,
