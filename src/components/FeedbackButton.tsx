@@ -1,37 +1,54 @@
 import { useState } from 'react';
+import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
 import { Message, useChatContext } from '@/contexts/ChatContext';
-import { Button } from './Button';
+
+const Button = ({
+  label,
+  feedback,
+  onClick,
+}: {
+  label: string;
+  feedback: string;
+  onClick: () => void;
+}) => {
+  return (
+    <div className="mt-2 flex justify-center gap-3 self-end text-gray-400 md:gap-4 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
+      <button
+        onClick={onClick}
+        disabled={label === feedback}
+        className="!dark:text-gray-200 rounded-md bg-gray-100 p-1 text-gray-700 hover:bg-gray-100 hover:text-gray-700 enabled:hover:cursor-pointer dark:bg-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 dark:disabled:bg-gray-600 disabled:dark:hover:text-gray-400"
+      >
+        {label === 'good' ? (
+          <HandThumbUpIcon className="h-4 w-4" />
+        ) : (
+          <HandThumbDownIcon className="h-4 w-4" />
+        )}
+      </button>
+    </div>
+  );
+};
 
 export const FeedbackButton = ({ message }: { message: Message }) => {
   const { messageId, actor, feedback: initialFeedback } = message;
   const [feedback, setFeedback] = useState(initialFeedback);
   const { sendAction } = useChatContext();
 
-  const sendFeedback = (label) => {
-    const choice = feedback == 'none' ? label : 'none';
+  const sendFeedback = (label: string) => {
+    const choice = feedback === 'none' ? label : 'none';
     setFeedback(choice);
     sendAction({ messageId, choice });
   };
-  return feedback == 'n/a' || actor != 'bot' ? (
+
+  return feedback === 'n/a' || actor !== 'bot' ? (
     <></>
   ) : (
-    <>
-      <Button
-        key="good"
-        onClick={() => sendFeedback('good')}
-        disabled={feedback == 'bad'}
-        className="disabled:bg-gray-400"
-      >
-        👍
-      </Button>
-      <Button
-        key="bad"
-        onClick={() => sendFeedback('bad')}
-        disabled={feedback == 'good'}
-        className="disabled:bg-gray-400"
-      >
-        👎
-      </Button>
-    </>
+    <div className="flex justify-between">
+      {(feedback === 'none' || feedback === 'good') && (
+        <Button onClick={() => sendFeedback('good')} label="good" feedback={feedback} />
+      )}
+      {(feedback === 'none' || feedback === 'bad') && (
+        <Button onClick={() => sendFeedback('bad')} label="bad" feedback={feedback} />
+      )}
+    </div>
   );
 };

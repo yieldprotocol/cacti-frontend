@@ -8,15 +8,17 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   return (
     <div
-      className={`flex items-start py-4 px-4 lg:px-64 ${
-        actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
-      }`}
+      className={`
+      m-auto flex items-start gap-4 p-4 py-4 px-4 text-base md:gap-6 md:px-40 lg:px-64
+       ${actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'}`}
     >
       <Avatar actor={actor} />
-      <div className={`text-md w-full overflow-hidden rounded-md pl-4 leading-7`}>
+      <div
+        className={`relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]`}
+      >
         <MessageTranslator message={payload} />
-        <FeedbackButton message={message} />
       </div>
+      <FeedbackButton message={message} />
     </div>
   );
 };
