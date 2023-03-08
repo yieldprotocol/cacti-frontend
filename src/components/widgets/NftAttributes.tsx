@@ -12,7 +12,7 @@ const fetchCollectionAttributes = async (nftAddress: string) => {
     .get(`${nftAddress}/traits`, {
       headers: {
         Accept: 'application/json',
-        'X-API-Key': process.env.CENTER_APP_KEY,
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY,
       },
     })
     .then((res) => {
@@ -23,7 +23,7 @@ const fetchCollectionAttributes = async (nftAddress: string) => {
     });
 };
 
-const NftCollectionAttributes = ({ nftAddress }: Props) => {
+export const NftCollectionAttributes = ({ nftAddress }: Props) => {
   const { isLoading, isError, error, data } = useQuery(['nftAttributes'], async () =>
     fetchCollectionAttributes(nftAddress)
   );
@@ -39,5 +39,3 @@ const NftCollectionAttributes = ({ nftAddress }: Props) => {
     </>
   );
 };
-
-export default NftCollectionAttributes;
