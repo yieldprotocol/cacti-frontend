@@ -31,14 +31,7 @@ const getAvatar = (actor: string) =>
   actor == 'bot' ? botAvatar : actor == 'user' ? userAvatar : systemAvatar;
 
 const initialContext = {
-  messages: [
-    {
-      messageId: '',
-      actor: 'bot',
-      payload: 'Hello 👋, how can I help you?',
-      feedback: 'n/a',
-    },
-  ],
+  messages: [],
   sendMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
