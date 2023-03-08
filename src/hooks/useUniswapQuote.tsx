@@ -14,16 +14,16 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
   const provider = useProvider();
 
   const { isLoading, error, data } = useSWR(
-    `useUniswapQuote-${props.baseTokenSymbol}-${props.quoteTokenSymbol}-${chain.id}`,
+    `useUniswapQuote-${props.baseTokenSymbol}-${props.quoteTokenSymbol}-${chain?.id || '1'}`,
     async () => {
       const isQueryTokenEth = props.quoteTokenSymbol === 'ETH';
       const isBaseTokenEth = props.baseTokenSymbol === 'ETH';
       const tokenIn = isBaseTokenEth
-        ? findTokenBySymbol('WETH', chain.id)
-        : findTokenBySymbol(props.baseTokenSymbol, chain.id);
+        ? findTokenBySymbol('WETH', chain?.id || 36963)
+        : findTokenBySymbol(props.baseTokenSymbol, chain?.id || 36963);
       const tokenOut = isQueryTokenEth
-        ? findTokenBySymbol('WETH', chain.id)
-        : findTokenBySymbol(props.quoteTokenSymbol, chain.id);
+        ? findTokenBySymbol('WETH', chain?.id || 36963)
+        : findTokenBySymbol(props.quoteTokenSymbol, chain?.id || 36963);
       const router = new AlphaRouter({
         chainId: MAINNET_CHAIN_ID,
         provider: provider,
