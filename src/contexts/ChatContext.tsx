@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useModalContext } from '@/contexts/ModalContext';
@@ -21,7 +21,6 @@ export type ChatContextType = {
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
 };
-
 
 const initialContext = {
   messages: [
@@ -161,7 +160,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setIsBotThinking(false);
     }, 500);
   };
-
 
   return (
     <ChatContext.Provider
