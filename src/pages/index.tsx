@@ -4,7 +4,7 @@ import { DebugButton } from '@/components/DebugButton';
 import { DebugMessageToggle } from '@/components/DebugMessageToggle';
 import { MintButton } from '@/components/MintButton';
 import { ResetButton } from '@/components/ResetButton';
-import { NftCollectionAttributes } from '@/components/widgets/NftAttributes';
+import { NftAttributes, NftCollectionAttributes } from '@/components/widgets/NftAttributes';
 
 export const Home = () => {
   return (
@@ -19,7 +19,6 @@ export const Home = () => {
         </div>
         <div className="w-full">
           <ChatBox />
-          <NftCollectionAttributes nftAddress={'0x8a90cab2b38dba80c64b7734e58ee1db38b8992e'} />
         </div>
       </div>
     </>

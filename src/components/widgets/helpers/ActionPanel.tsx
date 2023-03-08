@@ -18,7 +18,7 @@ export const ActionPanel = ({ header, msg, children }: Props) => {
             </div>
           </div>
           <div className="mt-5 sm:mt-0 sm:ml-6 sm:flex sm:items-center">
-            <div className="inline-flex grow items-center">{children}</div>
+            <div className="grow items-center">{children}</div>
           </div>
         </div>
       </div>

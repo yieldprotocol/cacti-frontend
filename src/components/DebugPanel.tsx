@@ -85,6 +85,20 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|price("ETH", "USDC")|>`}</p>
       </div>
+      {/* Start query for NFT traits */}
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(
+            `Sure let me pull the traits for that NFT. <|nfttraits("0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6", "5869")|>`
+          );
+        }}
+      >
+        Get traits for NFT 0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6:5869
+      </Button>
+      <div className="flex flex-col justify-center break-words text-xs">
+        <p>{`<|nfttraits("0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6", "5869")|>`}</p>
+      </div>
     </div>
   );
 };
