@@ -13,16 +13,14 @@ export const Price = (props: PriceProps) => {
     baseTokenSymbol: props.baseToken,
     quoteTokenSymbol: props.queryToken,
   });
-  let widgetComponent = <Spinner className="text-black" />;
+  let widgetComponent = <Spinner />;
   if (data?.humanReadableAmount) {
     widgetComponent = (
-      <p className="text-black">{`1 ${props.baseToken} is worth ${data.humanReadableAmount} ${props.queryToken}`}</p>
+      <p>{`1 ${props.baseToken} is worth ${data.humanReadableAmount} ${props.queryToken}`}</p>
     );
   } else if (error) {
     console.error(error);
-    widgetComponent = (
-      <p className="text-black">An error occurred, most likely we don&apos;t support the token</p>
-    );
+    widgetComponent = <p>An error occurred, most likely we don&apos;t support the token</p>;
   }
 
   return <>{widgetComponent}</>;
