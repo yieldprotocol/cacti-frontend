@@ -1,5 +1,6 @@
 import { Button } from '@/components/Button';
 import { useChatContext } from '@/contexts/ChatContext';
+import { shortenAddress } from '@/utils';
 
 export const DebugPanel = ({ handleClose }) => {
   const { spoofBotMessage } = useChatContext();
@@ -94,7 +95,7 @@ export const DebugPanel = ({ handleClose }) => {
           );
         }}
       >
-        Get traits for NFT 0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6:5869
+        `Get traits for NFT {shortenAddress('0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6')}:5869`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|nfttraits("0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6", "5869")|>`}</p>

@@ -4,7 +4,7 @@ import { Chain, useNetwork } from 'wagmi';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol } from '@/utils';
+import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { NftAttributes } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
@@ -100,7 +100,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <ActionPanel
             key={inputString}
-            header={`Query for NFT ${nftAddress}-${tokenID} traits`}
+            header={`Query for NFT ${shortenAddress(nftAddress)}:${tokenID} traits`}
             msg={inputString}
           >
             <NftAttributes nftAddress={nftAddress} tokenID={tokenID} />
