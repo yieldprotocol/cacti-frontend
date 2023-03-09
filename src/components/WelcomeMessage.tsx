@@ -7,10 +7,7 @@ const WelcomeColumn = ({ children }) => {
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) => {
-  let onClickClasses = '';
-  if (onClick) {
-    onClickClasses = 'cursor-pointer hover:bg-gray-500';
-  }
+  const onClickClasses = onClick ? 'cursor-pointer hover:bg-gray-500' : '';
   return (
     <div
       className={`my-4 max-w-[250px]  rounded-lg bg-gray-600 p-4 text-center text-white ${onClickClasses}`}
