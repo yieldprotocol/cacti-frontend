@@ -24,14 +24,7 @@ export type ChatContextType = {
 };
 
 const initialContext = {
-  messages: [
-    {
-      messageId: '',
-      actor: 'bot',
-      payload: 'Hello 👋, how can I help you?',
-      feedback: 'n/a',
-    },
-  ],
+  messages: [],
   sendMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
