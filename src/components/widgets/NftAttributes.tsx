@@ -27,8 +27,9 @@ const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
 };
 
 export const NftCollectionAttributes = ({ nftAddress }: Props) => {
-  const { isLoading, isError, error, data } = useQuery(['nftAttributes'], async () =>
-    fetchNftAttributes(nftAddress, '/traits')
+  const { isLoading, isError, error, data } = useQuery(
+    ['nftCollectionAttributes', nftAddress],
+    async () => fetchNftAttributes(nftAddress, '/traits')
   );
 
   if (isLoading) return <h1>Loading..</h1>;
@@ -44,8 +45,9 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
 };
 
 export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
-  const { isLoading, isError, error, data } = useQuery(['singleNftAttributes'], async () =>
-    fetchNftAttributes(nftAddress, `/${tokenID}`)
+  const { isLoading, isError, error, data } = useQuery(
+    ['NftAttributes', nftAddress, tokenID],
+    async () => fetchNftAttributes(nftAddress, `/${tokenID}`)
   );
   const result = useAsset({ network: 'ethereum-mainnet', address: nftAddress, tokenId: tokenID });
 
