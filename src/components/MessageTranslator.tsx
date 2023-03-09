@@ -6,11 +6,13 @@ import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
+import { NftAssetContainer } from './widgets/NftAssetContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from './widgets/NftAttributes';
+import { NftCollectionContainer } from './widgets/NftCollectionContainer';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
@@ -21,26 +23,39 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   return (
     <div className="flex flex-col gap-3">
       {stringsAndWidgets.map((item, i) => {
-        // if it's a string, just return the string in a fragment
-        if (typeof item === 'string') return <Fragment key={`i${i}`}>{item}</Fragment>;
-        // otherwise, let's try to translate the widget
-        return Widgetize(item, chain);
+        return (
+          <Fragment key={`i${i}`}>
+            {
+              // if it's a string, just return the string
+              // otherwise, let's try to translate the widget
+              typeof item === 'string' ? item : Widgetize(item, chain)
+            }
+          </Fragment>
+        );
       })}
     </div>
   );
 };
 
+const parseArgsStripQuotes = (args: string): any[] => {
+  return args
+    ? JSON.parse(
+        JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
+      )
+    : [];
+};
+
 const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
-  const inputString = `${fnName}(${args.join(',')})`;
+  const inputString = `${fnName}(${args})`;
   const chainId = chain?.id || 36963;
 
   try {
     switch (fnName) {
       // Transfer widget
-      case 'transfer':
-        const [tokenSymbol, amtString, receiver] = args;
+      case 'transfer': {
+        const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
         const isEth = tokenSymbol === 'ETH';
         const token = isEth
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
@@ -57,9 +72,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             </ConnectFirst>
           </ActionPanel>
         );
+      }
       // Swap widget
-      case 'uniswap':
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] = args;
+      case 'uniswap': {
+        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] =
+          parseArgsStripQuotes(args);
 
         const tokenIn =
           tokenInSymbol === 'ETH'
@@ -92,15 +109,9 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             </ConnectFirst>
           </ActionPanel>
         );
-      case 'nftsearch':
-        const [query] = args;
-        return (
-          <ActionPanel header={`Query for ${query} NFTs`} msg={inputString}>
-            <NftSearch {...{ query }} />
-          </ActionPanel>
-        );
-      case 'price':
-        const [baseToken, queryToken] = args;
+      }
+      case 'price': {
+        const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
             header={`Query for ${baseToken} in terms of ${queryToken}`}
@@ -109,8 +120,9 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <Price baseToken={baseToken} queryToken={queryToken} />
           </ActionPanel>
         );
-      case 'nfttraits':
-        const [nftAddress, tokenID] = args;
+      }
+      case 'nfttraits': {
+        const [nftAddress, tokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
             key={inputString}
@@ -120,11 +132,13 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <NftAttributes nftAddress={nftAddress} tokenID={tokenID} />
           </ActionPanel>
         );
-      case 'nftcollectiontraits':
+      }
+      case 'nftcollectiontraits': {
         const [nftCollectionAddress] = args;
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
-      case 'nftsbytraits':
-        const [nftAddr, traitType, traitValue] = args;
+      }
+      case 'nftsbytraits': {
+        const [nftAddr, traitType, traitValue] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
             key={inputString}
@@ -138,6 +152,51 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             />
           </ActionPanel>
         );
+      }
+      case 'nftsearch':
+      case 'nft-search': {
+        const query = args;
+        return (
+          <ActionPanel header={`Query for ${query} NFTs`} msg={inputString}>
+            <NftSearch {...{ query }} />
+          </ActionPanel>
+        );
+      }
+      case 'nft-collection-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
+          params = { network, address, name, numAssets, previewImageUrl };
+        }
+        return <NftCollectionContainer {...params} />;
+      }
+      case 'nft-asset-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, tokenId, collectionName, name, previewImageUrl] =
+            parseArgsStripQuotes(args);
+          params = { network, address, tokenId, collectionName, name, previewImageUrl };
+        }
+        return <NftAssetContainer {...params} />;
+      }
+      case 'list-container': {
+        const params = JSON.parse(args);
+        return (
+          <div className="columns-1 text-black sm:columns-2">
+            <ul role="list" className="divide-y divide-gray-200">
+              {params.items?.map(({ name, params }, i) => (
+                <Fragment key={`i${i}`}>
+                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                </Fragment>
+              )) || ''}
+            </ul>
+          </div>
+        );
+      }
       default:
         return (
           <div className="inline-block bg-slate-500 p-5 text-white">

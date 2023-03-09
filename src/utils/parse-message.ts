@@ -3,7 +3,7 @@ export const parseMessage = (str: string) => {
    * 2 capture groups, one being the function name, and the other being all the params.
    * If there are no params, the second group will be empty.
    */
-  const regex = new RegExp(/<\|([\w\-]*)\(([^)]*)\)\|>/g, 'dg');
+  const regex = new RegExp(/<\|([\w\-]*)\(([^\n]*)\)\|>/g, 'dg');
   const matches = Array.from(str.matchAll(regex));
   if (!matches.length) return [str];
   const parsedMatches = Array.from(matches).map((match) => {
@@ -16,13 +16,7 @@ export const parseMessage = (str: string) => {
       start,
       end,
       fnName: capture1,
-      args: capture2
-        ? JSON.parse(
-            JSON.stringify(
-              capture2.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), ''))
-            )
-          )
-        : [],
+      args: capture2,
     };
   });
   // TODO: sloppy
