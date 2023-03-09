@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
+import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol } from '@/utils';
@@ -91,6 +92,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <ActionPanel header={`Query for ${query} NFTs`} msg={inputString}>
             <NftSearch {...{ query }} />
+          </ActionPanel>
+        );
+      case 'price':
+        const [baseToken, queryToken] = args;
+        return (
+          <ActionPanel
+            header={`Query for ${baseToken} in terms of ${queryToken}`}
+            msg={inputString}
+          >
+            <Price baseToken={baseToken} queryToken={queryToken} />
           </ActionPanel>
         );
       default:
