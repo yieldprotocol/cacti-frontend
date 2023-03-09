@@ -12,6 +12,7 @@ const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: string }) => {
   const { chain } = useNetwork();
   const provider = useProvider();
+  const CHAIN_ID_FORK_FALLBACK = chain?.id || 36963;
 
   const { isLoading, error, data } = useSWR(
     `useUniswapQuote-${props.baseTokenSymbol}-${props.quoteTokenSymbol}-${chain?.id || '1'}`,
@@ -19,11 +20,11 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
       const isQueryTokenEth = props.quoteTokenSymbol === 'ETH';
       const isBaseTokenEth = props.baseTokenSymbol === 'ETH';
       const tokenIn = isBaseTokenEth
-        ? findTokenBySymbol('WETH', chain?.id || 36963)
-        : findTokenBySymbol(props.baseTokenSymbol, chain?.id || 36963);
+        ? findTokenBySymbol('WETH', CHAIN_ID_FORK_FALLBACK)
+        : findTokenBySymbol(props.baseTokenSymbol, CHAIN_ID_FORK_FALLBACK);
       const tokenOut = isQueryTokenEth
-        ? findTokenBySymbol('WETH', chain?.id || 36963)
-        : findTokenBySymbol(props.quoteTokenSymbol, chain?.id || 36963);
+        ? findTokenBySymbol('WETH', CHAIN_ID_FORK_FALLBACK)
+        : findTokenBySymbol(props.quoteTokenSymbol, CHAIN_ID_FORK_FALLBACK);
       const router = new AlphaRouter({
         chainId: MAINNET_CHAIN_ID,
         provider: provider,
