@@ -19,8 +19,8 @@ export const MessageList = () => {
         return <MessageItem key={`m${i}`} message={message} />;
       })}
       {isBotThinking && (
-        <div className="flex justify-center bg-gray-600 p-6 text-white after:inline-block after:animate-ellipse">
-          Bot is thinking
+        <div className="flex justify-center bg-gray-600 p-6 text-white after:inline-block">
+          <span className="w-[114px] after:animate-ellipse">Bot is thinking</span>
         </div>
       )}
       <div ref={bottomRef}></div>
