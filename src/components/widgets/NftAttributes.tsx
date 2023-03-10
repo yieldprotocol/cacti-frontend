@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { useAsset } from '@center-inc/react';
+import { useAsset, useCollection } from '@center-inc/react';
 import axios from 'axios';
 import { Spinner } from '@/utils';
 
@@ -32,15 +32,24 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     async () => fetchNftAttributes(nftAddress, '/traits')
   );
 
+  const useCollectionResult = useCollection({ network: 'ethereum-mainnet', address: nftAddress });
+
   if (isLoading) return <h1>Loading..</h1>;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
     <div>
-      <span>The NFT collection({nftAddress}) has the following traits: </span>
+      <span>
+        The NFT collection, <b>{useCollectionResult?.name || nftAddress}</b>, has the following
+        traits:{' '}
+      </span>
       {data?.items.map((item, index, items) => {
         if (index === items.length - 1) return <b key={item.trait}>and {item.trait}. </b>;
-        return <b key={item.trait}>{item.trait}, </b>;
+        return (
+          <span key={item.trait}>
+            <b>{item.trait}</b>,{' '}
+          </span>
+        );
       })}
     </div>
   );
