@@ -6,7 +6,7 @@ import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
-import { NftAttributes } from './widgets/NftAttributes';
+import { NftAttributes, NftCollectionAttributes } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
@@ -95,6 +95,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <NftSearch {...{ query }} />
           </ActionPanel>
         );
+      case 'price':
+        const [baseToken, queryToken] = args;
+        return (
+          <ActionPanel
+            header={`Query for ${baseToken} in terms of ${queryToken}`}
+            msg={inputString}
+          >
+            <Price baseToken={baseToken} queryToken={queryToken} />
+          </ActionPanel>
+        );
       case 'nfttraits':
         const [nftAddress, tokenID] = args;
         return (
@@ -106,16 +116,9 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <NftAttributes nftAddress={nftAddress} tokenID={tokenID} />
           </ActionPanel>
         );
-      case 'price':
-        const [baseToken, queryToken] = args;
-        return (
-          <ActionPanel
-            header={`Query for ${baseToken} in terms of ${queryToken}`}
-            msg={inputString}
-          >
-            <Price baseToken={baseToken} queryToken={queryToken} />
-          </ActionPanel>
-        );
+      case 'nftcollectiontraits':
+        const [nftCollectionAddress] = args;
+        return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       default:
         return (
           <div className="inline-block bg-slate-500 p-5 text-white">

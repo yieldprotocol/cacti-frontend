@@ -91,14 +91,27 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure let me pull the traits for that NFT. <|nfttraits("0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6", "5869")|>`
+            `Sure let me pull the traits for that NFT. <|nfttraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`
           );
         }}
       >
-        `Get traits for NFT {shortenAddress('0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6')}:5869`
+        `Get traits for NFT {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:8566`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nfttraits("0x4a793Dff8DB7717fA042C5a71CBdaEe883016Ba6", "5869")|>`}</p>
+        <p>{`<|nfttraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`}</p>
+      </div>
+      {/* Start query for NFT collection traits */}
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(`<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`);
+        }}
+      >
+        `Get traits for NFT collection{' '}
+        {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:5869`
+      </Button>
+      <div className="flex flex-col justify-center break-words text-xs">
+        <p>{`<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`}</p>
       </div>
     </div>
   );

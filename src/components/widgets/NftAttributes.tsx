@@ -36,11 +36,13 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
-    <>
-      {data?.items.map((item) => {
-        return <span key={item.trait}>{item.trait} </span>;
+    <div>
+      <span>The NFT collection({nftAddress}) has the following traits: </span>
+      {data?.items.map((item, index, items) => {
+        if (index === items.length - 1) return <b key={item.trait}>and {item.trait}. </b>;
+        return <b key={item.trait}>{item.trait}, </b>;
       })}
-    </>
+    </div>
   );
 };
 
