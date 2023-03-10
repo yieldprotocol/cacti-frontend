@@ -113,6 +113,21 @@ export const DebugPanel = ({ handleClose }) => {
       <div className="flex flex-col justify-center break-words text-xs">
         <p>{`<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`}</p>
       </div>
+      {/* Start query for NFTs using traits */}
+      <Button
+        onClick={(e) => {
+          handleClose();
+          spoofBotMessage(
+            `<|nftsbytraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`
+          );
+        }}
+      >
+        `Get traits for NFT collection{' '}
+        {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`
+      </Button>
+      <div className="flex flex-col justify-center break-words text-xs">
+        <p>{`<|nftsbytraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`}</p>
+      </div>
     </div>
   );
 };

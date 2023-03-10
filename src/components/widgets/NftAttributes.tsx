@@ -6,6 +6,8 @@ import { Spinner } from '@/utils';
 type Props = {
   nftAddress: string;
   tokenID?: string;
+  traitType?: string;
+  traitValue?: string;
 };
 
 axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
@@ -15,6 +17,28 @@ const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
     .get(`${nftAddress}${subUrl}`, {
       headers: {
         Accept: 'application/json',
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const fetchNftsByAttributes = async (nftAddress: string, traitType: string, traitValue: string) => {
+  const data = {
+    query: {},
+  };
+  data.query[traitType] = [traitValue];
+
+  return axios
+    .post(`${nftAddress}/assets/searchByTraits?limit=10`, data, {
+      headers: {
+        Accept: 'application/json',
+        contentType: 'application/json',
         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
       },
     })
@@ -80,6 +104,47 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
             </div>
           );
         })}
+    </>
+  );
+};
+
+export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props) => {
+  const { isLoading, isError, error, data } = useQuery(
+    ['NftsWithAttributes', nftAddress, traitType, traitValue],
+    async () => fetchNftsByAttributes(nftAddress, traitType, traitValue)
+  );
+
+  if (isLoading) return <Spinner />;
+  if (isError) return <h1>{JSON.stringify(error)}</h1>;
+  if (!data) return <h1>No data</h1>;
+
+  return (
+    <>
+      <div className="columns-1 text-black sm:columns-2">
+        {isLoading && <span>Results loading</span>}
+        <ul role="list" className="divide-y divide-gray-200">
+          {data?.items.map(({ tokenId, address, name, mediumPreviewImageUrl }: any) => (
+            <div key={tokenId}>
+              <a
+                href={`https://center.app/collections/${address}/${tokenId}`}
+                className="flex items-center py-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {mediumPreviewImageUrl ? (
+                  <img className="h-32 w-32 rounded-md" src={mediumPreviewImageUrl} alt="" />
+                ) : (
+                  <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
+                    ?
+                  </div>
+                )}
+                <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
+              </a>
+            </div>
+          )) || ''}
+        </ul>
+        {error && 'There was an unexpected center.app API error'}
+      </div>
     </>
   );
 };

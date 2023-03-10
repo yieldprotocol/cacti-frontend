@@ -6,7 +6,11 @@ import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
-import { NftAttributes, NftCollectionAttributes } from './widgets/NftAttributes';
+import {
+  NftAttributes,
+  NftCollectionAttributes,
+  NftsWithAttributes,
+} from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
@@ -119,6 +123,21 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       case 'nftcollectiontraits':
         const [nftCollectionAddress] = args;
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
+      case 'nftsbytraits':
+        const [nftAddr, traitType, traitValue] = args;
+        return (
+          <ActionPanel
+            key={inputString}
+            header={`Query for NFTs with Moon Hat traits`}
+            msg={`Headwear, Moon Hat`}
+          >
+            <NftsWithAttributes
+              nftAddress={nftAddr}
+              traitType={traitType}
+              traitValue={traitValue}
+            />
+          </ActionPanel>
+        );
       default:
         return (
           <div className="inline-block bg-slate-500 p-5 text-white">
