@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
@@ -117,6 +118,19 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
 
+  const {
+    isLoading: quoteIsLoading,
+    error: quoteError,
+    data: quote,
+  } = useUniswapQuote({ baseTokenSymbol: tokenIn.symbol, quoteTokenSymbol: tokenOut.symbol });
+
+  // 1. Considerations, quote is async
+  // 2. convert amountIn to humanReadableAmount
+  // 3. Make sure quote is in bigNumber
+  console.log('Quote', quote?.value);
+  console.log('Quote', quoteIsLoading);
+  console.log('Quote', quote?.value?.toExact());
+  console.log('Quote', amountIn.toString());
   const params: ExactInputSingleParams = {
     tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
     tokenOut: tokenOut.address,

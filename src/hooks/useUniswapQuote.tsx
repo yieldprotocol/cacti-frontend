@@ -9,7 +9,11 @@ import { MAINNET_CHAIN_ID } from '@/utils/constants';
 
 const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 
-const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: string }) => {
+const useUniswapQuote = (props: {
+  baseTokenSymbol: string;
+  quoteTokenSymbol: string;
+  amount?: number;
+}) => {
   const { chain } = useNetwork();
   const provider = useProvider();
   const CHAIN_ID_FORK_FALLBACK = chain?.id || 36963;
@@ -39,7 +43,7 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
             tokenIn.name
           ),
 
-          ethers.utils.parseUnits('1', tokenIn.decimals).toString()
+          ethers.utils.parseUnits(props?.amount?.toString() || '1', tokenIn.decimals).toString()
         ),
         new Token(
           MAINNET_CHAIN_ID,
@@ -53,6 +57,7 @@ const useUniswapQuote = (props: { baseTokenSymbol: string; quoteTokenSymbol: str
 
       return {
         humanReadableAmount: route.quote.toFixed(4),
+        value: route.quote,
       };
     }
   );
