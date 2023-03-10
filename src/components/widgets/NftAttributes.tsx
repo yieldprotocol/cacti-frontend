@@ -15,7 +15,7 @@ const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
     .get(`${nftAddress}${subUrl}`, {
       headers: {
         Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY,
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
       },
     })
     .then((res) => {
