@@ -3,12 +3,19 @@ import { useAsset, useCollection } from '@center-inc/react';
 import axios from 'axios';
 import { Spinner } from '@/utils';
 
-type Props = {
+interface Props {
   nftAddress: string;
   tokenID?: string;
   traitType?: string;
   traitValue?: string;
-};
+}
+
+interface NftAttributesProps {
+  tokenId: string;
+  address: string;
+  name: string;
+  mediumPreviewImageUrl: string;
+}
 
 axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
 
@@ -30,9 +37,10 @@ const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
 
 const fetchNftsByAttributes = async (nftAddress: string, traitType: string, traitValue: string) => {
   const data = {
-    query: {},
+    query: {
+      [traitType]: [traitValue],
+    },
   };
-  data.query[traitType] = [traitValue];
 
   return axios
     .post(`${nftAddress}/assets/searchByTraits?limit=10`, data, {
@@ -116,32 +124,36 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
-  if (!data) return <h1>No data</h1>;
+  if (!data) return <h1 className="text-black">fetchNftsByAttributes failed</h1>;
 
   return (
     <>
       <div className="columns-1 text-black sm:columns-2">
         {isLoading && <span>Results loading</span>}
         <ul role="list" className="divide-y divide-gray-200">
-          {data?.items.map(({ tokenId, address, name, mediumPreviewImageUrl }: any) => (
-            <div key={tokenId}>
-              <a
-                href={`https://center.app/collections/${address}/${tokenId}`}
-                className="flex items-center py-4"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {mediumPreviewImageUrl ? (
-                  <img className="h-32 w-32 rounded-md" src={mediumPreviewImageUrl} alt="" />
-                ) : (
-                  <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
-                    ?
-                  </div>
-                )}
-                <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
-              </a>
-            </div>
-          )) || ''}
+          {(data?.items &&
+            data?.items.map(
+              ({ tokenId, address, name, mediumPreviewImageUrl }: NftAttributesProps) => (
+                <div key={tokenId}>
+                  <a
+                    href={`https://center.app/collections/${address}/${tokenId}`}
+                    className="flex items-center py-4"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {mediumPreviewImageUrl ? (
+                      <img className="h-32 w-32 rounded-md" src={mediumPreviewImageUrl} alt="" />
+                    ) : (
+                      <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
+                        ?
+                      </div>
+                    )}
+                    <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
+                  </a>
+                </div>
+              )
+            )) ||
+            `Can't find items that has the following traits: ${traitType}: ${traitValue}`}
         </ul>
         {error && 'There was an unexpected center.app API error'}
       </div>

@@ -128,8 +128,8 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <ActionPanel
             key={inputString}
-            header={`Query for NFTs with Moon Hat traits`}
-            msg={`Headwear, Moon Hat`}
+            header={`Query for NFTs with ${traitValue} ${traitType}`}
+            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}}`}
           >
             <NftsWithAttributes
               nftAddress={nftAddr}
