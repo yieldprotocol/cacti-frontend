@@ -12,7 +12,7 @@ const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 const useUniswapQuote = (props: {
   baseTokenSymbol: string;
   quoteTokenSymbol: string;
-  amount?: number;
+  amount?: string;
 }) => {
   const { chain } = useNetwork();
   const provider = useProvider();

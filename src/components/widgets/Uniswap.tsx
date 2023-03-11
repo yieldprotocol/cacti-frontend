@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   erc20ABI,
   useAccount,
@@ -44,12 +44,14 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
 
   // Check if balance is enough
-  const { data: balance } = useContractRead({
+  const { data: balance, error } = useContractRead({
     address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: [receiver],
   });
+  console.log(error);
+  console.log(tokenIn.address);
 
   // Get allowance amount
   const { data: allowanceAmount } = useContractRead({
@@ -117,12 +119,17 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
+  const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain.id) : tokenIn;
 
   const {
     isLoading: quoteIsLoading,
     error: quoteError,
     data: quote,
-  } = useUniswapQuote({ baseTokenSymbol: tokenIn.symbol, quoteTokenSymbol: tokenOut.symbol });
+  } = useUniswapQuote({
+    baseTokenSymbol: tokenInChecked.symbol,
+    quoteTokenSymbol: tokenOut.symbol,
+    amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
+  });
 
   // 1. Considerations, quote is async
   // 2. convert amountIn to humanReadableAmount
@@ -130,15 +137,17 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   console.log('Quote', quote?.value);
   console.log('Quote', quoteIsLoading);
   console.log('Quote', quote?.value?.toExact());
-  console.log('Quote', amountIn.toString());
+  console.log('Quote', ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals));
   const params: ExactInputSingleParams = {
-    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
+    tokenIn: tokenInChecked.address,
     tokenOut: tokenOut.address,
     fee: BigNumber.from(3000),
     recipient: receiver,
     deadline: BigNumber.from(0),
     amountIn,
-    amountOutMinimum: BigNumber.from(0),
+    amountOutMinimum: quote?.value
+      ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals)
+      : BigNumber.from(0),
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
@@ -159,7 +168,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     <>
       <div>
         {!isSuccess && (
-          <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+          <Button disabled={!swapWrite || quoteIsLoading} onClick={() => swapWrite?.()}>
             Send
           </Button>
         )}
