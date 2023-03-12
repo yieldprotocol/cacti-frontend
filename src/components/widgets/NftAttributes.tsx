@@ -20,6 +20,8 @@ interface NftAttributesProps {
 axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
 
 const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
+  console.log(subUrl);
+  console.log(nftAddress);
   return axios
     .get(`${nftAddress}${subUrl}`, {
       headers: {
@@ -63,8 +65,12 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     ['nftCollectionAttributes', nftAddress],
     async () => fetchNftAttributes(nftAddress, '/traits')
   );
+  console.log(nftAddress);
+  console.log(data);
+  console.log(error);
 
   const useCollectionResult = useCollection({ network: 'ethereum-mainnet', address: nftAddress });
+  console.log(useCollectionResult);
 
   if (isLoading) return <h1>Loading..</h1>;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
@@ -98,7 +104,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex justify-center">
         <img className="h-32 w-32 rounded-md" src={result[0].mediaUrl} alt="nft image" />
       </div>
@@ -112,7 +118,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
             </div>
           );
         })}
-    </>
+    </div>
   );
 };
 
@@ -128,13 +134,16 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
 
   return (
     <>
-      <div className="columns-1 text-black sm:columns-2">
+      <div className="mt-4 flex w-[100%] justify-center text-black">
         {isLoading && <span>Results loading</span>}
-        <ul role="list" className="divide-y divide-gray-200">
+        <ul
+          role="list"
+          className="flex grid w-[100%] grid-cols-2 flex-wrap gap-x-6 gap-y-1 after:flex-auto xl:grid-cols-4"
+        >
           {(data?.items &&
             data?.items.map(
               ({ tokenId, address, name, mediumPreviewImageUrl }: NftAttributesProps) => (
-                <div key={tokenId}>
+                <div className="flex justify-center" key={tokenId}>
                   <a
                     href={`https://center.app/collections/${address}/${tokenId}`}
                     className="flex items-center py-4"
@@ -148,7 +157,7 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
                         ?
                       </div>
                     )}
-                    <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
+                    <p className="ml-3 text-sm font-medium text-gray-300 underline">{name}</p>
                   </a>
                 </div>
               )
