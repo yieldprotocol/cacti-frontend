@@ -4,8 +4,13 @@ import { Chain, useNetwork } from 'wagmi';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol } from '@/utils';
+import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
+import {
+  NftAttributes,
+  NftCollectionAttributes,
+  NftsWithAttributes,
+} from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
@@ -102,6 +107,35 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             msg={inputString}
           >
             <Price baseToken={baseToken} queryToken={queryToken} />
+          </ActionPanel>
+        );
+      case 'nfttraits':
+        const [nftAddress, tokenID] = args;
+        return (
+          <ActionPanel
+            key={inputString}
+            header={`Query for NFT ${shortenAddress(nftAddress)}:${tokenID} traits`}
+            msg={inputString}
+          >
+            <NftAttributes nftAddress={nftAddress} tokenID={tokenID} />
+          </ActionPanel>
+        );
+      case 'nftcollectiontraits':
+        const [nftCollectionAddress] = args;
+        return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
+      case 'nftsbytraits':
+        const [nftAddr, traitType, traitValue] = args;
+        return (
+          <ActionPanel
+            key={inputString}
+            header={`Query for NFTs with ${traitValue} ${traitType}`}
+            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}}`}
+          >
+            <NftsWithAttributes
+              nftAddress={nftAddr}
+              traitType={traitType}
+              traitValue={traitValue}
+            />
           </ActionPanel>
         );
       default:
