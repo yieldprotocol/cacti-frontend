@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { BigNumberish } from 'ethers';
 import { parseEther } from 'ethers/lib/utils.js';
+import { useQuery } from 'react-query';
+
 import {
   useAccount,
   useBlockNumber,
@@ -54,9 +57,32 @@ export const BuyNFT = (props: Props) => {
     setTimeStamp(block.timestamp);
   };
 
+  const getListing = async (nftAddress: string, tokenId: string) => {
+    axios
+      .get(
+        `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'X-API-Key': '2cbc58c203fd498f9ff9c531f3f71c27',
+          },
+        }
+      )
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
   useEffect(() => {
     getTimeStamp();
+    
   });
+
+  const {isLoading, isError, error, data } = useQuery(['listing', nftAddress, tokenId], async() => getListing());
 
   const params: BasicOrderParameters = {
     considerationToken: '0x23581767a106ae21c074b2276d25e5c3e136a68b',
