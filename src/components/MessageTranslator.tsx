@@ -151,7 +151,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nfttraits': {
+      case 'nft-traits': {
         const [nftAddress, tokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
@@ -163,11 +163,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nftcollectiontraits': {
+      case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
-      case 'nftsbytraits': {
+      case 'nfts-by-traits': {
         const [nftAddr, traitType, traitValue] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
@@ -184,7 +184,6 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nftsearch':
       case 'nft-search': {
         const query = args;
         return (
