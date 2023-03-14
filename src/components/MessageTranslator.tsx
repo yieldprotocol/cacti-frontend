@@ -2,7 +2,11 @@ import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
 import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
-import { NftCollectionContainer } from '@/components/widgets/NftCollectionContainer';
+import {
+  NftCollectionContainer,
+  NftCollectionTraitContainer,
+  NftCollectionTraitValueContainer,
+} from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
@@ -212,6 +216,24 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           params = { network, address, tokenId, collectionName, name, previewImageUrl };
         }
         return <NftAssetContainer {...params} />;
+      }
+      case 'nft-collection-trait-container': {
+        const { values, ...params } = JSON.parse(args);
+        return (
+          <NftCollectionTraitContainer {...params}>
+            <ul role="list" className="divide-y divide-gray-200">
+              {values?.map(({ name, params }, i) => (
+                <Fragment key={`i${i}`}>
+                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                </Fragment>
+              )) || ''}
+            </ul>
+          </NftCollectionTraitContainer>
+        );
+      }
+      case 'nft-collection-trait-value-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitValueContainer {...params} />;
       }
       case 'yield-container': {
         const params = JSON.parse(args);

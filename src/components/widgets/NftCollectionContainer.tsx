@@ -6,6 +6,18 @@ interface NftCollectionContainerProps {
   numAssets?: string | number;
 }
 
+interface NftCollectionTraitContainerProps {
+  trait: string;
+  children?: JSX.Element;
+}
+
+interface NftCollectionTraitValueContainerProps {
+  trait: string;
+  value: string;
+  count: string | number;
+  total: string | number;
+}
+
 export const NftCollectionContainer = ({
   network,
   address,
@@ -27,5 +39,33 @@ export const NftCollectionContainer = ({
         </div>
       </a>
     </>
+  );
+};
+
+export const NftCollectionTraitContainer = ({
+  trait,
+  children,
+}: NftCollectionTraitContainerProps) => {
+  return (
+    <div>
+      <b>{trait}: </b>
+      {children}
+    </div>
+  );
+};
+
+export const NftCollectionTraitValueContainer = ({
+  trait,
+  value,
+  count,
+  total,
+}: NftCollectionTraitValueContainerProps) => {
+  const numer = typeof count === 'string' ? parseInt(count) : count;
+  const denom = typeof total === 'string' ? parseInt(total) : total;
+  const pct = Math.round((100.0 * numer) / denom);
+  return (
+    <div>
+      {value} ({pct}%)
+    </div>
   );
 };
