@@ -1,18 +1,18 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
+import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
+import { NftCollectionContainer } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
-import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from './widgets/NftAttributes';
-import { NftCollectionContainer } from '@/components/widgets/NftCollectionContainer';
 import { NftSearch } from './widgets/NftSearch';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
