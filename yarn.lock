@@ -3651,7 +3651,7 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     react-query: ^3.39.3
-    react-use-websocket: ^4.2.0
+    react-use-websocket: ^4.3.1
     swr: ^2.0.4
     tailwindcss: ^3.2.4
     typescript: 4.9.4
@@ -7873,13 +7873,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-use-websocket@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "react-use-websocket@npm:4.2.0"
+"react-use-websocket@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "react-use-websocket@npm:4.3.1"
   peerDependencies:
     react: ">= 18.0.0"
     react-dom: ">= 18.0.0"
-  checksum: f28b1e6f5ad604302003c7df5b0af7308c26f9d2d22d0681a7f120fd3066efa6525b1ccb21a44125ac6d27976eba20d892df75d106e12be73c68e29be497ffb6
+  checksum: 6febb76b462e68fddc8021f155f914124afce6dad42ed3807794532a208263a4946a69f1783d81faf0aba83677bd14f973b4ebdbd79dcd35a6f67b679d199c51
   languageName: node
   linkType: hard
 
