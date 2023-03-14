@@ -122,7 +122,7 @@ export const DebugPanel = ({ handleClose }) => {
           );
         }}
       >
-        `Get traits for NFT collection{' '}
+        `Get NFTs by traits{' '}
         {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">

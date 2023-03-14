@@ -174,7 +174,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             key={inputString}
             direction="col"
             header={`Query for NFTs with ${traitValue} ${traitType}`}
-            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}}`}
+            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}`}
           >
             <NftsWithAttributes
               nftAddress={nftAddr}
