@@ -1,4 +1,4 @@
 type Widget = {
   fnName: string;
-  args: any[];
+  args: any;
 };
