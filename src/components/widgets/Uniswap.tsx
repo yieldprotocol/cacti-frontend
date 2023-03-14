@@ -15,6 +15,7 @@ import { WidgetError } from '@/components/widgets/helpers';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
+import { Spinner } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -131,13 +132,6 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
   });
 
-  // 1. Considerations, quote is async
-  // 2. convert amountIn to humanReadableAmount
-  // 3. Make sure quote is in bigNumber
-  console.log('Quote', quote?.value);
-  console.log('Quote', quoteIsLoading);
-  console.log('Quote', quote?.value?.toExact());
-  console.log('Quote', ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals));
   const params: ExactInputSingleParams = {
     tokenIn: tokenInChecked.address,
     tokenOut: tokenOut.address,
@@ -146,7 +140,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     deadline: BigNumber.from(0),
     amountIn,
     amountOutMinimum: quote?.value
-      ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals)
+      ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals).div('1000')
       : BigNumber.from(0),
     sqrtPriceLimitX96: BigNumber.from(0),
   };
@@ -168,8 +162,15 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     <>
       <div>
         {!isSuccess && (
-          <Button disabled={!swapWrite || quoteIsLoading} onClick={() => swapWrite?.()}>
-            Send
+          <Button
+            className="px-4"
+            disabled={!swapWrite || quoteIsLoading}
+            onClick={() => swapWrite?.()}
+          >
+            <div className="flex gap-2">
+              Send
+              {quoteIsLoading ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
+            </div>
           </Button>
         )}
         {isSuccess && <TxStatus hash={data?.hash} />}
