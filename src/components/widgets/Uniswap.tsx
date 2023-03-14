@@ -51,8 +51,6 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     functionName: 'balanceOf',
     args: [receiver],
   });
-  console.log(error);
-  console.log(tokenIn.address);
 
   // Get allowance amount
   const { data: allowanceAmount } = useContractRead({
