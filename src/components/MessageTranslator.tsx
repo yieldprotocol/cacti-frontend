@@ -6,7 +6,7 @@ import { NftCollectionContainer } from '@/components/widgets/NftCollectionContai
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol, shortenAddress } from '@/utils';
+import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import {
   NftAttributes,
@@ -113,16 +113,18 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         );
       }
       case 'yield-farm': {
-        // deposit-token(Compound, Ethereum, USDC, 10000)
-        const [project, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
+        const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const isEth = tokenSymbol === 'ETH';
         const token = isEth
           ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
           : findTokenBySymbol(tokenSymbol, chainId);
+
         const amount = parseUnits(amtString, token.decimals);
+
+        const project = findProjectByName(projectName);
         return (
           <ActionPanel
-            header={`You are depositing ${amtString} ${tokenSymbol} into ${project}`}
+            header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
             msg={inputString}
             key={inputString}
           >

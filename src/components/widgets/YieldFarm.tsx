@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import {
+  UsePrepareContractWriteConfig,
   erc20ABI,
   useAccount,
   useContractRead,
@@ -12,34 +14,37 @@ import {
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
-import { Token } from '@/types';
-import { findTokenBySymbol, formatToEther } from '@/utils';
-import SwapRouter02Abi from '../../abi/SwapRouter02.json';
+import { Project, Token } from '@/types';
+import CompoundV2USDCAbi from '../../abi/CompoundV2USDC.json';
 
-interface Props {
-  project: string;
+// NOTE: For Demo, only support depositing USDC into Compound
+// Compound-V2 USDC cToken address
+const compoundUSDCAddress = '0x39AA39c021dfbaE8faC545936693aC917d5E7563';
+const supportedProjects: {
+  [projectId: string]: {
+    getWriteConfig: (token: Token, amount: BigNumber) => UsePrepareContractWriteConfig;
+  };
+} = {
+  compound: {
+    getWriteConfig: (token: Token, amount: BigNumber): UsePrepareContractWriteConfig => {
+      return {
+        address: compoundUSDCAddress,
+        abi: CompoundV2USDCAbi,
+        functionName: 'mint',
+        args: [amount],
+      };
+    },
+  },
+};
+interface YieldFarmProps {
+  project: Project;
   network: string;
   token: Token;
   amount: BigNumber;
 }
 
-interface ExactInputSingleParams {
-  tokenIn: string;
-  tokenOut: string;
-  fee: BigNumber;
-  recipient: string;
-  deadline: BigNumber;
-  amountIn: BigNumber;
-  amountOutMinimum: BigNumber;
-  sqrtPriceLimitX96: BigNumber;
-}
-
-// TODO: change
-const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
-
-export const YieldFarm = ({ project, network, token, amount }: Props) => {
-  // Owner is the receiver
-  const { address: sender } = useAccount();
+export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
+  const { address: walletAddress } = useAccount();
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
@@ -49,7 +54,7 @@ export const YieldFarm = ({ project, network, token, amount }: Props) => {
     address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
-    args: [sender],
+    args: [walletAddress],
   });
 
   // Get allowance amount
@@ -57,41 +62,47 @@ export const YieldFarm = ({ project, network, token, amount }: Props) => {
     address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [sender, swapRouter02Address],
+    args: [walletAddress, compoundUSDCAddress],
   });
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(amountIn));
-    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, sender]);
+    setHasBalance(balance && BigNumber.from(balance).gte(amount));
+    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amount));
+  }, [balance, allowanceAmount, amount, isApprovalSuccess, walletAddress]);
 
-  // ETH to token swap
-  if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
+  // For Demo, only support depositing USDC into Compound
+  if (project.id !== 'compound' || token.symbol !== 'USDC') {
+    return <p>Unable to deposit, project/token not supported</p>;
+  }
+
+  if (!hasBalance) {
+    return <p>Insufficient balance</p>;
+  }
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ tokenIn, amountIn, setIsApprovalSuccess }} />
+        <ApproveTokens {...{ project, token, amount, setIsApprovalSuccess }} />
       )}
-      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
+      {(hasAllowance || isApprovalSuccess) && <DepositTokens {...{ project, token, amount }} />}
     </div>
   );
 };
 
 const ApproveTokens = ({
-  tokenIn,
-  amountIn,
+  project,
+  token,
+  amount,
   setIsApprovalSuccess,
-}: Pick<Props, 'tokenIn' | 'amountIn'> & {
+}: Pick<YieldFarmProps, 'project' | 'token' | 'amount'> & {
   setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { chain } = useNetwork();
   // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: tokenIn.address as `0x${string}`,
+    address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [swapRouter02Address, amountIn],
+    args: [supportedProjects[project.id].getWriteConfig(token, amount).address, amount],
   });
   const { write: tokenWrite, data } = useContractWrite(tokenConfig);
   const { isLoading, isSuccess: isApprovalSuccess } = useWaitForTransaction({ hash: data?.hash });
@@ -107,41 +118,27 @@ const ApproveTokens = ({
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve Uniswap router for {formatToEther(amountIn.toString())} {tokenIn.symbol}
+      First, approve {project} for {formatUnits(amount.toString(), token.decimals)} {token.symbol}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
 };
 
-const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
-  // Owner is the receiver
-  const { address: receiver } = useAccount();
-  const { chain } = useNetwork();
-  const isEth = tokenIn.symbol == 'ETH';
+const DepositTokens = ({
+  project,
+  token,
+  amount,
+}: {
+  project: Project;
+  token: Token;
+  amount: BigNumber;
+}) => {
+  const prepareContractWriteConfig = supportedProjects[project.id].getWriteConfig(token, amount);
 
-  const params: ExactInputSingleParams = {
-    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
-    tokenOut: tokenOut.address,
-    fee: BigNumber.from(3000),
-    recipient: receiver,
-    deadline: BigNumber.from(0),
-    amountIn,
-    amountOutMinimum: BigNumber.from(0),
-    sqrtPriceLimitX96: BigNumber.from(0),
-  };
-
-  const { config: swapConfig, error } = usePrepareContractWrite({
-    address: swapRouter02Address,
-    abi: SwapRouter02Abi,
-    functionName: 'exactInputSingle',
-    args: [params],
-    overrides: {
-      value: isEth ? amountIn : 0,
-    },
-  });
+  const { config: depositConfig, error } = usePrepareContractWrite(prepareContractWriteConfig);
   const err: Error & { reason?: string } = error;
 
-  const { write: swapWrite, data, isSuccess } = useContractWrite(swapConfig);
+  const { write: swapWrite, data, isSuccess } = useContractWrite(depositConfig);
 
   return (
     <>
