@@ -41,15 +41,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(true);
   const { setModal } = useModalContext();
-  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
-    'wss://chatweb3.func.ai:9998',
-    {
-      onOpen: (evt) => onOpen(),
-      onClose: (evt) => onClose(),
-      onError: (evt) => onError(),
-      shouldReconnect: (closeEvent) => true,
-    }
-  );
+  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket('ws://localhost:9999', {
+    onOpen: (evt) => onOpen(),
+    onClose: (evt) => onClose(),
+    onError: (evt) => onError(),
+    shouldReconnect: (closeEvent) => true,
+  });
 
   // Connected wallet status
   const {

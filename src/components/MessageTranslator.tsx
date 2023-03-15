@@ -14,6 +14,8 @@ import {
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
+import { YieldContainer } from './widgets/YieldContainer';
+import { YieldFarm } from './widgets/YieldFarm';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
@@ -110,6 +112,26 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
+      case 'yield-farm': {
+        // deposit-token(Compound, Ethereum, USDC, 10000)
+        const [project, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
+        const isEth = tokenSymbol === 'ETH';
+        const token = isEth
+          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
+          : findTokenBySymbol(tokenSymbol, chainId);
+        const amount = parseUnits(amtString, token.decimals);
+        return (
+          <ActionPanel
+            header={`You are depositing ${amtString} ${tokenSymbol} into ${project}`}
+            msg={inputString}
+            key={inputString}
+          >
+            <ConnectFirst>
+              <YieldFarm {...{ project, network, token, amount }} />
+            </ConnectFirst>
+          </ActionPanel>
+        );
+      }
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
@@ -183,6 +205,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         }
         return <NftAssetContainer {...params} />;
       }
+      case 'yield-container': {
+        const params = JSON.parse(args);
+
+        return <YieldContainer {...params} />;
+      }
       case 'list-container': {
         const params = JSON.parse(args);
         return (
@@ -195,6 +222,31 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               )) || ''}
             </ul>
           </div>
+        );
+      }
+      case 'table-container': {
+        const params = JSON.parse(args);
+        const headers = params.headers;
+        const rows = params.rows;
+        return (
+          <table className="table-auto">
+            <thead>
+              <tr>
+                {headers.map((header, i) => (
+                  <th key={`i${i}`}>{header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(({ name, params }, i) => {
+                return (
+                  <Fragment key={`i${i}`}>
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
         );
       }
       default:
