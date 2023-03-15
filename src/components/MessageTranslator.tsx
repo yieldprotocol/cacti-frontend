@@ -1,7 +1,11 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
-import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
+import {
+  NftAssetContainer,
+  NftAssetTraitValueContainer,
+  NftAssetTraitsContainer,
+} from '@/components/widgets/NftAssetContainer';
 import {
   NftCollectionContainer,
   NftCollectionTraitContainer,
@@ -218,6 +222,24 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           params = { network, address, tokenId, collectionName, name, previewImageUrl };
         }
         return <NftAssetContainer {...params} />;
+      }
+      case 'nft-asset-traits-container': {
+        const { asset, values } = JSON.parse(args);
+        return (
+          <NftAssetTraitsContainer
+            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
+          >
+            {values?.map(({ name, params }, i) => (
+              <Fragment key={`i${i}`}>
+                {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+              </Fragment>
+            )) || ''}
+          </NftAssetTraitsContainer>
+        );
+      }
+      case 'nft-asset-trait-value-container': {
+        const params = JSON.parse(args);
+        return <NftAssetTraitValueContainer {...params} />;
       }
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);

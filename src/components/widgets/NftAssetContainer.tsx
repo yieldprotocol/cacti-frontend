@@ -7,6 +7,16 @@ interface NftAssetContainerProps {
   previewImageUrl: string;
 }
 
+interface NftAssetTraitsContainerProps {
+  asset: JSX.Element;
+  children?: JSX.Element;
+}
+
+interface NftAssetTraitValueContainerProps {
+  trait: string;
+  value: string;
+}
+
 export const NftAssetContainer = ({
   network,
   address,
@@ -36,6 +46,27 @@ export const NftAssetContainer = ({
           <p className="ml-3 text-sm font-medium text-gray-400">{network}</p>
         </div>
       </a>
+    </div>
+  );
+};
+
+// Asset with a nested list of trait values
+export const NftAssetTraitsContainer = ({ asset, children }: NftAssetTraitsContainerProps) => {
+  return (
+    <div>
+      {asset}
+      <div>{children}</div>
+    </div>
+  );
+};
+
+// Value of a trait
+export const NftAssetTraitValueContainer = ({ trait, value }: NftAssetTraitValueContainerProps) => {
+  return (
+    <div>
+      <div className="m-2 text-black">
+        <b>{trait}</b>: {value}{' '}
+      </div>
     </div>
   );
 };
