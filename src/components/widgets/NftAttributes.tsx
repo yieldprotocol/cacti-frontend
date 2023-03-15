@@ -20,8 +20,6 @@ interface NftAttributesProps {
 axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
 
 const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
-  console.log(subUrl);
-  console.log(nftAddress);
   return axios
     .get(`${nftAddress}${subUrl}`, {
       headers: {
@@ -65,12 +63,8 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     ['nftCollectionAttributes', nftAddress],
     async () => fetchNftAttributes(nftAddress, '/traits')
   );
-  console.log(nftAddress);
-  console.log(data);
-  console.log(error);
 
   const useCollectionResult = useCollection({ network: 'ethereum-mainnet', address: nftAddress });
-  console.log(useCollectionResult);
 
   if (isLoading) return <h1>Loading..</h1>;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
