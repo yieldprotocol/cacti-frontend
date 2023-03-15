@@ -16,7 +16,7 @@ export const NftAssetContainer = ({
   previewImageUrl,
 }: NftAssetContainerProps) => {
   return (
-    <div>
+    <div className="flex justify-center">
       <a
         href={`https://center.app/${network}/collections/${address}/${tokenId}`}
         className="flex items-center py-4"
