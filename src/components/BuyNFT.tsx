@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import { BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { parseEther } from 'ethers/lib/utils.js';
-import { useQuery } from 'react-query';
-
+import { getJSDocParameterTags } from 'typescript';
 import {
   useAccount,
   useBlockNumber,
@@ -19,7 +19,11 @@ import SeaportAbi from '../abi/SeaportAbi.json';
 import { Button } from './Button';
 import { WidgetError } from './widgets/helpers';
 
-interface Props {}
+interface Props {
+  nftAddress: string;
+  tokenId: string;
+}
+
 interface BasicOrderParameters {
   considerationToken: string;
   considerationIdentifier: BigNumberish;
@@ -40,12 +44,63 @@ interface BasicOrderParameters {
   additionalRecipients: [any];
   signature: string;
 }
-export const BuyNFT = (props: Props) => {
+
+const fetchListing = async (nftAddress: string, tokenId: string) => {
+  return axios
+    .get(
+      `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'X-API-Key': '2cbc58c203fd498f9ff9c531f3f71c27',
+        },
+      }
+    )
+    .then((res) => {
+      console.log('res is', res);
+
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const fillOrder = async (orderHash: string, fulfillerAddr: string) => {
+  const data = {
+    listing: {
+      hash: orderHash,
+      chain: 'ethereum',
+      protocol_address: '0x00000000000001ad428e4906aE43D8F9852d0dD6', // Seaport 1.4
+    },
+    fulfiller: {
+      address: fulfillerAddr,
+    },
+  };
+
+  return axios
+    .post('https://api.opensea.io/v2/listings/fulfillment_data', data, {
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': '2cbc58c203fd498f9ff9c531f3f71c27',
+      },
+    })
+    .then((res) => {
+      console.log('fullfillment res is', res);
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const provider = useProvider() as JsonRpcProvider;
-  const { data: blockNumber, isError } = useBlockNumber();
+  const { data: blockNumber } = useBlockNumber();
   const [timeStamp, setTimeStamp] = useState(0);
+  const [myParams, setMyParams] = useState();
 
   const getBlock = async () => {
     const block = await provider.getBlock(blockNumber);
@@ -57,82 +112,68 @@ export const BuyNFT = (props: Props) => {
     setTimeStamp(block.timestamp);
   };
 
-  const getListing = async (nftAddress: string, tokenId: string) => {
-    axios
-      .get(
-        `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
-        {
-          headers: {
-            Accept: 'application/json',
-            'X-API-Key': '2cbc58c203fd498f9ff9c531f3f71c27',
-          },
-        }
-      )
-      .then((res) => {
-        return res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-
   useEffect(() => {
     getTimeStamp();
-    
+    if (params) {
+      params['considerationAmount'] = BigNumber.from(params['considerationAmount'].toString());
+      params['salt'] = BigNumber.from(`3`);
+    }
   });
 
-  const {isLoading, isError, error, data } = useQuery(['listing', nftAddress, tokenId], async() => getListing());
+  const { isLoading, isError, error, data } = useQuery(['listing', nftAddress, tokenId], async () =>
+    fetchListing(nftAddress, tokenId)
+  );
 
-  const params: BasicOrderParameters = {
-    considerationToken: '0x23581767a106ae21c074b2276d25e5c3e136a68b',
-    considerationIdentifier: 8652,
-    considerationAmount: 1,
-    offerer: receiver,
-    zone: '0x0000000000000000000000000000000000000000',
-    offerToken: '0x0000000000000000000000000000000000000000',
-    offerIdentifier: '3',
-    offerAmount: parseEther('6.99'),
-    basicOrderType: '3',
-    startTime: timeStamp,
-    endTime: timeStamp + 86400,
-    zoneHash: '0x3000000000000000000000000000000000000000000000000000000000000000',
-    salt: '1178663006809303457',
-    offererConduitKey: '',
-    fulfillerConduitKey: '',
-    totalOriginalAdditionalRecipients: 0,
-    additionalRecipients: [
-      {
-        amount: 459950000000000,
-        recipient: '0x0000a26b00c1f0df003000390027140000faa719',
-      },
-    ],
-    signature: '',
-  };
+  console.log('listing data is', data);
+  console.log('listing hash is', data?.orders[0].order_hash);
+  const orderHash = data?.orders[0].order_hash;
 
-  console.log('the receiver is', receiver);
+  const { data: fulfillmentData } = useQuery(['fulfillment', orderHash], async () =>
+    fillOrder(orderHash, receiver || '0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080')
+  );
 
-  const { config: swapConfig, error } = usePrepareContractWrite({
-    address: '0x00000000006c3852cbEf3e08E8dF289169EdE581',
+  console.log('fullfillment data is', fulfillmentData);
+
+  let params = fulfillmentData?.fulfillment_data.transaction.input_data
+    .parameters as BasicOrderParameters;
+
+  const paramValue = fulfillmentData?.fulfillment_data.transaction.value;
+  console.log('params are', params);
+
+  const { config: swapConfig, error: prepareWriteError } = usePrepareContractWrite({
+    address: '0x00000000000001ad428e4906aE43D8F9852d0dD6',
     abi: SeaportAbi,
     functionName: 'fulfillBasicOrder',
     args: [params],
     overrides: {
-      value: parseEther('6.99'),
+      value: BigNumber.from(paramValue?.toString() || 0),
+      gasLimit: BigNumber.from('300000'), // Errors on mainnet without this
     },
   });
-  const err: Error & { reason?: string } = error;
+  const err: Error & { reason?: string } = prepareWriteError;
 
-  const { write: swapWrite, data, isError: NFTError } = useContractWrite(swapConfig);
-  const { isLoading } = useWaitForTransaction({ hash: data?.hash });
+  const {
+    write: swapWrite,
+    data: ContractWriteData,
+    isError: NFTError,
+  } = useContractWrite(swapConfig);
+
+  const {
+    isLoading: isTxPending,
+    isSuccess,
+    isError: txError,
+  } = useWaitForTransaction({ hash: data?.hash });
 
   return (
     <div>
-      {isLoading ? (
+      component mounted
+      {isSuccess && <p>Success!</p>}
+      {txError && <p>Tx error: {txError}</p>}
+      {isTxPending ? (
         <Button className="flex items-center" disabled>
           <Spinner /> Buying NFT...
         </Button>
-      ) : data?.hash ? (
+      ) : ContractWriteData?.hash ? (
         <div className="flex items-center disabled:border-0 disabled:bg-green-700">
           <CheckCircleIcon className="h-5 text-green-600" />
           <div className="p-1 text-green-600">Success</div>
@@ -142,11 +183,11 @@ export const BuyNFT = (props: Props) => {
           Buy NFT
         </Button>
       )}
-      {data?.hash && (
+      {ContractWriteData?.hash && (
         <div>
           <a
             className="text-blue-200 underline"
-            href={`https://goerli.etherscan.io/tx/${data?.hash}`}
+            href={`https://goerli.etherscan.io/tx/${ContractWriteData?.hash}`}
             target="_blank"
             rel="noreferrer"
           >

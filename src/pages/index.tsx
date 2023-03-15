@@ -13,6 +13,7 @@ export const Home = () => {
         </div>
         <div className="w-full">
           <ChatBox />
+          <BuyNFT nftAddress="0x894a19ccf5b1137507a45bb981e2c418a73651b6" tokenId="5155" />
         </div>
       </div>
     </>
