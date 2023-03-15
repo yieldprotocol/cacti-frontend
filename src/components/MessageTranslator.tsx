@@ -6,6 +6,8 @@ import {
   NftCollectionContainer,
   NftCollectionTraitContainer,
   NftCollectionTraitValueContainer,
+  NftCollectionTraitValuesContainer,
+  NftCollectionTraitsContainer,
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
@@ -216,6 +218,14 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           params = { network, address, tokenId, collectionName, name, previewImageUrl };
         }
         return <NftAssetContainer {...params} />;
+      }
+      case 'nft-collection-traits-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitsContainer {...params} />;
+      }
+      case 'nft-collection-trait-values-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitValuesContainer {...params} />;
       }
       case 'nft-collection-trait-container': {
         const { values, ...params } = JSON.parse(args);

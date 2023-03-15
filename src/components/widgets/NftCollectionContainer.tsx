@@ -6,6 +6,21 @@ interface NftCollectionContainerProps {
   numAssets?: string | number;
 }
 
+interface NftCollectionTraitsContainerProps {
+  network: string;
+  address: string;
+  name: string;
+  traits: string[];
+}
+
+interface NftCollectionTraitValuesContainerProps {
+  network: string;
+  address: string;
+  name: string;
+  trait: string;
+  values: string[];
+}
+
 interface NftCollectionTraitContainerProps {
   trait: string;
   children?: JSX.Element;
@@ -42,6 +57,67 @@ export const NftCollectionContainer = ({
   );
 };
 
+// Plain list of traits
+export const NftCollectionTraitsContainer = ({
+  network,
+  address,
+  name,
+  traits,
+}: NftCollectionTraitsContainerProps) => {
+  return (
+    <div>
+      <span>
+        The NFT collection, <b>{name || address}</b>, has the following traits:{' '}
+      </span>
+      {traits.map((trait, index, items) => {
+        if (index === items.length - 1)
+          return (
+            <span key={trait}>
+              and <b>{trait}</b>.
+            </span>
+          );
+        return (
+          <span key={trait}>
+            <b>{trait}</b>,{' '}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
+// Plain list of trait values
+export const NftCollectionTraitValuesContainer = ({
+  network,
+  address,
+  name,
+  trait,
+  values,
+}: NftCollectionTraitValuesContainerProps) => {
+  return (
+    <div>
+      <span>
+        The trait <b>{trait}</b> of the NFT collection, <b>{name || address}</b>, has the following
+        values:{' '}
+      </span>
+      {values.map((value, index, items) => {
+        if (index === items.length - 1)
+          return (
+            <span key={value}>
+              and <b>{value}</b>.
+            </span>
+          );
+        return (
+          <span key={value}>
+            <b>{value}</b>,{' '}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
+// Trait with a nested list of values
 export const NftCollectionTraitContainer = ({
   trait,
   children,
@@ -54,6 +130,7 @@ export const NftCollectionTraitContainer = ({
   );
 };
 
+// Value of a trait with its associated frequency
 export const NftCollectionTraitValueContainer = ({
   trait,
   value,
