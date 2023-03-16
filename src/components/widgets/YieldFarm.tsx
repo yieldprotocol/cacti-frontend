@@ -26,10 +26,10 @@ const supportedProjects: {
   };
 } = {
   compound: {
-    getWriteConfig: (token: Token, amount: BigNumber): UsePrepareContractWriteConfig => {
+    getWriteConfig: (token: Token, amount: BigNumber) => {
       return {
         address: compoundUSDCAddress,
-        abi: CompoundV2USDCAbi,
+        abi: CompoundV2USDCAbi as any,
         functionName: 'mint',
         args: [amount],
       };
@@ -139,7 +139,7 @@ const DepositTokens = ({
   const { config: depositConfig, error } = usePrepareContractWrite(prepareContractWriteConfig);
   const err: Error & { reason?: string } = error;
 
-  const { write: swapWrite, data, isSuccess } = useContractWrite(depositConfig);
+  const { write: swapWrite, data, isSuccess } = useContractWrite(depositConfig as any);
 
   return (
     <>
