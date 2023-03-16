@@ -100,12 +100,11 @@ const ApproveTokens = ({
 
   return (
     <div>
-      <div>
+      <div className="flex justify-end">
         <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve Uniswap router for {formatToEther(amountIn.toString())} {tokenIn.symbol}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
@@ -143,7 +142,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
 
   return (
     <>
-      <div>
+      <div className="flex justify-end">
         {!isSuccess && (
           <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
             Send
