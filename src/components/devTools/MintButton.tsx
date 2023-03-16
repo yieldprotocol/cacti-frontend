@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { useAccount, useBalance, useNetwork, useProvider } from 'wagmi';
-import { Button } from './Button';
+import { Button } from '../Button';
 
 export const MintButton = () => {
   const { address } = useAccount();

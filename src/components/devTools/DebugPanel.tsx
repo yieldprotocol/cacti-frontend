@@ -32,14 +32,14 @@ export const DebugPanel = ({ handleClose }) => {
         </Button>
 
         <div className="flex flex-col justify-center break-words text-xs">
-          <p>{spoofText.match(regex)}</p>
+          <p className='text-xs'>{spoofText.match(regex)}</p>
         </div>
       </>
     );
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4 p-4">
 
       {spoofPrompts.map((spoof) => {
         return debugMessage(spoof[0], spoof[1]);
