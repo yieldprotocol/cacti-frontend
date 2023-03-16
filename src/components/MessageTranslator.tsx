@@ -14,8 +14,8 @@ import {
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
-import { YieldContainer } from './widgets/YieldContainer';
 import { YieldFarm } from './widgets/YieldFarm';
+import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
@@ -210,7 +210,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       case 'yield-container': {
         const params = JSON.parse(args);
 
-        return <YieldContainer {...params} />;
+        return <YieldRowContainer {...params} />;
       }
       case 'list-container': {
         const params = JSON.parse(args);
@@ -231,19 +231,25 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const headers = params.headers;
         const rows = params.rows;
         return (
-          <table className="table-auto">
-            <thead>
-              <tr>
+          <table className="table-auto border border-gray-500">
+            <thead className="bg-gray-800 text-left">
+              <tr className="border-b border-gray-400">
                 {headers.map((header, i) => (
-                  <th key={`i${i}`}>{header}</th>
+                  <th className="py-1 px-2" key={`i${i}`}>
+                    {header.displayName}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map(({ name, params }, i) => {
+                const rowArgs = {
+                  headers,
+                  rowParams: params,
+                };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) }, chain)}
                   </Fragment>
                 );
               })}

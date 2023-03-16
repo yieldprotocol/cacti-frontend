@@ -118,7 +118,8 @@ const ApproveTokens = ({
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve {project} for {formatUnits(amount.toString(), token.decimals)} {token.symbol}
+      First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
+      {token.symbol}
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
