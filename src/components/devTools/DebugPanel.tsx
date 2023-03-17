@@ -73,16 +73,16 @@ const spoofPrompts: [string, string][] = [
   ['Get price of ETH in USDC', '<|price("ETH", "USDC")|>'],
   [
     `Get traits for NFT ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:8566`,
-    '<|nfttraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>',
+    '<|nft-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>',
   ],
   [
     `Get traits for NFT collection ${shortenAddress(
       '0x23581767a106ae21c074b2276d25e5c3e136a68b'
     )}:5869`,
-    '<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>',
+    '<|nft-collection-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>',
   ],
   [
-    `Get traits for NFT collection ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`,
-    '<|nftsbytraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>',
+    `Get NFTs by traits ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`,
+    '<|nfts-by-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>',
   ],
 ];
