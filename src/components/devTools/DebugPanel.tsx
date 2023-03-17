@@ -6,7 +6,6 @@ import { shortenAddress } from '@/utils';
 const CUSTOM_PROMPT = 'Custom Prompt';
 
 export const DebugPanel = ({ handleClose }) => {
-  
   const { spoofBotMessage } = useChatContext();
   const [customMessage, setCustomMessage] = useState<string>('');
 
@@ -45,6 +44,8 @@ export const DebugPanel = ({ handleClose }) => {
   return (
     <div className="grid grid-cols-2 gap-4 p-4">
       {debugMessage(CUSTOM_PROMPT, customMessage)}
+      <div />
+      <div />
       {spoofPrompts.map((spoof) => {
         return debugMessage(spoof[0], spoof[1]);
       })}
