@@ -13,12 +13,10 @@ export const ResetButton = (props:any) => {
   const buttonStyles = [];
   buttonStyles[0] = <Button onClick={reset}>Reset</Button>;
   buttonStyles[1] = (
-    <div className="text-xs text-gray-500 hover:text-white px-8">
-      <button onClick={reset} className="" >
-          <div className="w-[1.5em]"> <ArrowPathIcon /> </div>
-          <div>Reset All</div>
-      </button>
-    </div>
+    <button className="text-xs text-gray-500 hover:text-white ">
+        <div className='p-1'><ArrowPathIcon/></div>
+        <div className='-m-1'>Reset </div>
+    </button>
   );
 
   return buttonStyles[props.styleOption || 0];

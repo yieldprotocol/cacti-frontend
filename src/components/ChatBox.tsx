@@ -29,7 +29,7 @@ export const ChatBox = () => {
         <div className="col-span-8">
           <MessageInput />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 px-8">
           <ResetButton styleOption={1} />
         </div>
       </div>
