@@ -18,7 +18,6 @@ const useTokenApproval = ({
   amountIn: BigNumber;
 }) => {
   const { chain } = useNetwork();
-  // Get approval ready
   const { config: tokenConfig } = usePrepareContractWrite({
     address: address,
     abi: erc20ABI,
