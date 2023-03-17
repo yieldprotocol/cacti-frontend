@@ -15,10 +15,9 @@ export const TxStatus = ({ hash }: Props) => {
   const { sendAction } = useChatContext();
 
   useEffect(() => {
-    if (isSuccess && !isError) {
+    if (isSuccess) {
       sendAction({ actionType: 'transaction', hash, success: true });
-    }
-    if (isError && !isSuccess) {
+    } else if (isError) {
       sendAction({ actionType: 'transaction', hash, success: false, error: JSON.stringify(error) });
     }
   }, [isSuccess, isError, error, hash, sendAction]);
@@ -30,7 +29,7 @@ export const TxStatus = ({ hash }: Props) => {
           <Spinner /> Pending...
         </Button>
       )}
-      {isSuccess && !isError && (
+      {isSuccess && (
         <div className="flex items-center disabled:border-0 disabled:bg-green-700">
           <CheckCircleIcon className="h-5 text-green-600" />
           <div className="p-1 text-green-600">Success</div>
