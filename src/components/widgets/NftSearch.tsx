@@ -1,4 +1,5 @@
 import { useCollectionSearch } from '@center-inc/react';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { NftCollectionContainer } from './NftCollectionContainer';
 
 interface Result {
@@ -23,7 +24,7 @@ export const NftSearch = ({ query }) => {
         >
           {results?.map(({ id, ...props }: Result) => {
             if (props.previewImageUrl) {
-              return <NftCollectionContainer key={id} network="ethereum-mainnet" {...props} />;
+              return <NftCollectionContainer key={id} network={ETHEREUM_NETWORK} {...props} />;
             }
           }) || ''}
         </ul>

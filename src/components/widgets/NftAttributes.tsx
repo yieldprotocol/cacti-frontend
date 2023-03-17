@@ -4,6 +4,7 @@ import axios from 'axios';
 import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
 import { NftCollectionTraitsContainer } from '@/components/widgets/NftCollectionContainer';
 import { Spinner } from '@/utils';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 
 interface Props {
   nftAddress: string;
@@ -20,7 +21,7 @@ interface NftAttributesProps {
   mediumPreviewImageUrl: string;
 }
 
-axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
+axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
 
 const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
   return axios
@@ -66,15 +67,14 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     ['nftCollectionAttributes', nftAddress],
     async () => fetchNftAttributes(nftAddress, '/traits')
   );
-  const network = 'ethereum-mainnet';
-  const useCollectionResult = useCollection({ network, address: nftAddress });
+  const useCollectionResult = useCollection({ network: ETHEREUM_NETWORK, address: nftAddress });
 
   if (isLoading) return <h1>Loading..</h1>;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
     <NftCollectionTraitsContainer
-      network={network}
+      network={ETHEREUM_NETWORK}
       address={nftAddress}
       name={useCollectionResult?.name}
       traits={data?.items.map((item) => item.trait)}
@@ -87,8 +87,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
     ['NftAttributes', nftAddress, tokenID],
     async () => fetchNftAttributes(nftAddress, `/${tokenID}`)
   );
-  const network = 'ethereum-mainnet';
-  const result = useAsset({ network, address: nftAddress, tokenId: tokenID });
+  const result = useAsset({ network: ETHEREUM_NETWORK, address: nftAddress, tokenId: tokenID });
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
@@ -117,7 +116,6 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
     ['NftsWithAttributes', nftAddress, traitType, traitValue],
     async () => fetchNftsByAttributes(nftAddress, traitType, traitValue)
   );
-  const network = 'ethereum-mainnet';
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
@@ -142,7 +140,7 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
               }: NftAttributesProps) => (
                 <NftAssetContainer
                   key={`${address}/${tokenId}`}
-                  network={network}
+                  network={ETHEREUM_NETWORK}
                   address={address}
                   tokenId={tokenId}
                   collectionName={collectionName}
