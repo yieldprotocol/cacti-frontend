@@ -24,7 +24,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-black bg-opacity-30 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -38,12 +38,12 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-500 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 md:max-w-[75%] lg:max-w-[75%]">
-                <div className="p-4 space-y-4">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-500 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 md:max-w-[75%] lg:max-w-[75%]">
+                <div className="space-y-4 p-4">
                   <div className="flex justify-between">
-                    <div className="text-lg font-bold leading-6 text-gray-900">
+                    <Dialog.Title as="h2" className="text-lg font-bold leading-6 text-white">
                       Development Toolbox
-                    </div>
+                    </Dialog.Title>
                     <div className="absolute top-0 right-0 pt-4 pr-4">
                       <button
                         type="button"
@@ -56,38 +56,37 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                     </div>
                   </div>
 
-
-                  <div className="grid grid-cols-3 space-x-4" >
-
-                    <div className= "bg-white rounded-lg p-4 space-y-4 col-span-1">
-                      <div className="flex justify-between ">
-                        Toggle debugging messages
+                  <div className="grid grid-cols-3 space-x-4">
+                    <div className="col-span-1 rounded-lg bg-white text-center ">
+                      <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
+                        Actions and Setttings
+                        <p className="text-xs m-2">
+                          A collection of useful development tools
+                        </p>
+                      </div>
+                      <hr/>
+                      <div className="p-4 space-y-8 mt-4" >
                         <DebugMessageToggle />
-                      </div>
-                      <hr />
-                      <div className="flex justify-between">
-                        Mint 10 ETH to connected wallet
+   
                         <MintButton />
-                      </div>
-                      <hr />
-                      <div className="flex justify-between">
-                        Reset chat
+
                         <ResetButton />
                       </div>
                     </div>
 
-                    <div className="text-center bg-white rounded-lg col-span-2 ">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                    <div className="col-span-2 rounded-lg bg-white text-center ">
+                      <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
                         Debug Mode
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="m-4">In debug mode, you can spoof messages from the bot.</p>
+                        <p className="text-xs m-2">
+                          In debug mode, you can spoof messages from the bot.
+                        </p>
+                      </div>
+                      <hr />
+                      <div>
                         <DebugPanel handleClose={handleClose} />
                       </div>
                     </div>
-
                   </div>
-
                 </div>
               </Dialog.Panel>
             </Transition.Child>

@@ -31,8 +31,8 @@ export const DebugPanel = ({ handleClose }) => {
           {spoofLabel}
         </Button>
 
-        <div className="flex flex-col justify-center break-words text-xs">
-          <p className='text-xs'>{spoofText.match(regex)}</p>
+        <div className="flex flex-col justify-center break-words text-xs font-mono">
+          <span>{spoofText.match(regex)}</span>
         </div>
       </>
     );
