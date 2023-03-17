@@ -24,7 +24,7 @@ export const ChatBox = () => {
         {ready ? messageContentComponent : <Spinner />}
       </div>
 
-      <div className="w-full grid grid-cols-12 py-5 gap-2">
+      <div className="grid w-full grid-cols-12 gap-2 py-5">
         <div className="col-span-2" />
         <div className="col-span-8">
           <MessageInput />
