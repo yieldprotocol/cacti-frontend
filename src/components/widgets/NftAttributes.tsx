@@ -1,7 +1,10 @@
 import { useQuery } from 'react-query';
 import { useAsset, useCollection } from '@center-inc/react';
 import axios from 'axios';
+import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
+import { NftCollectionTraitsContainer } from '@/components/widgets/NftCollectionContainer';
 import { Spinner } from '@/utils';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 
 interface Props {
   nftAddress: string;
@@ -13,11 +16,12 @@ interface Props {
 interface NftAttributesProps {
   tokenId: string;
   address: string;
+  collectionName: string;
   name: string;
   mediumPreviewImageUrl: string;
 }
 
-axios.defaults.baseURL = 'https://api.center.dev/v1/ethereum-mainnet';
+axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
 
 const fetchNftAttributes = async (nftAddress: string, subUrl: string) => {
   return axios
@@ -63,27 +67,18 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     ['nftCollectionAttributes', nftAddress],
     async () => fetchNftAttributes(nftAddress, '/traits')
   );
-
-  const useCollectionResult = useCollection({ network: 'ethereum-mainnet', address: nftAddress });
+  const useCollectionResult = useCollection({ network: ETHEREUM_NETWORK, address: nftAddress });
 
   if (isLoading) return <h1>Loading..</h1>;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
-    <div>
-      <span>
-        The NFT collection, <b>{useCollectionResult?.name || nftAddress}</b>, has the following
-        traits:{' '}
-      </span>
-      {data?.items.map((item, index, items) => {
-        if (index === items.length - 1) return <b key={item.trait}>and {item.trait}. </b>;
-        return (
-          <span key={item.trait}>
-            <b>{item.trait}</b>,{' '}
-          </span>
-        );
-      })}
-    </div>
+    <NftCollectionTraitsContainer
+      network={ETHEREUM_NETWORK}
+      address={nftAddress}
+      name={useCollectionResult?.name}
+      traits={data?.items.map((item) => item.trait)}
+    />
   );
 };
 
@@ -92,7 +87,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
     ['NftAttributes', nftAddress, tokenID],
     async () => fetchNftAttributes(nftAddress, `/${tokenID}`)
   );
-  const result = useAsset({ network: 'ethereum-mainnet', address: nftAddress, tokenId: tokenID });
+  const result = useAsset({ network: ETHEREUM_NETWORK, address: nftAddress, tokenId: tokenID });
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
@@ -136,24 +131,22 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
         >
           {(data?.items &&
             data?.items.map(
-              ({ tokenId, address, name, mediumPreviewImageUrl }: NftAttributesProps) => (
-                <div className="flex justify-center" key={tokenId}>
-                  <a
-                    href={`https://center.app/collections/${address}/${tokenId}`}
-                    className="flex items-center py-4"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {mediumPreviewImageUrl ? (
-                      <img className="h-32 w-32 rounded-md" src={mediumPreviewImageUrl} alt="" />
-                    ) : (
-                      <div className="flex h-32 w-32 items-center justify-center bg-gray-100 text-4xl text-gray-400">
-                        ?
-                      </div>
-                    )}
-                    <p className="ml-3 text-sm font-medium text-gray-300 underline">{name}</p>
-                  </a>
-                </div>
+              ({
+                tokenId,
+                address,
+                collectionName,
+                name,
+                mediumPreviewImageUrl,
+              }: NftAttributesProps) => (
+                <NftAssetContainer
+                  key={`${address}/${tokenId}`}
+                  network={ETHEREUM_NETWORK}
+                  address={address}
+                  tokenId={tokenId}
+                  collectionName={collectionName}
+                  name={name}
+                  previewImageUrl={mediumPreviewImageUrl}
+                />
               )
             )) ||
             `Can't find items that has the following traits: ${traitType}: ${traitValue}`}

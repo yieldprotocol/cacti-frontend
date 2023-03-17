@@ -91,42 +91,43 @@ export const DebugPanel = ({ handleClose }) => {
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `Sure let me pull the traits for that NFT. <|nfttraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`
+            `Sure let me pull the traits for that NFT. <|nft-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`
           );
         }}
       >
         `Get traits for NFT {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:8566`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nfttraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`}</p>
+        <p>{`<|nft-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "8566")|>`}</p>
       </div>
       {/* Start query for NFT collection traits */}
       <Button
         onClick={(e) => {
           handleClose();
-          spoofBotMessage(`<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`);
+          spoofBotMessage(
+            `<|nft-collection-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`
+          );
         }}
       >
         `Get traits for NFT collection{' '}
         {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:5869`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nftcollectiontraits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`}</p>
+        <p>{`<|nft-collection-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b")|>`}</p>
       </div>
       {/* Start query for NFTs using traits */}
       <Button
         onClick={(e) => {
           handleClose();
           spoofBotMessage(
-            `<|nftsbytraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`
+            `<|nfts-by-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`
           );
         }}
       >
-        `Get traits for NFT collection{' '}
-        {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`
+        `Get NFTs by traits {shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}`
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nftsbytraits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`}</p>
+        <p>{`<|nfts-by-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>`}</p>
       </div>
     </div>
   );

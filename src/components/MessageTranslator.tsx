@@ -1,8 +1,18 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
-import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
-import { NftCollectionContainer } from '@/components/widgets/NftCollectionContainer';
+import {
+  NftAssetContainer,
+  NftAssetTraitValueContainer,
+  NftAssetTraitsContainer,
+} from '@/components/widgets/NftAssetContainer';
+import {
+  NftCollectionContainer,
+  NftCollectionTraitContainer,
+  NftCollectionTraitValueContainer,
+  NftCollectionTraitValuesContainer,
+  NftCollectionTraitsContainer,
+} from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
@@ -151,7 +161,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nfttraits': {
+      case 'nft-traits': {
         const [nftAddress, tokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
@@ -163,18 +173,18 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nftcollectiontraits': {
+      case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
-      case 'nftsbytraits': {
+      case 'nfts-by-traits': {
         const [nftAddr, traitType, traitValue] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
             key={inputString}
             direction="col"
             header={`Query for NFTs with ${traitValue} ${traitType}`}
-            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}}`}
+            msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}`}
           >
             <NftsWithAttributes
               nftAddress={nftAddr}
@@ -184,7 +194,6 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
-      case 'nftsearch':
       case 'nft-search': {
         const query = args;
         return (
@@ -213,6 +222,50 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           params = { network, address, tokenId, collectionName, name, previewImageUrl };
         }
         return <NftAssetContainer {...params} />;
+      }
+      case 'nft-asset-traits-container': {
+        const { asset, values } = JSON.parse(args);
+        return (
+          <NftAssetTraitsContainer
+            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
+          >
+            {values?.map(({ name, params }, i) => (
+              <Fragment key={`i${i}`}>
+                {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+              </Fragment>
+            )) || ''}
+          </NftAssetTraitsContainer>
+        );
+      }
+      case 'nft-asset-trait-value-container': {
+        const params = JSON.parse(args);
+        return <NftAssetTraitValueContainer {...params} />;
+      }
+      case 'nft-collection-traits-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitsContainer {...params} />;
+      }
+      case 'nft-collection-trait-values-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitValuesContainer {...params} />;
+      }
+      case 'nft-collection-trait-container': {
+        const { values, ...params } = JSON.parse(args);
+        return (
+          <NftCollectionTraitContainer {...params}>
+            <ul role="list" className="divide-y divide-gray-200">
+              {values?.map(({ name, params }, i) => (
+                <Fragment key={`i${i}`}>
+                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                </Fragment>
+              )) || ''}
+            </ul>
+          </NftCollectionTraitContainer>
+        );
+      }
+      case 'nft-collection-trait-value-container': {
+        const params = JSON.parse(args);
+        return <NftCollectionTraitValueContainer {...params} />;
       }
       case 'yield-container': {
         const params = JSON.parse(args);
