@@ -5,6 +5,7 @@ import { MessageList } from '@/components/MessageList';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
+import { ResetButton } from './ResetButton';
 
 export const ChatBox = () => {
   const { messages } = useChatContext();
@@ -22,8 +23,15 @@ export const ChatBox = () => {
       <div className="min-h-full overflow-auto">
         {ready ? messageContentComponent : <Spinner />}
       </div>
-      <div className="w-full py-5 md:px-64">
-        <MessageInput />
+
+      <div className="w-full grid grid-cols-12 py-5 gap-2">
+        <div className="col-span-2" />
+        <div className="col-span-8">
+          <MessageInput />
+        </div>
+        <div className="col-span-2">
+          <ResetButton styleOption={1} />
+        </div>
       </div>
     </div>
   );
