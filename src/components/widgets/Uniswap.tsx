@@ -115,10 +115,11 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
+  const tokenOutIsEth = tokenOut.symbol == 'ETH';
 
   const params: ExactInputSingleParams = {
-    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
-    tokenOut: tokenOut.address,
+    tokenIn: isEth ? 'ETH' : tokenIn.address,
+    tokenOut: isEth ? 'ETH' : tokenOut.address,
     fee: BigNumber.from(3000),
     recipient: receiver,
     deadline: BigNumber.from(0),
@@ -127,6 +128,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
+  // switch this to use a router
   const { config: swapConfig, error } = usePrepareContractWrite({
     address: swapRouter02Address,
     abi: SwapRouter02Abi,
