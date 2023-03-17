@@ -60,14 +60,12 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                     <div className="col-span-1 rounded-lg bg-white text-center ">
                       <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
                         Actions and Setttings
-                        <p className="text-xs m-2">
-                          A collection of useful development tools
-                        </p>
+                        <p className="m-2 text-xs">A collection of useful development tools</p>
                       </div>
-                      <hr/>
-                      <div className="p-4 space-y-8 mt-4" >
+                      <hr />
+                      <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
-   
+
                         <MintButton />
 
                         <ResetButton />
@@ -77,7 +75,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                     <div className="col-span-2 rounded-lg bg-white text-center ">
                       <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
                         Debug Mode
-                        <p className="text-xs m-2">
+                        <p className="m-2 text-xs">
                           In debug mode, you can spoof messages from the bot.
                         </p>
                       </div>

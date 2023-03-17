@@ -7,7 +7,11 @@ export const Home = () => {
     <>
       <div className="flex h-screen bg-gray-700">
         <div className="fixed top-0 right-0 mr-4 mt-4 inline-flex gap-3">
-        { true && <DevToolsButton /> /* TODO : add logic to show devTools: possible eg. process.env.NODE_ENV === 'development' */ }
+          {
+            true && (
+              <DevToolsButton />
+            ) /* TODO : add logic to show devTools: possible eg. process.env.NODE_ENV === 'development' */
+          }
           <ConnectButton />
         </div>
         <div className="w-full">
