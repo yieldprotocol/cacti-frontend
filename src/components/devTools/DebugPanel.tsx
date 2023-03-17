@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Button } from '@/components/Button';
 import { useChatContext } from '@/contexts/ChatContext';
 import { shortenAddress } from '@/utils';
@@ -12,9 +12,9 @@ export const DebugPanel = ({ handleClose }) => {
   const debugMessage = (spoofLabel: string, spoofText: string) => {
     const regex = new RegExp(/<\|([\w\-]*)\(([^\n]*)\)\|>/g);
     return (
-      <>
+      <Fragment key={spoofLabel}>
         <Button
-          onClick={(e) => {
+          onClick={(e: any) => {
             e.preventDefault();
             handleClose();
             spoofBotMessage(spoofText);
@@ -22,7 +22,6 @@ export const DebugPanel = ({ handleClose }) => {
         >
           {spoofLabel}
         </Button>
-
         <div className="flex flex-col justify-center break-words font-mono text-xs">
           {spoofLabel === CUSTOM_PROMPT ? (
             <input
@@ -37,7 +36,7 @@ export const DebugPanel = ({ handleClose }) => {
             <span>{spoofText.match(regex)}</span>
           )}
         </div>
-      </>
+      </Fragment>
     );
   };
 
