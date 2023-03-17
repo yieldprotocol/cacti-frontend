@@ -68,7 +68,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
   useEffect(() => {
     sendWalletMessage();
-  }, [walletIsConnected, walletStatus, walletAddress, sendWalletMessage]);
+  }, [walletIsConnected, walletStatus, walletAddress]);
 
   const onOpen = () => {
     const q = window.location.search;
