@@ -19,9 +19,9 @@ export const TxStatus = ({ hash }: Props) => {
       sendAction({ actionType: 'transaction', hash, success: true });
     }
     if (isError && !isSuccess) {
-      sendAction({ actionType: 'transaction', hash, success: false, error });
+      sendAction({ actionType: 'transaction', hash, success: false, error: JSON.stringify(error) });
     }
-  }, [isSuccess, isError, error]);
+  }, [isSuccess, isError, error, hash, sendAction]);
 
   return (
     <div>
