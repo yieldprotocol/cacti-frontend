@@ -6,7 +6,7 @@ import { NftCollectionContainer } from '@/components/widgets/NftCollectionContai
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
-import { findTokenBySymbol, shortenAddress } from '@/utils';
+import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import {
   NftAttributes,
@@ -14,6 +14,8 @@ import {
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
+import { YieldFarm } from './widgets/YieldFarm';
+import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
@@ -114,6 +116,28 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </ActionPanel>
         );
       }
+      case 'yield-farm': {
+        const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
+        const isEth = tokenSymbol === 'ETH';
+        const token = isEth
+          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
+          : findTokenBySymbol(tokenSymbol, chainId);
+
+        const amount = parseUnits(amtString, token.decimals);
+
+        const project = findProjectByName(projectName);
+        return (
+          <ActionPanel
+            header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
+            msg={inputString}
+            key={inputString}
+          >
+            <ConnectFirst>
+              <YieldFarm {...{ project, network, token, amount }} />
+            </ConnectFirst>
+          </ActionPanel>
+        );
+      }
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
@@ -190,6 +214,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         }
         return <NftAssetContainer {...params} />;
       }
+      case 'yield-container': {
+        const params = JSON.parse(args);
+
+        return <YieldRowContainer {...params} />;
+      }
       case 'list-container': {
         const params = JSON.parse(args);
         return (
@@ -202,6 +231,37 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               )) || ''}
             </ul>
           </div>
+        );
+      }
+      case 'table-container': {
+        const params = JSON.parse(args);
+        const headers = params.headers;
+        const rows = params.rows;
+        return (
+          <table className="table-auto border border-gray-500">
+            <thead className="bg-gray-800 text-left">
+              <tr className="border-b border-gray-400">
+                {headers.map((header, i) => (
+                  <th className="py-1 px-2" key={`i${i}`}>
+                    {header.displayName}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(({ name, params }, i) => {
+                const rowArgs = {
+                  headers,
+                  rowParams: params,
+                };
+                return (
+                  <Fragment key={`i${i}`}>
+                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) }, chain)}
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
         );
       }
       default:

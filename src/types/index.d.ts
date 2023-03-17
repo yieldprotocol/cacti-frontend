@@ -3,3 +3,8 @@ export interface Token {
   symbol: string;
   decimals: number;
 }
+
+export interface Project {
+  id: string;
+  name: string;
+}
