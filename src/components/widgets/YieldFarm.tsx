@@ -139,13 +139,13 @@ const DepositTokens = ({
   const { config: depositConfig, error } = usePrepareContractWrite(prepareContractWriteConfig);
   const err: Error & { reason?: string } = error;
 
-  const { write: swapWrite, data, isSuccess } = useContractWrite(depositConfig as any);
+  const { write: depositWrite, data, isSuccess } = useContractWrite(depositConfig as any);
 
   return (
     <>
       <div>
         {!isSuccess && (
-          <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+          <Button disabled={!depositWrite} onClick={() => depositWrite?.()}>
             Send
           </Button>
         )}
