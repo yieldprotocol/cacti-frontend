@@ -16,7 +16,7 @@ export const Price = (props: PriceProps) => {
   let widgetComponent = <Spinner />;
   if (data?.humanReadableAmount) {
     widgetComponent = (
-      <p>{`1 ${props.baseToken} is worth ${data.humanReadableAmount} ${props.queryToken}`}</p>
+      <p className="text-sm">{`1 ${props.baseToken} is worth ${data.humanReadableAmount} ${props.queryToken}`}</p>
     );
   } else if (error) {
     console.error(error);

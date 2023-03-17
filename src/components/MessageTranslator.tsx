@@ -65,13 +65,15 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const amount = parseUnits(amtString, token.decimals);
         return (
           <ActionPanel
-            header={`Transfer ${amtString} ${tokenSymbol} to ${receiver}`}
-            msg={inputString}
+            header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
+            msg={`transfer(${tokenSymbol},${amtString},${shortenAddress(receiver)})`}
             key={inputString}
           >
-            <ConnectFirst>
-              <TransferButton {...{ amount, receiver, token }} />
-            </ConnectFirst>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <TransferButton {...{ amount, receiver, token }} />
+              </ConnectFirst>
+            </div>
           </ActionPanel>
         );
       }
@@ -100,15 +102,17 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             msg={inputString}
             key={inputString}
           >
-            <ConnectFirst>
-              <UniswapButton
-                {...{
-                  tokenIn,
-                  tokenOut,
-                  amountIn,
-                }}
-              />
-            </ConnectFirst>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <UniswapButton
+                  {...{
+                    tokenIn,
+                    tokenOut,
+                    amountIn,
+                  }}
+                />
+              </ConnectFirst>
+            </div>
           </ActionPanel>
         );
       }
@@ -141,7 +145,9 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             header={`Query for ${baseToken} in terms of ${queryToken}`}
             msg={inputString}
           >
-            <Price baseToken={baseToken} queryToken={queryToken} />
+            <div className="flex w-[100%] justify-end">
+              <Price baseToken={baseToken} queryToken={queryToken} />
+            </div>
           </ActionPanel>
         );
       }
@@ -158,7 +164,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         );
       }
       case 'nftcollectiontraits': {
-        const [nftCollectionAddress] = args;
+        const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
       case 'nftsbytraits': {
@@ -166,6 +172,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <ActionPanel
             key={inputString}
+            direction="col"
             header={`Query for NFTs with ${traitValue} ${traitType}`}
             msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}}`}
           >
@@ -181,7 +188,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       case 'nft-search': {
         const query = args;
         return (
-          <ActionPanel header={`Query for ${query} NFTs`} msg={inputString}>
+          <ActionPanel header={`Query for ${query} NFTs`} msg={inputString} direction="col">
             <NftSearch {...{ query }} />
           </ActionPanel>
         );

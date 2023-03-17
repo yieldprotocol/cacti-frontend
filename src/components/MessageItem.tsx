@@ -13,9 +13,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
        ${actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'}`}
     >
       <Avatar actor={actor} />
-      <div
-        className={`relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]`}
-      >
+      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
         <MessageTranslator message={payload} />
       </div>
       <FeedbackButton message={message} />

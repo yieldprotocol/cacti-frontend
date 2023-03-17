@@ -48,6 +48,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       onClose: (evt) => onClose(),
       onError: (evt) => onError(),
       shouldReconnect: (closeEvent) => true,
+      reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
     }
   );
 
