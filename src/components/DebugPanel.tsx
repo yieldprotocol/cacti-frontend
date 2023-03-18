@@ -66,13 +66,13 @@ export const DebugPanel = ({ handleClose }) => {
       <Button
         onClick={(e) => {
           handleClose();
-          spoofBotMessage(`OK, dog NFTs! <|nftsearch("dogs")|>`);
+          spoofBotMessage(`OK, dog NFTs! <|nft-search("dogs")|>`);
         }}
       >
         Browse some dog NFTs
       </Button>
       <div className="flex flex-col justify-center break-words text-xs">
-        <p>{`<|nftsearch("dogs")|>`}</p>
+        <p>{`<|nft-search("dogs")|>`}</p>
       </div>
       {/* Start ETH price in terms of USDC */}
       <Button
