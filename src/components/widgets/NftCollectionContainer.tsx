@@ -93,7 +93,8 @@ export const NftCollectionTraitsContainer = ({
         if (index === items.length - 1)
           return (
             <span key={trait}>
-              and <b>{trait}</b>.
+              {index === 0 ? '' : 'and '}
+              <b>{trait}</b>.
             </span>
           );
         return (
@@ -124,7 +125,8 @@ export const NftCollectionTraitValuesContainer = ({
         if (index === items.length - 1)
           return (
             <span key={value}>
-              and <b>{value}</b>.
+              {index === 0 ? '' : 'and '}
+              <b>{value}</b>.
             </span>
           );
         return (
