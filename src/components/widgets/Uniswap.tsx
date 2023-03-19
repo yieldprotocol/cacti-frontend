@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   erc20ABI,
   useAccount,
@@ -12,8 +12,10 @@ import {
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
+import { Spinner } from '@/utils';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -43,7 +45,7 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
 
   // Check if balance is enough
-  const { data: balance } = useContractRead({
+  const { data: balance, error } = useContractRead({
     address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
@@ -115,15 +117,28 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
+  const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain.id) : tokenIn;
+
+  const {
+    isLoading: quoteIsLoading,
+    error: quoteError,
+    data: quote,
+  } = useUniswapQuote({
+    baseTokenSymbol: tokenInChecked.symbol,
+    quoteTokenSymbol: tokenOut.symbol,
+    amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
+  });
 
   const params: ExactInputSingleParams = {
-    tokenIn: isEth ? findTokenBySymbol('WETH', chain.id).address : tokenIn.address,
+    tokenIn: tokenInChecked.address,
     tokenOut: tokenOut.address,
     fee: BigNumber.from(3000),
     recipient: receiver,
     deadline: BigNumber.from(0),
     amountIn,
-    amountOutMinimum: BigNumber.from(0),
+    amountOutMinimum: quote?.value
+      ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals).div('1000')
+      : BigNumber.from(0),
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
@@ -144,8 +159,15 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     <>
       <div className="flex justify-end">
         {!isSuccess && (
-          <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
-            Send
+          <Button
+            className="px-4"
+            disabled={!swapWrite || quoteIsLoading}
+            onClick={() => swapWrite?.()}
+          >
+            <div className="flex gap-2">
+              Send
+              {quoteIsLoading ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
+            </div>
           </Button>
         )}
         {isSuccess && <TxStatus hash={data?.hash} />}
