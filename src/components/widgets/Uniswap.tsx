@@ -12,10 +12,12 @@ import {
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
 import { Spinner } from '@/utils';
+import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -87,27 +89,22 @@ const ApproveTokens = ({
 }) => {
   const { chain } = useNetwork();
   // Get approval ready
-  const { config: tokenConfig } = usePrepareContractWrite({
+  const { approvalWrite, isLoading, isSuccess, data } = useTokenApproval({
     address: tokenIn.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'approve',
-    args: [swapRouter02Address, amountIn],
+    amountIn,
+    spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
   });
-  const { write: tokenWrite, data } = useContractWrite(tokenConfig);
-  const { isLoading, isSuccess: isApprovalSuccess } = useWaitForTransaction({ hash: data?.hash });
-
   useEffect(() => {
-    setIsApprovalSuccess(isApprovalSuccess);
-  }, [setIsApprovalSuccess, isApprovalSuccess]);
+    setIsApprovalSuccess(isSuccess);
+  }, [setIsApprovalSuccess, isSuccess]);
 
   return (
     <div>
       <div className="flex justify-end">
-        <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
+        <Button disabled={!approvalWrite} onClick={() => approvalWrite?.()}>
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
 };
