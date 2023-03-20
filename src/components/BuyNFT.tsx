@@ -4,8 +4,7 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
-import { parseEther } from 'ethers/lib/utils.js';
-import { getJSDocParameterTags } from 'typescript';
+import * as JSONbigint from 'json-bigint';
 import {
   useAccount,
   useBlockNumber,
@@ -18,6 +17,8 @@ import { Spinner } from '@/utils';
 import SeaportAbi from '../abi/SeaportAbi.json';
 import { Button } from './Button';
 import { WidgetError } from './widgets/helpers';
+
+const JSONbig = JSONbigint({ storeAsString: true });
 
 interface Props {
   nftAddress: string;
@@ -56,10 +57,7 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
         },
       }
     )
-    .then((res) => {
-      console.log('res is', res);
-      return res.data;
-    })
+    .then((res) => res.data)
     .catch((err) => {
       console.log(err);
     });
@@ -83,20 +81,9 @@ const fillOrder = async (orderHash: string, fulfillerAddr: string) => {
         Accept: 'application/json',
         'X-API-Key': '2cbc58c203fd498f9ff9c531f3f71c27',
       },
+      transformResponse: (data) => JSONbig.parse(data), // opensea passes ints that are too big for js, so we process here first
     })
-    .then((res) => {
-      // res.data.fulfillment_data.transaction.input_data.parameters.salt =
-      //   '0x' + res.data.fulfillment_data.transaction.input_data.parameters.salt.toString(16);
-      res.data.fulfillment_data.transaction.input_data.parameters.salt =
-        '0x360c6ebe000000000000000000000000000000000000000026b878511453a22b';
-      res.data.fulfillment_data.transaction.input_data.parameters.considerationAmount =
-        BigNumber.from(
-          res.data.fulfillment_data.transaction.input_data.parameters.considerationAmount.toString()
-        );
-      console.log('fullfillment res is', res);
-
-      return res.data;
-    })
+    .then((res) => res.data)
     .catch((err) => {
       console.log(err);
     });
@@ -108,7 +95,6 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
   const provider = useProvider() as JsonRpcProvider;
   const { data: blockNumber } = useBlockNumber();
   const [timeStamp, setTimeStamp] = useState(0);
-  const [myParams, setMyParams] = useState();
 
   const getBlock = async () => {
     const block = await provider.getBlock(blockNumber);
@@ -122,89 +108,70 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
 
   useEffect(() => {
     getTimeStamp();
-    if (params) {
-      // params['considerationAmount'] = BigNumber.from(params['considerationAmount'].toString());
-      // params['salt'] = BigNumber.from(`23`);
-    }
   });
 
-  const { isLoading, isError, error, data } = useQuery(['listing', nftAddress, tokenId], async () =>
-    fetchListing(nftAddress, tokenId)
-  );
+  const {
+    isLoading,
+    isError,
+    error,
+    data: listingData,
+  } = useQuery(['listing', nftAddress, tokenId], async () => fetchListing(nftAddress, tokenId));
+  console.log('listing response is', listingData);
 
-  console.log('listing data is', data);
-  console.log('listing hash is', data?.orders[0].order_hash);
-  const orderHash = data?.orders[0].order_hash;
+  const orderHash = listingData?.orders[0].order_hash;
+  console.log('0th listing hash is', orderHash);
 
   const { data: fulfillmentData } = useQuery(['fulfillment', orderHash], async () =>
     fillOrder(orderHash, receiver)
   );
 
-  console.log('fullfillment data is', fulfillmentData);
+  console.log('fullfillment response is', fulfillmentData);
 
   let params = fulfillmentData?.fulfillment_data.transaction.input_data
     .parameters as BasicOrderParameters;
 
-  const paramValue = fulfillmentData?.fulfillment_data.transaction.value;
-  console.log('params are', params);
-  console.log('valueAmount is ', paramValue);
+  if (params) params.salt = params?.salt.toString();
 
-  const { config: swapConfig, error: prepareWriteError } = usePrepareContractWrite({
+  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value.toString();
+  console.log('fullfillment params are', params);
+  console.log('fulfillment value amount is ', valueAmount);
+
+  const { config: writeConfig, error: prepareWriteError } = usePrepareContractWrite({
     address: '0x00000000000001ad428e4906aE43D8F9852d0dD6', // Seaport 1.4
     abi: SeaportAbi,
     functionName: 'fulfillBasicOrder',
     args: [params],
     overrides: {
-      value: BigNumber.from(paramValue?.toString() || 0),
-      // gasLimit: BigNumber.from('300000'), // Errors on mainnet without this
+      value: BigNumber.from(valueAmount || 0),
+      gasLimit: BigNumber.from(8000000),
     },
   });
   const err: Error & { reason?: string } = prepareWriteError;
 
   const {
-    write: swapWrite,
-    data: ContractWriteData,
-    isError: NFTError,
-  } = useContractWrite(swapConfig);
+    write: seaportWrite,
+    data: contractWriteData,
+    isError: isWriteError,
+  } = useContractWrite(writeConfig);
 
   const {
     isLoading: isTxPending,
     isSuccess,
-    isError: txError,
-  } = useWaitForTransaction({ hash: data?.hash });
-
-  // console.log('txData is', txData);
+    isError: isTxError,
+  } = useWaitForTransaction({ hash: contractWriteData?.hash });
 
   return (
     <div>
-      component mounted
       {isSuccess && <p>Success!</p>}
-      {txError && <p>Tx error: {txError}</p>}
+      {isTxError && <p>Tx error: {isTxError}</p>}
       {isTxPending ? (
         <Button className="flex items-center" disabled>
           <Spinner /> Buying NFT...
         </Button>
-      ) : ContractWriteData?.hash ? (
-        <div className="flex items-center disabled:border-0 disabled:bg-green-700">
-          <CheckCircleIcon className="h-5 text-green-600" />
-          <div className="p-1 text-green-600">Success</div>
-        </div>
       ) : (
-        <Button disabled={!swapWrite} onClick={() => swapWrite?.()}>
+        <Button disabled={!seaportWrite} onClick={() => seaportWrite?.()}>
           Buy NFT
         </Button>
-      )}
-      {ContractWriteData?.hash && (
-        <div>
-          <a
-            className="text-blue-200 underline"
-            href={`https://goerli.etherscan.io/tx/${ContractWriteData?.hash}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            View on Etherscan
-          </a>
-        </div>
       )}
       {err && <WidgetError>Error simulating transaction: {err.message || err.reason}</WidgetError>}
     </div>
