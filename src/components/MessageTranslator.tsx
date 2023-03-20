@@ -63,7 +63,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = chain?.id || 36963;
+  const chainId = chain?.id || 1;
 
   try {
     switch (fnName) {
