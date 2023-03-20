@@ -58,7 +58,6 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
     )
     .then((res) => {
       console.log('res is', res);
-
       return res.data;
     })
     .catch((err) => {
@@ -86,7 +85,16 @@ const fillOrder = async (orderHash: string, fulfillerAddr: string) => {
       },
     })
     .then((res) => {
+      // res.data.fulfillment_data.transaction.input_data.parameters.salt =
+      //   '0x' + res.data.fulfillment_data.transaction.input_data.parameters.salt.toString(16);
+      res.data.fulfillment_data.transaction.input_data.parameters.salt =
+        '0x360c6ebe000000000000000000000000000000000000000026b878511453a22b';
+      res.data.fulfillment_data.transaction.input_data.parameters.considerationAmount =
+        BigNumber.from(
+          res.data.fulfillment_data.transaction.input_data.parameters.considerationAmount.toString()
+        );
       console.log('fullfillment res is', res);
+
       return res.data;
     })
     .catch((err) => {
@@ -115,8 +123,8 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
   useEffect(() => {
     getTimeStamp();
     if (params) {
-      params['considerationAmount'] = BigNumber.from(params['considerationAmount'].toString());
-      params['salt'] = BigNumber.from(`3`);
+      // params['considerationAmount'] = BigNumber.from(params['considerationAmount'].toString());
+      // params['salt'] = BigNumber.from(`23`);
     }
   });
 
@@ -129,7 +137,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
   const orderHash = data?.orders[0].order_hash;
 
   const { data: fulfillmentData } = useQuery(['fulfillment', orderHash], async () =>
-    fillOrder(orderHash, receiver || '0x637C1Ec1d205a4E7a79c9CE4Bd100CD1d19E6080')
+    fillOrder(orderHash, receiver)
   );
 
   console.log('fullfillment data is', fulfillmentData);
@@ -139,15 +147,16 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
 
   const paramValue = fulfillmentData?.fulfillment_data.transaction.value;
   console.log('params are', params);
+  console.log('valueAmount is ', paramValue);
 
   const { config: swapConfig, error: prepareWriteError } = usePrepareContractWrite({
-    address: '0x00000000000001ad428e4906aE43D8F9852d0dD6',
+    address: '0x00000000000001ad428e4906aE43D8F9852d0dD6', // Seaport 1.4
     abi: SeaportAbi,
     functionName: 'fulfillBasicOrder',
     args: [params],
     overrides: {
       value: BigNumber.from(paramValue?.toString() || 0),
-      gasLimit: BigNumber.from('300000'), // Errors on mainnet without this
+      // gasLimit: BigNumber.from('300000'), // Errors on mainnet without this
     },
   });
   const err: Error & { reason?: string } = prepareWriteError;
@@ -163,6 +172,8 @@ export const BuyNFT = ({ nftAddress, tokenId }: Props) => {
     isSuccess,
     isError: txError,
   } = useWaitForTransaction({ hash: data?.hash });
+
+  // console.log('txData is', txData);
 
   return (
     <div>

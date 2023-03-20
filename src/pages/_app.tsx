@@ -26,7 +26,7 @@ const mainnetFork = {
 } as Chain;
 
 const { chains, provider } = configureChains(
-  [mainnetFork, mainnet],
+  [mainnetFork],
   [
     jsonRpcProvider({
       priority: 0,
