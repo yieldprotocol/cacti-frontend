@@ -17,6 +17,7 @@ import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
 import { findTokenBySymbol, formatToEther } from '@/utils';
 import { Spinner } from '@/utils';
+import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
@@ -91,6 +92,7 @@ const ApproveTokens = ({
   const { approvalWrite, isLoading, isSuccess, data } = useTokenApproval({
     address: tokenIn.address as `0x${string}`,
     amountIn,
+    spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
   });
   useEffect(() => {
     setIsApprovalSuccess(isSuccess);

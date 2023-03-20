@@ -13,16 +13,18 @@ import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 const useTokenApproval = ({
   address,
   amountIn,
+  spenderAddress,
 }: {
   address: `0x${string}`;
   amountIn: BigNumber;
+  spenderAddress: `0x${string}`;
 }) => {
   const { chain } = useNetwork();
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: address,
+    address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [UNISWAP_ROUTER_02_ADDRESS, amountIn],
+    args: [spenderAddress, amountIn],
   });
   const { write: approvalWrite, data, isLoading, isSuccess } = useContractWrite(tokenConfig);
   return { approvalWrite, data, isLoading, isSuccess };
