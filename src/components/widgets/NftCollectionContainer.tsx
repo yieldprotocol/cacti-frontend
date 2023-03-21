@@ -6,6 +6,11 @@ interface NftCollectionContainerProps {
   numAssets?: string | number;
 }
 
+interface NftCollectionAssetsContainerProps {
+  collection: JSX.Element;
+  children?: JSX.Element;
+}
+
 interface NftCollectionTraitsContainerProps {
   network: string;
   address: string;
@@ -57,6 +62,21 @@ export const NftCollectionContainer = ({
   );
 };
 
+// Collection with a nested list of assets
+export const NftCollectionAssetsContainer = ({
+  collection,
+  children,
+}: NftCollectionAssetsContainerProps) => {
+  return (
+    <div>
+      <div>This is the NFT collection:</div>
+      <div>{collection}</div>
+      <div>Here are some of the NFTs in the collection:</div>
+      <div>{children}</div>
+    </div>
+  );
+};
+
 // Plain list of traits
 export const NftCollectionTraitsContainer = ({
   network,
@@ -73,7 +93,8 @@ export const NftCollectionTraitsContainer = ({
         if (index === items.length - 1)
           return (
             <span key={trait}>
-              and <b>{trait}</b>.
+              {index === 0 ? '' : 'and '}
+              <b>{trait}</b>.
             </span>
           );
         return (
@@ -104,7 +125,8 @@ export const NftCollectionTraitValuesContainer = ({
         if (index === items.length - 1)
           return (
             <span key={value}>
-              and <b>{value}</b>.
+              {index === 0 ? '' : 'and '}
+              <b>{value}</b>.
             </span>
           );
         return (

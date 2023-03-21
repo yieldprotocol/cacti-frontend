@@ -7,6 +7,7 @@ import {
   NftAssetTraitsContainer,
 } from '@/components/widgets/NftAssetContainer';
 import {
+  NftCollectionAssetsContainer,
   NftCollectionContainer,
   NftCollectionTraitContainer,
   NftCollectionTraitValueContainer,
@@ -240,6 +241,27 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       case 'nft-asset-trait-value-container': {
         const params = JSON.parse(args);
         return <NftAssetTraitValueContainer {...params} />;
+      }
+      case 'nft-collection-assets-container': {
+        const { collection, assets } = JSON.parse(args);
+        return (
+          <NftCollectionAssetsContainer
+            collection={Widgetize(
+              { fnName: collection.name, args: JSON.stringify(collection.params) },
+              chain
+            )}
+          >
+            <div className="columns-1 text-black sm:columns-2">
+              <ul role="list" className="divide-y divide-gray-200">
+                {assets?.map(({ name, params }, i) => (
+                  <Fragment key={`i${i}`}>
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                  </Fragment>
+                )) || ''}
+              </ul>
+            </div>
+          </NftCollectionAssetsContainer>
+        );
       }
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
