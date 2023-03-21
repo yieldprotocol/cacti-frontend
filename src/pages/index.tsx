@@ -14,8 +14,8 @@ export const Home = () => {
         </div>
         <div className="w-full">
           <ChatBox />
-          <BuyNFT nftAddress="0x1a92f7381b9f03921564a437210bb9396471050c" tokenId="4797" />
-          <CheckNftOwner nftAddress="0x1a92f7381b9f03921564a437210bb9396471050c" tokenId="4797" />
+          <BuyNFT nftAddress="0x60e4d786628fea6478f785a6d7e704777c86a7c6" tokenId="20516" />
+          <CheckNftOwner nftAddress="0x60e4d786628fea6478f785a6d7e704777c86a7c6" tokenId="20516" />
         </div>
       </div>
     </>
