@@ -69,7 +69,7 @@ const spoofPrompts: [string, string][] = [
     'Suggest a ETH to DAI token swap on Uniswap',
     'Sure, let me swap that ETH into DAI. <|uniswap("ETH", "DAI", "SELLAMOUNT", 0.01)|> Click the above button to make the swap.',
   ],
-  ['Browse some dog NFTs', '<|nftsearch("dogs")|>'],
+  ['Browse some dog NFTs', '<|nft-search("dogs")|>'],
   ['Get price of ETH in USDC', '<|price("ETH", "USDC")|>'],
   [
     `Get traits for NFT ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:8566`,
