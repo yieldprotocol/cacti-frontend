@@ -55,12 +55,16 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
     .then((res) => res.data);
 };
 
-const fetchFulfillParams = async (orderHash: string, fulfillerAddr: string) => {
+const fetchFulfillParams = async (
+  orderHash: string,
+  fulfillerAddr: string,
+  protocolAddress: string
+) => {
   const data = {
     listing: {
       hash: orderHash,
       chain: 'ethereum',
-      protocol_address: SEAPORT_1_4,
+      protocol_address: protocolAddress,
     },
     fulfiller: {
       address: fulfillerAddr,
@@ -98,6 +102,8 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const orderHash = listingData?.orders[0]?.order_hash;
   const orderListingDate = listingData?.orders[0]?.listing_time;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
+  const protocol_address = listingData?.orders[0]?.protocol_address;
+  console.log('protocol_address', protocol_address);
 
   const isNewerListing =
     orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP;
@@ -115,7 +121,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: fulfillmentData,
   } = useQuery(
     ['fulfillment', orderHash],
-    async () => orderHash && fetchFulfillParams(orderHash, receiver)
+    async () => orderHash && fetchFulfillParams(orderHash, receiver, protocol_address)
   );
   console.log('fullfillmentData', fulfillmentData);
 
@@ -127,7 +133,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   // If prepareWriteError, show error
   // If prepareWriteError is not set, proceed
   const { config: writeConfig, error: prepareWriteError } = usePrepareContractWrite({
-    address: SEAPORT_1_4,
+    address: protocol_address,
     abi: SeaportAbi,
     functionName: 'fulfillBasicOrder',
     args: [params],

@@ -1,7 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BuyNFT } from '@/components/BuyNFT';
 import { ChatBox } from '@/components/ChatBox';
-import { CheckNftOwner } from '@/components/CheckNftOwner';
 import { DevToolsButton } from '@/components/devTools/DevToolsButton';
 
 export const Home = () => {
@@ -14,8 +12,6 @@ export const Home = () => {
         </div>
         <div className="w-full">
           <ChatBox />
-          <BuyNFT nftAddress="0x60e4d786628fea6478f785a6d7e704777c86a7c6" tokenId="20516" />
-          <CheckNftOwner nftAddress="0x60e4d786628fea6478f785a6d7e704777c86a7c6" tokenId="20516" />
         </div>
       </div>
     </>
