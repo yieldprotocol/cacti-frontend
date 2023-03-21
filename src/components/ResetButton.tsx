@@ -3,7 +3,7 @@ import { Button } from './Button';
 
 type ResetButtonProps = {
   styleOption?: number;
-}
+};
 
 export const ResetButton = (props: ResetButtonProps) => {
   const reset = () => {
