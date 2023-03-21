@@ -8,5 +8,9 @@ export const ResetButton = () => {
     const paramString = params.toString();
     window.location.assign(paramString ? `/?${paramString}` : '/');
   };
-  return <Button onClick={reset}>Reset</Button>;
+  return (
+    <Button onClick={reset} className="flex w-full disabled:bg-gray-400">
+      Reset
+    </Button>
+  );
 };
