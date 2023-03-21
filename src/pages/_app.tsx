@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app';
 import { CenterProvider } from '@center-inc/react';
 import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
-import { Chain, WagmiConfig, configureChains, createClient, mainnet } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { ChatContextProvider } from '@/contexts/ChatContext';
 import { ModalContextProvider } from '@/contexts/ModalContext';
