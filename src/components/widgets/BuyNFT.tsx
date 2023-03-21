@@ -1,22 +1,19 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import * as JSONbigint from 'json-bigint';
 import {
   useAccount,
-  useBlockNumber,
   useContractWrite,
   usePrepareContractWrite,
-  useProvider,
   useWaitForTransaction,
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
+import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Spinner } from '@/utils';
-import { SEAPORT_1_4 } from '@/utils/constants';
+import { CheckNftOwner } from '../CheckNftOwner';
 
 const JSONbig = JSONbigint({ storeAsString: true });
 
@@ -103,7 +100,6 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const orderListingDate = listingData?.orders[0]?.listing_time;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
   const protocol_address = listingData?.orders[0]?.protocol_address;
-  console.log('protocol_address', protocol_address);
 
   const isNewerListing =
     orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP;
@@ -123,7 +119,6 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     ['fulfillment', orderHash],
     async () => orderHash && fetchFulfillParams(orderHash, receiver, protocol_address)
   );
-  console.log('fullfillmentData', fulfillmentData);
 
   let params = fulfillmentData?.fulfillment_data.transaction.input_data
     .parameters as BasicOrderParameters;
@@ -166,28 +161,35 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <div>
+      <div>
+        <NftAttributes nftAddress={nftAddress} tokenID={tokenId} />
+        <CheckNftOwner nftAddress={nftAddress} tokenId={tokenId} />
+      </div>
+
+      {isTxError && <WidgetError>Tx error: {txErrorData.message}</WidgetError>}
+      {isTxPending && (
+        <Button className="flex items-center" disabled>
+          <Spinner /> Buying NFT...
+        </Button>
+      )}
+      {!isSuccess && (
+        <Button disabled={!seaportWrite || isWriteError} onClick={() => seaportWrite?.()}>
+          Buy NFT
+        </Button>
+      )}
+      {isSuccess && <b className="m-2">Success! You now own the NFT.</b>}
+
       {isQueryLoading && <p>Fetching listing hash...</p>}
       {!isQueryLoading && !isQueryError && !orderHash && (
         <WidgetError>NFT is not currently for sale</WidgetError>
       )}
       {!isValidListing && <WidgetError>Listing expired or too new for forked Mainnet</WidgetError>}
-      {isFulfillError && (
+      {!isSuccess && isFulfillError && (
         <WidgetError>
           Could not fetch fulfillment data from Opensea. Error: {(fulfillError as Error).message}
         </WidgetError>
       )}
-      {isSuccess && <p>Success!</p>}
-      {isTxError && <WidgetError>Tx error: {txErrorData.message}</WidgetError>}
-      {isTxPending ? (
-        <Button className="flex items-center" disabled>
-          <Spinner /> Buying NFT...
-        </Button>
-      ) : (
-        <Button disabled={!seaportWrite} onClick={() => seaportWrite?.()}>
-          Buy NFT
-        </Button>
-      )}
-      {err && <WidgetError>Error: {err.message || err.reason}</WidgetError>}
+      {!isSuccess && err && <WidgetError>Error: {err.message || err.reason}</WidgetError>}
     </div>
   );
 };

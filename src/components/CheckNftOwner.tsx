@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { erc721ABI, useContractRead } from 'wagmi';
+import { erc721ABI, useBlockNumber, useContractRead } from 'wagmi';
 
 interface Props {
   nftAddress: string;
@@ -15,11 +15,16 @@ export const CheckNftOwner = ({ nftAddress, tokenId }: Props) => {
     abi: erc721ABI,
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId)],
+    watch: true,
   });
 
   useEffect(() => {
     setOwner(data?.toString() || '');
   }, [data]);
 
-  return <div>The owner of this NFT is: {owner}</div>;
+  return (
+    <div className="m-2">
+      <b>Owner</b>: {owner}
+    </div>
+  );
 };
