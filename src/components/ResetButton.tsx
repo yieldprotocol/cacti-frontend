@@ -1,7 +1,11 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Button } from './Button';
 
-export const ResetButton = (props: any) => {
+type ResetButtonProps = {
+  styleOption?: number;
+}
+
+export const ResetButton = (props: ResetButtonProps) => {
   const reset = () => {
     const q = window.location.search;
     const params = new URLSearchParams(q);
@@ -13,7 +17,7 @@ export const ResetButton = (props: any) => {
   const buttonStyles = [];
   buttonStyles[0] = <Button onClick={reset}>Reset</Button>;
   buttonStyles[1] = (
-    <button className="text-xs text-gray-500 hover:text-white ">
+    <button className="text-xs text-gray-500 hover:text-white" onClick={reset}>
       <div className="p-1">
         <ArrowPathIcon />
       </div>
