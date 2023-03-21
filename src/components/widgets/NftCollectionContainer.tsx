@@ -69,9 +69,9 @@ export const NftCollectionAssetsContainer = ({
 }: NftCollectionAssetsContainerProps) => {
   return (
     <div>
-      <div>This is the NFT collection: </div>
+      <div>This is the NFT collection:</div>
       <div>{collection}</div>
-      <div>Here are some of the NFTs in the collection: </div>
+      <div>Here are some of the NFTs in the collection:</div>
       <div>{children}</div>
     </div>
   );
