@@ -65,6 +65,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
   const chainId = chain?.id || 36963;
 
   try {
+    console.log('Function name', fnName, 'args', args);
     switch (fnName) {
       // Transfer widget
       case 'transfer': {
