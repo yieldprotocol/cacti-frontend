@@ -102,6 +102,14 @@ const spoofPrompts: [string, string][] = [
     '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png")|>',
   ],
   [
+    `Show NFT asset trait container `,
+    `<|nft-asset-traits-container({\"asset\":{\"name\":\"display-nft-asset-container\",\"params\":{\"network\":\"polygon-mainnet\",\"address\":\"0x04509754d1E7CB093b76Ef70104ac64C8f40b167\",\"tokenId\":\"9\",\"collectionName\":\"WildDogs\",\"name\":\"WildDogs#9\",\"previewImageUrl\":\"https://cdn.center.app/137/0x04509754d1E7CB093b76Ef70104ac64C8f40b167/9/cbacba38adbfa8d7e6334b0c4a14a347d3795c01d16f043b196d3ba32f985257.png\"}},\"values\":[{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"background\",\"value\":\"purple\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"skin\",\"value\":\"skin6\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"suit\",\"value\":\"suit8\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"eye\",\"value\":\"redeye\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"scar\",\"value\":\"none\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"accessory\",\"value\":\"woodenbat\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"smoke\",\"value\":\"smoke\"}}]})|>`,
+  ],
+  [
+    `Show NFT asset trait value container `,
+    `<|nft-asset-trait-value-container({\"trait\":\"background\",\"value\":\"purple\"})|>`,
+  ],
+  [
     `Show NFT collection assets traits in a container `,
     `<|nft-collection-assets-container(${assetsCollection})|>`,
   ],
@@ -110,16 +118,8 @@ const spoofPrompts: [string, string][] = [
     `<|nft-collection-traits-container({\"network\":\"polygon-mainnet\",\"address\":\"0xbdb2127B89225875cD7a579911a0d4D6F70F89AE\",\"name\":\"DragonLordNFT\",\"traits\":[\"Ascertive\",\"Blessed\",\"Caring\",\"Fortunate\",\"GenesisDefense\",\"Health\",\"Lucky\",\"Nurturing\",\"PassiveAggressive\",\"PerfectVision\"]})|>`,
   ],
   [
-    `Show NFT collection traits in a container`,
-    `<|nft-collection-traits-container({\"network\":\"polygon-mainnet\",\"address\":\"0xbdb2127B89225875cD7a579911a0d4D6F70F89AE\",\"name\":\"DragonLordNFT\",\"traits\":[\"Ascertive\",\"Blessed\",\"Caring\",\"Fortunate\",\"GenesisDefense\",\"Health\",\"Lucky\",\"Nurturing\",\"PassiveAggressive\",\"PerfectVision\"]})|>`,
-  ],
-  [
     `Show NFT collection trait values in a container`,
     `<|nft-collection-trait-values-container({\"network\":\"polygon-mainnet\",\"address\":\"0xbdb2127B89225875cD7a579911a0d4D6F70F89AE\",\"name\":\"DragonLordNFT\",\"trait\":\"GenesisDefense\",\"values\":[\"10\"]})|>`,
-  ],
-  [
-    `Show yield container`,
-    `<|yield-container({\"headers\":[{\"fieldName\":\"project\",\"displayName\":\"Project\"},{\"fieldName\":\"tvlUsd\",\"displayName\":\"TVL\"},{\"fieldName\":\"apy\",\"displayName\":\"APY\"},{\"fieldName\":\"apyAvg30d\",\"displayName\":\"30dayAvg.APY\"}],\"rowParams\":{\"token\":\"USDC\",\"network\":\"Ethereum\",\"project\":\"compound\",\"apy\":3.4375,\"apyAvg30d\":2.62986,\"tvlUsd\":131934173}})|>`,
   ],
   [
     `Show yield container row`,
