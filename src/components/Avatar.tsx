@@ -10,13 +10,13 @@ const Avatar = ({ actor }: Props) => {
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 
   return (
-    <div className="h-8 w-8 rounded-md bg-gray-300 shadow-md">
+    <div className="rounded-md bg-gray-300 shadow-md">
       {actor === 'user' ? (
-        <UserIcon className="text-gray-600" />
+        <UserIcon className="h-8 w-8 text-gray-600" />
       ) : actor === 'system' ? (
-        <CommandLineIcon className="text-black" />
+        <CommandLineIcon className="h-8 w-8 text-black" />
       ) : (
-        <img className="h-full w-full rounded-md" src={botAvatar} alt="bot avatar" />
+        <img className="h-full w-[2.61rem] rounded-md" src={botAvatar} alt="bot avatar" />
       )}
     </div>
   );
