@@ -11,25 +11,21 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import { CompoundV2USDCAbi } from '@/abi/CompoundV2USDC';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Project, Token } from '@/types';
-import CompoundV2USDCAbi from '../../abi/CompoundV2USDC.json';
 
 // NOTE: For Demo, only support depositing USDC into Compound
 // Compound-V2 USDC cToken address
 const compoundUSDCAddress = '0x39AA39c021dfbaE8faC545936693aC917d5E7563';
-const supportedProjects: {
-  [projectId: string]: {
-    getWriteConfig: (token: Token, amount: BigNumber) => UsePrepareContractWriteConfig;
-  };
-} = {
+const supportedProjects = {
   compound: {
     getWriteConfig: (token: Token, amount: BigNumber) => {
       return {
         address: compoundUSDCAddress,
-        abi: CompoundV2USDCAbi as any,
+        abi: CompoundV2USDCAbi,
         functionName: 'mint',
         args: [amount],
       };
@@ -112,14 +108,16 @@ const ApproveTokens = ({
   }, [setIsApprovalSuccess, isApprovalSuccess]);
 
   return (
-    <div>
-      <div>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-center">
         <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
-      {token.symbol}
+      <div className="flex justify-center text-xs">
+        First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
+        {token.symbol}
+      </div>
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );
@@ -139,7 +137,7 @@ const DepositTokens = ({
   const { config: depositConfig, error } = usePrepareContractWrite(prepareContractWriteConfig);
   const err: Error & { reason?: string } = error;
 
-  const { write: depositWrite, data, isSuccess } = useContractWrite(depositConfig as any);
+  const { write: depositWrite, data, isSuccess } = useContractWrite(depositConfig);
 
   return (
     <>

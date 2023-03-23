@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import { useAsset, useCollection } from '@center-inc/react';
 import axios from 'axios';
+import Grid from '@/components/Grid';
 import { NftAssetContainer } from '@/components/widgets/NftAssetContainer';
 import { NftCollectionTraitsContainer } from '@/components/widgets/NftCollectionContainer';
 import { Spinner } from '@/utils';
@@ -125,10 +126,7 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
     <>
       <div className="mt-4 flex w-[100%] justify-center text-black">
         {isLoading && <span>Results loading</span>}
-        <ul
-          role="list"
-          className="flex grid w-[100%] grid-cols-2 flex-wrap gap-x-6 gap-y-1 after:flex-auto xl:grid-cols-4"
-        >
+        <Grid>
           {(data?.items &&
             data?.items.map(
               ({
@@ -150,7 +148,7 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
               )
             )) ||
             `Can't find items that has the following traits: ${traitType}: ${traitValue}`}
-        </ul>
+        </Grid>
         {error && 'There was an unexpected center.app API error'}
       </div>
     </>
