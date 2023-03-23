@@ -26,7 +26,7 @@ export const ResetButton = (props: ResetButtonProps) => {
         <div className="p-1">
           <ArrowPathIcon />
         </div>
-        <div className="-m-1">Reset </div>
+        <div className="-m-1">Reset</div>
       </button>
     ),
   };
