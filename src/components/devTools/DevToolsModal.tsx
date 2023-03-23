@@ -47,7 +47,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                     <div className="absolute top-0 right-0 pt-4 pr-4">
                       <button
                         type="button"
-                        className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md  text-gray-400 hover:text-gray-500 focus:outline-none"
                         onClick={handleClose}
                       >
                         <span className="sr-only">Close</span>
@@ -57,7 +57,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                   </div>
 
                   <div className="grid grid-cols-3 space-x-4">
-                    <div className="col-span-1 rounded-lg bg-white text-center ">
+                    <div className="col-span-1 rounded-lg bg-gray-300 text-center">
                       <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
                         Actions and Setttings
                         <p className="m-2 text-xs">A collection of useful development tools</p>
@@ -72,7 +72,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                       </div>
                     </div>
 
-                    <div className="col-span-2 rounded-lg bg-white text-center ">
+                    <div className="col-span-2 rounded-lg bg-gray-300 text-center ">
                       <div className="pt-4 text-lg font-medium leading-6 text-gray-900">
                         Debug Mode
                         <p className="m-2 text-xs">
