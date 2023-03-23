@@ -276,26 +276,6 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
-      // TODO: the below container is legacy
-      case 'nft-collection-trait-container': {
-        const { values, ...params } = JSON.parse(args);
-        return (
-          <NftCollectionTraitContainer {...params}>
-            <ul role="list" className="divide-y divide-gray-200">
-              {values?.map(({ name, params }, i) => (
-                <Fragment key={`i${i}`}>
-                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
-                </Fragment>
-              )) || ''}
-            </ul>
-          </NftCollectionTraitContainer>
-        );
-      }
-      // TODO: the below container is legacy
-      case 'nft-collection-trait-value-container': {
-        const params = JSON.parse(args);
-        return <NftCollectionTraitValueContainer {...params} />;
-      }
       case 'yield-container': {
         const params = JSON.parse(args);
 
