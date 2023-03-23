@@ -41,7 +41,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-500 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 md:max-w-[75%] lg:max-w-[75%]">
                 <div className="space-y-4 p-4">
                   <div className="flex justify-between">
-                    <Dialog.Title as="h2" className="text-lg font-bold leading-6 text-white">
+                    <Dialog.Title as="h2" className="text-lg font-bold leading-6 text-gray-200">
                       Development Toolbox
                     </Dialog.Title>
                     <div className="absolute top-0 right-0 pt-4 pr-4">
