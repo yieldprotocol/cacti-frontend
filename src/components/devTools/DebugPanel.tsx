@@ -11,7 +11,7 @@ export const DebugPanel = ({ handleClose }) => {
 
   const debugMessage = (spoofLabel: string, spoofText: string) => {
     const regex = new RegExp(/<\|([\w\-]*)\(([^\n]*)\)\|>/g);
-    const readableCmd = spoofText.match(regex);
+    const widgetString = spoofText.match(regex);
     return (
       <Fragment key={spoofLabel}>
         <Button
@@ -21,7 +21,7 @@ export const DebugPanel = ({ handleClose }) => {
             spoofBotMessage(spoofText);
           }}
         >
-          <span className="max-h-[64px] overflow-hidden text-ellipsis ">{spoofLabel}</span>
+          <span className="max-h-[64px] overflow-y-scroll">{spoofLabel}</span>
         </Button>
         <div className="flex flex-col justify-center break-words font-mono text-xs">
           {spoofLabel === CUSTOM_PROMPT ? (
@@ -34,9 +34,7 @@ export const DebugPanel = ({ handleClose }) => {
               placeholder="Prompt"
             ></input>
           ) : (
-            <div className="h-[66px] overflow-hidden text-ellipsis ">
-              {readableCmd[0].length > 100 ? `${readableCmd[0].slice(0, 50)}...` : readableCmd}
-            </div>
+            <div className="h-[66px] overflow-y-auto">{widgetString}</div>
           )}
         </div>
       </Fragment>
