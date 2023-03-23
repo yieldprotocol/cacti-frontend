@@ -47,7 +47,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                     <div className="absolute top-0 right-0 pt-4 pr-4">
                       <button
                         type="button"
-                        className="rounded-md  text-gray-400 hover:text-gray-500 focus:outline-none"
+                        className="rounded-md text-gray-200 hover:text-gray-400 focus:outline-none"
                         onClick={handleClose}
                       >
                         <span className="sr-only">Close</span>
