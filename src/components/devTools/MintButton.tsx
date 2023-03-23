@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { useAccount, useBalance, useNetwork, useProvider } from 'wagmi';
-import { Button } from './Button';
+import { Button } from '@/components/Button';
 
 export const MintButton = () => {
   const { address } = useAccount();
@@ -30,7 +30,7 @@ export const MintButton = () => {
   return !isVisible ? (
     <></>
   ) : (
-    <Button onClick={mint} disabled={isLoading} className="disabled:bg-gray-400">
+    <Button onClick={mint} disabled={isLoading} className="flex w-full disabled:bg-gray-400">
       Mint 10 ETH
     </Button>
   );

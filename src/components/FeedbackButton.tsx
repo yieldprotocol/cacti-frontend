@@ -35,7 +35,7 @@ export const FeedbackButton = ({ message }: { message: Message }) => {
   const sendFeedback = (label: string) => {
     const choice = feedback === 'none' ? label : 'none';
     setFeedback(choice);
-    sendAction({ messageId, choice });
+    sendAction({ actionType: 'feedback', messageId, choice });
   };
 
   return feedback === 'n/a' || actor !== 'bot' ? (

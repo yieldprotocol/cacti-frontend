@@ -1,5 +1,7 @@
 import { utils } from 'ethers';
+import projectListJson from '@/utils/ProjectList.json';
 import tokenListJson from '@/utils/TokenList.json';
+import { Project } from '../types';
 
 export const shortenAddress = (address: string) => address.slice(0, 6) + '...' + address.slice(-4);
 export const findTokenBySymbol = (symbol: string, chainId: number) => {
@@ -14,6 +16,21 @@ export const findTokenByAddress = (address: string, chainId: number) => {
 };
 export const formatToEther = (amount: string) => utils.formatEther(amount);
 export const formatToWei = (amount: string) => utils.parseEther(amount).toString();
+
+export const findProjectByName = (name: string): Project => {
+  // Project/Protocol list from Defillama - https://api.llama.fi/protocols
+  const found = projectListJson.find(
+    (project) =>
+      project.name.toLowerCase() == name.toLowerCase() ||
+      project.slug.toLowerCase() == name.toLowerCase()
+  );
+  if (!found) throw new Error(`No project found for name ${name}`);
+
+  return {
+    id: found.slug,
+    name: found.name,
+  };
+};
 
 export const Spinner = ({ className }: { className?: string }) => (
   <svg

@@ -20,7 +20,7 @@ export const DebugMessageToggle = () => {
           } inline-block h-4 w-4 transform rounded-full bg-white transition`}
         />
       </Switch>
-      <span className="text-white">Enable debug logs</span>
+      <span>Enable debug logs</span>
     </div>
   );
 };
