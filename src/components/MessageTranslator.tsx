@@ -210,14 +210,14 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         );
       }
       case 'buy-nft': {
-        const [buyNftAddrress, buyTokenID] = parseArgsStripQuotes(args);
+        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
-            header={`Buy NFTs ${buyNftAddrress} ${buyTokenID}`}
+            header={`Buy NFTs ${buyNftAddress} ${buyTokenID}`}
             msg={inputString}
             direction="col"
           >
-            <BuyNFT nftAddress={buyNftAddrress} tokenId={buyTokenID} />
+            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
           </ActionPanel>
         );
       }
