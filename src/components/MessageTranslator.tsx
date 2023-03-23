@@ -271,6 +271,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
+      // TODO: the below container is legacy
       case 'nft-collection-trait-container': {
         const { values, ...params } = JSON.parse(args);
         return (
@@ -285,6 +286,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </NftCollectionTraitContainer>
         );
       }
+      // TODO: the below container is legacy
       case 'nft-collection-trait-value-container': {
         const params = JSON.parse(args);
         return <NftCollectionTraitValueContainer {...params} />;
