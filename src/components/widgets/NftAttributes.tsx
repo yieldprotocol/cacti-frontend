@@ -102,7 +102,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
         data?.metadata.attributes.map((attribute) => {
           return (
             <div key={attribute.trait_type}>
-              <div className="m-2 text-black">
+              <div className="m-2">
                 <b>{attribute.trait_type}</b>: {attribute.value}{' '}
               </div>
             </div>

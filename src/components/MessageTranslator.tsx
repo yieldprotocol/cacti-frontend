@@ -20,6 +20,7 @@ import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
+import { BuyNFT } from './widgets/BuyNFT';
 import {
   NftAttributes,
   NftCollectionAttributes,
@@ -63,7 +64,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = chain?.id || 36963;
+  const chainId = chain?.id || 1;
 
   try {
     switch (fnName) {
@@ -205,6 +206,18 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <ActionPanel header={`Query for ${query} NFTs`} msg={inputString} direction="col">
             <NftSearch {...{ query }} />
+          </ActionPanel>
+        );
+      }
+      case 'buy-nft': {
+        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
+        return (
+          <ActionPanel
+            header={`Buy NFTs ${buyNftAddress} ${buyTokenID}`}
+            msg={inputString}
+            direction="col"
+          >
+            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
           </ActionPanel>
         );
       }
