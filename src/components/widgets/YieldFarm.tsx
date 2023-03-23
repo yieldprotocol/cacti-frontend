@@ -112,14 +112,16 @@ const ApproveTokens = ({
   }, [setIsApprovalSuccess, isApprovalSuccess]);
 
   return (
-    <div>
-      <div>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-center">
         <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
           {isLoading ? 'Pending...' : 'Approve'}
         </Button>
       </div>
-      First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
-      {token.symbol}
+      <div className="flex justify-center text-xs">
+        First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
+        {token.symbol}
+      </div>
       {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
     </div>
   );

@@ -29,7 +29,7 @@ export const NftAssetContainer = ({
     <div className="flex justify-center">
       <a
         href={`https://center.app/${network}/collections/${address}/${tokenId}`}
-        className="flex items-center py-4"
+        className="flex flex-col items-center py-4"
         target="_blank"
         rel="noreferrer"
       >
@@ -40,7 +40,7 @@ export const NftAssetContainer = ({
             ?
           </div>
         )}
-        <div>
+        <div className="mt-2 flex flex-col items-center justify-center">
           <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
           <p className="ml-3 text-sm font-medium text-gray-400">{collectionName}</p>
           <p className="ml-3 text-sm font-medium text-gray-400">{network}</p>
@@ -53,7 +53,7 @@ export const NftAssetContainer = ({
 // Asset with a nested list of trait values
 export const NftAssetTraitsContainer = ({ asset, children }: NftAssetTraitsContainerProps) => {
   return (
-    <div>
+    <div className="flex justify-center gap-16 p-4">
       {asset}
       <div>{children}</div>
     </div>

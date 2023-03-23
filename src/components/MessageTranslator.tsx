@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
+import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
   NftAssetTraitValueContainer,
@@ -79,6 +80,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
             msg={`transfer(${tokenSymbol},${amtString},${shortenAddress(receiver)})`}
             key={inputString}
+            centerTitle={true}
           >
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
@@ -112,6 +114,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
             key={inputString}
+            centerTitle={true}
           >
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
@@ -142,6 +145,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
             msg={inputString}
             key={inputString}
+            gap="gap-3"
           >
             <ConnectFirst>
               <YieldFarm {...{ project, network, token, amount }} />
@@ -155,6 +159,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           <ActionPanel
             header={`Query for ${baseToken} in terms of ${queryToken}`}
             msg={inputString}
+            centerTitle={true}
           >
             <div className="flex w-[100%] justify-end">
               <Price baseToken={baseToken} queryToken={queryToken} />
@@ -251,14 +256,14 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               chain
             )}
           >
-            <div className="columns-1 text-black sm:columns-2">
-              <ul role="list" className="divide-y divide-gray-200">
+            <div className="text-black">
+              <Grid>
                 {assets?.map(({ name, params }, i) => (
                   <Fragment key={`i${i}`}>
                     {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
                   </Fragment>
                 )) || ''}
-              </ul>
+              </Grid>
             </div>
           </NftCollectionAssetsContainer>
         );
@@ -299,14 +304,14 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       case 'list-container': {
         const params = JSON.parse(args);
         return (
-          <div className="columns-1 text-black sm:columns-2">
-            <ul role="list" className="divide-y divide-gray-200">
+          <div className="text-black">
+            <Grid>
               {params.items?.map(({ name, params }, i) => (
                 <Fragment key={`i${i}`}>
                   {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
                 </Fragment>
               )) || ''}
-            </ul>
+            </Grid>
           </div>
         );
       }

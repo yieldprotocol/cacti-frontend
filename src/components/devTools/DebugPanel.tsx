@@ -99,10 +99,6 @@ const spoofPrompts: [string, string][] = [
     '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png")|>',
   ],
   [
-    `Show NFT asset traits in a container `,
-    '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png")|>',
-  ],
-  [
     `Show NFT asset trait container `,
     `<|nft-asset-traits-container({\"asset\":{\"name\":\"display-nft-asset-container\",\"params\":{\"network\":\"polygon-mainnet\",\"address\":\"0x04509754d1E7CB093b76Ef70104ac64C8f40b167\",\"tokenId\":\"9\",\"collectionName\":\"WildDogs\",\"name\":\"WildDogs#9\",\"previewImageUrl\":\"https://cdn.center.app/137/0x04509754d1E7CB093b76Ef70104ac64C8f40b167/9/cbacba38adbfa8d7e6334b0c4a14a347d3795c01d16f043b196d3ba32f985257.png\"}},\"values\":[{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"background\",\"value\":\"purple\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"skin\",\"value\":\"skin6\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"suit\",\"value\":\"suit8\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"eye\",\"value\":\"redeye\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"scar\",\"value\":\"none\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"accessory\",\"value\":\"woodenbat\"}},{\"name\":\"display-nft-asset-trait-value-container\",\"params\":{\"trait\":\"smoke\",\"value\":\"smoke\"}}]})|>`,
   ],
@@ -111,7 +107,7 @@ const spoofPrompts: [string, string][] = [
     `<|nft-asset-trait-value-container({\"trait\":\"background\",\"value\":\"purple\"})|>`,
   ],
   [
-    `Show NFT collection assets traits in a container `,
+    `Show NFT collection assets in a container `,
     `<|nft-collection-assets-container(${assetsCollection})|>`,
   ],
   [
