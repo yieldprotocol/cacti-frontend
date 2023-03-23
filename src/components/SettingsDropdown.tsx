@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { Cog8ToothIcon, WrenchIcon } from '@heroicons/react/24/outline';
-import { DevToolsModal } from './devTools/DevToolsModal';
+import { DevToolsModal } from '@/components/devTools/DevToolsModal';
 
 const SettingsDropdown = () => {
   const [openModal, setOpenModal] = useState(false);
