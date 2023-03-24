@@ -9,6 +9,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
@@ -73,38 +74,16 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ tokenIn, amountIn, setIsApprovalSuccess }} />
+        <ApproveTokens
+          {...{
+            token: tokenIn,
+            amount: amountIn,
+            setIsApprovalSuccess,
+            spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+          }}
+        />
       )}
       {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
-    </div>
-  );
-};
-
-const ApproveTokens = ({
-  tokenIn,
-  amountIn,
-  setIsApprovalSuccess,
-}: Pick<Props, 'tokenIn' | 'amountIn'> & {
-  setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const { chain } = useNetwork();
-  // Get approval ready
-  const { approvalWrite, isLoading, isSuccess, data } = useTokenApproval({
-    address: tokenIn.address as `0x${string}`,
-    amountIn,
-    spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
-  });
-  useEffect(() => {
-    setIsApprovalSuccess(isSuccess);
-  }, [setIsApprovalSuccess, isSuccess]);
-
-  return (
-    <div>
-      <div className="flex justify-end">
-        <Button disabled={!approvalWrite} onClick={() => approvalWrite?.()}>
-          {isLoading ? 'Pending...' : 'Approve'}
-        </Button>
-      </div>
     </div>
   );
 };
