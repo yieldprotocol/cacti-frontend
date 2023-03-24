@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "devBackend": "NEXT_PUBLIC_ENV_TAG=dev next dev",
+    "prodBackend": "NEXT_PUBLIC_ENV_TAG=prod next dev",
+    "localBackend": "NEXT_PUBLIC_ENV_TAG=local next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
