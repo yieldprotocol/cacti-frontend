@@ -54,7 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains} theme={lightTheme({ accentColor: '#2563eb' })}>
+        <RainbowKitProvider chains={chains} theme={lightTheme({ accentColor: '#1f2937' })}>
           <CenterProvider>
             <ModalContextProvider>
               <ChatContextProvider>
