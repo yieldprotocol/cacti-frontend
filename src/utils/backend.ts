@@ -30,9 +30,5 @@ export const getBackendUrl = () => {
     );
   }
   const envTag = envTagString as EnvTag;
-  return getBackendUrlForEnv(envTag);
-};
-
-const getBackendUrlForEnv = (envTag: EnvTag) => {
   return BACKEND_URL_BY_ENV_TAG[envTag];
 };
