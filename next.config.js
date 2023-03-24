@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-};
-
-module.exports = {
+  env: {
+    NEXT_PUBLIC_ENV_TAG: process.env.NEXT_PUBLIC_ENV_TAG,
+  },
   images: {
     remotePatterns: [
       {
@@ -15,3 +15,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = nextConfig;
