@@ -3,6 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
 import { useModalContext } from '@/contexts/ModalContext';
+import { getBackendUrl } from '@/utils/backend';
 
 export type Message = {
   messageId: string;
@@ -41,16 +42,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(true);
   const { setModal } = useModalContext();
-  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
-    'wss://chatweb3.func.ai:9998',
-    {
-      onOpen: (evt) => onOpen(),
-      onClose: (evt) => onClose(),
-      onError: (evt) => onError(),
-      shouldReconnect: (closeEvent) => true,
-      reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
-    }
-  );
+
+  const backendUrl = getBackendUrl();
+  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(backendUrl, {
+    onOpen: (evt) => onOpen(),
+    onClose: (evt) => onClose(),
+    onError: (evt) => onError(),
+    shouldReconnect: (closeEvent) => true,
+    reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
+  });
 
   // Connected wallet status
   const {
@@ -71,6 +71,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   }, [walletIsConnected, walletStatus, walletAddress]);
 
   const onOpen = () => {
+    console.log(`Connected to backend: ${backendUrl}`);
+
     const q = window.location.search;
     if (q) {
       // websocket is re-establishing an existing session
