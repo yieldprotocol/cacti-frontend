@@ -13,7 +13,7 @@ export const MintButton = () => {
   const provider = useProvider() as JsonRpcProvider;
 
   useEffect(() => {
-    if (!address || chain?.id != 36963) setVisible(false);
+    if (!address || chain?.id != 1) setVisible(false);
     setVisible(true);
   }, [address, chain?.id]);
 

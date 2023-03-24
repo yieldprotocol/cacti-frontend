@@ -12,6 +12,7 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import { CompoundV2USDCAbi } from '@/abi/CompoundV2USDC';
+import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
@@ -76,50 +77,20 @@ export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) =
   }
 
   return (
-    <div>
+    <>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens {...{ project, token, amount, setIsApprovalSuccess }} />
+        <ApproveTokens
+          {...{
+            token,
+            amount,
+            setIsApprovalSuccess,
+            spenderAddress: supportedProjects[project.id].getWriteConfig(token, amount)
+              .address as `0x${string}`,
+          }}
+        />
       )}
       {(hasAllowance || isApprovalSuccess) && <DepositTokens {...{ project, token, amount }} />}
-    </div>
-  );
-};
-
-const ApproveTokens = ({
-  project,
-  token,
-  amount,
-  setIsApprovalSuccess,
-}: Pick<YieldFarmProps, 'project' | 'token' | 'amount'> & {
-  setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  // Get approval ready
-  const { config: tokenConfig } = usePrepareContractWrite({
-    address: token.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'approve',
-    args: [supportedProjects[project.id].getWriteConfig(token, amount).address, amount],
-  });
-  const { write: tokenWrite, data } = useContractWrite(tokenConfig);
-  const { isLoading, isSuccess: isApprovalSuccess } = useWaitForTransaction({ hash: data?.hash });
-
-  useEffect(() => {
-    setIsApprovalSuccess(isApprovalSuccess);
-  }, [setIsApprovalSuccess, isApprovalSuccess]);
-
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex justify-center">
-        <Button disabled={!tokenWrite} onClick={() => tokenWrite?.()}>
-          {isLoading ? 'Pending...' : 'Approve'}
-        </Button>
-      </div>
-      <div className="flex justify-center text-xs">
-        First, approve {project.name} for {formatUnits(amount.toString(), token.decimals)}{' '}
-        {token.symbol}
-      </div>
-      {!isLoading && isApprovalSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
-    </div>
+    </>
   );
 };
 
