@@ -22,13 +22,16 @@ const BACKEND_URL_BY_ENV_TAG: { [key in EnvTag]: string } = {
   [EnvTag.Local]: 'ws://localhost:9999',
 };
 
+function isEnvTag(envTag: any): envTag is EnvTag {
+  return Object.values(EnvTag).includes(envTag);
+};
+
 export const getBackendUrl = () => {
-  const envTagString = process.env.NEXT_PUBLIC_ENV_TAG || DEFAULT_ENV_TAG;
-  if (!(envTagString in BACKEND_URL_BY_ENV_TAG)) {
+  const envTag = process.env.NEXT_PUBLIC_ENV_TAG || DEFAULT_ENV_TAG;
+  if (!isEnvTag(envTag)) {
     throw Error(
-      `Invalid env tag: ${envTagString}; must be one of ${Object.values(BACKEND_URL_BY_ENV_TAG)}`
+      `Invalid env tag: ${envTag}; must be one of ${Object.values(EnvTag)}`
     );
   }
-  const envTag = envTagString as EnvTag;
   return BACKEND_URL_BY_ENV_TAG[envTag];
 };
