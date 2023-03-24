@@ -24,14 +24,12 @@ const BACKEND_URL_BY_ENV_TAG: { [key in EnvTag]: string } = {
 
 function isEnvTag(envTag: any): envTag is EnvTag {
   return Object.values(EnvTag).includes(envTag);
-};
+}
 
 export const getBackendUrl = () => {
   const envTag = process.env.NEXT_PUBLIC_ENV_TAG || DEFAULT_ENV_TAG;
   if (!isEnvTag(envTag)) {
-    throw Error(
-      `Invalid env tag: ${envTag}; must be one of ${Object.values(EnvTag)}`
-    );
+    throw Error(`Invalid env tag: ${envTag}; must be one of ${Object.values(EnvTag)}`);
   }
   return BACKEND_URL_BY_ENV_TAG[envTag];
 };
