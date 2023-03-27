@@ -23,7 +23,9 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   const { address: receiver } = useAccount();
   const { useForkEnv } = useFork();
   const { data: tokenIn, isETH: tokenInisETH } = useToken(tokenInSymbol);
-  const { data: tokenOut } = useToken(tokenOutSymbol);
+  const { data: tokenInForPrice } = useToken(tokenInisETH ? 'WETH' : tokenInSymbol);
+  const { data: tokenOut, isETH: tokenOutisETH } = useToken(tokenOutSymbol);
+  const { data: tokenOutForPrice } = useToken(tokenOutisETH ? 'WETH' : tokenInSymbol);
 
   const amountInFmt = formatUnits(amountIn, tokenIn?.decimals);
 
@@ -32,14 +34,14 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     error: quoteError,
     data: quote,
   } = useUniswapQuote({
-    baseTokenSymbol: tokenIn?.symbol!,
-    quoteTokenSymbol: tokenOut?.symbol!,
+    baseTokenSymbol: tokenInForPrice?.symbol!,
+    quoteTokenSymbol: tokenOutForPrice?.symbol!,
     amount: amountInFmt,
   });
 
   const params: ExactInputSingleParams = {
-    tokenIn: tokenIn?.address!,
-    tokenOut: tokenOut?.address!,
+    tokenIn: tokenInForPrice?.address!,
+    tokenOut: tokenOutForPrice?.address!,
     fee: BigNumber.from(3000),
     recipient: receiver!,
     deadline: BigNumber.from(0),
