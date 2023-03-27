@@ -90,8 +90,8 @@ const spoofPrompts: [string, string][] = [
     '<|nfts-by-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>',
   ],
   [
-    `Buy NFT ${shortenAddress('0x282bdd42f4eb70e7a9d9f40c8fea0825b7f68c5d')}:8239`,
-    '<|buy-nft("0x282bdd42f4eb70e7a9d9f40c8fea0825b7f68c5d", "8239")|>',
+    `Buy NFT ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:3705`,
+    '<|buy-nft("0x23581767a106ae21c074b2276d25e5c3e136a68b", "3705")|>',
   ],
   [`Deposit USDC into yield farm `, '<|yield-farm("compound", "ethereum", "USDC", "1")|>'], // Only works for this use case if your wallet has USDC
   [
