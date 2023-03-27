@@ -1,17 +1,30 @@
+import { useCallback } from 'react';
 import { useChainId } from 'wagmi';
 import { Token } from '@/types';
 import { findTokenBySymbol } from '@/utils';
 
-const useToken = (tokenSymbol: string) => {
+const useToken = (tokenSymbol?: string) => {
   const chainId = useChainId();
 
   // using WETH address for ETH
-  const isETH = tokenSymbol === 'ETH';
-  const token = findTokenBySymbol(isETH ? 'WETH' : tokenSymbol, chainId);
+  const getIsETH = useCallback((_tokenSymbol: string) => _tokenSymbol.toUpperCase() === 'ETH', []);
+  const getToken = useCallback(
+    (_tokenSymbol: string) =>
+      getIsETH(_tokenSymbol)
+        ? ({
+            address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+            symbol: 'ETH',
+            decimals: 18,
+          } as Token)
+        : (findTokenBySymbol(_tokenSymbol, chainId) as Token),
+    [chainId, getIsETH]
+  );
 
   return {
-    data: token as Token,
-    isETH,
+    data: tokenSymbol ? getToken(tokenSymbol) : undefined,
+    getToken,
+    isETH: tokenSymbol ? getIsETH(tokenSymbol) : false,
+    getIsETH,
   };
 };
 
