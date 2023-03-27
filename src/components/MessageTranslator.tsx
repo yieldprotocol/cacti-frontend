@@ -236,9 +236,9 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         try {
           params = JSON.parse(args);
         } catch (e) {
-          const [network, address, tokenId, collectionName, name, previewImageUrl] =
+          const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
             parseArgsStripQuotes(args);
-          params = { network, address, tokenId, collectionName, name, previewImageUrl };
+          params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
         }
         return <NftAssetContainer {...params} />;
       }

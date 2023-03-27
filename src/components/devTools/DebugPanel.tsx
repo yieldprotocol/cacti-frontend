@@ -100,7 +100,7 @@ const spoofPrompts: [string, string][] = [
   ], // Only works for this use case if your wallet has USDC
   [
     `Show NFT asset in a container `,
-    '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png")|>',
+    '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png", "123.4 ETH")|>',
   ],
   [
     `Show NFT asset trait container `,
