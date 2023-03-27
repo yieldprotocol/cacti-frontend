@@ -5,6 +5,7 @@ interface NftAssetContainerProps {
   collectionName: string;
   name: string;
   previewImageUrl: string;
+  price?: string;
 }
 
 interface NftAssetTraitsContainerProps {
@@ -24,7 +25,9 @@ export const NftAssetContainer = ({
   collectionName,
   name,
   previewImageUrl,
+  price,
 }: NftAssetContainerProps) => {
+  const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
   return (
     <div className="flex justify-center">
       <a
@@ -44,6 +47,7 @@ export const NftAssetContainer = ({
           <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
           <p className="ml-3 text-sm font-medium text-gray-400">{collectionName}</p>
           <p className="ml-3 text-sm font-medium text-gray-400">{network}</p>
+          <p className="ml-3 text-sm font-medium text-gray-400">{listPrice}</p>
         </div>
       </a>
     </div>
