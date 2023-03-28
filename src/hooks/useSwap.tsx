@@ -69,6 +69,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
       value: tokenInisETH ? amountIn : 0,
     },
     staleTime: Infinity,
+    enabled: !useForkEnv,
   });
 
   const {
@@ -79,7 +80,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     error: txError,
   } = useContractWrite(swapConfig);
 
-  const swap = () => (useForkEnv ? contract?.exactInputSingle(params) : swapWrite);
+  const swap = async () => (useForkEnv ? await contract?.exactInputSingle(params) : swapWrite?.());
 
   return {
     swap,
