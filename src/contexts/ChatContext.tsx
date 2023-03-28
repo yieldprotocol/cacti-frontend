@@ -30,7 +30,7 @@ const initialContext = {
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
-  showDebugMessages: true,
+  showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
 };
 
