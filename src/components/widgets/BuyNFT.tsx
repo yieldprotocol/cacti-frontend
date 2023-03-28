@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
+import { formatEther } from 'ethers/lib/utils.js';
 import * as JSONbigint from 'json-bigint';
 import {
   useAccount,
@@ -174,7 +175,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       )}
       {!isSuccess && (
         <Button disabled={!seaportWrite || isWriteError} onClick={() => seaportWrite?.()}>
-          Buy NFT
+          Buy NFT {valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}
         </Button>
       )}
       {isSuccess && <b className="m-2">Success! You now own the NFT.</b>}
