@@ -59,6 +59,9 @@ const useUniswapQuote = (props: {
         humanReadableAmount: route.quote.toFixed(4),
         value: route.quote,
       };
+    },
+    {
+      revalidateOnFocus: false,
     }
   );
   return { isLoading, error, data };
