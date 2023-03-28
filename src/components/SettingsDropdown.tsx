@@ -23,45 +23,41 @@ const SettingsDropdown = () => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className="absolute right-0 mt-4 w-56 origin-top-right rounded-md bg-gray-800 shadow-md focus:outline-none"
+          className="absolute right-0 mt-4 w-56 origin-top-right rounded-md bg-gray-800 p-2 shadow-md focus:outline-none"
           static
         >
           <Menu.Item>
-            <div className="p-2">
-              <button
-                className="text-md flex w-full items-center gap-2 rounded-md p-2 px-2 py-2 text-white hover:bg-gray-700"
-                onClick={() => setUseForkEnv(!useForkEnv)}
-              >
-                <SignalIcon className="ml-1 h-5 w-5 text-white" />
-                <div className="flex w-full justify-between">
-                  <div>Use Fork</div>
-                  <Switch
-                    checked={useForkEnv}
-                    onChange={setUseForkEnv}
+            <button
+              className="text-md flex w-full items-center gap-2 rounded-md p-2 text-white hover:bg-gray-700"
+              onClick={() => setUseForkEnv(!useForkEnv)}
+            >
+              <SignalIcon className="ml-1 h-5 w-5 text-white" />
+              <div className="flex w-full justify-between">
+                <div>Use Fork</div>
+                <Switch
+                  checked={useForkEnv}
+                  onChange={setUseForkEnv}
+                  className={`${
+                    useForkEnv ? 'bg-gray-600' : 'bg-gray-400'
+                  } relative inline-flex h-6 w-11 items-center rounded-full`}
+                >
+                  <span
                     className={`${
-                      useForkEnv ? 'bg-gray-600' : 'bg-gray-400'
-                    } relative inline-flex h-6 w-11 items-center rounded-full`}
-                  >
-                    <span
-                      className={`${
-                        useForkEnv ? 'translate-x-6' : 'translate-x-1'
-                      } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-                    />
-                  </Switch>
-                </div>
-              </button>
-            </div>
+                      useForkEnv ? 'translate-x-6' : 'translate-x-1'
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
+              </div>
+            </button>
           </Menu.Item>
           <Menu.Item>
-            <div className="p-2">
-              <button
-                className="text-md flex w-full items-center gap-2 rounded-md p-2 px-2 py-2 text-white hover:bg-gray-700"
-                onClick={() => setOpenModal(true)}
-              >
-                <WrenchIcon className="ml-1 h-5 w-5 text-white" />
-                <div>Developer Tools</div>
-              </button>
-            </div>
+            <button
+              className="text-md flex w-full items-center gap-2 rounded-md p-2 px-2 py-2 text-white hover:bg-gray-700"
+              onClick={() => setOpenModal(true)}
+            >
+              <WrenchIcon className="ml-1 h-5 w-5 text-white" />
+              <div>Developer Tools</div>
+            </button>
           </Menu.Item>
         </Menu.Items>
       </Transition>
