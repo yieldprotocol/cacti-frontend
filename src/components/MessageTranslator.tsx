@@ -20,9 +20,9 @@ import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
 import useChainId from '@/hooks/useChainId';
+import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
-import { parseMessage } from '@/utils/parse-message';
 import { BuyNFT } from './widgets/BuyNFT';
 import {
   NftAttributes,
@@ -37,7 +37,7 @@ import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const { chain } = useNetwork();
-  const stringsAndWidgets = parseMessage(message);
+  const stringsAndWidgets = useParseMessage(message);
   return (
     <div className="flex flex-col gap-3">
       {stringsAndWidgets.map((item, i) => {
