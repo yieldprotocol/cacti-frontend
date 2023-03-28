@@ -1,156 +1,111 @@
 import { useEffect, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
-import {
-  erc20ABI,
-  useAccount,
-  useContractRead,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { XCircleIcon } from '@heroicons/react/20/solid';
+import { BigNumber } from 'ethers';
+import { erc20ABI, useAccount, useContractRead } from 'wagmi';
 import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
-import useTokenApproval from '@/hooks/useTokenApproval';
-import useUniswapQuote from '@/hooks/useUniswapQuote';
-import { Token } from '@/types';
-import { findTokenBySymbol, formatToEther } from '@/utils';
+import useSwap from '@/hooks/useSwap';
+import useToken from '@/hooks/useToken';
 import { Spinner } from '@/utils';
 import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
-import SwapRouter02Abi from '../../abi/SwapRouter02.json';
 
 interface Props {
-  tokenIn: Token;
-  tokenOut: Token;
+  tokenInSymbol: string;
+  tokenOutSymbol: string;
   amountIn: BigNumber;
 }
 
-interface ExactInputSingleParams {
-  tokenIn: string;
-  tokenOut: string;
-  fee: BigNumber;
-  recipient: string;
-  deadline: BigNumber;
-  amountIn: BigNumber;
-  amountOutMinimum: BigNumber;
-  sqrtPriceLimitX96: BigNumber;
-}
-
-const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
-
-export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
+export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
   // Owner is the receiver
   const { address: receiver } = useAccount();
+  const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
   const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
 
   // Check if balance is enough
-  const { data: balance, error } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
+  const { data: balance } = useContractRead({
+    address: tokenIn?.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
-    args: [receiver],
+    args: [receiver!],
+    enabled: !!tokenIn && !tokenInIsETH,
   });
 
   // Get allowance amount
   const { data: allowanceAmount } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
+    address: tokenIn?.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [receiver, swapRouter02Address],
+    args: [receiver!, UNISWAP_ROUTER_02_ADDRESS],
+    enabled: !tokenInIsETH,
   });
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(amountIn));
-    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+    setHasBalance(balance! && BigNumber.from(balance).gte(amountIn));
+    setHasAllowance(allowanceAmount! && BigNumber.from(allowanceAmount).gte(amountIn));
+  }, [allowanceAmount, amountIn, balance]);
 
   // ETH to token swap
-  if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
+  if (tokenInIsETH) return <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />;
 
   return (
     <div>
       {!hasAllowance && !isApprovalSuccess && (
         <ApproveTokens
           {...{
-            token: tokenIn,
+            token: tokenIn!,
             amount: amountIn,
             setIsApprovalSuccess,
             spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
           }}
         />
       )}
-      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
+      {(hasAllowance || isApprovalSuccess) && (
+        <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />
+      )}
     </div>
   );
 };
 
-const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
-  // Owner is the receiver
-  const { address: receiver } = useAccount();
-  const { chain } = useNetwork();
-  const isEth = tokenIn.symbol == 'ETH';
-  const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain.id) : tokenIn;
-
-  const {
-    isLoading: quoteIsLoading,
-    error: quoteError,
-    data: quote,
-  } = useUniswapQuote({
-    baseTokenSymbol: tokenInChecked.symbol,
-    quoteTokenSymbol: tokenOut.symbol,
-    amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
-  });
-
-  const params: ExactInputSingleParams = {
-    tokenIn: tokenInChecked.address,
-    tokenOut: tokenOut.address,
-    fee: BigNumber.from(3000),
-    recipient: receiver,
-    deadline: BigNumber.from(0),
-    amountIn,
-    amountOutMinimum: quote?.value
-      ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals).div('1000')
-      : BigNumber.from(0),
-    sqrtPriceLimitX96: BigNumber.from(0),
-  };
-
-  const { config: swapConfig, error } = usePrepareContractWrite({
-    address: swapRouter02Address,
-    abi: SwapRouter02Abi,
-    functionName: 'exactInputSingle',
-    args: [params],
-    overrides: {
-      value: isEth ? amountIn : 0,
-    },
-  });
-  const err: Error & { reason?: string } = error;
-
-  const { write: swapWrite, data, isSuccess } = useContractWrite(swapConfig);
+const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
+  const { swap, isLoading, isSuccess, prepareError, txError, hash } = useSwap(
+    tokenInSymbol,
+    tokenOutSymbol,
+    amountIn
+  );
 
   return (
-    <>
-      <div className="flex justify-end">
-        {!isSuccess && (
-          <Button
-            className="px-4"
-            disabled={!swapWrite || quoteIsLoading}
-            onClick={() => swapWrite?.()}
-          >
-            <div className="flex gap-2">
-              Send
-              {quoteIsLoading ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
-            </div>
-          </Button>
-        )}
-        {isSuccess && <TxStatus hash={data?.hash} />}
-        {err && (
-          <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
-        )}
-      </div>
-    </>
+    <div className="flex">
+      {!isSuccess && (
+        <Button
+          className={prepareError || txError ? 'border border-red-500' : ''}
+          disabled={!swap || isLoading}
+          onClick={swap}
+        >
+          <div className="flex gap-2 align-middle">
+            {isLoading ? (
+              <Spinner className="mr-0 h-4 self-center" />
+            ) : prepareError || txError ? (
+              <>
+                <div className="">
+                  <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+            {prepareError
+              ? 'Error preparing swap'
+              : txError
+              ? 'Error executing transaction'
+              : 'Send'}
+          </div>
+        </Button>
+      )}
+      {isSuccess && <TxStatus hash={hash!} />}
+    </div>
   );
 };

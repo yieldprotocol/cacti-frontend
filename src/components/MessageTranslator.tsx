@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { Chain, useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
@@ -18,6 +19,8 @@ import {
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
+import useChainId from '@/hooks/useChainId';
+import useToken from '@/hooks/useToken';
 import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { parseMessage } from '@/utils/parse-message';
 import { BuyNFT } from './widgets/BuyNFT';
@@ -64,7 +67,8 @@ const Widgetize = (widget: Widget, chain: Chain) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = chain?.id || 1;
+  const chainId = useChainId();
+  const { getToken } = useToken();
 
   try {
     switch (fnName) {
@@ -93,26 +97,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       }
       // Swap widget
       case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] =
+        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
 
-        const tokenIn =
-          tokenInSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenInSymbol, chainId);
-        const tokenOut =
-          tokenOutSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenOutSymbol, chainId);
-
-        const amountIn = parseUnits(amountInString, tokenIn.decimals);
+        const tokenIn = getToken(tokenInSymbol);
+        const amountIn = parseUnits(amountInStrRaw, tokenIn.decimals);
+        const amountIn_ = formatUnits(amountIn, tokenIn.decimals);
 
         return (
           <ActionPanel
-            header={`Swap ${formatUnits(
-              amountIn.toString(),
-              tokenIn.decimals
-            )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
+            header={`Swap ${amountIn_} of ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
             key={inputString}
             centerTitle={true}
@@ -121,8 +115,8 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               <ConnectFirst>
                 <UniswapButton
                   {...{
-                    tokenIn,
-                    tokenOut,
+                    tokenInSymbol,
+                    tokenOutSymbol,
                     amountIn,
                   }}
                 />
