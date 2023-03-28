@@ -1,10 +1,11 @@
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount, useContract, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import useFork from '@/hooks/useFork';
 import useToken from '@/hooks/useToken';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
+import useSigner from './useSigner';
 
 interface ExactInputSingleParams {
   tokenIn: string;
@@ -26,6 +27,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   const { data: tokenInForPrice } = useToken(tokenInisETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOut, isETH: tokenOutisETH } = useToken(tokenOutSymbol);
   const { data: tokenOutForPrice } = useToken(tokenOutisETH ? 'WETH' : tokenInSymbol);
+  const signer = useSigner();
 
   const amountInFmt = formatUnits(amountIn, tokenIn?.decimals);
 
@@ -52,6 +54,12 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
+  const contract = useContract({
+    address: UNISWAP_ROUTER_02_ADDRESS,
+    abi: SwapRouter02Abi,
+    signerOrProvider: signer,
+  });
+
   const { config: swapConfig, error: prepareError } = usePrepareContractWrite({
     address: UNISWAP_ROUTER_02_ADDRESS,
     abi: SwapRouter02Abi,
@@ -60,6 +68,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     overrides: {
       value: tokenInisETH ? amountIn : 0,
     },
+    staleTime: Infinity,
   });
 
   const {
@@ -70,18 +79,13 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     error: txError,
   } = useContractWrite(swapConfig);
 
-  const swap = () => {
-    if (useForkEnv) {
-      return swapWrite;
-    }
-    return swapWrite;
-  };
+  const swap = () => (useForkEnv ? contract?.exactInputSingle(params) : swapWrite);
 
   return {
     swap,
     data,
     isSuccess,
-    prepareError,
+    prepareError: !useForkEnv && prepareError,
     txError,
     isLoading: quoteIsLoading || isLoading,
     quoteError,
