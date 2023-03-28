@@ -22,9 +22,10 @@ type ForkTools = {
 
 // handle using a fork
 const useFork = (): ForkTools => {
+  const FORK_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
   const [useForkEnv, setUseForkEnv] = useLocalStorage(USE_FORK_KEY, JSON.stringify(true));
   /* Get the fork url from a simple cache, or alternatively the env */
-  const [forkUrl, setForkUrl] = useState<string>(process.env.FORK_URL || '');
+  const [forkUrl, setForkUrl] = useState<string>(FORK_URL || '');
   const TENDERLY_FORK_API = `http://api.tenderly.co/api/v1/account/${process.env.TENDERLY_USER}/project/${process.env.TENDERLY_PROJECT}/fork`;
 
   /* parameters from wagmi */
