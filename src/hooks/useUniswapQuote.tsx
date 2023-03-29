@@ -1,9 +1,8 @@
 import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core';
 import { AlphaRouter } from '@uniswap/smart-order-router';
-import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import useSWR from 'swr';
-import { erc20ABI, useAccount, useContract, useNetwork, useProvider } from 'wagmi';
+import { useNetwork, useProvider } from 'wagmi';
 import { findTokenBySymbol } from '@/utils';
 import { MAINNET_CHAIN_ID } from '@/utils/constants';
 
@@ -56,8 +55,8 @@ const useUniswapQuote = (props: {
       );
 
       return {
-        humanReadableAmount: route.quote.toFixed(4),
-        value: route.quote,
+        humanReadableAmount: route?.quote.toFixed(4),
+        value: route?.quote,
       };
     }
   );
