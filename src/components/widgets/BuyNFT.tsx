@@ -14,7 +14,7 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
-import { Order } from '@/types';
+import { Order } from '@/types/seaport';
 import { Spinner } from '@/utils';
 import { NftOwner } from '../CheckNftOwner';
 
