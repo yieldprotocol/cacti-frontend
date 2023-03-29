@@ -5,6 +5,7 @@ import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/r
 import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import RpcUrlCheck from '@/components/RpcUrlCheck';
 import { ChatContextProvider } from '@/contexts/ChatContext';
 import { ModalContextProvider } from '@/contexts/ModalContext';
 import '@/styles/globals.css';
@@ -51,6 +52,7 @@ const wagmiClient = createClient({
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
+  // If not a tenderly fork render modal
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiConfig client={wagmiClient}>
@@ -58,7 +60,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <CenterProvider>
             <ModalContextProvider>
               <ChatContextProvider>
-                <Component {...pageProps} />
+                <RpcUrlCheck>
+                  <Component {...pageProps} />
+                </RpcUrlCheck>
               </ChatContextProvider>
             </ModalContextProvider>
           </CenterProvider>
