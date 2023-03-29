@@ -147,6 +147,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             msg={inputString}
             key={inputString}
             gap="gap-3"
+            centerTitle={true}
           >
             <ConnectFirst>
               <YieldFarm {...{ project, network, token, amount }} />

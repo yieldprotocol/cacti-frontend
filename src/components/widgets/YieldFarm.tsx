@@ -112,11 +112,13 @@ const DepositTokens = ({
 
   return (
     <>
-      <div>
+      <div className="flex w-[100%] justify-end">
         {!isSuccess && (
-          <Button disabled={!depositWrite} onClick={() => depositWrite?.()}>
-            Send
-          </Button>
+          <div>
+            <Button disabled={!depositWrite} onClick={() => depositWrite?.()}>
+              Send
+            </Button>
+          </div>
         )}
         {isSuccess && <TxStatus hash={data?.hash} />}
         {err && (
