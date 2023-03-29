@@ -5,7 +5,7 @@ import { shortenAddress } from '@/utils';
 
 const CUSTOM_PROMPT = 'Custom Prompt';
 
-export const DebugPanel = ({ handleClose }) => {
+export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
   const { spoofBotMessage } = useChatContext();
   const [customMessage, setCustomMessage] = useState<string>('');
 

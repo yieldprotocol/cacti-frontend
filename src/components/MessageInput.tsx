@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { sendMessage } = useChatContext();
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   }, []);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     if (messageInput.length > 0) {
       sendMessage(messageInput);
