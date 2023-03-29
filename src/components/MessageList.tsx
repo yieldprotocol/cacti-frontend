@@ -5,7 +5,7 @@ import Avatar from './Avatar';
 
 export const MessageList = () => {
   const { messages, isBotThinking, showDebugMessages } = useChatContext();
-  const bottomRef = useRef(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

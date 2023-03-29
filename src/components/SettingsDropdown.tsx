@@ -8,6 +8,7 @@ import useFork from '@/hooks/useFork';
 const SettingsDropdown = () => {
   const { useForkEnv, setUseForkEnv } = useFork();
   const [openModal, setOpenModal] = useState(false);
+
   return (
     <Menu as="div" className="relative">
       <Menu.Button className="h-full w-full rounded-md p-2 align-middle hover:bg-gray-800">
