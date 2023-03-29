@@ -47,6 +47,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
 
   // tx hash to use for waiting for tx
   const [hash, setHash] = useState<`0x${string}`>();
+  const [txPending, setTxPending] = useState(false);
 
   const amountInFmt = formatUnits(amountIn, tokenIn?.decimals);
 
@@ -92,9 +93,11 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     enabled: !useForkEnv,
   });
 
-  const { writeAsync: swapWriteAsync, error: txError } = useContractWrite(swapConfig);
+  const { writeAsync: swapWriteAsync } = useContractWrite(swapConfig);
 
+  // handles both fork and non-fork envs
   const swap = async () => {
+    setTxPending(true);
     if (useForkEnv) {
       const tx = (await contract?.connect(signer!).exactInputSingle(params, {
         value,
@@ -104,6 +107,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
       const tx = await swapWriteAsync?.();
       setHash(tx?.hash);
     }
+    setTxPending(false);
   };
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
@@ -117,10 +121,11 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   return {
     swap,
     data,
-    isSuccess,
+    txSuccess: isSuccess,
     prepareError: !useForkEnv && prepareError,
     txError: isError,
-    isLoading: quoteIsLoading || isLoading,
+    txPending: txPending || isLoading,
+    quoteIsLoading,
     quoteError,
     hash,
   };

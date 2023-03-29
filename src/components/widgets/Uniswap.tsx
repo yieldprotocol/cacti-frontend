@@ -60,7 +60,7 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
 };
 
 const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
-  const { swap, isLoading, isSuccess, prepareError, txError, hash } = useSwap(
+  const { swap, txPending, txSuccess, txError, prepareError, hash, quoteIsLoading } = useSwap(
     tokenInSymbol,
     tokenOutSymbol,
     amountIn
@@ -68,14 +68,14 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
 
   return (
     <div className="flex">
-      {!isSuccess && (
+      {!txSuccess && (
         <Button
           className={prepareError || txError ? 'border border-red-500' : ''}
-          disabled={!swap || isLoading}
+          disabled={!swap || txPending}
           onClick={swap}
         >
           <div className="flex gap-2 align-middle">
-            {isLoading ? (
+            {txPending ? (
               <Spinner className="mr-0 h-4 self-center" />
             ) : prepareError || txError ? (
               <>
@@ -90,11 +90,15 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
               ? 'Error preparing swap'
               : txError
               ? 'Error executing transaction'
-              : 'Send'}
+              : quoteIsLoading
+              ? 'Quote loading...'
+              : txPending
+              ? 'Pending...'
+              : 'Swap'}
           </div>
         </Button>
       )}
-      {isSuccess && <TxStatus hash={hash!} />}
+      {txSuccess && <TxStatus hash={hash!} />}
     </div>
   );
 };
