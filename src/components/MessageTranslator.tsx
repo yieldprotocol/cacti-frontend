@@ -106,7 +106,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
 
         return (
           <ActionPanel
-            header={`Swap ${amountIn_} of ${tokenInSymbol} to ${tokenOutSymbol}`}
+            header={`Swap ${amountIn_} ${tokenInSymbol} to ${tokenOutSymbol}`}
             msg={inputString}
             key={inputString}
             centerTitle={true}
