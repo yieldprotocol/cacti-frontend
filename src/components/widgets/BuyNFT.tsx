@@ -15,7 +15,7 @@ import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Spinner } from '@/utils';
-import { CheckNftOwner } from '../CheckNftOwner';
+import { NftOwner } from '../CheckNftOwner';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
@@ -116,7 +116,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     functionName: 'fulfillOrder',
     args: [
       { parameters: params, signature: signature },
-      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
     ],
     overrides: {
       value: BigNumber.from(valueAmount || 0),
@@ -149,7 +149,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     <div>
       <div>
         <NftAttributes nftAddress={nftAddress} tokenID={tokenId} />
-        <CheckNftOwner nftAddress={nftAddress} tokenId={tokenId} />
+        <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
       </div>
 
       {isTxError && <WidgetError>Tx error: {txErrorData?.message}</WidgetError>}

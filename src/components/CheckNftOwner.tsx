@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { erc721ABI, useAccount, useBlockNumber, useContractRead } from 'wagmi';
+import { erc721ABI, useAccount, useContractRead } from 'wagmi';
 import erc1155ABI from '@/abi/erc1155ABI.json';
 
 interface Props {
@@ -8,11 +8,11 @@ interface Props {
   tokenId: string;
 }
 
-export const CheckNftOwner = ({ nftAddress, tokenId }: Props) => {
+export const NftOwner = ({ nftAddress, tokenId }: Props) => {
   const [owner, setOwner] = useState('');
   const { address: account } = useAccount();
 
-  const { data: ERC721Data, isSuccess: is721ReadSuccess } = useContractRead({
+  const { data: erc721Data, isSuccess: is721ReadSuccess } = useContractRead({
     address: nftAddress as `0x${string}`,
     abi: erc721ABI,
     functionName: 'ownerOf',
@@ -20,7 +20,7 @@ export const CheckNftOwner = ({ nftAddress, tokenId }: Props) => {
     watch: true,
   });
 
-  const { data: ERC1155Data, isSuccess: is1155ReadSuccess } = useContractRead({
+  const { data: erc1155Data, isSuccess: is1155ReadSuccess } = useContractRead({
     address: nftAddress as `0x${string}`,
     abi: erc1155ABI,
     functionName: 'balanceOf',
@@ -29,9 +29,9 @@ export const CheckNftOwner = ({ nftAddress, tokenId }: Props) => {
   });
 
   useEffect(() => {
-    if (is721ReadSuccess) setOwner(`Owner: ${ERC721Data?.toString()}` || '');
-    if (is1155ReadSuccess) setOwner(`Your balance: ` + ERC1155Data?.toString() || '0');
-  }, [ERC721Data, ERC1155Data, is721ReadSuccess, is1155ReadSuccess]);
+    if (is721ReadSuccess) setOwner(`Owner: ${erc721Data?.toString()}` || '');
+    if (is1155ReadSuccess) setOwner(`Your balance: ` + erc1155Data?.toString() || '0');
+  }, [erc721Data, erc1155Data, is721ReadSuccess, is1155ReadSuccess]);
 
   return (
     <div className="m-2">
