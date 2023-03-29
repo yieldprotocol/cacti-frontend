@@ -46,7 +46,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return the string
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item, chain)
+              typeof item === 'string' ? item : Widgetize(item)
             }
           </Fragment>
         );
@@ -63,7 +63,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const Widgetize = (widget: Widget, chain: Chain) => {
+const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
@@ -240,11 +240,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
+            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }, i) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -258,16 +258,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { collection, assets } = JSON.parse(args);
         return (
           <NftCollectionAssetsContainer
-            collection={Widgetize(
-              { fnName: collection.name, args: JSON.stringify(collection.params) },
-              chain
-            )}
+            collection={Widgetize({
+              fnName: collection.name,
+              args: JSON.stringify(collection.params),
+            })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }, i) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -295,7 +295,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <Grid>
               {params.items?.map(({ name, params }, i) => (
                 <Fragment key={`i${i}`}>
-                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                  {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                 </Fragment>
               )) || ''}
             </Grid>
@@ -325,7 +325,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
                 };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
                   </Fragment>
                 );
               })}
