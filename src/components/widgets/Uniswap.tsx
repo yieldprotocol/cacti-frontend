@@ -8,6 +8,7 @@ import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
 import useSwap from '@/hooks/useSwap';
 import useToken from '@/hooks/useToken';
+import useTokenApproval from '@/hooks/useTokenApproval';
 import { Spinner } from '@/utils';
 import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 
@@ -21,9 +22,13 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
+  const { hasAllowance } = useTokenApproval({
+    address: tokenIn?.address as `0x${string}`,
+    amount: amountIn,
+    spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+  });
+
   const [hasBalance, setHasBalance] = useState(false);
-  const [hasAllowance, setHasAllowance] = useState(false);
-  const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
 
   // Check if balance is enough
   const { data: balance } = useContractRead({
@@ -34,37 +39,21 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
     enabled: !!tokenIn && !tokenInIsETH,
   });
 
-  // Get allowance amount
-  const { data: allowanceAmount } = useContractRead({
-    address: tokenIn?.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [receiver!, UNISWAP_ROUTER_02_ADDRESS],
-    enabled: !tokenInIsETH,
-  });
-
-  useEffect(() => {
-    setHasBalance(balance! && BigNumber.from(balance).gte(amountIn));
-    setHasAllowance(allowanceAmount! && BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [allowanceAmount, amountIn, balance]);
-
   // ETH to token swap
   if (tokenInIsETH) return <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />;
 
   return (
-    <div>
-      {!hasAllowance && !isApprovalSuccess && (
+    <div className="flex gap-2">
+      {hasAllowance ? (
+        <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />
+      ) : (
         <ApproveTokens
           {...{
             token: tokenIn!,
             amount: amountIn,
-            setIsApprovalSuccess,
             spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
           }}
         />
-      )}
-      {(hasAllowance || isApprovalSuccess) && (
-        <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />
       )}
     </div>
   );
