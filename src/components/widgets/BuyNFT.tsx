@@ -14,6 +14,7 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
+import { Order } from '@/types';
 import { Spinner } from '@/utils';
 import { NftOwner } from '../CheckNftOwner';
 
@@ -102,10 +103,10 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     async () => orderHash && fetchFulfillParams(orderHash, receiver!, protocol_address)
   );
 
-  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as any;
-  const signature = fulfillmentData?.fulfillment_data.orders[0].signature;
+  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
+  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
 
-  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value;
+  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
 
   // usePrepareContractWrite states:
   // If prepareWriteError, show error
