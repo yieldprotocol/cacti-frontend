@@ -77,8 +77,8 @@ export const NftCollectionAttributes = ({ nftAddress }: Props) => {
     <NftCollectionTraitsContainer
       network={ETHEREUM_NETWORK}
       address={nftAddress}
-      name={useCollectionResult?.name}
-      traits={data?.items.map((item) => item.trait)}
+      name={useCollectionResult?.name!}
+      traits={data?.items.map((item: any) => item.trait)}
     />
   );
 };
@@ -88,7 +88,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
     ['NftAttributes', nftAddress, tokenID],
     async () => fetchNftAttributes(nftAddress, `/${tokenID}`)
   );
-  const result = useAsset({ network: ETHEREUM_NETWORK, address: nftAddress, tokenId: tokenID });
+  const result = useAsset({ network: ETHEREUM_NETWORK, address: nftAddress, tokenId: tokenID! });
 
   if (isLoading) return <Spinner />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
@@ -99,7 +99,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
         <img className="h-32 w-32 rounded-md" src={result[0].mediaUrl} alt="nft image" />
       </div>
       {data &&
-        data?.metadata.attributes.map((attribute) => {
+        data?.metadata.attributes.map((attribute: any) => {
           return (
             <div key={attribute.trait_type}>
               <div className="m-2">
@@ -115,7 +115,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
 export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props) => {
   const { isLoading, isError, error, data } = useQuery(
     ['NftsWithAttributes', nftAddress, traitType, traitValue],
-    async () => fetchNftsByAttributes(nftAddress, traitType, traitValue)
+    async () => fetchNftsByAttributes(nftAddress, traitType!, traitValue!)
   );
 
   if (isLoading) return <Spinner />;

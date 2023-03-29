@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 interface YieldRowContainerProps {
   headers: { displayName: string; fieldName: string }[];
   rowParams: RowParams;
@@ -18,7 +16,8 @@ export const YieldRowContainer = ({ headers, rowParams }: YieldRowContainerProps
   return (
     <tr className="border-b border-gray-400">
       {headers.map((header, i) => {
-        let value = rowParams[header.fieldName];
+        // TODO fix type
+        let value = (rowParams as any)[header.fieldName];
         if (header.fieldName === 'tvlUsd') {
           value =
             '$' +

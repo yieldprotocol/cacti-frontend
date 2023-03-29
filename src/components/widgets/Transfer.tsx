@@ -29,12 +29,10 @@ const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) =
     name: receiver,
   });
 
-  const { config, error } = usePrepareSendTransaction({
+  const { config, error: err } = usePrepareSendTransaction({
     request: { to: resolvedAddress ? resolvedAddress : receiver, value: amount },
   });
   const { sendTransaction, isSuccess, data } = useSendTransaction(config);
-
-  const err: Error & { reason?: string } = error;
 
   return (
     <div>
@@ -43,8 +41,8 @@ const TransferEth = ({ amount, receiver }: Omit<TransferButtonProps, 'token'>) =
           Send
         </Button>
       )}
-      {isSuccess && <TxStatus hash={data?.hash} />}
-      {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
+      {isSuccess && <TxStatus hash={data?.hash!} />}
+      {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}
     </div>
   );
 };
@@ -55,7 +53,7 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
     name: receiver,
   });
 
-  const { config: tokenConfig, error } = usePrepareContractWrite({
+  const { config: tokenConfig, error: err } = usePrepareContractWrite({
     address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'transfer',
@@ -63,7 +61,6 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
   });
 
   const { write: tokenWrite, isSuccess, data } = useContractWrite(tokenConfig);
-  const err: Error & { reason?: string } = error;
 
   return (
     <div>
@@ -72,8 +69,8 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
           Send
         </Button>
       )}
-      {isSuccess && <TxStatus hash={data?.hash} />}
-      {err && <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>}
+      {isSuccess && <TxStatus hash={data?.hash!} />}
+      {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}
     </div>
   );
 };

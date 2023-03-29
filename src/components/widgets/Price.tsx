@@ -1,7 +1,6 @@
 //   based on the returned token
-import { useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
-import { Spinner, findTokenBySymbol } from '@/utils';
+import { Spinner } from '@/utils';
 
 type PriceProps = {
   baseToken: string;

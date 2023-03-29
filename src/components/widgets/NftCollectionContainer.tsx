@@ -1,8 +1,8 @@
 interface NftCollectionContainerProps {
-  network: string;
-  address: string;
-  name: string;
-  previewImageUrl: string;
+  network?: string;
+  address?: string;
+  name?: string;
+  previewImageUrl?: string;
   numAssets?: string | number;
 }
 
