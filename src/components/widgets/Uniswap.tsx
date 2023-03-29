@@ -28,17 +28,6 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
     spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
   });
 
-  const [hasBalance, setHasBalance] = useState(false);
-
-  // Check if balance is enough
-  const { data: balance } = useContractRead({
-    address: tokenIn?.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: [receiver!],
-    enabled: !!tokenIn && !tokenInIsETH,
-  });
-
   // ETH to token swap
   if (tokenInIsETH) return <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />;
 
@@ -71,7 +60,7 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
       {!txSuccess && (
         <Button
           className={prepareError || txError ? 'border border-red-500' : ''}
-          disabled={!swap || txPending}
+          disabled={!swap || txPending || quoteIsLoading}
           onClick={swap}
         >
           <div className="flex gap-2 align-middle">
