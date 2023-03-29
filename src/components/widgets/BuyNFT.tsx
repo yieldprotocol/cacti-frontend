@@ -15,6 +15,7 @@ import { WidgetError } from '@/components/widgets/helpers';
 import { Spinner } from '@/utils';
 import { CheckNftOwner } from '../CheckNftOwner';
 
+// @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
 
 interface BasicOrderParameters {
@@ -102,7 +103,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const protocol_address = listingData?.orders[0]?.protocol_address;
 
   const isNewerListing =
-    orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP;
+    orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP!;
   const isExpired = orderExpirationDate < Date.now() / 1000;
   const isValidListing = !isNewerListing && !isExpired;
 
@@ -117,7 +118,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: fulfillmentData,
   } = useQuery(
     ['fulfillment', orderHash],
-    async () => orderHash && fetchFulfillParams(orderHash, receiver, protocol_address)
+    async () => orderHash && fetchFulfillParams(orderHash, receiver!, protocol_address)
   );
 
   let params = fulfillmentData?.fulfillment_data.transaction.input_data
@@ -166,7 +167,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         <CheckNftOwner nftAddress={nftAddress} tokenId={tokenId} />
       </div>
 
-      {isTxError && <WidgetError>Tx error: {txErrorData.message}</WidgetError>}
+      {isTxError && <WidgetError>Tx error: {txErrorData?.message}</WidgetError>}
       {isTxPending && (
         <Button className="flex items-center" disabled>
           <Spinner /> Buying NFT...

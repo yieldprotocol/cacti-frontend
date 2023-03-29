@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
-import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { Chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -242,7 +241,7 @@ const Widgetize = (widget: Widget) => {
           <NftAssetTraitsContainer
             asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
           >
-            {values?.map(({ name, params }, i) => (
+            {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
                 {Widgetize({ fnName: name, args: JSON.stringify(params) })}
               </Fragment>
@@ -265,7 +264,7 @@ const Widgetize = (widget: Widget) => {
           >
             <div className="text-black">
               <Grid>
-                {assets?.map(({ name, params }, i) => (
+                {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
                     {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                   </Fragment>
@@ -293,11 +292,13 @@ const Widgetize = (widget: Widget) => {
         return (
           <div className="text-black">
             <Grid>
-              {params.items?.map(({ name, params }, i) => (
-                <Fragment key={`i${i}`}>
-                  {Widgetize({ fnName: name, args: JSON.stringify(params) })}
-                </Fragment>
-              )) || ''}
+              {params.items?.map(
+                ({ name, params }: { name: string; params: string }, i: number) => (
+                  <Fragment key={`i${i}`}>
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+                  </Fragment>
+                )
+              ) || ''}
             </Grid>
           </div>
         );
@@ -310,15 +311,15 @@ const Widgetize = (widget: Widget) => {
           <table className="table-auto border border-gray-500">
             <thead className="bg-gray-800 text-left">
               <tr className="border-b border-gray-400">
-                {headers.map((header, i) => (
+                {headers.map(({ displayName }: { displayName: string }, i: number) => (
                   <th className="py-1 px-2" key={`i${i}`}>
-                    {header.displayName}
+                    {displayName}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ name, params }, i) => {
+              {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
                 const rowArgs = {
                   headers,
                   rowParams: params,
@@ -340,7 +341,7 @@ const Widgetize = (widget: Widget) => {
           </div>
         );
     }
-  } catch (e) {
+  } catch (e: any) {
     return (
       <div className="grid grid-cols-2 bg-slate-500 p-5 text-white">
         <div>

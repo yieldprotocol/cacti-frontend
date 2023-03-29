@@ -51,7 +51,7 @@ export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) =
     address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
-    args: [walletAddress],
+    args: [walletAddress!],
   });
 
   // Get allowance amount
@@ -59,12 +59,12 @@ export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) =
     address: token.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [walletAddress, compoundUSDCAddress],
+    args: [walletAddress!, compoundUSDCAddress],
   });
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(amount));
-    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amount));
+    balance && setHasBalance(BigNumber.from(balance).gte(amount));
+    allowanceAmount && setHasAllowance(BigNumber.from(allowanceAmount).gte(amount));
   }, [balance, allowanceAmount, amount, isApprovalSuccess, walletAddress]);
 
   // For Demo, only support depositing USDC into Compound
@@ -103,12 +103,15 @@ const DepositTokens = ({
   token: Token;
   amount: BigNumber;
 }) => {
-  const prepareContractWriteConfig = supportedProjects[project.id].getWriteConfig(token, amount);
+  const prepareContractWriteConfig = (supportedProjects as any)[project.id].getWriteConfig(
+    token,
+    amount
+  );
 
-  const { config: depositConfig, error } = usePrepareContractWrite(prepareContractWriteConfig);
-  const err: Error & { reason?: string } = error;
+  const { config: depositConfig, error: err } = usePrepareContractWrite(prepareContractWriteConfig);
 
-  const { write: depositWrite, data, isSuccess } = useContractWrite(depositConfig);
+  // TODO fix types
+  const { write: depositWrite, data, isSuccess } = useContractWrite(depositConfig as any);
 
   return (
     <>
@@ -118,10 +121,8 @@ const DepositTokens = ({
             Send
           </Button>
         )}
-        {isSuccess && <TxStatus hash={data?.hash} />}
-        {err && (
-          <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
-        )}
+        {isSuccess && <TxStatus hash={data?.hash!} />}
+        {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}
       </div>
     </>
   );

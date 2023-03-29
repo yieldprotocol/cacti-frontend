@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
 import { XCircleIcon } from '@heroicons/react/20/solid';
 
-export const WidgetError = ({ children }) => {
+export const WidgetError = ({ children }: { children: ReactNode }) => {
   return (
     <div className="max-h-48 overflow-y-scroll rounded-md bg-red-50 p-4">
       <div className="flex">
