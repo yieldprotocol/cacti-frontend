@@ -22,7 +22,7 @@ export const CurrentRpcUrl = () => {
   useEffect(() => {
     if (url) {
       const forkId = url.split('/')[4];
-      setTenderlyUrl(`https://dashboard.tenderly.co/${process.env.TENDERLY_USER}/${process.env.TENDERLY_PROJECT}/fork/${forkId}`);
+      setTenderlyUrl(`https://dashboard.tenderly.co/${process.env.NEXT_PUBLIC_TENDERLY_USER}/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork/${forkId}`);
     }
   }, [url]);
 
