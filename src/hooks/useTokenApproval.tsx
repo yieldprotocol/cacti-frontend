@@ -12,15 +12,11 @@ import {
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 
-const useTokenApproval = ({
-  address,
-  amount,
-  spenderAddress,
-}: {
-  address: `0x${string}`;
-  amount: BigNumber;
-  spenderAddress: `0x${string}`;
-}) => {
+const useTokenApproval = (
+  address: `0x${string}`,
+  amount: BigNumber,
+  spenderAddress: `0x${string}`
+) => {
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 

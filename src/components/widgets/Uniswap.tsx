@@ -41,49 +41,25 @@ interface ExactInputSingleParams {
 const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 
 export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
-  // Owner is the receiver
-  const { address: receiver } = useAccount();
-  const [hasBalance, setHasBalance] = useState(false);
-  const [hasAllowance, setHasAllowance] = useState(false);
-  const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
-
-  // Check if balance is enough
-  const { data: balance, error } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: [receiver!],
-  });
-
-  // Get allowance amount
-  const { data: allowanceAmount } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [receiver!, swapRouter02Address],
-  });
-
-  useEffect(() => {
-    balance && setHasBalance(BigNumber.from(balance).gte(amountIn));
-    allowanceAmount && setHasAllowance(BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+  const { hasAllowance } = useTokenApproval(
+    tokenIn.address as `0x${string}`,
+    amountIn,
+    swapRouter02Address
+  );
 
   // ETH to token swap
   if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
 
   return (
     <div>
-      {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens
-          {...{
-            token: tokenIn,
-            amount: amountIn,
-            setIsApprovalSuccess,
-            spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
-          }}
-        />
-      )}
-      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
+      <ApproveTokens
+        {...{
+          token: tokenIn,
+          amount: amountIn,
+          spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+        }}
+      />
+      {hasAllowance && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
     </div>
   );
 };
