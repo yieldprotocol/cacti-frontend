@@ -1,43 +1,35 @@
-import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { useNetwork } from 'wagmi';
 import { Button } from '@/components/Button';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import { Token } from '@/types';
-
-interface Props {
-  tokenIn: Token;
-  tokenOut: Token;
-  amountIn: BigNumber;
-}
 
 const ApproveTokens = ({
   token,
   amount,
   spenderAddress,
-  setIsApprovalSuccess,
 }: {
   token: Token;
   amount: BigNumber;
   spenderAddress: `0x${string}`;
-  setIsApprovalSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { chain } = useNetwork();
   // Get approval ready
-  const { approvalWrite, isLoading, isSuccess, data } = useTokenApproval({
+  const { approve, txPending, hasAllowance, hasBalance } = useTokenApproval({
     address: token.address as `0x${string}`,
-    amountIn: amount,
+    amount: amount,
     spenderAddress,
   });
-  useEffect(() => {
-    setIsApprovalSuccess(isSuccess);
-  }, [setIsApprovalSuccess, isSuccess]);
+
+  if (hasAllowance) return null;
 
   return (
     <div className="w-[100%]">
       <div className="flex justify-end">
-        <Button disabled={!approvalWrite} onClick={() => approvalWrite?.()}>
-          {isLoading ? 'Pending...' : 'Approve'}
+        <Button
+          disabled={!approve || txPending || !hasBalance}
+          onClick={approve}
+          className={hasBalance ? '' : 'border border-red-500'}
+        >
+          {!hasBalance ? 'Insufficient balance' : txPending ? 'Approval pending...' : 'Approve'}
         </Button>
       </div>
     </div>
