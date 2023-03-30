@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { ArrowPathIcon, LockClosedIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import { XCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { Button } from '@/components/Button';
 import useCachedState from '@/hooks/useCachedState';
@@ -32,8 +32,7 @@ export const ChangeForkId = () => {
       .catch((e) => {
         return e;
       });
-    // resp.status === 201 ? setValidUrl(true) : setValidUrl(false);
-    return resp.status === 201 ? true : false;
+    return resp.status === 201;
   };
 
   const handleApply = async () => {
@@ -101,29 +100,25 @@ export const ChangeForkId = () => {
           <div className="w-50">
             <Button
               onClick={() => {
-                const url = parseRpcUrl(process.env.NEXT_PUBLIC_TENDERLY_FORK_ID);
+                const url = parseRpcUrl(process.env.NEXT_PUBLIC_TENDERLY_FORK_ID!);
                 setNewUrl(url);
               }}
               className="text-xs disabled:bg-gray-400"
             >
-              <div className="text-[1em]">
-                Default Fork
-              </div>
+              <div className="text-[1em]">Default Fork</div>
             </Button>
           </div>
         </div>
 
         <div className="flex gap-2 p-2 text-xs">
-        <Button
-              onClick={handleCreateFork}
-              className="text-xs disabled:bg-gray-400"
-              // disabled={true}
-            >
-              <div>
-                Create and Use New Fork
-              </div>
-            </Button>
-            </div>
+          <Button
+            onClick={handleCreateFork}
+            className="text-xs disabled:bg-gray-400"
+            // disabled={true}
+          >
+            <div>Create and Use New Fork</div>
+          </Button>
+        </div>
       </div>
     </div>
   );
