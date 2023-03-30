@@ -39,7 +39,7 @@ const ConnectionWrapper = ({ children }) => {
   );
 
   const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
+    appName: 'chatweb3 app',
     chains,
   });
 
