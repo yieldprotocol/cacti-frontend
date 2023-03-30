@@ -52,7 +52,7 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
-    args: [receiver],
+    args: [receiver!],
   });
 
   // Get allowance amount
@@ -60,12 +60,12 @@ export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
     address: tokenIn.address as `0x${string}`,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [receiver, swapRouter02Address],
+    args: [receiver!, swapRouter02Address],
   });
 
   useEffect(() => {
-    setHasBalance(balance && BigNumber.from(balance).gte(amountIn));
-    setHasAllowance(allowanceAmount && BigNumber.from(allowanceAmount).gte(amountIn));
+    balance && setHasBalance(BigNumber.from(balance).gte(amountIn));
+    allowanceAmount && setHasAllowance(BigNumber.from(allowanceAmount).gte(amountIn));
   }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
 
   // ETH to token swap
@@ -93,7 +93,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { address: receiver } = useAccount();
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
-  const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain.id) : tokenIn;
+  const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain?.id!) : tokenIn;
 
   const {
     isLoading: quoteIsLoading,
@@ -109,7 +109,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     tokenIn: tokenInChecked.address,
     tokenOut: tokenOut.address,
     fee: BigNumber.from(3000),
-    recipient: receiver,
+    recipient: receiver!,
     deadline: BigNumber.from(0),
     amountIn,
     amountOutMinimum: quote?.value
@@ -127,7 +127,6 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
       value: isEth ? amountIn : 0,
     },
   });
-  const err: Error & { reason?: string } = error;
 
   const { write: swapWrite, data, isSuccess } = useContractWrite(swapConfig);
 
@@ -146,10 +145,8 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
             </div>
           </Button>
         )}
-        {isSuccess && <TxStatus hash={data?.hash} />}
-        {err && (
-          <WidgetError>Error simulating transaction: {err.reason || err.message}</WidgetError>
-        )}
+        {isSuccess && <TxStatus hash={data?.hash!} />}
+        {error && <WidgetError>Error simulating transaction: {error.message}</WidgetError>}
       </div>
     </>
   );
