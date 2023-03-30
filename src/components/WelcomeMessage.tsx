@@ -2,11 +2,11 @@ import { ReactNode } from 'react';
 import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
-const WelcomeColumn = ({ children }) => {
+const WelcomeColumn = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col">{children}</div>;
 };
 
-const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) => {
+const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
   const onClickClasses = onClick ? 'cursor-pointer hover:bg-gray-500' : '';
   return (
     <div
@@ -18,7 +18,7 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
   );
 };
 
-const WelcomeBoxSubtitle = ({ children }) => {
+const WelcomeBoxSubtitle = ({ children }: { children: ReactNode }) => {
   return <h3 className="py-5 text-center text-2xl font-bold text-white">{children}</h3>;
 };
 
