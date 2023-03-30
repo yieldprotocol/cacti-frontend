@@ -31,7 +31,7 @@ const useCachedState = (key: string, initialValue: any, append?: string) :
           localStorage.setItem(_key, JSON.stringify(valueToStore));
         }
       } catch (error) {
-        // TODO: handle the error cases needs work
+        // TODO: handling the error cases needs work
         // eslint-disable-next-line no-console
         console.log(error);
       }
@@ -40,7 +40,7 @@ const useCachedState = (key: string, initialValue: any, append?: string) :
   );
 
   /* Clear the cache, either specific keys (as an array) or all if no keys provided */
-  const clear = (keys: string[] = []) => {
+  const clearCache = (keys: string[] = []) => {
     if (typeof window === 'undefined') return;
     if (keys.length > 0) {
       keys.forEach((k: string) => {
@@ -53,7 +53,7 @@ const useCachedState = (key: string, initialValue: any, append?: string) :
     if (typeof window !== 'undefined') setValue(storedValue);
   }, [_key, setValue, storedValue]);
 
-  return [storedValue, setValue, clear];
+  return [storedValue, setValue, clearCache];
 };
 
 export default useCachedState;
