@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 /** a Hook for SIMPLE caching & retrieved data from localStorage */
 const useCachedState = (
   key: string,
-  initialValue: any,
+  initialValue?: string,
   append?: string
 ): [string, (value: any) => void, () => void] => {
   const getValue = () => {
