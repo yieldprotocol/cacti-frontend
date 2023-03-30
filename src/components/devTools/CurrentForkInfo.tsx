@@ -22,7 +22,9 @@ export const CurrentForkInfo = () => {
   useEffect(() => {
     if (url) {
       const forkId = url.split('/')[4];
-      setTenderlyUrl(`https://dashboard.tenderly.co/${process.env.NEXT_PUBLIC_TENDERLY_USER}/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork/${forkId}`);
+      setTenderlyUrl(
+        `https://dashboard.tenderly.co/${process.env.NEXT_PUBLIC_TENDERLY_USER}/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork/${forkId}`
+      );
     }
   }, [url]);
 
@@ -38,23 +40,21 @@ export const CurrentForkInfo = () => {
   return (
     <div>
       <div className="border">
-        <div className="p-4 font-mono text-xs">{url}</div>  
+        <div className="p-4 font-mono text-xs">{url}</div>
         <div className="flex gap-2 p-2 text-xs">
           <Button onClick={copyUrl} disabled={copied}>
             <div className="flex gap-2 text-xs">
-              <div className="w-4">
-                {copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />}{' '}
-              </div>
+              <div className="w-4">{copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />} </div>
               Copy RPC
             </div>
           </Button>
-          <Button onClick={goToTenderly} disabled={!url} >
-              <div className="flex gap-2 text-xs">
-                <div className="w-4">
-                  <ArrowTopRightOnSquareIcon />
-                </div>
-                Tenderly
+          <Button onClick={goToTenderly} disabled={!url}>
+            <div className="flex gap-2 text-xs">
+              <div className="w-4">
+                <ArrowTopRightOnSquareIcon />
               </div>
+              Tenderly
+            </div>
           </Button>
         </div>
       </div>
