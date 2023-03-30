@@ -31,6 +31,7 @@ const useForkTools = (): ForkTools => {
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
+  const forkSigner = isFork && !forkUrl ? forkProvider.getSigner(account) : undefined;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -97,11 +98,6 @@ const useForkTools = (): ForkTools => {
     isFork ? ['forkStartBlock', forkUrl] : null,
     getForkStartBlock
   ); // don't run if not using forked env
-
-  const forkSigner = useMemo(() => {
-    if (!isFork || !forkUrl) return undefined;
-    return forkProvider.getSigner(account);
-  }, [account, forkProvider, forkUrl, isFork]);
 
   return {
     isFork,
