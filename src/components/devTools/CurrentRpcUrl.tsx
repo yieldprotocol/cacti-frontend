@@ -37,31 +37,26 @@ export const CurrentRpcUrl = () => {
 
   return (
     <div>
-      {/* <div className="text-left p-2 "> Current RPC URL </div> */}
       <div className="border">
-        <div className="p-4 font-mono text-xs">{url}</div>
-        
+        <div className="p-4 font-mono text-xs">{url}</div>  
         <div className="flex gap-2 p-2 text-xs">
-
           <Button onClick={copyUrl} disabled={copied}>
             <div className="flex gap-2 text-xs">
-              <div className="w-6">
+              <div className="w-4">
                 {copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />}{' '}
               </div>
               Copy RPC
             </div>
           </Button>
-
           <Button onClick={goToTenderly} disabled={!url} >
               <div className="flex gap-2 text-xs">
-                <div className="w-6">
+                <div className="w-4">
                   <ArrowTopRightOnSquareIcon />
                 </div>
                 Tenderly
               </div>
           </Button>
         </div>
-
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { DebugPanel } from '@/components/devTools/DebugPanel';
 import { ResetButton } from '../ResetButton';
+import { ChangeForkId } from './ChangeForkId';
+import { CurrentRpcUrl } from './CurrentRpcUrl';
 import { DebugMessageToggle } from './DebugMessageToggle';
 import { MintButton } from './MintButton';
 
@@ -63,12 +65,24 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                         <p className="m-2 text-xs">A collection of useful development tools</p>
                       </div>
                       <hr />
+
+                      <div className="mt-8 flex px-4 text-left text-sm font-bold leading-6 text-gray-900">
+                        General
+                      </div>
+
                       <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
-
-                        <MintButton />
-
                         <ResetButton />
+                      </div>
+
+                      <div className="mt-8 px-4 text-left text-sm font-bold leading-6 text-gray-900">
+                        Forked Environment
+                      </div>
+
+                      <div className="space-y-8 p-4 ">
+                        <CurrentRpcUrl />
+                        <MintButton />
+                        <ChangeForkId />
                       </div>
                     </div>
 
