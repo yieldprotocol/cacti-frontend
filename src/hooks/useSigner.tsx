@@ -1,15 +1,12 @@
 import { useMemo } from 'react';
 import { useSigner as useSignerWagmi } from 'wagmi';
-import useFork from './useFork';
+import useForkTools from './useForkTools';
 
 const useSigner = () => {
   const { data: wagmiSigner } = useSignerWagmi();
-  const { signer: forkSigner, useForkEnv } = useFork();
+  const { signer: forkSigner, isFork } = useForkTools();
 
-  return useMemo(
-    () => (useForkEnv ? forkSigner : wagmiSigner),
-    [forkSigner, useForkEnv, wagmiSigner]
-  );
+  return useMemo(() => (isFork ? forkSigner : wagmiSigner), [forkSigner, isFork, wagmiSigner]);
 };
 
 export default useSigner;
