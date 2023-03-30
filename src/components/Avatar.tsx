@@ -1,5 +1,7 @@
+import Image from 'next/image';
 import { UserIcon } from '@heroicons/react/20/solid';
 import { CommandLineIcon } from '@heroicons/react/24/outline';
+import profilePic from '@/public/punk2042.png';
 
 interface Props {
   actor: string;
@@ -12,11 +14,17 @@ const Avatar = ({ actor }: Props) => {
   return (
     <div className="rounded-md bg-gray-300 shadow-md">
       {actor === 'user' ? (
-        <UserIcon className="h-8 w-8 text-gray-600" />
+        <Image
+          width={32}
+          height={32}
+          className="h-full w-8 max-w-none rounded-md"
+          src={profilePic}
+          alt="bot avatar"
+        />
       ) : actor === 'system' ? (
         <CommandLineIcon className="h-8 w-8 text-black" />
       ) : (
-        <img className="h-full w-[2.61rem] rounded-md" src={botAvatar} alt="bot avatar" />
+        <img className="h-full w-8 max-w-none rounded-md" src={botAvatar} alt="bot avatar" />
       )}
     </div>
   );

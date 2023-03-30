@@ -54,8 +54,8 @@ export const NftCollectionContainer = ({
       >
         <img className="h-32 w-32 rounded-md" src={previewImageUrl} alt="" />
         <div className="mt-1 flex flex-col items-center justify-center">
-          <p className="ml-3 text-xs font-medium text-blue-400 underline">{name}</p>
-          <p className="ml-3 text-xs font-medium text-gray-400">{network}</p>
+          <p className="ml-3 text-xs font-medium text-blue-300 underline">{name}</p>
+          <p className="ml-3 text-xs font-medium text-gray-200">{network}</p>
         </div>
       </a>
     </>

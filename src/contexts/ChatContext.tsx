@@ -12,8 +12,6 @@ export type Message = {
   feedback: string;
 };
 
-// type UserMessage = Omit<Message, 'avatar'>;
-
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;

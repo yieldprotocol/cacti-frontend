@@ -79,15 +79,19 @@ export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) =
   return (
     <>
       {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens
-          {...{
-            token,
-            amount,
-            setIsApprovalSuccess,
-            spenderAddress: supportedProjects[project.id].getWriteConfig(token, amount)
-              .address as `0x${string}`,
-          }}
-        />
+        <div className="flex w-[100%] justify-end">
+          <div>
+            <ApproveTokens
+              {...{
+                token,
+                amount,
+                setIsApprovalSuccess,
+                spenderAddress: supportedProjects[project.id].getWriteConfig(token, amount)
+                  .address as `0x${string}`,
+              }}
+            />
+          </div>
+        </div>
       )}
       {(hasAllowance || isApprovalSuccess) && <DepositTokens {...{ project, token, amount }} />}
     </>
@@ -115,11 +119,13 @@ const DepositTokens = ({
 
   return (
     <>
-      <div>
+      <div className="flex w-[100%] justify-end">
         {!isSuccess && (
-          <Button disabled={!depositWrite} onClick={() => depositWrite?.()}>
-            Send
-          </Button>
+          <div>
+            <Button disabled={!depositWrite} onClick={() => depositWrite?.()}>
+              Send
+            </Button>
+          </div>
         )}
         {isSuccess && <TxStatus hash={data?.hash!} />}
         {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}

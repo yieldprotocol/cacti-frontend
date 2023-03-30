@@ -3640,6 +3640,7 @@ __metadata:
     "@uniswap/v3-periphery": ^1.4.3
     autoprefixer: ^10.4.13
     axios: ^1.3.4
+    copy-to-clipboard: ^3.3.3
     dotenv: ^16.0.3
     eslint: 8.32.0
     eslint-config-next: 13.1.2
@@ -3849,7 +3850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-to-clipboard@npm:^3.3.1":
+"copy-to-clipboard@npm:^3.3.1, copy-to-clipboard@npm:^3.3.3":
   version: 3.3.3
   resolution: "copy-to-clipboard@npm:3.3.3"
   dependencies:

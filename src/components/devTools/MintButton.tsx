@@ -30,7 +30,11 @@ export const MintButton = () => {
   return !isVisible ? (
     <></>
   ) : (
-    <Button onClick={mint} disabled={isLoading} className="flex w-full disabled:bg-gray-400">
+    <Button
+      onClick={mint}
+      disabled={isLoading}
+      className="flex w-full text-xs disabled:bg-gray-400"
+    >
       Mint 10 ETH
     </Button>
   );

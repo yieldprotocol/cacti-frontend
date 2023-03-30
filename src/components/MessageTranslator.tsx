@@ -140,6 +140,7 @@ const Widgetize = (widget: Widget) => {
             msg={inputString}
             key={inputString}
             gap="gap-3"
+            centerTitle={true}
           >
             <ConnectFirst>
               <YieldFarm {...{ project, network, token, amount }} />
@@ -229,9 +230,9 @@ const Widgetize = (widget: Widget) => {
         try {
           params = JSON.parse(args);
         } catch (e) {
-          const [network, address, tokenId, collectionName, name, previewImageUrl] =
+          const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
             parseArgsStripQuotes(args);
-          params = { network, address, tokenId, collectionName, name, previewImageUrl };
+          params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
         }
         return <NftAssetContainer {...params} />;
       }

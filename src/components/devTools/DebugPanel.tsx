@@ -90,8 +90,8 @@ const spoofPrompts: [string, string][] = [
     '<|nfts-by-traits("0x23581767a106ae21c074b2276d25e5c3e136a68b", "Headwear", "Moon Hat")|>',
   ],
   [
-    `Buy NFT ${shortenAddress('0x282bdd42f4eb70e7a9d9f40c8fea0825b7f68c5d')}:8239`,
-    '<|buy-nft("0x282bdd42f4eb70e7a9d9f40c8fea0825b7f68c5d", "8239")|>',
+    `Buy NFT ${shortenAddress('0x23581767a106ae21c074b2276d25e5c3e136a68b')}:3705`,
+    '<|buy-nft("0x23581767a106ae21c074b2276d25e5c3e136a68b", "3705")|>',
   ],
   [`Deposit USDC into yield farm `, '<|yield-farm("compound", "ethereum", "USDC", "1")|>'], // Only works for this use case if your wallet has USDC
   [
@@ -100,7 +100,7 @@ const spoofPrompts: [string, string][] = [
   ], // Only works for this use case if your wallet has USDC
   [
     `Show NFT asset in a container `,
-    '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png")|>',
+    '<|nft-asset-container("ethereum-mainnet", "0x23581767a106ae21c074b2276d25e5c3e136a68b", "5869", "Moonbirds", "Moonbird #5869", "https://cdn.center.app/v2/1/72e3f71c5ae9875a5481aef5fdf3508ac49060b41d38b2e945269972d0655b81/7ddeb4472a74ab91c2566b0693005b6034b2278d1183df5b9772bec299fc0dc5.png", "123.4 ETH")|>',
   ],
   [
     `Show NFT asset trait container `,
