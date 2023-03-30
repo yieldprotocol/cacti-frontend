@@ -4,7 +4,7 @@ import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { DebugPanel } from '@/components/devTools/DebugPanel';
 import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
-import { ConnectedForkInfo } from './ConnectedForkInfo';
+import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
 import { MintButton } from './MintButton';
 
@@ -80,7 +80,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                       </div>
 
                       <div className="space-y-8 p-4 ">
-                        <ConnectedForkInfo />
+                        <CurrentForkInfo />
                         <MintButton />
                         <ChangeForkId />
                       </div>

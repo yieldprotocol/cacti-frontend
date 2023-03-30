@@ -8,7 +8,7 @@ import copy from 'copy-to-clipboard';
 import { Button } from '@/components/Button';
 import useCachedState from '@/hooks/useCachedState';
 
-export const ConnectedForkInfo = () => {
+export const CurrentForkInfo = () => {
   const [url] = useCachedState('forkUrl');
   const [tenderlyUrl, setTenderlyUrl] = useState<string>(url);
   const [copied, setCopied] = useState<boolean>(false);
