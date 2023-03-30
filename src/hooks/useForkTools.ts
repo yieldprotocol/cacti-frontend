@@ -1,8 +1,8 @@
+import { useCallback, useMemo, useState } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
-import { useCallback, useMemo, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
-import { useBalance, useAccount } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 
 type ForkTools = {
   isFork: boolean;
@@ -13,10 +13,9 @@ type ForkTools = {
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
   fillEther: () => Promise<void>;
-}
+};
 
-const useForkTools = () : ForkTools=> {
-
+const useForkTools = (): ForkTools => {
   /* Get the fork url from a simple cache, or alternatively the env */
   const [forkUrl, setForkUrl] = useState<string>(process.env.FORK_URL || '');
   const [isFork, setIsFork] = useState<boolean>(false);
@@ -75,7 +74,10 @@ const useForkTools = () : ForkTools=> {
     if (!provider || !isFork) return;
 
     try {
-      const transactionParameters = [[account], ethers.utils.hexValue(BigInt('100000000000000000000'))];
+      const transactionParameters = [
+        [account],
+        ethers.utils.hexValue(BigInt('100000000000000000000')),
+      ];
       await provider.send('tenderly_addBalance', transactionParameters);
       refetch();
       console.log('Filled eth on fork');
@@ -85,7 +87,10 @@ const useForkTools = () : ForkTools=> {
   }, [account, provider, refetch, isFork]);
 
   /* keep track of forked blockchain time/ startblock */
-  const { data: forkTimestamp } = useSWRImmutable(isFork ? ['forkTimestamp', forkUrl] : null, getForkTimestamp); // don't run if not using forked env
+  const { data: forkTimestamp } = useSWRImmutable(
+    isFork ? ['forkTimestamp', forkUrl] : null,
+    getForkTimestamp
+  ); // don't run if not using forked env
   const { data: forkStartBlock } = useSWRImmutable(
     isFork ? ['forkStartBlock', forkUrl] : null,
     getForkStartBlock

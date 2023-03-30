@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
 /** a Hook for SIMPLE caching & retrieved data from localStorage */
-const useCachedState = (key: string, initialValue: any, append?: string) :
-[string, (value:any)=>void, ()=>void] => {
-
+const useCachedState = (
+  key: string,
+  initialValue: any,
+  append?: string
+): [string, (value: any) => void, () => void] => {
   const getValue = () => {
     try {
       if (typeof window !== 'undefined') {
@@ -17,9 +19,9 @@ const useCachedState = (key: string, initialValue: any, append?: string) :
     }
     return initialValue;
   };
-    
+
   const _key = append ? `${key}_${append}` : key;
-  const [storedValue, setStoredValue] = useState(()=> getValue());
+  const [storedValue, setStoredValue] = useState(() => getValue());
 
   const setValue = useCallback(
     (value: any) => {

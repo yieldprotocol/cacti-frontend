@@ -1,11 +1,10 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import type { AppProps } from 'next/app';
 import { CenterProvider } from '@center-inc/react';
+import '@rainbow-me/rainbowkit/styles.css';
 import { ChatContextProvider } from '@/contexts/ChatContext';
 import ConnectionWrapper from '@/contexts/ConnectionWrapper';
 import { ModalContextProvider } from '@/contexts/ModalContext';
-
-import '@rainbow-me/rainbowkit/styles.css';
 import '@/styles/globals.css';
 
 const queryClient = new QueryClient();
