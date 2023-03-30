@@ -39,6 +39,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
+
   const { setModal } = useModalContext();
 
   const backendUrl = getBackendUrl();
