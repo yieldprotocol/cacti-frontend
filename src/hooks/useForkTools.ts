@@ -2,7 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useProvider } from 'wagmi';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 type ForkTools = {
   isFork: boolean;
@@ -23,12 +24,7 @@ const useForkTools = (): ForkTools => {
   /* parameters from wagmi */
   const { address: account } = useAccount();
   const { refetch } = useBalance({ address: account });
-
-  /* build a fresh new RPC provider */
-  const provider = useMemo(
-    () => (isFork ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
-    [forkUrl, isFork]
-  );
+  const provider = useProvider() as JsonRpcProvider;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;

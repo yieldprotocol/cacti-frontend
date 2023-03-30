@@ -3,10 +3,13 @@ import { ArrowPathIcon, LockClosedIcon, XCircleIcon } from '@heroicons/react/24/
 import axios from 'axios';
 import { Button } from '@/components/Button';
 import useCachedState from '@/hooks/useCachedState';
+import useForkTools from '@/hooks/useForkTools';
 
 export const ChangeForkId = () => {
   const [newUrl, setNewUrl] = useState<string>('');
   const [validUrl, setValidUrl] = useState<boolean>();
+
+  const { createNewFork } = useForkTools();
   const [, setForkUrl] = useCachedState('forkUrl');
 
   /* Get the project id from a valid RPC URL. TODO make this more robust*/
@@ -33,7 +36,7 @@ export const ChangeForkId = () => {
     return resp.status === 201 ? true : false;
   };
 
-  const apply = async () => {
+  const handleApply = async () => {
     /* get the input value as a url, if it isn't already */
     const parsedUrl = parseRpcUrl(newUrl);
     /* Check if we can get a valid response from fork at the parsed Url */
@@ -43,10 +46,18 @@ export const ChangeForkId = () => {
     if (isValid) {
       setValidUrl(true);
       setForkUrl(parsedUrl);
+      // eslint-disable-next-line no-restricted-globals
       window.location.reload();
     }
     /* if not valid, set the validUrl state to false */
     setValidUrl(false);
+  };
+
+  const handleCreateFork = async () => {
+    const newForkUrl = await createNewFork();
+    setForkUrl(parseRpcUrl(newForkUrl));
+    // eslint-disable-next-line no-restricted-globals
+    window.location.reload();
   };
 
   /* When the newURL changes, check if the parse url is a valid fork */
@@ -81,7 +92,7 @@ export const ChangeForkId = () => {
 
         <div className="flex gap-2 p-2 text-xs">
           <Button
-            onClick={apply}
+            onClick={handleApply}
             className={`first-line:text-xs disabled:bg-gray-400 ${validUrl && 'bg-green-500'} `}
             disabled={!validUrl}
           >
@@ -101,6 +112,18 @@ export const ChangeForkId = () => {
             </Button>
           </div>
         </div>
+
+        <div className="flex gap-2 p-2 text-xs">
+        <Button
+              onClick={handleCreateFork}
+              className="text-xs disabled:bg-gray-400"
+              // disabled={true}
+            >
+              <div>
+                Create and Use New Fork
+              </div>
+            </Button>
+            </div>
       </div>
     </div>
   );
