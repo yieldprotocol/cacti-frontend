@@ -14,8 +14,8 @@ type ForkTools = {
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
   fillEther: () => Promise<void>;
-  provider: JsonRpcProvider | undefined;
-  signer: ethers.Signer | undefined;
+  provider?: JsonRpcProvider;
+  signer?: ethers.Signer;
 };
 
 const useForkTools = (): ForkTools => {
