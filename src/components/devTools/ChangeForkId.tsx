@@ -96,9 +96,9 @@ export const ChangeForkId = () => {
             className={`first-line:text-xs disabled:bg-gray-400 ${validUrl && 'bg-green-500'} `}
             disabled={!validUrl}
           >
-            Apply New Fork URL
+            Apply Fork RPC URL
           </Button>
-          <div className=" w-1/5">
+          <div className="w-50">
             <Button
               onClick={() => {
                 const url = parseRpcUrl(process.env.NEXT_PUBLIC_TENDERLY_FORK_ID);
@@ -106,8 +106,8 @@ export const ChangeForkId = () => {
               }}
               className="text-xs disabled:bg-gray-400"
             >
-              <div className="w-4">
-                <ArrowPathIcon />
+              <div className="text-[1em]">
+                Default Fork
               </div>
             </Button>
           </div>
