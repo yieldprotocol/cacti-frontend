@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
+// @ts-ignore TODO: fix this
 import * as JSONbigint from 'json-bigint';
 import {
   useAccount,
