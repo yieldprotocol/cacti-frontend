@@ -1,22 +1,17 @@
 enum EnvTag {
   Dev = 'dev',
   Prod = 'prod',
-  Legacy = 'legacy',
   Local = 'local',
 }
 
-// TODO: update default to Dev once there's confidence in stability
-const DEFAULT_ENV_TAG = EnvTag.Legacy;
+const DEFAULT_ENV_TAG = EnvTag.Dev;
 
 const BACKEND_URL_BY_ENV_TAG: { [key in EnvTag]: string } = {
-  // chatweb3-backend-dev on GCP Cloud Run
+  // chatweb3-backend-dev on GCP Cloud Run (runs up-to-date master)
   [EnvTag.Dev]: 'wss://chatweb3-backend-dev-go3k2a3aca-ue.a.run.app',
 
   // chatweb3-backend-prod on GCP Cloud Run
   [EnvTag.Prod]: 'wss://chatweb3-backend-prod-go3k2a3aca-ue.a.run.app',
-
-  // legacy chatweb3 AWS host
-  [EnvTag.Legacy]: 'wss://chatweb3.func.ai:9998',
 
   // locally running backend
   [EnvTag.Local]: 'ws://localhost:9999',
