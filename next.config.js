@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_ENV_TAG: process.env.NEXT_PUBLIC_ENV_TAG
+    NEXT_PUBLIC_ENV_TAG: process.env.NEXT_PUBLIC_ENV_TAG,
   },
   images: {
     remotePatterns: [
