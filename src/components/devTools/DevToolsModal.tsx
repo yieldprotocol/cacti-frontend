@@ -81,8 +81,8 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
 
                       <div className="space-y-8 p-4 ">
                         <CurrentForkInfo />
-                        <MintButton />
                         <ChangeForkId />
+                        <MintButton />
                       </div>
                     </div>
 
