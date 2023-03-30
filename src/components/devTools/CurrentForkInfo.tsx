@@ -15,7 +15,7 @@ export const CurrentForkInfo = () => {
 
   /* set a timer controlling it has been copied */
   useEffect(() => {
-    copied && (async () => setTimeout(() => setCopied(false), 5000))();
+    copied && (async () => setTimeout(() => setCopied(false), 2000))();
   }, [copied]);
 
   /* Monitor rpc url and update link to tenderly TODO: increase robustness here */
