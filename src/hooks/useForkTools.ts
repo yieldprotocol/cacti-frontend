@@ -31,14 +31,14 @@ const useForkTools = (): ForkTools => {
   );
 
   const createNewFork = useCallback(async (): Promise<string> => {
-    const TENDERLY_FORK_API = `http://api.tenderly.co/api/v1/account/${process.env.TENDERLY_USER}/project/${process.env.TENDERLY_PROJECT}/fork`;
+    const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
     const currentBlockNumber = await provider.getBlockNumber();
     const resp = await axios.post(
-      TENDERLY_FORK_API,
+      forkAPI,
       { network_id: 1, block_number: currentBlockNumber },
       {
         headers: {
-          'X-Access-Key': process.env.TENDERLY_ACCESS_KEY as string,
+          'X-Access-Key': process.env.NEXT_PUBLIC_TENDERLY_ACCESS_KEY as string,
         },
       }
     );
