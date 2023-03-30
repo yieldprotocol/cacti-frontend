@@ -44,10 +44,10 @@ export const NftAssetContainer = ({
           </div>
         )}
         <div className="mt-2 flex flex-col items-center justify-center">
-          <p className="ml-3 text-sm font-medium text-blue-400 underline">{name}</p>
-          <p className="ml-3 text-sm font-medium text-gray-400">{collectionName}</p>
-          <p className="ml-3 text-sm font-medium text-gray-400">{network}</p>
-          <p className="ml-3 text-sm font-medium text-gray-400">{listPrice}</p>
+          <p className="ml-3 text-sm font-medium text-blue-300 underline">{name}</p>
+          <p className="ml-3 text-sm font-medium text-gray-200">{collectionName}</p>
+          <p className="ml-3 text-sm font-medium text-gray-200">{network}</p>
+          <p className="ml-3 text-sm font-medium text-gray-200">{listPrice}</p>
         </div>
       </a>
     </div>
@@ -57,7 +57,7 @@ export const NftAssetContainer = ({
 // Asset with a nested list of trait values
 export const NftAssetTraitsContainer = ({ asset, children }: NftAssetTraitsContainerProps) => {
   return (
-    <div className="flex justify-center gap-16 p-4">
+    <div className="flex justify-center gap-16 rounded-lg bg-gray-500 p-4 shadow">
       {asset}
       <div>{children}</div>
     </div>
@@ -68,7 +68,7 @@ export const NftAssetTraitsContainer = ({ asset, children }: NftAssetTraitsConta
 export const NftAssetTraitValueContainer = ({ trait, value }: NftAssetTraitValueContainerProps) => {
   return (
     <div>
-      <div className="m-2 text-black">
+      <div className="m-2 text-gray-200">
         <b>{trait}</b>: {value}{' '}
       </div>
     </div>
