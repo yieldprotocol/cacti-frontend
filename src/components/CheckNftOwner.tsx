@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { erc721ABI, useAccount, useContractRead } from 'wagmi';
 import erc1155ABI from '@/abi/erc1155ABI.json';
+import { shortenAddress } from '@/utils';
 
 interface Props {
   nftAddress: string;
@@ -29,13 +30,13 @@ export const NftOwner = ({ nftAddress, tokenId }: Props) => {
   });
 
   useEffect(() => {
-    if (is721ReadSuccess) setOwner(`Owner: ${erc721Data?.toString()}` || '');
+    if (is721ReadSuccess) setOwner(`${erc721Data?.toString()}` || '');
     if (is1155ReadSuccess) setOwner(`Your balance: ` + erc1155Data?.toString() || '0');
   }, [erc721Data, erc1155Data, is721ReadSuccess, is1155ReadSuccess]);
 
   return (
-    <div className="m-2">
-      <b>{owner}</b>
+    <div>
+      <b>Owned by</b>: {shortenAddress(owner)}
     </div>
   );
 };
