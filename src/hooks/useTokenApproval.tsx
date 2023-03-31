@@ -21,8 +21,6 @@ const useTokenApproval = (
 ) => {
   const { data: token } = useToken(undefined, address);
 
-  if (!token) throw new Error('no token found');
-
   const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
