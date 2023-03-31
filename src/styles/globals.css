@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .pause {
+      animation-play-state: paused;
+    }
+
+         /* Chrome, Safari and Opera */
+         .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+    
+        .no-scrollbar {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+ }
+
+

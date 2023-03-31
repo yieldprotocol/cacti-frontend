@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       animation: {
         ellipse: 'dotty steps(1,end) 1s infinite',
+        'marquee-infinite' : 'marquee 120s linear infinite',
       },
       keyframes: {
         dotty: {
@@ -14,6 +15,10 @@ module.exports = {
           '50%': { content: "'..'" },
           '75%': { content: "'...'" },
           '100%': { content: "''" },
+        },
+        marquee: {
+          '0%': { transform: 'translateY(0%)' },
+          '100%': { transform: 'translateY(-100%)' },
         },
       },
     },
