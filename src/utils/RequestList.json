@@ -1,0 +1,2019 @@
+[
+   {
+     "id": 1,
+     "group": "App",
+     "subGroup": null,
+     "description": "General questions about chatweb3",
+     "request": "What can you do?"
+   },
+   {
+     "id": 2,
+     "group": "App",
+     "subGroup": null,
+     "description": "General questions about chatweb3",
+     "request": "What functions do you provide?"
+   },
+   {
+     "id": 3,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is web3?"
+   },
+   {
+     "id": 4,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "Why do I need a wallet?"
+   },
+   {
+     "id": 5,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a private key?"
+   },
+   {
+     "id": 6,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "How do I avoid losing all my money?"
+   },
+   {
+     "id": 7,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "Who can I trust?"
+   },
+   {
+     "id": 8,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is an NFT?"
+   },
+   {
+     "id": 9,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "How can I use a stablecoin?"
+   },
+   {
+     "id": 10,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a DAO?"
+   },
+   {
+     "id": 11,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between Ethereum and Ethereum Classic?"
+   },
+   {
+     "id": 12,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between a fungible and non-fungible token?"
+   },
+   {
+     "id": 13,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a smart contract?"
+   },
+   {
+     "id": 14,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "​​How does DeFi work?"
+   },
+   {
+     "id": 15,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "How does a liquidity pool work?"
+   },
+   {
+     "id": 16,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a yield farm?"
+   },
+   {
+     "id": 17,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What are the advantages of using a decentralized finance platform?"
+   },
+   {
+     "id": 18,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between a security token and a utility token?"
+   },
+   {
+     "id": 19,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is an airdrop and how does it work?"
+   },
+   {
+     "id": 20,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is an ERC-20 token?"
+   },
+   {
+     "id": 21,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between a public and private blockchain?"
+   },
+   {
+     "id": 22,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is an initial coin offering?"
+   },
+   {
+     "id": 23,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a hash rate?"
+   },
+   {
+     "id": 24,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a blockchain explorer?"
+   },
+   {
+     "id": 25,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a hard fork?"
+   },
+   {
+     "id": 26,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a 51% attack?"
+   },
+   {
+     "id": 27,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a Solidity contract?"
+   },
+   {
+     "id": 28,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a Proof of Work consensus mechanism?"
+   },
+   {
+     "id": 29,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a Merkle tree?"
+   },
+   {
+     "id": 30,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between a public and private key?"
+   },
+   {
+     "id": 31,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a zero-knowledge proof?"
+   },
+   {
+     "id": 32,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a smart contract oracle?"
+   },
+   {
+     "id": 33,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a multi-signature wallet?"
+   },
+   {
+     "id": 34,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a non-custodial wallet?"
+   },
+   {
+     "id": 35,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a gas fee?"
+   },
+   {
+     "id": 36,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a state channel?"
+   },
+   {
+     "id": 37,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What are the advantages of using a non-fungible token?"
+   },
+   {
+     "id": 38,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the concept of an atomic swap?"
+   },
+   {
+     "id": 39,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the concept of bonding curves?"
+   },
+   {
+     "id": 40,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the concept of flash loans?"
+   },
+   {
+     "id": 41,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the concept of wrapped tokens?"
+   },
+   {
+     "id": 42,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the concept of a state channel?"
+   },
+   {
+     "id": 43,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a wrapped token?"
+   },
+   {
+     "id": 44,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the difference between a hardware wallet and a software wallet?"
+   },
+   {
+     "id": 45,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the purpose of a gas relay?"
+   },
+   {
+     "id": 46,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a decentralized exchange?"
+   },
+   {
+     "id": 47,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a liquidity mining program?"
+   },
+   {
+     "id": 48,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a staking pool?"
+   },
+   {
+     "id": 49,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is an ERC-721 token?"
+   },
+   {
+     "id": 50,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a mnemonic?"
+   },
+   {
+     "id": 51,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a Geth node?"
+   },
+   {
+     "id": 52,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is a BIP39 seed phrase?"
+   },
+   {
+     "id": 53,
+     "group": "Basic",
+     "subGroup": null,
+     "description": "Web3, blockchain and defi basic understanding/principles",
+     "request": "What is the best way to ensure privacy with cryptocurrency transactions?"
+   },
+   {
+     "id": 54,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I approve a transaction on Metamask?"
+   },
+   {
+     "id": 55,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "What is a yield aggregator and how do I use it?"
+   },
+   {
+     "id": 56,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I get the ETH balance of an address on Etherscan?"
+   },
+   {
+     "id": 57,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I chart totalSupply on Dune Analytics?"
+   },
+   {
+     "id": 58,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "What is Infura?"
+   },
+   {
+     "id": 59,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do multi-sig transactions work on Gnosis Safe?"
+   },
+   {
+     "id": 60,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "What is the purpose of a block explorer?"
+   },
+   {
+     "id": 61,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I find historical price charts on CoinGecko?"
+   },
+   {
+     "id": 62,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I deposit funds to an Ledger hardware wallet?"
+   },
+   {
+     "id": 63,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I trace a transaction on Coinalysis?"
+   },
+   {
+     "id": 64,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I switch from testnet to mainnet on Infura?"
+   },
+   {
+     "id": 65,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I send a transaction to a smart contract on Trust Wallet?"
+   },
+   {
+     "id": 66,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I mint a token on Tokensoft?"
+   },
+   {
+     "id": 67,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "What platforms enable users to easily create their own tokens?"
+   },
+   {
+     "id": 68,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I issue a token on Ethereum blockchain?"
+   },
+   {
+     "id": 69,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I mint an ERC-721 token with OpenZeppelin?"
+   },
+   {
+     "id": 70,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I trace an Ethereum transaction with Blocknative?"
+   },
+   {
+     "id": 71,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I search Ethereum transactions on Etherscan?"
+   },
+   {
+     "id": 72,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I check the ENS domain on a transaction?"
+   },
+   {
+     "id": 73,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How do I buy a domain on Unstoppable Domains?"
+   },
+   {
+     "id": 74,
+     "group": "Tools",
+     "subGroup": null,
+     "description": "Questions about Tools",
+     "request": "How can I vote on a governance proposal?"
+   },
+   {
+     "id": 75,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the best NFT marketplaces?"
+   },
+   {
+     "id": 76,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Where can I view the latest transactions of an address?"
+   },
+   {
+     "id": 77,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Where can I borrow Dai with ETH collateral?"
+   },
+   {
+     "id": 78,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Who has the cheapest swap fees?"
+   },
+   {
+     "id": 79,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How can I find the Ether burned in recent blocks?"
+   },
+   {
+     "id": 80,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Who has the lowest borrowing rates in DeFi?"
+   },
+   {
+     "id": 81,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Where are the highest yields in yield farming?"
+   },
+   {
+     "id": 82,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What DeFi platform provides the best yields?"
+   },
+   {
+     "id": 83,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How do I find historical price charts for NFTs?"
+   },
+   {
+     "id": 84,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What's the best way to store crypto?"
+   },
+   {
+     "id": 85,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Where can I track the market cap and price of NFT project tokens?"
+   },
+   {
+     "id": 86,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What's the best way to margin trade crypto?"
+   },
+   {
+     "id": 87,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What is the best way to monetize NFTs?"
+   },
+   {
+     "id": 88,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Where can I lend ETH safely and reliably?"
+   },
+   {
+     "id": 89,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What is the best tool to buy crypto with a credit card?"
+   },
+   {
+     "id": 90,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How do I mint and manage my own NFTs?"
+   },
+   {
+     "id": 91,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What exchange is the most liquid?"
+   },
+   {
+     "id": 92,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Which web3 wallets are most secure?"
+   },
+   {
+     "id": 93,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the best decentralized exchanges for trading NFTs?"
+   },
+   {
+     "id": 94,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What tools can I use to accept and manage crypto payments for my business?"
+   },
+   {
+     "id": 95,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What is the most user-friendly way to borrow crypto?"
+   },
+   {
+     "id": 96,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What DeFi protocol is most popular?"
+   },
+   {
+     "id": 97,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What is the best app for tracking my portfolio?"
+   },
+   {
+     "id": 98,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What protocols facilitate decentralized lending?"
+   },
+   {
+     "id": 99,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the best block explorers?"
+   },
+   {
+     "id": 100,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What hardware wallet is the most secure?"
+   },
+   {
+     "id": 101,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How do I store my crypto securely?"
+   },
+   {
+     "id": 102,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What protocols facilitate token swaps?"
+   },
+   {
+     "id": 103,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the most popular synthetic assets?"
+   },
+   {
+     "id": 104,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the most popular stablecoins?"
+   },
+   {
+     "id": 105,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What protocols are used to facilitate flash loans?"
+   },
+   {
+     "id": 106,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Which DAOs are the most established?"
+   },
+   {
+     "id": 107,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How can I easily stake Ether?"
+   },
+   {
+     "id": 108,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What is the most user-friendly way to lend crypto?"
+   },
+   {
+     "id": 109,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What synthetic assets enable users to gain exposure to a basket of assets?"
+   },
+   {
+     "id": 110,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "Which DeFi protocols enable users to earn interest on their crypto?"
+   },
+   {
+     "id": 111,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What decentralized prediction markets offer the most reliable odds?"
+   },
+   {
+     "id": 112,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "How can I bridge tokens to Avalanche?"
+   },
+   {
+     "id": 113,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "What are the top protocols on Optimism?"
+   },
+   {
+     "id": 114,
+     "group": "Discovery",
+     "subGroup": null,
+     "description": "Protocol, Project and Tool Discovery Questions (Questions that are best answered by providing a project or list of projects as an answer)",
+     "request": "I'm trying to remember the name of a site that let's you view transactions on Arbitrum. You can search for transactions by the txn hash."
+   },
+   {
+     "id": 115,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "Where can I look up information on AAVE token?"
+   },
+   {
+     "id": 116,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "Give me a summary of how Yearn works"
+   },
+   {
+     "id": 117,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is a cryptopunk?"
+   },
+   {
+     "id": 118,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I use the Uniswap interface?"
+   },
+   {
+     "id": 119,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is a wrapped Bitcoin?"
+   },
+   {
+     "id": 120,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "Who’s managing Maker?"
+   },
+   {
+     "id": 121,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What traits does a Pudgy Penguin have?"
+   },
+   {
+     "id": 122,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What are some of the advantages of using a decentralized exchange?"
+   },
+   {
+     "id": 123,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is the purpose of a DAI stablecoin?"
+   },
+   {
+     "id": 124,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is the purpose of the Chainlink Network?"
+   },
+   {
+     "id": 125,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is the purpose of the Ethereum Name Service (ENS)?"
+   },
+   {
+     "id": 126,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How does the Curve DeFi protocol work?"
+   },
+   {
+     "id": 127,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I use Compound to earn interest on my crypto assets?"
+   },
+   {
+     "id": 128,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I use Uniswap to swap between tokens?"
+   },
+   {
+     "id": 129,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is a Gnosis Safe wallet?"
+   },
+   {
+     "id": 130,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is the use of the MakerDAO CDP portal?"
+   },
+   {
+     "id": 131,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I use Aave to lend and borrow tokens?"
+   },
+   {
+     "id": 132,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is the use of Balancer for portfolio rebalancing?"
+   },
+   {
+     "id": 133,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I use Chainlink to connect two blockchain networks?"
+   },
+   {
+     "id": 134,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I collect NFT rewards on Futureswap?"
+   },
+   {
+     "id": 135,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is IPFS?"
+   },
+   {
+     "id": 136,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I swap tokens on Kyber Network?"
+   },
+   {
+     "id": 137,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "What is Zapper?"
+   },
+   {
+     "id": 138,
+     "group": "Advanced",
+     "subGroup": null,
+     "description": "Information finding and Question Answering (Explain something about crypto, no specific numbers needed to retrieve)",
+     "request": "How do I list an NFT on OpenSea?"
+   },
+   {
+     "id": 139,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "I want to swap 5 Uniswap for AAVE"
+   },
+   {
+     "id": 140,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "Withdraw my Aave earnings"
+   },
+   {
+     "id": 141,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "I want to stake my ETH"
+   },
+   {
+     "id": 142,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "Can I get a loan in the Maker Protocol?"
+   },
+   {
+     "id": 143,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "sell my bored Ape"
+   },
+   {
+     "id": 144,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join a Compound pool"
+   },
+   {
+     "id": 145,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "buy a NFT on OpenSea"
+   },
+   {
+     "id": 146,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "lend a cryptocurrency on Aave"
+   },
+   {
+     "id": 147,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "mint a NFT using Ethereum"
+   },
+   {
+     "id": 148,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join a Balancer pool"
+   },
+   {
+     "id": 149,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "create a new ERC-20 token"
+   },
+   {
+     "id": 150,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "deposit tokens into my wallet"
+   },
+   {
+     "id": 151,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "purchase a CryptoKitty"
+   },
+   {
+     "id": 152,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join a Livepeer stream"
+   },
+   {
+     "id": 153,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "invest in a Synthetix crypto asset"
+   },
+   {
+     "id": 154,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use my wallet to access 0x"
+   },
+   {
+     "id": 155,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "I’d like to join a yearn.finance yield farm"
+   },
+   {
+     "id": 156,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join the Balancer Liquidity Mining program"
+   },
+   {
+     "id": 157,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join Uniswap and provide liquidity"
+   },
+   {
+     "id": 158,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "vote in a MakerDAO governance proposal"
+   },
+   {
+     "id": 159,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "stake a coin and earn rewards"
+   },
+   {
+     "id": 160,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "buy a Rare Pepe card"
+   },
+   {
+     "id": 161,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use a credit card to purchase crypto"
+   },
+   {
+     "id": 162,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use my wallet to borrow ETH"
+   },
+   {
+     "id": 163,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use my wallet to vote in an Aragon DAO"
+   },
+   {
+     "id": 164,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "attach ENS domains to an Ethereum wallet"
+   },
+   {
+     "id": 165,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join a liquidity pool and earn rewards"
+   },
+   {
+     "id": 166,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "buy a DAI stablecoin"
+   },
+   {
+     "id": 167,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "purchase a Synthetix asset"
+   },
+   {
+     "id": 168,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "create and participate in an Ethereum DEX"
+   },
+   {
+     "id": 169,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "exchange DAI for WBTC"
+   },
+   {
+     "id": 170,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "purchase a collectible on RareBits"
+   },
+   {
+     "id": 171,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use my wallet to invest in Compound"
+   },
+   {
+     "id": 172,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "mint or burn a token on Rarible"
+   },
+   {
+     "id": 173,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "buy an Ethereum Domain Name"
+   },
+   {
+     "id": 174,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "join a Synthetix liquidity pool"
+   },
+   {
+     "id": 175,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "claim my Digital Art tokens on Nifty Gateway"
+   },
+   {
+     "id": 176,
+     "group": "Actions",
+     "subGroup": null,
+     "description": "Trigger Actions",
+     "request": "use my wallet to pay for a service on Request Network"
+   },
+   {
+     "id": 177,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my balance of X token?"
+   },
+   {
+     "id": 178,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total value of all tokens in my wallet?"
+   },
+   {
+     "id": 179,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Can you show me my last 5 transactions?"
+   },
+   {
+     "id": 180,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Do I have any tokens from Uniswap's Claim process?"
+   },
+   {
+     "id": 181,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the status of my aave transfer?"
+   },
+   {
+     "id": 182,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What NFTs do I have?"
+   },
+   {
+     "id": 183,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Does my wallet qualify for any airdrops?"
+   },
+   {
+     "id": 184,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What are my most valuable NFTs?"
+   },
+   {
+     "id": 185,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What tokens have I sent with my wallet address?"
+   },
+   {
+     "id": 186,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever used a Maker CDP?"
+   },
+   {
+     "id": 187,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What tokens have I received with my wallet address?"
+   },
+   {
+     "id": 188,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "How much ETH have I spent?"
+   },
+   {
+     "id": 189,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What are some recent transfers I have made?"
+   },
+   {
+     "id": 190,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my Compound balance?"
+   },
+   {
+     "id": 191,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What Ethereum tokens have I transacted with?"
+   },
+   {
+     "id": 192,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my wallet address?"
+   },
+   {
+     "id": 193,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of ETH I have received?"
+   },
+   {
+     "id": 194,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever participated in a yield farming initiative?"
+   },
+   {
+     "id": 195,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total number of ETH transactions I have made?"
+   },
+   {
+     "id": 196,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the history of my $ORBS token transfers?"
+   },
+   {
+     "id": 197,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of ETH I have sent?"
+   },
+   {
+     "id": 198,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Do I have any tokens from NFT auctions?"
+   },
+   {
+     "id": 199,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total balance of assets in my wallet?"
+   },
+   {
+     "id": 200,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever used a 0x DEX?"
+   },
+   {
+     "id": 201,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What tokens have I sent from my wallet?"
+   },
+   {
+     "id": 202,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of ERC-20 tokens I have received?"
+   },
+   {
+     "id": 203,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "How many transfers have I made with my wallet?"
+   },
+   {
+     "id": 204,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of ERC-20 tokens I have sent?"
+   },
+   {
+     "id": 205,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the current value of the ETH and ERC-20 tokens in my wallet?"
+   },
+   {
+     "id": 206,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever contributed to a token sale?"
+   },
+   {
+     "id": 207,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my balance of $YFI token?"
+   },
+   {
+     "id": 208,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my Uniswap liquidity balance?"
+   },
+   {
+     "id": 209,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my wallet’s balance of ETH and ERC-20 tokens?"
+   },
+   {
+     "id": 210,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my ENS name?"
+   },
+   {
+     "id": 211,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my Arbitrum balance?"
+   },
+   {
+     "id": 212,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What was the amount of my last Maker CDP transaction?"
+   },
+   {
+     "id": 213,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is my balance of $SUSHI token?"
+   },
+   {
+     "id": 214,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What was the amount of my last Uniswap trade?"
+   },
+   {
+     "id": 215,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever used an ERC-20 token?"
+   },
+   {
+     "id": 216,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of crypto sent to my wallet?"
+   },
+   {
+     "id": 217,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of crypto sent from my wallet?"
+   },
+   {
+     "id": 218,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the floor price of the NFTs I own?"
+   },
+   {
+     "id": 219,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever received an airdrop?"
+   },
+   {
+     "id": 220,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What was the amount of my last Compound transaction?"
+   },
+   {
+     "id": 221,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "Have I ever deposited crypto in a DeFi protocol?"
+   },
+   {
+     "id": 222,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total value of all Uniswap assets in my wallet?"
+   },
+   {
+     "id": 223,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the total amount of ETH gas I have spent?"
+   },
+   {
+     "id": 224,
+     "group": "User",
+     "subGroup": null,
+     "description": "Questions about the user’s wallet activity",
+     "request": "What is the collateralization level of my Dai loan on AAVE?"
+   },
+   {
+     "id": 225,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What’s the floor price of a bored Ape?"
+   },
+   {
+     "id": 226,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the price of UNI?"
+   },
+   {
+     "id": 227,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the current average gas price?"
+   },
+   {
+     "id": 228,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the balance of the Uniswap ETH/USDC pool?"
+   },
+   {
+     "id": 229,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total ETH held in Compound Finance?"
+   },
+   {
+     "id": 230,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the staking reward for Balancer?"
+   },
+   {
+     "id": 231,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What's my yield on my Aave position?"
+   },
+   {
+     "id": 232,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total amount of Dai held in MakerDAO?"
+   },
+   {
+     "id": 233,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total supply of WBTC?"
+   },
+   {
+     "id": 234,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total supply of USDC?"
+   },
+   {
+     "id": 235,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total supply of DAI?"
+   },
+   {
+     "id": 236,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total number of ERC-721 tokens?"
+   },
+   {
+     "id": 237,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the average daily volume of ERC-20 token transactions?"
+   },
+   {
+     "id": 238,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total amount of SUSD held in Synthetix?"
+   },
+   {
+     "id": 239,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total amount of USDC held in Compound?"
+   },
+   {
+     "id": 240,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total supply of ETH?"
+   },
+   {
+     "id": 241,
+     "group": "Data",
+     "subGroup": null,
+     "description": "Data Point(s) Retrieval (Q’s where response would require retrieving information from somewhere)",
+     "request": "What is the total number of unique Ethereum addresses?"
+   },
+   {
+     "id": 242,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "What protocols support USDC?"
+   },
+   {
+     "id": 243,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "Can I use $UNI collateral on AAVE?"
+   },
+   {
+     "id": 244,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "Can I lend $YFI on Compound?"
+   },
+   {
+     "id": 245,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "What is the debt limit for ETH collateral on Euler?"
+   },
+   {
+     "id": 246,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "How large is the loan-to-value ratio for AAVE?"
+   },
+   {
+     "id": 247,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "Is there a $YFI to $UNI Uniswap pool?"
+   },
+   {
+     "id": 248,
+     "group": "Protocol Info",
+     "subGroup": null,
+     "description": "Protocol Support Questions",
+     "request": "Does Arbitrum have lido stETH support?"
+   },
+   {
+     "id": 249,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What were the prices for UNI for the past two weeks?"
+   },
+   {
+     "id": 250,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What were the stats for Uniswap yesterday?"
+   },
+   {
+     "id": 251,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "How many ETH wallets have more than 10 ETH?"
+   },
+   {
+     "id": 252,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in DeFi projects?"
+   },
+   {
+     "id": 253,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total ETH locked in smart contracts?"
+   },
+   {
+     "id": 254,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "How many new ETH wallets have been opened in the past 24 hours?"
+   },
+   {
+     "id": 255,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the average daily volume of ETH transactions?"
+   },
+   {
+     "id": 256,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the average daily gas prices?"
+   },
+   {
+     "id": 257,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the average daily volume of WBTC transactions?"
+   },
+   {
+     "id": 258,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of Uniswap transactions?"
+   },
+   {
+     "id": 259,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of UNI held in Uniswap?"
+   },
+   {
+     "id": 260,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of Maker transactions?"
+   },
+   {
+     "id": 261,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of Ethereum transactions per day?"
+   },
+   {
+     "id": 262,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH locked in Aave?"
+   },
+   {
+     "id": 263,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in DeFi smart contracts?"
+   },
+   {
+     "id": 264,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH in DAI stablecoins?"
+   },
+   {
+     "id": 265,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of ERC-721 token transactions?"
+   },
+   {
+     "id": 266,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in MakerDAO?"
+   },
+   {
+     "id": 267,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total ETH transaction fees collected on Ethereum this week?"
+   },
+   {
+     "id": 268,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total number of Uniswap liquidity pools?"
+   },
+   {
+     "id": 269,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of Compound transactions?"
+   },
+   {
+     "id": 270,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the average daily gas used on Ethereum?"
+   },
+   {
+     "id": 271,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of Synthetix transactions?"
+   },
+   {
+     "id": 272,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total supply of ETH locked in DeFi projects?"
+   },
+   {
+     "id": 273,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total number of unique active Ethereum addresses?"
+   },
+   {
+     "id": 274,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the daily volume of Aave transactions?"
+   },
+   {
+     "id": 275,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of dYdX tokens?"
+   },
+   {
+     "id": 276,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in Compound?"
+   },
+   {
+     "id": 277,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "How many ETH wallets have more than 100 ETH?"
+   },
+   {
+     "id": 278,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in Aave?"
+   },
+   {
+     "id": 279,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total amount of ETH held in DAI stablecoins?"
+   },
+   {
+     "id": 280,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of Aave transactions?"
+   },
+   {
+     "id": 281,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of dYdX transactions?"
+   },
+   {
+     "id": 282,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the average daily volume of Compound transactions?"
+   },
+   {
+     "id": 283,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of ERC-20 token transactions on Synthetix?"
+   },
+   {
+     "id": 284,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total daily volume of ERC-721 token transactions on Synthetix?"
+   },
+   {
+     "id": 285,
+     "group": "Dune Info",
+     "subGroup": null,
+     "description": "Extended DUNE information",
+     "request": "What is the total supply of ETH held in DeFi protocols?"
+   },
+   {
+     "id": 286,
+     "group": "Governance",
+     "subGroup": null,
+     "description": "Governance and  Voting",
+     "request": "I’d like to vote my tokens"
+   },
+   {
+     "id": 287,
+     "group": "Governance",
+     "subGroup": null,
+     "description": "Governance and Voting",
+     "request": "I’d like to view current governance proposals"
+   },
+   {
+     "id": 288,
+     "group": "History",
+     "subGroup": null,
+     "description": "Questions about past actions in the chat app",
+     "request": "What was the tx hash of the last action I took?"
+   }
+ ]
+ 
