@@ -14,7 +14,6 @@ export const parseMessage = (str: string) => {
     const [_, capture1, capture2] = match;
     // destructure the first element of the indices (tuple of 2 items referring to string start, end)
     const [[start, end]] = match.indices;
-    console.log(capture2);
     return {
       start,
       end,

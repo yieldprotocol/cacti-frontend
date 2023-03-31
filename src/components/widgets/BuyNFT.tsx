@@ -14,32 +14,12 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
+import { Order } from '@/types';
 import { Spinner } from '@/utils';
-import { CheckNftOwner } from '../CheckNftOwner';
+import { NftOwner } from '../CheckNftOwner';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
-
-interface BasicOrderParameters {
-  considerationToken: string;
-  considerationIdentifier: BigNumberish;
-  considerationAmount: BigNumberish;
-  offerer: string;
-  zone?: string;
-  offerToken: string;
-  offerIdentifier: BigNumberish;
-  offerAmount: BigNumberish;
-  basicOrderType: string;
-  startTime: BigNumberish;
-  endTime: BigNumberish;
-  zoneHash: string;
-  salt: BigNumberish;
-  offererConduitKey: string;
-  fulfillerConduitKey: string;
-  totalOriginalAdditionalRecipients: BigNumberish;
-  additionalRecipients: [any];
-  signature: string;
-}
 
 const fetchListing = async (nftAddress: string, tokenId: string) => {
   return axios
@@ -123,9 +103,10 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     async () => orderHash && fetchFulfillParams(orderHash, receiver!, protocol_address)
   );
 
-  let params = fulfillmentData?.fulfillment_data.transaction.input_data
-    .parameters as BasicOrderParameters;
-  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value;
+  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
+  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
+
+  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
 
   // usePrepareContractWrite states:
   // If prepareWriteError, show error
@@ -133,8 +114,11 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const { config: writeConfig, error: prepareWriteError } = usePrepareContractWrite({
     address: protocol_address,
     abi: SeaportAbi,
-    functionName: 'fulfillBasicOrder',
-    args: [params],
+    functionName: 'fulfillOrder',
+    args: [
+      { parameters: params, signature: signature },
+      '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
+    ],
     overrides: {
       value: BigNumber.from(valueAmount || 0),
     },
@@ -166,7 +150,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     <div>
       <div>
         <NftAttributes nftAddress={nftAddress} tokenID={tokenId} />
-        <CheckNftOwner nftAddress={nftAddress} tokenId={tokenId} />
+        <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
       </div>
 
       {isTxError && <WidgetError>Tx error: {txErrorData?.message}</WidgetError>}
