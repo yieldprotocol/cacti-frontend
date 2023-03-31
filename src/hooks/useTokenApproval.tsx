@@ -39,7 +39,7 @@ const useTokenApproval = (
   });
 
   // for using in fork env
-  const contract = useContract({ address, abi: erc20ABI });
+  const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
     address,
     abi: erc20ABI,
@@ -61,8 +61,8 @@ const useTokenApproval = (
     setTxPending(true);
 
     try {
-      if (isFork) {
-        const tx = await contract?.connect(signer!).approve(spenderAddress, amountToUse);
+      if (true) {
+        const tx = await contract?.approve(spenderAddress, amountToUse);
         setHash(tx?.hash as `0x${string}`);
       } else {
         const tx = await approvalWriteAsync?.();
