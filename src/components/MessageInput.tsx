@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
+import AutoRequestBuilder from './AutoRequestBuilder';
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
@@ -37,24 +38,31 @@ export const MessageInput = ({}) => {
   );
 
   return (
-    <form onSubmit={handleSendMessage}>
-      <div className="flex">
-        <input
-          type="text"
-          onChange={(e) => setMessageInput(e.target.value)}
-          className="form-control mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
-          placeholder="Enter your message..."
-          tabIndex={0}
-          value={messageInput}
-          ref={inputRef}
-        />
-        <button
-          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
-          onClick={handleSendMessage}
-        >
-          <div className="flex justify-center">{sendButtonIcon}</div>
-        </button>
-      </div>
-    </form>
+    <>
+      <form onSubmit={handleSendMessage}>
+        <div className="flex">
+          <input
+            type="text"
+            onChange={(e) => setMessageInput(e.target.value)}
+            className="form-control mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
+            placeholder="Enter your message..."
+            tabIndex={0}
+            value={messageInput}
+            ref={inputRef}
+          />
+          <button
+            className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
+            onClick={handleSendMessage}
+          >
+            <div className="flex justify-center">{sendButtonIcon}</div>
+          </button>
+        </div>
+      </form>
+      <AutoRequestBuilder
+        input={messageInput}
+        setInput={setMessageInput}
+        handleSendMessage={handleSendMessage}
+      />
+    </>
   );
 };
