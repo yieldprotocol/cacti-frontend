@@ -16,9 +16,11 @@ type ForkTools = {
   fillEther: () => Promise<void>;
 };
 
+export const FORK_RPC_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
+
 const useForkTools = (): ForkTools => {
   /* Get the fork url from a simple cache, or alternatively the env */
-  const [forkUrl, setForkUrl] = useState<string>(process.env.FORK_URL || '');
+  const [forkUrl, setForkUrl] = useState<string>(FORK_RPC_URL || '');
   const [isFork, setIsFork] = useState<boolean>(false);
 
   /* parameters from wagmi */
