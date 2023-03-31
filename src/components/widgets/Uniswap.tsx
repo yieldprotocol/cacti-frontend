@@ -16,7 +16,7 @@ import { WidgetError } from '@/components/widgets/helpers';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
-import { findTokenBySymbol, formatToEther } from '@/utils';
+import { cleanValue, findTokenBySymbol, formatToEther } from '@/utils';
 import { Spinner } from '@/utils';
 import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
@@ -41,49 +41,25 @@ interface ExactInputSingleParams {
 const swapRouter02Address = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 
 export const UniswapButton = ({ tokenIn, tokenOut, amountIn }: Props) => {
-  // Owner is the receiver
-  const { address: receiver } = useAccount();
-  const [hasBalance, setHasBalance] = useState(false);
-  const [hasAllowance, setHasAllowance] = useState(false);
-  const [isApprovalSuccess, setIsApprovalSuccess] = useState(false);
-
-  // Check if balance is enough
-  const { data: balance, error } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: [receiver!],
-  });
-
-  // Get allowance amount
-  const { data: allowanceAmount } = useContractRead({
-    address: tokenIn.address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [receiver!, swapRouter02Address],
-  });
-
-  useEffect(() => {
-    balance && setHasBalance(BigNumber.from(balance).gte(amountIn));
-    allowanceAmount && setHasAllowance(BigNumber.from(allowanceAmount).gte(amountIn));
-  }, [balance, allowanceAmount, amountIn, isApprovalSuccess, receiver]);
+  const { hasAllowance } = useTokenApproval(
+    tokenIn.address as `0x${string}`,
+    amountIn,
+    swapRouter02Address
+  );
 
   // ETH to token swap
   if (tokenIn.symbol === 'ETH') return <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />;
 
   return (
     <div>
-      {!hasAllowance && !isApprovalSuccess && (
-        <ApproveTokens
-          {...{
-            token: tokenIn,
-            amount: amountIn,
-            setIsApprovalSuccess,
-            spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
-          }}
-        />
-      )}
-      {(hasAllowance || isApprovalSuccess) && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
+      <ApproveTokens
+        {...{
+          token: tokenIn,
+          amount: amountIn,
+          spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+        }}
+      />
+      {hasAllowance && <SwapTokens {...{ tokenIn, tokenOut, amountIn }} />}
     </div>
   );
 };
@@ -94,6 +70,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
   const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain?.id!) : tokenIn;
+  const amountInToUse = BigNumber.from(cleanValue(amountIn.toString(), tokenInChecked.decimals));
 
   const {
     isLoading: quoteIsLoading,
@@ -102,7 +79,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   } = useUniswapQuote({
     baseTokenSymbol: tokenInChecked.symbol,
     quoteTokenSymbol: tokenOut.symbol,
-    amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
+    amount: ethers.utils.formatUnits(amountInToUse, tokenInChecked.decimals),
   });
 
   const params: ExactInputSingleParams = {
@@ -111,7 +88,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     fee: BigNumber.from(3000),
     recipient: receiver!,
     deadline: BigNumber.from(0),
-    amountIn,
+    amountIn: amountInToUse,
     amountOutMinimum: quote?.value
       ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals).div('1000')
       : BigNumber.from(0),

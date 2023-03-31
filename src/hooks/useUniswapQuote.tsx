@@ -3,7 +3,7 @@ import { AlphaRouter } from '@uniswap/smart-order-router';
 import { ethers } from 'ethers';
 import useSWR from 'swr';
 import { useNetwork, useProvider } from 'wagmi';
-import { findTokenBySymbol } from '@/utils';
+import { cleanValue, findTokenBySymbol } from '@/utils';
 import { MAINNET_CHAIN_ID } from '@/utils/constants';
 
 const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -32,6 +32,9 @@ const useUniswapQuote = (props: {
         chainId: MAINNET_CHAIN_ID,
         provider: provider,
       });
+
+      const amountToUse = cleanValue(props.amount, tokenIn.decimals);
+
       const route = await router.route(
         CurrencyAmount.fromRawAmount(
           new Token(
@@ -42,7 +45,7 @@ const useUniswapQuote = (props: {
             tokenIn.name
           ),
 
-          ethers.utils.parseUnits(props?.amount?.toString() || '1', tokenIn.decimals).toString()
+          ethers.utils.parseUnits(amountToUse || '1', tokenIn.decimals).toString()
         ),
         new Token(
           MAINNET_CHAIN_ID,
