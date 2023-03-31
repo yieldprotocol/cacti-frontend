@@ -1,16 +1,20 @@
 import { useChainId } from 'wagmi';
 import { Token } from '@/types';
-import { findTokenBySymbol } from '@/utils';
+import { findTokenByAddress, findTokenBySymbol } from '@/utils';
 
-const useToken = (tokenSymbol: string) => {
+const useToken = (tokenSymbol?: string, tokenAddress?: string) => {
   const chainId = useChainId();
 
   // using WETH address for ETH
   const isETH = tokenSymbol === 'ETH';
-  const token = findTokenBySymbol(isETH ? 'WETH' : tokenSymbol, chainId);
+
+  // try to get by symbol first
+  const token = tokenSymbol
+    ? findTokenBySymbol(isETH ? 'WETH' : tokenSymbol, chainId)
+    : findTokenByAddress(tokenAddress!, chainId);
 
   return {
-    data: token as Token,
+    data: token as Token | undefined,
     isETH,
   };
 };
