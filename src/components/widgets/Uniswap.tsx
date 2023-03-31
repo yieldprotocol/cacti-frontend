@@ -16,7 +16,7 @@ import { WidgetError } from '@/components/widgets/helpers';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
-import { findTokenBySymbol, formatToEther } from '@/utils';
+import { cleanValue, findTokenBySymbol, formatToEther } from '@/utils';
 import { Spinner } from '@/utils';
 import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 import SwapRouter02Abi from '../../abi/SwapRouter02.json';
@@ -70,6 +70,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   const { chain } = useNetwork();
   const isEth = tokenIn.symbol == 'ETH';
   const tokenInChecked = isEth ? findTokenBySymbol('WETH', chain?.id!) : tokenIn;
+  const amountInToUse = BigNumber.from(cleanValue(amountIn.toString(), tokenInChecked.decimals));
 
   const {
     isLoading: quoteIsLoading,
@@ -78,7 +79,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
   } = useUniswapQuote({
     baseTokenSymbol: tokenInChecked.symbol,
     quoteTokenSymbol: tokenOut.symbol,
-    amount: ethers.utils.formatUnits(amountIn.toString(), tokenInChecked.decimals),
+    amount: ethers.utils.formatUnits(amountInToUse, tokenInChecked.decimals),
   });
 
   const params: ExactInputSingleParams = {
@@ -87,7 +88,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     fee: BigNumber.from(3000),
     recipient: receiver!,
     deadline: BigNumber.from(0),
-    amountIn,
+    amountIn: amountInToUse,
     amountOutMinimum: quote?.value
       ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut.decimals).div('1000')
       : BigNumber.from(0),
