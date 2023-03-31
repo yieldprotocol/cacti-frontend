@@ -11,12 +11,19 @@ import {
 } from 'wagmi';
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
+import useToken from '@/hooks/useToken';
+import { cleanValue } from '@/utils';
 
 const useTokenApproval = (
   address: `0x${string}`,
   amount: BigNumber,
   spenderAddress: `0x${string}`
 ) => {
+  const { data: token } = useToken(undefined, address);
+
+  if (!token) throw new Error('no token found');
+
+  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
@@ -37,7 +44,7 @@ const useTokenApproval = (
     address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [spenderAddress, amount],
+    args: [spenderAddress, amountToUse],
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
@@ -55,7 +62,7 @@ const useTokenApproval = (
 
     try {
       if (isFork) {
-        const tx = await contract?.connect(signer!).approve(spenderAddress, amount);
+        const tx = await contract?.connect(signer!).approve(spenderAddress, amountToUse);
         setHash(tx?.hash as `0x${string}`);
       } else {
         const tx = await approvalWriteAsync?.();
