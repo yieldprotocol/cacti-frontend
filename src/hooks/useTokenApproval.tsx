@@ -61,7 +61,7 @@ const useTokenApproval = (
     setTxPending(true);
 
     try {
-      if (true) {
+      if (isFork) {
         const tx = await contract?.approve(spenderAddress, amountToUse);
         setHash(tx?.hash as `0x${string}`);
       } else {
