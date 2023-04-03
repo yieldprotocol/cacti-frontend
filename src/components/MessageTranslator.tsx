@@ -74,11 +74,8 @@ const Widgetize = (widget: Widget) => {
       // Transfer widget
       case 'transfer': {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-        const amount = parseUnits(amtString, token.decimals);
+        const token = getToken(tokenSymbol);
+        const amount = parseUnits(amtString, token?.decimals);
         return (
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
@@ -88,7 +85,7 @@ const Widgetize = (widget: Widget) => {
           >
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <TransferButton {...{ amount, receiver, token }} />
+                <TransferButton {...{ amount, receiver, token: token! }} />
               </ConnectFirst>
             </div>
           </ActionPanel>
@@ -129,12 +126,8 @@ const Widgetize = (widget: Widget) => {
       }
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-
-        const amount = parseUnits(amtString, token.decimals);
+        const token = getToken(tokenSymbol);
+        const amount = parseUnits(amtString, token?.decimals);
 
         const project = findProjectByName(projectName);
         return (
@@ -146,7 +139,7 @@ const Widgetize = (widget: Widget) => {
             centerTitle={true}
           >
             <ConnectFirst>
-              <YieldFarm {...{ project, network, token, amount }} />
+              <YieldFarm {...{ project, network, token: token!, amount }} />
             </ConnectFirst>
           </ActionPanel>
         );
