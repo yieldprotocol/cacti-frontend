@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { useNetwork, useProvider } from 'wagmi';
 import { cleanValue, findTokenBySymbol } from '@/utils';
 import { MAINNET_CHAIN_ID } from '@/utils/constants';
+import useChainId from './useChainId';
 
 const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 
@@ -33,7 +34,10 @@ const useUniswapQuote = (props: {
         provider: provider,
       });
 
-      const amountToUse = cleanValue(props.amount, tokenIn.decimals);
+      if (!tokenIn) throw new Error(`Token ${props.baseTokenSymbol} not found`);
+      if (!tokenOut) throw new Error(`Token ${props.quoteTokenSymbol} not found`);
+
+      const amountToUse = cleanValue(props.amount, tokenIn?.decimals);
 
       const route = await router.route(
         CurrencyAmount.fromRawAmount(
