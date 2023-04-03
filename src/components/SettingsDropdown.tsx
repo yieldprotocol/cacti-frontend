@@ -3,10 +3,10 @@ import { Menu, Switch, Transition } from '@headlessui/react';
 import { SignalIcon } from '@heroicons/react/20/solid';
 import { Cog8ToothIcon, WrenchIcon } from '@heroicons/react/24/outline';
 import { DevToolsModal } from '@/components/devTools/DevToolsModal';
-import useFork from '@/hooks/useFork';
+import useForkTools from '@/hooks/useForkTools';
 
 const SettingsDropdown = () => {
-  const { useForkEnv, setUseForkEnv } = useFork();
+  const { isFork, setIsFork } = useForkTools();
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -27,21 +27,21 @@ const SettingsDropdown = () => {
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 text-white hover:bg-gray-700"
-              onClick={() => setUseForkEnv(!useForkEnv)}
+              onClick={() => setIsFork(!isFork)}
             >
               <SignalIcon className="ml-1 h-5 w-5 text-white" />
               <div className="flex w-full justify-between">
                 <div>Use Fork</div>
                 <Switch
-                  checked={useForkEnv}
-                  onChange={setUseForkEnv}
+                  checked={isFork}
+                  onChange={setIsFork}
                   className={`${
-                    useForkEnv ? 'bg-gray-600' : 'bg-gray-400'
+                    isFork ? 'bg-gray-600' : 'bg-gray-400'
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span
                     className={`${
-                      useForkEnv ? 'translate-x-6' : 'translate-x-1'
+                      isFork ? 'translate-x-6' : 'translate-x-1'
                     } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                   />
                 </Switch>
