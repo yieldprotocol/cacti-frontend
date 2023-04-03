@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, Contract, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import {
@@ -10,10 +11,11 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
+import useChainId from '@/hooks/useChainId';
 import useFork from '@/hooks/useFork';
+import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
-import useSigner from './useSigner';
 
 interface ExactInputSingleParams {
   tokenIn: string;
@@ -26,9 +28,8 @@ interface ExactInputSingleParams {
   sqrtPriceLimitX96: BigNumber;
 }
 
-export const UNISWAP_ROUTER_02_ADDRESS = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
-
 const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNumber) => {
+  const chainId = useChainId();
   const { address: account } = useAccount();
   const { useForkEnv } = useFork();
   const { data: tokenIn, isETH: tokenInisETH } = useToken(tokenInSymbol);
@@ -75,14 +76,14 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   };
 
   const contract = useContract({
-    address: UNISWAP_ROUTER_02_ADDRESS,
+    address: SWAP_ROUTER_02_ADDRESSES(chainId),
     abi: SwapRouter02Abi,
     signerOrProvider: signer,
   });
 
   const value = tokenInisETH ? amountIn : 0;
   const { config: swapConfig, error: prepareError } = usePrepareContractWrite({
-    address: UNISWAP_ROUTER_02_ADDRESS,
+    address: SWAP_ROUTER_02_ADDRESSES(chainId),
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
     args: [params],

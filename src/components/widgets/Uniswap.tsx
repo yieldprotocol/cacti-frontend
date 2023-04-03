@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/20/solid';
+import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
 import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
+import useChainId from '@/hooks/useChainId';
 import useSwap from '@/hooks/useSwap';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import { Spinner } from '@/utils';
-import { UNISWAP_ROUTER_02_ADDRESS } from '@/utils/constants';
 
 interface Props {
   tokenInSymbol: string;
@@ -18,13 +17,12 @@ interface Props {
 }
 
 export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
-  // Owner is the receiver
-  const { address: receiver } = useAccount();
+  const chainId = useChainId();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { hasAllowance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
     amountIn,
-    UNISWAP_ROUTER_02_ADDRESS
+    SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
   // ETH to token swap
@@ -34,9 +32,9 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
     <div>
       <ApproveTokens
         {...{
-          token: tokenIn,
+          token: tokenIn!,
           amount: amountIn,
-          spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+          spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
         }}
       />
       {hasAllowance && <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />}
