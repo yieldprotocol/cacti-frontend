@@ -98,7 +98,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
       <div className="flex justify-center">
         <img className="h-32 w-32 rounded-md" src={result[0].mediaUrl} alt="nft image" />
       </div>
-      {data &&
+      {data?.metadata?.attributes &&
         data?.metadata.attributes.map((attribute: any) => {
           return (
             <div key={attribute.trait_type}>

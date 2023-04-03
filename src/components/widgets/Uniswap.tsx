@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/20/solid';
 import { BigNumber } from 'ethers';
-import { erc20ABI, useAccount, useContractRead } from 'wagmi';
+import { useAccount } from 'wagmi';
 import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
-import { WidgetError } from '@/components/widgets/helpers';
 import useSwap from '@/hooks/useSwap';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
@@ -22,28 +21,25 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
   // Owner is the receiver
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { hasAllowance } = useTokenApproval({
-    address: tokenIn?.address as `0x${string}`,
-    amount: amountIn,
-    spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
-  });
+  const { hasAllowance } = useTokenApproval(
+    tokenIn?.address as `0x${string}`,
+    amountIn,
+    UNISWAP_ROUTER_02_ADDRESS
+  );
 
   // ETH to token swap
   if (tokenInIsETH) return <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />;
 
   return (
-    <div className="flex gap-2">
-      {hasAllowance ? (
-        <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />
-      ) : (
-        <ApproveTokens
-          {...{
-            token: tokenIn!,
-            amount: amountIn,
-            spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
-          }}
-        />
-      )}
+    <div>
+      <ApproveTokens
+        {...{
+          token: tokenIn,
+          amount: amountIn,
+          spenderAddress: UNISWAP_ROUTER_02_ADDRESS,
+        }}
+      />
+      {hasAllowance && <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />}
     </div>
   );
 };

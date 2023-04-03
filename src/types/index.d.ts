@@ -1,3 +1,5 @@
+import { Order } from '@/types/seaport';
+
 export interface Token {
   address: string;
   symbol: string;
@@ -8,3 +10,5 @@ export interface Project {
   id: string;
   name: string;
 }
+
+export { Order };

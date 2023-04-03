@@ -9,22 +9,23 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import useFork from './useFork';
-import useSigner from './useSigner';
+import useForkTools from '@/hooks/useForkTools';
+import useSigner from '@/hooks/useSigner';
+import useToken from '@/hooks/useToken';
+import { cleanValue } from '@/utils';
 
-const useTokenApproval = ({
-  address,
-  amount,
-  spenderAddress,
-}: {
-  address: `0x${string}`;
-  amount: BigNumber;
-  spenderAddress: `0x${string}`;
-}) => {
+const useTokenApproval = (
+  address: `0x${string}`,
+  amount: BigNumber,
+  spenderAddress: `0x${string}`
+) => {
+  const { data: token } = useToken(undefined, address);
+
+  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
-  const { useForkEnv } = useFork();
+  const { isFork } = useForkTools();
   const signer = useSigner();
   const { address: account } = useAccount();
   // Get allowance amount
@@ -41,7 +42,7 @@ const useTokenApproval = ({
     address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [spenderAddress, amount],
+    args: [spenderAddress, amountToUse],
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
@@ -56,13 +57,20 @@ const useTokenApproval = ({
 
   const approve = async () => {
     setTxPending(true);
-    if (useForkEnv) {
-      const tx = await contract?.connect(signer!).approve(spenderAddress, amount);
-      setHash(tx?.hash as `0x${string}`);
-    } else {
-      const tx = await approvalWriteAsync?.();
-      setHash(tx?.hash);
+
+    try {
+      if (isFork) {
+        const tx = await contract?.approve(spenderAddress, amountToUse);
+        setHash(tx?.hash as `0x${string}`);
+      } else {
+        const tx = await approvalWriteAsync?.();
+        setHash(tx?.hash);
+      }
+    } catch (error) {
+      console.log('user rejected approval');
+      setTxPending(false);
     }
+
     setTxPending(false);
   };
 

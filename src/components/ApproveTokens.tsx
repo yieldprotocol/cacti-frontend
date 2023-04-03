@@ -13,11 +13,11 @@ const ApproveTokens = ({
   spenderAddress: `0x${string}`;
 }) => {
   // Get approval ready
-  const { approve, txPending, hasAllowance, hasBalance } = useTokenApproval({
-    address: token.address as `0x${string}`,
-    amount: amount,
-    spenderAddress,
-  });
+  const { approve, txPending, hasAllowance, hasBalance, txError } = useTokenApproval(
+    token.address as `0x${string}`,
+    amount,
+    spenderAddress
+  );
 
   if (hasAllowance) return null;
 
@@ -25,11 +25,17 @@ const ApproveTokens = ({
     <div className="w-[100%]">
       <div className="flex justify-end">
         <Button
-          disabled={!approve || txPending || !hasBalance}
+          disabled={!approve || txPending || !hasBalance || txError}
           onClick={approve}
           className={hasBalance ? '' : 'border border-red-500'}
         >
-          {!hasBalance ? 'Insufficient balance' : txPending ? 'Approval pending...' : 'Approve'}
+          {!hasBalance
+            ? 'Insufficient balance'
+            : txPending
+            ? 'Approval pending...'
+            : txError
+            ? 'Approval error'
+            : 'Approve'}
         </Button>
       </div>
     </div>
