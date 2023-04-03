@@ -194,3 +194,4 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useChatContext = () => useContext(ChatContext);
+export default ChatContextProvider;
