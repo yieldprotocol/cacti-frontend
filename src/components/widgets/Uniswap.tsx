@@ -43,10 +43,17 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
 };
 
 const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
+  const chainId = useChainId();
   const { swap, txPending, txSuccess, txError, prepareError, hash, quoteIsLoading } = useSwap(
     tokenInSymbol,
     tokenOutSymbol,
     amountIn
+  );
+  const { data: tokenIn } = useToken(tokenInSymbol);
+  const { hasBalance } = useTokenApproval(
+    tokenIn?.address as `0x${string}`,
+    amountIn,
+    SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
   return (
@@ -54,7 +61,7 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
       {!txSuccess && (
         <Button
           className={prepareError || txError ? 'border border-red-500' : ''}
-          disabled={!swap || txPending || quoteIsLoading}
+          disabled={!swap || txPending || quoteIsLoading || prepareError || txError}
           onClick={swap}
         >
           <div className="flex gap-2 align-middle">
@@ -69,7 +76,9 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
             ) : (
               <></>
             )}
-            {prepareError
+            {!hasBalance
+              ? 'Insufficient balance'
+              : prepareError
               ? 'Error preparing swap'
               : txError
               ? 'Error executing transaction'
