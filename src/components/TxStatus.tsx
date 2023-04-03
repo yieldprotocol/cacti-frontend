@@ -30,10 +30,10 @@ export const TxStatus = ({ hash }: Props) => {
         </Button>
       )}
       {isSuccess && (
-        <div className="flex items-center disabled:border-0 disabled:bg-green-700">
+        <Button className="flex gap-2 border border-green-600" disabled>
           <CheckCircleIcon className="h-5 text-green-600" />
-          <div className="p-1 text-green-600">Success</div>
-        </div>
+          <div className="text-green-600">Success</div>
+        </Button>
       )}
       {isError && error && <WidgetError>Transaction failed: {error.message}</WidgetError>}
     </div>
