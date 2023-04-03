@@ -12,7 +12,7 @@ import {
 } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import useChainId from '@/hooks/useChainId';
-import useFork from '@/hooks/useFork';
+import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
@@ -31,7 +31,7 @@ interface ExactInputSingleParams {
 const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNumber) => {
   const chainId = useChainId();
   const { address: account } = useAccount();
-  const { useForkEnv } = useFork();
+  const { isFork } = useForkTools();
   const { data: tokenIn, isETH: tokenInisETH } = useToken(tokenInSymbol);
   const { data: tokenInForPrice } = useToken(tokenInisETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOut, isETH: tokenOutisETH } = useToken(tokenOutSymbol);
@@ -91,7 +91,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
       value,
     },
     staleTime: Infinity,
-    enabled: !useForkEnv,
+    enabled: !isFork,
   });
 
   const { writeAsync: swapWriteAsync } = useContractWrite(swapConfig);
@@ -99,7 +99,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   // handles both fork and non-fork envs
   const swap = async () => {
     setTxPending(true);
-    if (useForkEnv) {
+    if (isFork) {
       const tx = (await contract?.connect(signer!).exactInputSingle(params, {
         value,
       })) as ContractTransaction;
@@ -123,7 +123,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     swap,
     data,
     txSuccess: isSuccess,
-    prepareError: !useForkEnv && prepareError,
+    prepareError: !isFork && prepareError,
     txError: isError,
     txPending: txPending || isLoading,
     quoteIsLoading,
