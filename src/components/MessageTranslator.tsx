@@ -21,7 +21,7 @@ import { UniswapButton } from '@/components/widgets/Uniswap';
 import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
-import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import {
   NftAttributes,
@@ -100,8 +100,11 @@ const Widgetize = (widget: Widget) => {
           parseArgsStripQuotes(args);
 
         const tokenIn = getToken(tokenInSymbol);
-        const amountIn = parseUnits(amountInStrRaw, tokenIn.decimals);
-        const amountIn_ = formatUnits(amountIn, tokenIn.decimals);
+        const amountIn = parseUnits(
+          cleanValue(amountInStrRaw, tokenIn?.decimals),
+          tokenIn?.decimals
+        );
+        const amountIn_ = cleanValue(formatUnits(amountIn, tokenIn?.decimals), tokenIn?.decimals);
 
         return (
           <ActionPanel
@@ -313,7 +316,7 @@ const Widgetize = (widget: Widget) => {
             <thead className="bg-gray-800 text-left">
               <tr className="border-b border-gray-400">
                 {headers.map(({ displayName }: { displayName: string }, i: number) => (
-                  <th className="py-1 px-2" key={`i${i}`}>
+                  <th className="px-2 py-1" key={`i${i}`}>
                     {displayName}
                   </th>
                 ))}

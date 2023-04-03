@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { useChainId } from 'wagmi';
 import { Token } from '@/types';
 import { findTokenByAddress, findTokenBySymbol } from '@/utils';
@@ -5,17 +6,22 @@ import { findTokenByAddress, findTokenBySymbol } from '@/utils';
 const useToken = (tokenSymbol?: string, tokenAddress?: string) => {
   const chainId = useChainId();
 
-  // using WETH address for ETH
-  const isETH = tokenSymbol === 'ETH';
+  const getTokenIsETH = (tokenSymbol?: string, tokenAddress?: string) =>
+    tokenSymbol === 'ETH' || tokenAddress === ethers.constants.AddressZero;
 
-  // try to get by symbol first
-  const token = tokenSymbol
-    ? findTokenBySymbol(isETH ? 'WETH' : tokenSymbol, chainId)
-    : findTokenByAddress(tokenAddress!, chainId);
+  const getToken = (tokenSymbol?: string, tokenAddress?: string) => {
+    if (getTokenIsETH(tokenSymbol, tokenAddress))
+      return { address: ethers.constants.AddressZero, symbol: 'ETH', decimals: 18 };
+    if (tokenSymbol) return findTokenBySymbol(tokenSymbol, chainId) as Token;
+    if (tokenAddress) return findTokenByAddress(tokenAddress, chainId) as Token;
+    return undefined;
+  };
 
   return {
-    data: token as Token | undefined,
-    isETH,
+    data: getToken(tokenSymbol, tokenAddress),
+    isETH: getTokenIsETH(tokenSymbol, tokenAddress),
+    getToken,
+    getTokenIsETH,
   };
 };
 
