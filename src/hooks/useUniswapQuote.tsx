@@ -1,10 +1,9 @@
 import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core';
 import { AlphaRouter } from '@uniswap/smart-order-router';
-import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import useSWR from 'swr';
-import { erc20ABI, useAccount, useContract, useNetwork, useProvider } from 'wagmi';
-import { findTokenBySymbol } from '@/utils';
+import { useNetwork, useProvider } from 'wagmi';
+import { cleanValue, findTokenBySymbol } from '@/utils';
 import { MAINNET_CHAIN_ID } from '@/utils/constants';
 
 const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -33,6 +32,9 @@ const useUniswapQuote = (props: {
         chainId: MAINNET_CHAIN_ID,
         provider: provider,
       });
+
+      const amountToUse = cleanValue(props.amount, tokenIn.decimals);
+
       const route = await router.route(
         CurrencyAmount.fromRawAmount(
           new Token(
@@ -43,7 +45,7 @@ const useUniswapQuote = (props: {
             tokenIn.name
           ),
 
-          ethers.utils.parseUnits(props?.amount?.toString() || '1', tokenIn.decimals).toString()
+          ethers.utils.parseUnits(amountToUse || '1', tokenIn.decimals).toString()
         ),
         new Token(
           MAINNET_CHAIN_ID,
@@ -56,8 +58,8 @@ const useUniswapQuote = (props: {
       );
 
       return {
-        humanReadableAmount: route.quote.toFixed(4),
-        value: route.quote,
+        humanReadableAmount: route?.quote.toFixed(4),
+        value: route?.quote,
       };
     }
   );

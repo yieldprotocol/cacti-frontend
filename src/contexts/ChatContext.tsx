@@ -12,8 +12,6 @@ export type Message = {
   feedback: string;
 };
 
-// type UserMessage = Omit<Message, 'avatar'>;
-
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
@@ -30,7 +28,7 @@ const initialContext = {
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
-  showDebugMessages: true,
+  showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
 };
 
@@ -39,8 +37,9 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
-  const [lastBotMessageId, setLastBotMessageId] = useState<string>(null);
-  const [showDebugMessages, setShowDebugMessages] = useState(true);
+  const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
+  const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
+
   const { setModal } = useModalContext();
 
   const backendUrl = getBackendUrl();

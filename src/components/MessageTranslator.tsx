@@ -18,8 +18,8 @@ import {
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { UniswapButton } from '@/components/widgets/Uniswap';
+import useParseMessage from '@/hooks/useParseMessage';
 import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
-import { parseMessage } from '@/utils/parse-message';
 import { BuyNFT } from './widgets/BuyNFT';
 import {
   NftAttributes,
@@ -34,7 +34,7 @@ import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const { chain } = useNetwork();
-  const stringsAndWidgets = parseMessage(message);
+  const stringsAndWidgets = useParseMessage(message);
   return (
     <div className="flex flex-col gap-3">
       {stringsAndWidgets.map((item, i) => {
@@ -43,7 +43,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return the string
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item, chain)
+              typeof item === 'string' ? item : Widgetize(item, chain!)
             }
           </Fragment>
         );
@@ -249,7 +249,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           <NftAssetTraitsContainer
             asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
           >
-            {values?.map(({ name, params }, i) => (
+            {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
                 {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
               </Fragment>
@@ -272,7 +272,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           >
             <div className="text-black">
               <Grid>
-                {assets?.map(({ name, params }, i) => (
+                {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
                     {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
                   </Fragment>
@@ -300,11 +300,13 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         return (
           <div className="text-black">
             <Grid>
-              {params.items?.map(({ name, params }, i) => (
-                <Fragment key={`i${i}`}>
-                  {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
-                </Fragment>
-              )) || ''}
+              {params.items?.map(
+                ({ name, params }: { name: string; params: string }, i: number) => (
+                  <Fragment key={`i${i}`}>
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                  </Fragment>
+                )
+              ) || ''}
             </Grid>
           </div>
         );
@@ -317,15 +319,15 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           <table className="table-auto border border-gray-500">
             <thead className="bg-gray-800 text-left">
               <tr className="border-b border-gray-400">
-                {headers.map((header, i) => (
+                {headers.map(({ displayName }: { displayName: string }, i: number) => (
                   <th className="py-1 px-2" key={`i${i}`}>
-                    {header.displayName}
+                    {displayName}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ name, params }, i) => {
+              {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
                 const rowArgs = {
                   headers,
                   rowParams: params,
@@ -347,7 +349,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </div>
         );
     }
-  } catch (e) {
+  } catch (e: any) {
     return (
       <div className="grid grid-cols-2 bg-slate-500 p-5 text-white">
         <div>

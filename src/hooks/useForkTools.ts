@@ -18,9 +18,11 @@ type ForkTools = {
   signer?: ethers.Signer;
 };
 
+export const FORK_RPC_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
+
 const useForkTools = (): ForkTools => {
   /* Get the fork url from a simple cache, or alternatively the env */
-  const [forkUrl, setForkUrl] = useState<string>(process.env.FORK_URL || '');
+  const [forkUrl, setForkUrl] = useState<string>(FORK_RPC_URL || '');
   const [isFork, setIsFork] = useState<boolean>(false);
 
   /* parameters from wagmi */
@@ -31,7 +33,7 @@ const useForkTools = (): ForkTools => {
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
-  const forkSigner = isFork && forkUrl ? forkProvider.getSigner(account) : undefined;
+  const forkSigner = isFork && forkUrl ? forkProvider?.getSigner(account) : undefined;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -63,7 +65,7 @@ const useForkTools = (): ForkTools => {
   const getForkStartBlock = useCallback(async () => {
     if (!isFork || !provider) return 'earliest';
     try {
-      const num = await forkProvider.send('tenderly_getForkBlockNumber', []);
+      const num = await forkProvider?.send('tenderly_getForkBlockNumber', []);
       const sBlock = +num.toString();
       console.log('Fork start block: ', sBlock);
       return sBlock;
@@ -81,7 +83,7 @@ const useForkTools = (): ForkTools => {
         [account],
         ethers.utils.hexValue(BigInt('100000000000000000000')),
       ];
-      await forkProvider.send('tenderly_addBalance', transactionParameters);
+      await forkProvider?.send('tenderly_addBalance', transactionParameters);
       refetch();
       console.log('Filled eth on fork');
     } catch (e) {

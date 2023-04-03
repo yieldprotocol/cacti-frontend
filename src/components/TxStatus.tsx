@@ -35,9 +35,7 @@ export const TxStatus = ({ hash }: Props) => {
           <div className="p-1 text-green-600">Success</div>
         </div>
       )}
-      {isError && error && (
-        <WidgetError>Transaction failed: {error.cause || error.message}</WidgetError>
-      )}
+      {isError && error && <WidgetError>Transaction failed: {error.message}</WidgetError>}
     </div>
   );
 };
