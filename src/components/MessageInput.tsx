@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
@@ -7,9 +7,27 @@ export const MessageInput = ({}) => {
 
   const { sendMessage } = useChatContext();
 
-  useEffect(() => {
-    inputRef.current?.focus();
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'I') {
+      e.preventDefault();
+      focusInput();
+    }
   }, []);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
+  useEffect(() => {
+    focusInput();
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
@@ -42,7 +60,7 @@ export const MessageInput = ({}) => {
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
-          className="form-control mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
+          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
           placeholder="Enter your message..."
           tabIndex={0}
           value={messageInput}
