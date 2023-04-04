@@ -16,6 +16,7 @@ import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
 import { Order } from '@/types';
 import { Spinner } from '@/utils';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { NftOwner } from '../CheckNftOwner';
 
 // @ts-ignore
@@ -60,6 +61,47 @@ const fetchFulfillParams = async (
       transformResponse: (data) => JSONbig.parse(data), // opensea passes ints that are too big for js, so we process here first
     })
     .then((res) => res.data);
+};
+
+const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
+  axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
+
+  return axios
+    .get(`${nftAddress}/${tokenID}`, {
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
+  const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
+    fetchNftAsset(nftAddress, tokenId)
+  );
+
+  return (
+    <>
+      {data ? (
+        <>
+          <div className="flex justify-center">
+            <img className="h-32 w-32 rounded-md" src={data.smallPreviewImageUrl} alt="nft image" />
+          </div>
+          <div>
+            <b>{data.collectionName}</b>: #{tokenId}
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </>
+  );
 };
 
 export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
@@ -147,22 +189,26 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   } = useWaitForTransaction({ hash: contractWriteData?.hash });
 
   return (
-    <div>
-      <div>
-        <NftAttributes nftAddress={nftAddress} tokenID={tokenId} />
+    <div className="mt-4 flex w-[100%] flex-col items-center justify-center gap-2">
+      <div className="mb-2 flex flex-col items-center justify-center gap-1">
+        <NFTMetadata nftAddress={nftAddress} tokenId={tokenId} />
         <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
       </div>
 
       {isTxError && <WidgetError>Tx error: {txErrorData?.message}</WidgetError>}
       {isTxPending && (
-        <Button className="flex items-center" disabled>
-          <Spinner /> Buying NFT...
-        </Button>
+        <div>
+          <Button className="flex items-center" disabled>
+            <Spinner /> Buying NFT...
+          </Button>
+        </div>
       )}
       {!isSuccess && (
-        <Button disabled={!seaportWrite || isWriteError} onClick={() => seaportWrite?.()}>
-          Buy NFT {valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}
-        </Button>
+        <div className="max-w-18rem">
+          <Button disabled={!seaportWrite || isWriteError} onClick={() => seaportWrite?.()}>
+            Buy NFT {valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}
+          </Button>
+        </div>
       )}
       {isSuccess && <b className="m-2">Success! You now own the NFT.</b>}
 

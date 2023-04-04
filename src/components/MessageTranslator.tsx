@@ -214,7 +214,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
-            header={`Buy NFTs ${buyNftAddress} ${buyTokenID}`}
+            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
             msg={inputString}
             direction="col"
           >
