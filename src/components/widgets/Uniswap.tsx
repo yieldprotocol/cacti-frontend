@@ -59,8 +59,10 @@ export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props
 const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
   const chainId = useChainId();
   const { address: receiver } = useAccount();
-  const { data: tokenInChecked } = useToken(tokenInSymbol === 'ETH' ? 'WETH' : tokenInSymbol);
-  const { data: tokenOutChecked } = useToken(tokenOutSymbol === 'ETH' ? 'WETH' : tokenOutSymbol);
+  const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
+  const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
+  const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
+  const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
   const amountInToUse = BigNumber.from(cleanValue(amountIn.toString(), tokenInChecked?.decimals));
 
   const { isLoading: quoteIsLoading, data: quote } = useUniswapQuote({
@@ -88,11 +90,10 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     functionName: 'exactInputSingle',
     args: [params],
     overrides: {
-      value: tokenInSymbol === 'ETH' ? amountIn : 0,
+      value: tokenInIsETH ? amountIn : 0,
     },
   });
 
-  const { data: tokenIn } = useToken(tokenInSymbol);
   const { hasBalance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
     amountIn,
