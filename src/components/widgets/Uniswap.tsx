@@ -13,6 +13,7 @@ import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useSubmitTx from '@/hooks/useSubmitTx';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Token } from '@/types';
@@ -95,7 +96,7 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
-  const { config: swapConfig, error } = usePrepareContractWrite({
+  const { config: swapConfig } = usePrepareContractWrite({
     address: swapRouter02Address,
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
@@ -105,7 +106,9 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
     },
   });
 
-  const { write: swapWrite, data, isSuccess } = useContractWrite(swapConfig);
+  const { isSuccess, isError, isPending, submitTx, isPrepared, error, hash } = useSubmitTx(
+    swapConfig.request
+  );
 
   return (
     <>
@@ -113,17 +116,17 @@ const SwapTokens = ({ tokenIn, tokenOut, amountIn }: Props) => {
         {!isSuccess && (
           <Button
             className="px-4"
-            disabled={!swapWrite || quoteIsLoading}
-            onClick={() => swapWrite?.()}
+            disabled={!submitTx || quoteIsLoading || isPending}
+            onClick={submitTx}
           >
             <div className="flex gap-2">
               Send
-              {quoteIsLoading ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
+              {quoteIsLoading || isPending ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
             </div>
           </Button>
         )}
-        {isSuccess && <TxStatus hash={data?.hash!} />}
-        {error && <WidgetError>Error simulating transaction: {error.message}</WidgetError>}
+        {isSuccess && <TxStatus hash={hash!} />}
+        {isError && <WidgetError>Error simulating transaction: {error.message}</WidgetError>}
       </div>
     </>
   );
