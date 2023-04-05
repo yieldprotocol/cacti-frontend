@@ -344,18 +344,21 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         );
       }
       case 'transaction-for-signing-container': {
-        const params = JSON.parse(args);
-        console.log('params', params);
+        const { fromAddress, toAddress, data, gas, value, description } = JSON.parse(args);
         return (
-          <ActionPanel
-            header={params.description}
-            msg={inputString}
-            key={inputString}
-            centerTitle={true}
-          >
+          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <SendTransaction {...params} />
+                <SendTransaction
+                  {...{
+                    fromAddress,
+                    toAddress,
+                    data,
+                    gas,
+                    value,
+                    description,
+                  }}
+                />
               </ConnectFirst>
             </div>
           </ActionPanel>
