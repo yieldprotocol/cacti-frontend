@@ -104,24 +104,15 @@ const Widgetize = (widget: Widget) => {
         const amountIn_ = cleanValue(formatUnits(amountIn, tokenIn?.decimals), tokenIn?.decimals);
 
         return (
-          <ActionPanel
-            header={`Swap ${amountIn_} ${tokenInSymbol} to ${tokenOutSymbol}`}
-            msg={inputString}
-            key={inputString}
-            centerTitle={true}
-          >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <UniswapButton
-                  {...{
-                    tokenInSymbol,
-                    tokenOutSymbol,
-                    amountIn,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
+          <ConnectFirst>
+            <UniswapButton
+              {...{
+                tokenInSymbol,
+                tokenOutSymbol,
+                amountIn,
+              }}
+            />
+          </ConnectFirst>
         );
       }
       case 'yield-farm': {

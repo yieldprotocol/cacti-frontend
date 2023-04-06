@@ -13,6 +13,12 @@ const nextConfig = {
         pathname: '/150/**',
       },
     ],
+    domains: [
+      'assets.coingecko.com',
+      'zapper.xyz',
+      'raw.githubusercontent.com',
+      'storage.googleapis.com',
+    ],
   },
 };
 
