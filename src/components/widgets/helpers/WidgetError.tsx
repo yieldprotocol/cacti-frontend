@@ -3,7 +3,7 @@ import { XCircleIcon } from '@heroicons/react/20/solid';
 
 export const WidgetError = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="max-h-48 overflow-y-scroll rounded-md bg-red-50 p-4">
+    <div className="max-h-48 overflow-y-auto rounded-md bg-red-50 p-4">
       <div className="flex">
         <div className="">
           <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />

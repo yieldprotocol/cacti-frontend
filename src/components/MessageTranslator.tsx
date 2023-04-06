@@ -27,6 +27,7 @@ import {
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
+import { SendTransaction } from './widgets/SendTransaction';
 import { YieldFarm } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
@@ -214,7 +215,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
-            header={`Buy NFTs ${buyNftAddress} ${buyTokenID}`}
+            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
             msg={inputString}
             direction="col"
           >
@@ -320,7 +321,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             <thead className="bg-gray-800 text-left">
               <tr className="border-b border-gray-400">
                 {headers.map(({ displayName }: { displayName: string }, i: number) => (
-                  <th className="py-1 px-2" key={`i${i}`}>
+                  <th className="px-2 py-1" key={`i${i}`}>
                     {displayName}
                   </th>
                 ))}
@@ -340,6 +341,27 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               })}
             </tbody>
           </table>
+        );
+      }
+      case 'transaction-for-signing-container': {
+        const { fromAddress, toAddress, data, gas, value, description } = JSON.parse(args);
+        return (
+          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <SendTransaction
+                  {...{
+                    fromAddress,
+                    toAddress,
+                    data,
+                    gas,
+                    value,
+                    description,
+                  }}
+                />
+              </ConnectFirst>
+            </div>
+          </ActionPanel>
         );
       }
       default:
