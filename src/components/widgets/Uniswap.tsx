@@ -248,19 +248,32 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     useSubmitTx(swapConfig.request);
 
   return (
-    <div className="grid gap-2 md:max-w-xl">
+    <div className="grid w-full gap-2 self-center xl:max-w-4xl">
       <div className="grid gap-2 xl:flex">
         <SwapItem
           tokenSymbol={tokenInSymbol}
           amount={amountIn_}
-          amountUSD={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
-          priceUSD={calcPrice(quoteUSDC?.humanReadableAmount, amountIn_)}
+          amountUSD={cleanValue(
+            tokenInSymbol === 'USDC' ? amountIn_ : quoteUSDC?.humanReadableAmount,
+            2
+          )}
+          priceUSD={
+            tokenInSymbol === 'USDC' ? '1.00' : calcPrice(quoteUSDC?.humanReadableAmount, amountIn_)
+          }
         />
         <SwapItem
           tokenSymbol={tokenOutSymbol}
           amount={cleanValue(amountOut_, 2)}
-          amountUSD={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
-          priceUSD={calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_)}
+          amountUSD={
+            tokenOutSymbol === 'USDC'
+              ? amountOut_
+              : cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)
+          }
+          priceUSD={
+            tokenOutSymbol === 'USDC'
+              ? '1.00'
+              : calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_)
+          }
         />
       </div>
       <TransactionBreakdown
