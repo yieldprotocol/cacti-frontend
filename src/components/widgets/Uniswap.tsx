@@ -1,14 +1,11 @@
 import Image from 'next/image';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { useAccount, useNetwork, usePrepareContractWrite } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import ApproveTokens from '@/components/ApproveTokens';
-import { Button } from '@/components/Button';
-import { TxStatus } from '@/components/TxStatus';
 import useChainId from '@/hooks/useChainId';
 import useSubmitTx from '@/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
@@ -89,7 +86,7 @@ const SwapItem = ({
           />
         </div>
         <div className="my-auto flex flex-col justify-end text-left">
-          <span className="text-3xl">{token?.symbol}</span>
+          <span className="text-xl md:text-3xl">{token?.symbol}</span>
           <span className="flex gap-1 text-sm font-light text-gray-300">
             <span>$</span>
             <span>{priceUSD}</span>
@@ -98,7 +95,7 @@ const SwapItem = ({
       </div>
       <div className="my-auto flex flex-1 justify-end gap-4 rounded-r-sm border border-gray-200/25 bg-gray-900/50 p-3.5">
         <div className="flex flex-col p-1 text-right">
-          <span className="text-3xl">{cleanValue(amount, 2)}</span>
+          <span className="text-3xl">{amount}</span>
           <span className="flex justify-end gap-1 text-sm font-light text-gray-300">
             <span>$</span>
             <span>{amountUSD}</span>
@@ -117,13 +114,13 @@ const TransactionBreakdown = ({
 }: {
   tokenInSymbol: string;
   tokenOutSymbol: string;
-  exchangeRate: string;
-  amountOutMinimum: string;
+  exchangeRate?: string;
+  amountOutMinimum?: string;
 }) => {
   return (
     <div className="grid gap-1.5 rounded-sm border border-gray-200/25 bg-gray-700 p-3.5 shadow-lg">
       <div className="mb-1 text-sm font-medium text-gray-100">Transaction Breakdown</div>
-      <div className="rounded-sm bg-gray-900/50 p-3">
+      <div className="rounded-sm bg-gray-900/50 p-3.5">
         <div className="flex justify-between text-sm text-gray-400">
           <div className="font-medium">Exchange Rate</div>
           <div className="text-gray-100">
@@ -140,29 +137,38 @@ const TransactionBreakdown = ({
 };
 
 const SubmitButton = ({
-  isPending,
+  isPendingConfirm,
+  isLoading,
   isSuccess,
   isError,
   onClick,
 }: {
-  isPending: boolean;
+  isPendingConfirm: boolean;
+  isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
   onClick: () => void;
 }) => (
-  <div className="justify-items-center rounded-sm bg-gray-900/80 p-3.5" onClick={onClick}>
-    <div>
-      {isPending && <Spinner className="mr-2 h-5 w-5" />}
-      {isSuccess && <CheckCircleIcon className="mr-2 h-5 w-5 text-green-500" />}
-      {isError && <XCircleIcon className="mr-2 h-5 w-5 text-red-500" />}
+  <button
+    className={`flex rounded-sm border border-gray-200/25 bg-gray-900/80 p-3.5 hover:cursor-pointer hover:bg-gray-900 disabled:cursor-not-allowed`}
+    onClick={onClick}
+    disabled={isLoading || isPendingConfirm || isSuccess || isError}
+  >
+    <div className="mx-auto flex gap-2">
+      <div className="flex items-center">
+        {(isLoading || isPendingConfirm) && <Spinner className="h-5 w-5 text-gray-100" />}
+        {isSuccess && <CheckCircleIcon className="h-5 w-5 text-green-500/80" />}
+        {isError && <XCircleIcon className="h-5 w-5 text-red-500/80" />}
+      </div>
+      <div className="flex items-center text-xl">
+        {!isLoading && !isSuccess && !isError && !isPendingConfirm && <span>Swap</span>}
+        {isPendingConfirm && <span>Waiting for wallet confirmation...</span>}
+        {isLoading && <span>Swapping...</span>}
+        {isSuccess && <span>Swapped!</span>}
+        {isError && <span>Swap Failed</span>}
+      </div>
     </div>
-    <div className="text-2xl">
-      {!isPending && !isSuccess && !isError && <span>Swap</span>}
-      {isPending && <span>Swapping...</span>}
-      {isSuccess && <span>Swapped!</span>}
-      {isError && <span>Swap Failed</span>}
-    </div>
-  </div>
+  </button>
 );
 
 const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
@@ -184,7 +190,7 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
   });
 
   // formatted amount out quote value
-  const amountOut_ = quote?.value ? quote.value.toExact() : '0';
+  const amountOut_ = quote?.value?.toExact();
 
   // usdc quote for amount in
   const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
@@ -200,15 +206,16 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     amount: amountOut_,
   });
 
-  const calcPrice = (quote: string, amount: string) => {
-    return cleanValue((+quote / +amount).toString(), 2);
-  };
+  const calcPrice = (quote: string | undefined, amount: string | undefined) =>
+    !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
 
   const amountOutMinimum = quote?.value
     ? ethers.utils.parseUnits(quote.value.toExact(), tokenOutChecked?.decimals).div('1000')
-    : BigNumber.from(0);
+    : undefined;
 
-  const amountOutMinimum_ = cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2);
+  const amountOutMinimum_ = amountOutMinimum
+    ? cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2)
+    : undefined;
 
   const params: ExactInputSingleParams = {
     tokenIn: tokenInChecked?.address!,
@@ -217,7 +224,7 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     recipient: receiver!,
     deadline: BigNumber.from(0),
     amountIn: amountInToUse,
-    amountOutMinimum,
+    amountOutMinimum: amountOutMinimum!,
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
@@ -237,9 +244,8 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
-  const { isSuccess, isError, isPending, submitTx, isPrepared, error, hash } = useSubmitTx(
-    swapConfig.request
-  );
+  const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
+    useSubmitTx(swapConfig.request);
 
   return (
     <div className="grid gap-2 md:max-w-xl">
@@ -248,13 +254,13 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
           tokenSymbol={tokenInSymbol}
           amount={amountIn_}
           amountUSD={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
-          priceUSD={calcPrice(quoteUSDC?.humanReadableAmount!, amountIn_)}
+          priceUSD={calcPrice(quoteUSDC?.humanReadableAmount, amountIn_)}
         />
         <SwapItem
           tokenSymbol={tokenOutSymbol}
-          amount={amountOut_}
+          amount={cleanValue(amountOut_, 2)}
           amountUSD={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
-          priceUSD={calcPrice(quoteTokenOutUSDC?.humanReadableAmount!, amountOut_)}
+          priceUSD={calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_)}
         />
       </div>
       <TransactionBreakdown
@@ -265,7 +271,8 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
       />
       <SubmitButton
         onClick={submitTx}
-        isPending={isPending}
+        isPendingConfirm={isPendingConfirm}
+        isLoading={isLoading}
         isSuccess={isSuccess}
         isError={isError}
       />
