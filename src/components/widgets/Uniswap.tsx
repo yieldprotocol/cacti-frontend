@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { XCircleIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
@@ -78,8 +78,9 @@ const SwapItem = ({
         <div className="my-auto flex-none rounded-full bg-gray-200/70 p-[1px] shadow-sm">
           <Image
             src={
-              token?.logoURI ||
-              `https://storage.googleapis.com/zapper-fi-assets/tokens/${chain?.name}/${token?.address}.png` ||
+              `https://storage.googleapis.com/zapper-fi-assets/tokens/${
+                chain?.name.toLowerCase() === 'mainnet fork' ? 'ethereum' : chain?.name
+              }/${token?.address.toLowerCase()}.png` ||
               'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x0000000000000000000000000000000000000000.png'
             }
             alt={tokenSymbol}
@@ -137,6 +138,32 @@ const TransactionBreakdown = ({
     </div>
   );
 };
+
+const SubmitButton = ({
+  isPending,
+  isSuccess,
+  isError,
+  onClick,
+}: {
+  isPending: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  onClick: () => void;
+}) => (
+  <div className="justify-items-center rounded-sm bg-gray-900/80 p-3.5" onClick={onClick}>
+    <div>
+      {isPending && <Spinner className="mr-2 h-5 w-5" />}
+      {isSuccess && <CheckCircleIcon className="mr-2 h-5 w-5 text-green-500" />}
+      {isError && <XCircleIcon className="mr-2 h-5 w-5 text-red-500" />}
+    </div>
+    <div className="text-2xl">
+      {!isPending && !isSuccess && !isError && <span>Swap</span>}
+      {isPending && <span>Swapping...</span>}
+      {isSuccess && <span>Swapped!</span>}
+      {isError && <span>Swap Failed</span>}
+    </div>
+  </div>
+);
 
 const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
   const chainId = useChainId();
@@ -236,7 +263,12 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
         exchangeRate={cleanValue(calcPrice(quote?.humanReadableAmount!, amountIn_), 2)}
         amountOutMinimum={amountOutMinimum_}
       />
-      {/* <SubmitButton /> */}
+      <SubmitButton
+        onClick={submitTx}
+        isPending={isPending}
+        isSuccess={isSuccess}
+        isError={isError}
+      />
     </div>
   );
 };
