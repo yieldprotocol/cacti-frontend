@@ -87,20 +87,20 @@ const SwapItem = ({
             height={30}
           />
         </div>
-        <div className="flex flex-col p-1 text-left">
-          <span className="text-md font-semibold">{token?.symbol}</span>
+        <div className="my-auto flex flex-col justify-end text-left">
+          <span className="text-3xl">{token?.symbol}</span>
           <span className="flex gap-1 text-sm font-light text-gray-300">
             <span>$</span>
-            {priceUSD}
+            <span>{priceUSD}</span>
           </span>
         </div>
       </div>
-      <div className="flex flex-1 justify-end gap-4 rounded-r-sm border border-gray-200/25 bg-gray-900/50 p-3.5">
+      <div className="my-auto flex flex-1 justify-end gap-4 rounded-r-sm border border-gray-200/25 bg-gray-900/50 p-3.5">
         <div className="flex flex-col p-1 text-right">
-          <span className="text-md font-semibold">{cleanValue(amount, 2)}</span>
-          <span className="flex gap-1 text-sm font-light text-gray-300">
+          <span className="text-3xl">{cleanValue(amount, 2)}</span>
+          <span className="flex justify-end gap-1 text-sm font-light text-gray-300">
             <span>$</span>
-            {amountUSD}
+            <span>{amountUSD}</span>
           </span>
         </div>
       </div>
@@ -125,7 +125,7 @@ const TransactionBreakdown = ({
       <div className="rounded-sm bg-gray-900/50 p-3">
         <div className="flex justify-between text-sm text-gray-400">
           <div className="font-medium">Exchange Rate</div>
-          <div className="">
+          <div className="text-gray-100">
             1 {tokenInSymbol} = {exchangeRate} {tokenOutSymbol}
           </div>
         </div>
