@@ -31,28 +31,8 @@ interface ExactInputSingleParams {
 }
 
 export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
-  const chainId = useChainId();
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { hasAllowance } = useTokenApproval(
-    tokenIn?.address as `0x${string}`,
-    amountIn,
-    SWAP_ROUTER_02_ADDRESSES(chainId)
-  );
-
-  // ETH to token swap
-  if (tokenInIsETH) return <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />;
-
   return (
-    <>
-      <ApproveTokens
-        {...{
-          token: tokenIn!,
-          amount: amountIn,
-          spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
-        }}
-      />
-      {hasAllowance && <SwapTokens {...{ tokenInSymbol, tokenOutSymbol, amountIn }} />}
-    </>
+    <SwapTokens tokenInSymbol={tokenInSymbol} tokenOutSymbol={tokenOutSymbol} amountIn={amountIn} />
   );
 };
 
@@ -238,7 +218,7 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     },
   });
 
-  const { hasBalance } = useTokenApproval(
+  const { hasBalance, hasAllowance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
     amountIn,
     SWAP_ROUTER_02_ADDRESSES(chainId)
@@ -282,13 +262,23 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
         exchangeRate={cleanValue(calcPrice(quote?.humanReadableAmount!, amountIn_), 2)}
         amountOutMinimum={amountOutMinimum_}
       />
-      <SubmitButton
-        onClick={submitTx}
-        isPendingConfirm={isPendingConfirm}
-        isLoading={isLoading}
-        isSuccess={isSuccess}
-        isError={isError}
-      />
+      {!tokenInIsETH && !hasAllowance ? (
+        <ApproveTokens
+          {...{
+            token: tokenIn!,
+            amount: amountIn,
+            spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
+          }}
+        />
+      ) : (
+        <SubmitButton
+          onClick={submitTx}
+          isPendingConfirm={isPendingConfirm}
+          isLoading={isLoading}
+          isSuccess={isSuccess}
+          isError={isError}
+        />
+      )}
     </div>
   );
 };

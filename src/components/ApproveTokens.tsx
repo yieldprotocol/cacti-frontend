@@ -35,7 +35,7 @@ const ApproveTokens = ({
             ? 'Approval pending...'
             : txError
             ? 'Approval error'
-            : 'Approve'}
+            : `Approve ${token.symbol}`}
         </Button>
       </div>
     </div>
