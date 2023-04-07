@@ -160,9 +160,9 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
               : isLoading
               ? 'Swapping...'
               : isError
-              ? 'Swap Error'
+              ? 'Swap error'
               : isSuccess
-              ? 'Swap Successful'
+              ? 'Swap successful'
               : 'Swap'
           }
           onClick={submitTx}
