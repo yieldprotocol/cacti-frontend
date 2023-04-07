@@ -17,7 +17,7 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
-import { UniswapButton } from '@/components/widgets/Uniswap';
+import Swap from '@/components/widgets/swap/Swap';
 import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
@@ -105,7 +105,7 @@ const Widgetize = (widget: Widget) => {
 
         return (
           <ConnectFirst>
-            <UniswapButton
+            <Swap
               {...{
                 tokenInSymbol,
                 tokenOutSymbol,

@@ -1,19 +1,20 @@
-import Image from 'next/image';
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
-import { useAccount, useNetwork, usePrepareContractWrite } from 'wagmi';
+import { useAccount, usePrepareContractWrite } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import ApproveTokens from '@/components/ApproveTokens';
+import SubmitButton from '@/components/widgets/swap/SubmitButton';
+import SwapItem from '@/components/widgets/swap/SwapItem';
+import TransactionBreakdown from '@/components/widgets/swap/TransactionBreakdown';
 import useChainId from '@/hooks/useChainId';
 import useSubmitTx from '@/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
-import { Spinner, cleanValue } from '@/utils';
+import { cleanValue } from '@/utils';
 
-interface Props {
+interface SwapProps {
   tokenInSymbol: string;
   tokenOutSymbol: string;
   amountIn: BigNumber;
@@ -30,128 +31,7 @@ interface ExactInputSingleParams {
   sqrtPriceLimitX96: BigNumber;
 }
 
-export const UniswapButton = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
-  return (
-    <SwapTokens tokenInSymbol={tokenInSymbol} tokenOutSymbol={tokenOutSymbol} amountIn={amountIn} />
-  );
-};
-
-const SwapItem = ({
-  tokenSymbol,
-  amount,
-  amountUSD,
-  priceUSD,
-}: {
-  tokenSymbol: string;
-  amount: string;
-  amountUSD?: string;
-  priceUSD?: string;
-}) => {
-  const { chain } = useNetwork();
-  const { data: token } = useToken(tokenSymbol);
-  return (
-    <div className="flex w-full justify-center rounded-sm bg-gray-700 shadow-lg">
-      <div className="flex flex-1 gap-2 rounded-l-sm border border-gray-200/25 p-3.5">
-        <div className="my-auto flex-none rounded-full bg-gray-200/70 p-[1px] shadow-sm">
-          <Image
-            src={
-              `https://storage.googleapis.com/zapper-fi-assets/tokens/${
-                chain?.name.toLowerCase() === 'mainnet fork' ? 'ethereum' : chain?.name
-              }/${token?.address.toLowerCase()}.png` ||
-              'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x0000000000000000000000000000000000000000.png'
-            }
-            alt={tokenSymbol}
-            width={30}
-            height={30}
-          />
-        </div>
-        <div className="my-auto flex flex-col justify-end text-left">
-          <span className="text-xl md:text-3xl">{token?.symbol}</span>
-          <span className="flex gap-1 text-sm font-light text-gray-300">
-            <span>$</span>
-            <span>{priceUSD}</span>
-          </span>
-        </div>
-      </div>
-      <div className="my-auto flex flex-1 justify-end gap-4 rounded-r-sm border border-gray-200/25 bg-gray-900/50 p-3.5">
-        <div className="flex flex-col p-1 text-right">
-          <span className="text-3xl">{amount}</span>
-          <span className="flex justify-end gap-1 text-sm font-light text-gray-300">
-            <span>$</span>
-            <span>{amountUSD}</span>
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const TransactionBreakdown = ({
-  tokenInSymbol,
-  tokenOutSymbol,
-  exchangeRate,
-  amountOutMinimum,
-}: {
-  tokenInSymbol: string;
-  tokenOutSymbol: string;
-  exchangeRate?: string;
-  amountOutMinimum?: string;
-}) => {
-  return (
-    <div className="grid gap-1.5 rounded-sm border border-gray-200/25 bg-gray-700 p-3.5 shadow-lg">
-      <div className="mb-1 text-sm font-medium text-gray-100">Transaction Breakdown</div>
-      <div className="rounded-sm bg-gray-900/50 p-3.5">
-        <div className="flex justify-between text-sm text-gray-400">
-          <div className="font-medium">Exchange Rate</div>
-          <div className="text-gray-100">
-            1 {tokenInSymbol} = {exchangeRate} {tokenOutSymbol}
-          </div>
-        </div>
-        <div className="flex justify-between text-sm text-gray-400">
-          <div className="text-sm text-gray-400">Minimum {tokenOutSymbol} Received</div>
-          <div className="">{amountOutMinimum}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const SubmitButton = ({
-  isPendingConfirm,
-  isLoading,
-  isSuccess,
-  isError,
-  onClick,
-}: {
-  isPendingConfirm: boolean;
-  isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  onClick: () => void;
-}) => (
-  <button
-    className={`flex rounded-sm border border-gray-200/25 bg-gray-900/80 p-3.5 hover:cursor-pointer hover:bg-gray-900 disabled:cursor-not-allowed`}
-    onClick={onClick}
-    disabled={isLoading || isPendingConfirm || isSuccess || isError}
-  >
-    <div className="mx-auto flex gap-2">
-      <div className="flex items-center">
-        {(isLoading || isPendingConfirm) && <Spinner className="h-5 w-5 text-gray-100" />}
-        {isSuccess && <CheckCircleIcon className="h-5 w-5 text-green-500/80" />}
-        {isError && <XCircleIcon className="h-5 w-5 text-red-500/80" />}
-      </div>
-      <div className="flex items-center text-xl">
-        {!isLoading && !isSuccess && !isError && !isPendingConfirm && <span>Swap</span>}
-        {isPendingConfirm && <span>Waiting for wallet confirmation...</span>}
-        {isLoading && <span>Swapping...</span>}
-        {isSuccess && <span>Swapped!</span>}
-        {isError && <span>Swap Failed</span>}
-      </div>
-    </div>
-  </button>
-);
-
-const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
+const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
   const chainId = useChainId();
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
@@ -272,6 +152,19 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
         />
       ) : (
         <SubmitButton
+          label={
+            !hasBalance
+              ? 'Insufficient balance'
+              : isPendingConfirm
+              ? 'Waiting for confirmation in wallet...'
+              : isLoading
+              ? 'Swapping...'
+              : isError
+              ? 'Swap Error'
+              : isSuccess
+              ? 'Swap Successful'
+              : 'Swap'
+          }
           onClick={submitTx}
           isPendingConfirm={isPendingConfirm}
           isLoading={isLoading}
@@ -282,3 +175,5 @@ const SwapTokens = ({ tokenInSymbol, tokenOutSymbol, amountIn }: Props) => {
     </div>
   );
 };
+
+export default Swap;
