@@ -23,11 +23,10 @@ const ApproveTokens = ({
 
   return (
     <SubmitButton
+      isError={txError || !hasBalance}
+      isLoading={txPending}
       disabled={!approve || txPending || !hasBalance || txError}
-      onClick={() => {
-        console.log('approving');
-        approve();
-      }}
+      onClick={approve}
       label={
         !hasBalance
           ? 'Insufficient balance'

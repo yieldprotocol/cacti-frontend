@@ -169,7 +169,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
           isPendingConfirm={isPendingConfirm}
           isLoading={isLoading}
           isSuccess={isSuccess}
-          isError={isError}
+          isError={isError || !hasBalance}
         />
       )}
     </div>
