@@ -9,6 +9,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import useBalance from '@/hooks/useBalance';
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
@@ -46,14 +47,8 @@ const useTokenApproval = (
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
-
-  // Check if balance is enough
-  const { data: balance } = useContractRead({
-    address: address as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: [account!],
-  });
+  const { data: balance } = useBalance(token?.address);
+  console.log('🦄 ~ file: useTokenApproval.tsx:51 ~ balance:', balance);
 
   const approve = async () => {
     setTxPending(true);
