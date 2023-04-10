@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
@@ -158,10 +158,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     ]);
   };
 
-  const replayUserMessage = (msg: string) => {
-    setIsBotThinking(true);
-    wsSendMessage({ actor: 'system', type: 'replay-user-msg', payload: msg });
-  };
+  const replayUserMessage = useCallback(
+    (msg: string) => {
+      setIsBotThinking(true);
+      wsSendMessage({ actor: 'system', type: 'replay-user-msg', payload: msg });
+    },
+    [wsSendMessage]
+  );
 
   const sendAction = (action: JsonValue) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });

@@ -42,8 +42,7 @@ export const SendTransaction = ({
     if (isApprovalTx && isSuccess) {
       replayUserMessage(parsedUserRequest);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isApprovalTx, isSuccess, parsedUserRequest]);
+  }, [isApprovalTx, isSuccess, parsedUserRequest, replayUserMessage]);
 
   if (userRequestStatus === 'error') {
     return <WidgetError>{errorMsg}</WidgetError>;
