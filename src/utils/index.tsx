@@ -64,5 +64,5 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
     }
     return input?.valueOf();
   }
-  return '0.0';
+  return undefined;
 };
