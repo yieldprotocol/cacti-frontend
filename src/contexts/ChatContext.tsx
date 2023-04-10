@@ -26,6 +26,7 @@ export type ChatContextType = {
 const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
+  replayUserMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
