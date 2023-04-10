@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useNetwork } from 'wagmi';
+import Skeleton from '@/components/SkeletonWrap';
 import useToken from '@/hooks/useToken';
 
 const SwapItem = ({
@@ -9,7 +10,7 @@ const SwapItem = ({
   priceUSD,
 }: {
   tokenSymbol: string;
-  amount: string;
+  amount?: string;
   amountUSD?: string;
   priceUSD?: string;
 }) => {
@@ -31,20 +32,20 @@ const SwapItem = ({
             height={30}
           />
         </div>
-        <div className="my-auto flex flex-col justify-end text-left">
+        <div className="my-auto flex w-full flex-col justify-end text-left">
           <span className="text-xl md:text-3xl">{token?.symbol}</span>
-          <span className="flex gap-1 text-sm font-light text-gray-300">
+          <div className="flex gap-1 text-sm font-light text-gray-300">
             <span>$</span>
-            <span>{priceUSD}</span>
-          </span>
+            <span className="flex">{priceUSD || <Skeleton width={50} />}</span>
+          </div>
         </div>
       </div>
       <div className="my-auto flex flex-1 justify-end gap-4 rounded-r-sm border border-gray-200/25 bg-gray-900/50 p-3.5">
-        <div className="flex flex-col p-1 text-right">
-          <span className="text-3xl">{amount}</span>
+        <div className="flex w-full flex-col p-1 text-right">
+          <span className="text-3xl">{amount || <Skeleton />}</span>
           <span className="flex justify-end gap-1 text-sm font-light text-gray-300">
             <span>$</span>
-            <span>{amountUSD}</span>
+            <span>{amountUSD || <Skeleton width={50} />}</span>
           </span>
         </div>
       </div>

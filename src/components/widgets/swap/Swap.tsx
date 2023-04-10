@@ -58,6 +58,9 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
     quoteTokenSymbol: 'USDC',
     amount: amountIn_,
   });
+  console.log('🦄 ~ file: Swap.tsx:61 ~ Swap ~ tokenInSymbol:', tokenInSymbol);
+  console.log('🦄 ~ file: Swap.tsx:61 ~ Swap ~ quoteIsLoadingUSDC:', quoteIsLoadingUSDC);
+  console.log('🦄 ~ file: Swap.tsx:51 ~ Swap ~ quoteIsLoading:', quoteIsLoading);
 
   // usdc quote for token out
   const { isLoading: quoteIsLoadingTokenOutUSDC, data: quoteTokenOutUSDC } = useUniswapQuote({
@@ -113,33 +116,44 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
         <SwapItem
           tokenSymbol={tokenInSymbol}
           amount={amountIn_}
-          amountUSD={cleanValue(
-            tokenInSymbol === 'USDC' ? amountIn_ : quoteUSDC?.humanReadableAmount,
-            2
-          )}
+          amountUSD={
+            tokenInSymbol === 'USDC'
+              ? amountIn_
+              : quoteIsLoadingUSDC
+              ? undefined
+              : cleanValue(quoteUSDC?.humanReadableAmount, 2)
+          }
           priceUSD={
-            tokenInSymbol === 'USDC' ? '1.00' : calcPrice(quoteUSDC?.humanReadableAmount, amountIn_)
+            tokenInSymbol === 'USDC'
+              ? '1.00'
+              : quoteIsLoadingUSDC
+              ? undefined
+              : cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, amountIn_), 2)
           }
         />
         <SwapItem
           tokenSymbol={tokenOutSymbol}
-          amount={cleanValue(amountOut_, 2)}
+          amount={quoteIsLoading ? undefined : cleanValue(amountOut_, 2)}
           amountUSD={
             tokenOutSymbol === 'USDC'
               ? amountOut_
+              : quoteIsLoadingTokenOutUSDC
+              ? undefined
               : cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)
           }
           priceUSD={
             tokenOutSymbol === 'USDC'
               ? '1.00'
-              : calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_)
+              : quoteIsLoadingTokenOutUSDC
+              ? undefined
+              : cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_), 2)
           }
         />
       </div>
       <TransactionBreakdown
         tokenInSymbol={tokenInSymbol}
         tokenOutSymbol={tokenOutSymbol}
-        exchangeRate={cleanValue(calcPrice(quote?.humanReadableAmount!, amountIn_), 2)}
+        exchangeRate={calcPrice(quote?.humanReadableAmount, amountIn_)}
         amountOutMinimum={amountOutMinimum_}
       />
       {!tokenInIsETH && !hasAllowance ? (
