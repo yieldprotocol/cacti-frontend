@@ -1,29 +1,34 @@
+import { useEffect } from 'react';
 import { BigNumber } from 'ethers';
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi';
+import { useChatContext } from '../../contexts/ChatContext';
 import { Spinner } from '../../utils';
 import { Button } from '../Button';
 import { TxStatus } from '../TxStatus';
 import { WidgetError } from './helpers';
 
+// status, tx, isApprovalTx, errorMsg, parsedUserRequest, description
+
 interface SendTransactionProps {
-  fromAddress: string;
-  toAddress: string;
-  data: string;
-  gas: string;
-  value: string;
-  description: string;
+  userRequestStatus: 'success' | 'error';
+  tx: { from: string; to: string; value: string; data: string; gas: string } | null;
+  isApprovalTx: boolean;
+  errorMsg: string;
+  parsedUserRequest: string;
 }
 
 export const SendTransaction = ({
-  fromAddress,
-  toAddress,
-  data,
-  gas,
-  value,
-  description,
+  userRequestStatus,
+  tx,
+  isApprovalTx,
+  errorMsg,
+  parsedUserRequest,
 }: SendTransactionProps) => {
+  const { replayUserMessage } = useChatContext();
+
+  const { to, from, value, data, gas } = tx || { to: '', from: '', value: '', data: '', gas: '' };
   const { config } = usePrepareSendTransaction({
-    request: { to: toAddress, from: fromAddress, value, data, gasLimit: gas },
+    request: { to, from, value, data, gasLimit: gas },
   });
   const {
     data: txResponse,
@@ -32,6 +37,17 @@ export const SendTransaction = ({
     error,
     sendTransaction,
   } = useSendTransaction(config);
+
+  useEffect(() => {
+    if (isApprovalTx && isSuccess) {
+      replayUserMessage(parsedUserRequest);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isApprovalTx, isSuccess, parsedUserRequest]);
+
+  if (userRequestStatus === 'error') {
+    return <WidgetError>{errorMsg}</WidgetError>;
+  }
 
   return (
     <div className="flex justify-end">

@@ -15,6 +15,7 @@ export type Message = {
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
+  replayUserMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
@@ -156,6 +157,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     ]);
   };
 
+  const replayUserMessage = (msg: string) => {
+    setIsBotThinking(true);
+    wsSendMessage({ actor: 'system', type: 'replay-user-msg', payload: msg });
+  };
+
   const sendAction = (action: JsonValue) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
@@ -181,6 +187,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       value={{
         messages,
         sendMessage,
+        replayUserMessage,
         sendAction,
         isBotThinking,
         spoofBotMessage,

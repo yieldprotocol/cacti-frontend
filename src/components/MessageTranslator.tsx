@@ -343,20 +343,21 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </table>
         );
       }
-      case 'transaction-for-signing-container': {
-        const { fromAddress, toAddress, data, gas, value, description } = JSON.parse(args);
+      case 'tx-payload-for-sending-container': {
+        const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
+          JSON.parse(args);
+
         return (
           <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
                 <SendTransaction
                   {...{
-                    fromAddress,
-                    toAddress,
-                    data,
-                    gas,
-                    value,
-                    description,
+                    userRequestStatus,
+                    tx,
+                    isApprovalTx,
+                    errorMsg,
+                    parsedUserRequest,
                   }}
                 />
               </ConnectFirst>
