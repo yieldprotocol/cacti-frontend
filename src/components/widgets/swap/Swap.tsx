@@ -58,9 +58,6 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
     quoteTokenSymbol: 'USDC',
     amount: amountIn_,
   });
-  console.log('🦄 ~ file: Swap.tsx:61 ~ Swap ~ tokenInSymbol:', tokenInSymbol);
-  console.log('🦄 ~ file: Swap.tsx:61 ~ Swap ~ quoteIsLoadingUSDC:', quoteIsLoadingUSDC);
-  console.log('🦄 ~ file: Swap.tsx:51 ~ Swap ~ quoteIsLoading:', quoteIsLoading);
 
   // usdc quote for token out
   const { isLoading: quoteIsLoadingTokenOutUSDC, data: quoteTokenOutUSDC } = useUniswapQuote({
