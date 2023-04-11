@@ -51,7 +51,11 @@ const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={lightTheme({ accentColor: '#1f2937' })}>
+      <RainbowKitProvider
+        chains={chains}
+        theme={lightTheme({ accentColor: '#1f2937' })}
+        showRecentTransactions={true}
+      >
         {children}
       </RainbowKitProvider>
     </WagmiConfig>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { BigNumber } from 'ethers';
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi';
 import { useChatContext } from '../../contexts/ChatContext';
@@ -15,6 +16,7 @@ interface SendTransactionProps {
   isApprovalTx: boolean;
   errorMsg: string;
   parsedUserRequest: string;
+  description: string;
 }
 
 export const SendTransaction = ({
@@ -23,6 +25,7 @@ export const SendTransaction = ({
   isApprovalTx,
   errorMsg,
   parsedUserRequest,
+  description,
 }: SendTransactionProps) => {
   const { replayUserMessage } = useChatContext();
 
@@ -37,12 +40,19 @@ export const SendTransaction = ({
     error,
     sendTransaction,
   } = useSendTransaction(config);
+  const addRecentTransaction = useAddRecentTransaction();
 
   useEffect(() => {
     if (isApprovalTx && isSuccess) {
       replayUserMessage(parsedUserRequest);
     }
   }, [isApprovalTx, isSuccess, parsedUserRequest, replayUserMessage]);
+
+  useEffect(() => {
+    if (txResponse) {
+      addRecentTransaction({ hash: txResponse.hash!, description });
+    }
+  }, [addRecentTransaction, description, txResponse]);
 
   if (userRequestStatus === 'error') {
     return <WidgetError>{errorMsg}</WidgetError>;
@@ -51,7 +61,13 @@ export const SendTransaction = ({
   return (
     <div className="flex justify-end">
       {!isSuccess && (
-        <Button className="px-4" disabled={isLoading} onClick={() => sendTransaction?.()}>
+        <Button
+          className="px-4"
+          disabled={isLoading}
+          onClick={() => {
+            sendTransaction?.();
+          }}
+        >
           <div className="flex gap-2">
             Send
             {isLoading ? <Spinner className="mr-0 h-4 self-center" /> : <></>}
