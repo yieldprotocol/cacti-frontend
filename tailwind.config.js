@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       animation: {
         ellipse: 'dotty steps(1,end) 1s infinite',
-        'marquee-infinite' : 'marquee 120s linear infinite',
+        'marquee-infinite' : 'marquee 130s linear infinite',
       },
       keyframes: {
         dotty: {

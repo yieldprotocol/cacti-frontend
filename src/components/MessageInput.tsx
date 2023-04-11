@@ -12,8 +12,9 @@ export const MessageInput = ({}) => {
     inputRef.current?.focus();
   }, []);
 
-  const handleSendMessage = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = (e?: FormEvent, requestString?: string) => {
+    e && e.preventDefault();
+
     if (messageInput.length > 0) {
       sendMessage(messageInput);
       setMessageInput('');
