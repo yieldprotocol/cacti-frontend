@@ -16,6 +16,7 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
+  truncateAndSendMessage: (messageId: string, msg: string) => void;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   showDebugMessages: boolean;
@@ -26,6 +27,7 @@ const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
+  truncateAndSendMessage: (messageId: string, msg: string) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
   showDebugMessages: false,
@@ -134,7 +136,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           feedback: lastMsg.feedback,
         };
         return [...messages.slice(0, -1), appendedMsg];
-      } else if (obj.operation == 'replace') {
+      } else if (obj.operation == 'replace' || obj.operation == 'create_then_replace') {
+        // replace most recent
         return [...messages.slice(0, -1), msg];
       } else {
         return [...messages, msg];
@@ -160,6 +163,22 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
+  const truncateAndSendMessage = (messageId: string, msg: string) => {
+    // dedicated function to combine 2 changes to messages
+    setIsBotThinking(true);
+    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
+    const idx = messages.findIndex((message) => message.messageId == messageId);
+    setMessages([
+      ...(idx >= 0 ? messages.slice(0, idx) : messages),
+      {
+        messageId: '',
+        actor: 'user',
+        payload: msg,
+        feedback: 'n/a',
+      },
+    ]);
+  };
+
   const spoofBotMessage = (msg: string) => {
     setIsBotThinking(true);
     setTimeout(() => {
@@ -183,6 +202,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         sendMessage,
         sendAction,
         isBotThinking,
+        truncateAndSendMessage,
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,
