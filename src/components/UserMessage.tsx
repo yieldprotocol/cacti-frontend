@@ -24,11 +24,11 @@ export const UserMessage = ({
 
       // submit edit
       if (e.key === 'Enter') {
-        inputRef.current?.blur();
-        setIsEditing(false);
         if (input !== initialText) {
           submitEdit(input);
         }
+        inputRef.current?.blur();
+        setIsEditing(false);
       }
     };
 
@@ -59,7 +59,10 @@ export const UserMessage = ({
           setIsEditing(true);
           setInput(e.target.value);
         }}
-        onBlur={() => setIsEditing(false)}
+        onBlur={() => {
+          setInput(initialText);
+          setIsEditing(false);
+        }}
         onFocus={() => setIsEditing(true)}
       />
       {isEditing && (
