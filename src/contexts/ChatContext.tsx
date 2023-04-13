@@ -176,17 +176,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const truncateAndSendMessage = (messageId: string, msg: string) => {
     // dedicated function to combine 2 changes to messages
     setIsBotThinking(true);
-    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
-    const idx = messages.findIndex((message) => message.messageId == messageId);
-    setMessages([
-      ...(idx >= 0 ? messages.slice(0, idx) : messages),
-      {
-        messageId: '',
-        actor: 'user',
-        payload: msg,
-        feedback: 'n/a',
-      },
-    ]);
+    const idx = messages.findIndex((message) => message.messageId === messageId);
+    const message = {
+      messageId,
+      actor: 'user',
+      payload: msg,
+      feedback: 'n/a',
+    };
+
+    setMessages((messages) => (idx >= 0 ? [...messages.slice(0, idx), message] : [message]));
+    wsSendMessage(message);
   };
 
   const spoofBotMessage = (msg: string) => {
