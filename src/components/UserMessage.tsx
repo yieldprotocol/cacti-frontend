@@ -28,6 +28,7 @@ export const UserMessage = ({
           submitEdit(input);
         }
         inputRef.current?.blur();
+        setInput(input);
         setIsEditing(false);
       }
     };
