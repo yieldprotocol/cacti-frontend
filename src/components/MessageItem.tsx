@@ -20,13 +20,10 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
-  const { sendAction, truncateAndSendMessage } = useChatContext();
+  console.log('🦄 ~ file: MessageItem.tsx:23 ~ MessageItem ~ payload:', payload);
+  const { truncateAndSendMessage } = useChatContext();
 
-  const submitEdit = (text: string) => {
-    // make this just do truncation
-    sendAction({ actionType: 'edit', messageId });
-    truncateAndSendMessage(messageId, text);
-  };
+  const submitEdit = (text: string) => truncateAndSendMessage(messageId, text);
 
   return (
     <MessageItemWrap actor={actor}>
