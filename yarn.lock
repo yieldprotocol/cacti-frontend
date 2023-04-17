@@ -3652,6 +3652,7 @@ __metadata:
     prettier-plugin-tailwindcss: ^0.2.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-loading-skeleton: ^3.2.0
     react-query: ^3.39.3
     react-use-websocket: ^4.3.1
     swr: ^2.0.4
@@ -7811,6 +7812,15 @@ __metadata:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
+  languageName: node
+  linkType: hard
+
+"react-loading-skeleton@npm:^3.2.0":
+  version: 3.2.1
+  resolution: "react-loading-skeleton@npm:3.2.1"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: e65cdfecedd4292c51556d44b4de298f35c6f4979d075ec9af75d1b23aece14c0e40d3b6cd07f77cd0d67e0880c83e4c54eb1fb960f69b7f34a960fabab64403
   languageName: node
   linkType: hard
 
