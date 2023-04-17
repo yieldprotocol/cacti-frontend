@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
@@ -15,7 +15,9 @@ export type Message = {
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
+  replayUserMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
+  truncateAndSendMessage: (messageId: string, msg: string) => void;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   showDebugMessages: boolean;
@@ -25,7 +27,9 @@ export type ChatContextType = {
 const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
+  replayUserMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
+  truncateAndSendMessage: (messageId: string, msg: string) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
   showDebugMessages: false,
@@ -133,7 +137,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
           feedback: lastMsg.feedback,
         };
         return [...messages.slice(0, -1), appendedMsg];
-      } else if (obj.operation == 'replace') {
+      } else if (obj.operation == 'replace' || obj.operation == 'create_then_replace') {
+        // replace most recent
         return [...messages.slice(0, -1), msg];
       } else {
         return [...messages, msg];
@@ -155,8 +160,31 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     ]);
   };
 
+  const replayUserMessage = useCallback(
+    (msg: string) => {
+      setIsBotThinking(true);
+      wsSendMessage({ actor: 'system', type: 'replay-user-msg', payload: msg });
+    },
+    [wsSendMessage]
+  );
+
   const sendAction = (action: JsonValue) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
+  };
+
+  const truncateAndSendMessage = (messageId: string, msg: string) => {
+    // dedicated function to combine 2 changes to messages
+    setIsBotThinking(true);
+    const idx = messages.findIndex((message) => message.messageId === messageId);
+    const message = {
+      messageId,
+      actor: 'user',
+      payload: msg,
+      feedback: 'n/a',
+    };
+
+    setMessages((messages) => (idx >= 0 ? [...messages.slice(0, idx), message] : [message]));
+    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
   };
 
   const spoofBotMessage = (msg: string) => {
@@ -180,8 +208,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       value={{
         messages,
         sendMessage,
+        replayUserMessage,
         sendAction,
         isBotThinking,
+        truncateAndSendMessage,
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,

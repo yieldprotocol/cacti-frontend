@@ -38,7 +38,7 @@ export const FeedbackButton = ({ message }: { message: Message }) => {
     sendAction({ actionType: 'feedback', messageId, choice });
   };
 
-  return feedback === 'n/a' || actor !== 'bot' ? (
+  return feedback === 'n/a' ? (
     <></>
   ) : (
     <div className="flex justify-between">

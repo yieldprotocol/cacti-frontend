@@ -29,6 +29,7 @@ import {
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
+import { SendTransaction } from './widgets/SendTransaction';
 import { YieldFarm } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
@@ -194,7 +195,7 @@ const Widgetize = (widget: Widget) => {
         const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
-            header={`Buy NFTs ${buyNftAddress} ${buyTokenID}`}
+            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
             msg={inputString}
             direction="col"
           >
@@ -320,6 +321,29 @@ const Widgetize = (widget: Widget) => {
               })}
             </tbody>
           </table>
+        );
+      }
+      case 'tx-payload-for-sending-container': {
+        const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
+          JSON.parse(args);
+
+        return (
+          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <SendTransaction
+                  {...{
+                    userRequestStatus,
+                    tx,
+                    isApprovalTx,
+                    errorMsg,
+                    parsedUserRequest,
+                    description,
+                  }}
+                />
+              </ConnectFirst>
+            </div>
+          </ActionPanel>
         );
       }
       default:
