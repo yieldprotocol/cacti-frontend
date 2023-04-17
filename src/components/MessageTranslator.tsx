@@ -99,10 +99,9 @@ const Widgetize = (widget: Widget) => {
 
         const tokenIn = getToken(tokenInSymbol);
         const amountIn = parseUnits(
-          cleanValue(amountInStrRaw, tokenIn?.decimals),
+          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
           tokenIn?.decimals
         );
-        const amountIn_ = cleanValue(formatUnits(amountIn, tokenIn?.decimals), tokenIn?.decimals);
 
         return (
           <ConnectFirst>
