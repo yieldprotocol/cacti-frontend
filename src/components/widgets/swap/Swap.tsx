@@ -7,6 +7,7 @@ import ApproveTokens from '@/components/ApproveTokens';
 import SubmitButton from '@/components/widgets/swap/SubmitButton';
 import SwapItem from '@/components/widgets/swap/SwapItem';
 import TransactionBreakdown from '@/components/widgets/swap/TransactionBreakdown';
+import useBalance from '@/hooks/useBalance';
 import useChainId from '@/hooks/useChainId';
 import useSubmitTx from '@/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
@@ -172,6 +173,8 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
               ? 'Swapping...'
               : isError
               ? 'Swap error'
+              : !isPrepared
+              ? 'Error preparing swap'
               : isSuccess
               ? 'Swap successful'
               : 'Swap'
@@ -181,6 +184,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
           isLoading={isLoading}
           isSuccess={isSuccess}
           isError={isError || !hasBalance}
+          disabled={quoteIsLoading || !isPrepared || !submitTx}
         />
       )}
     </div>
