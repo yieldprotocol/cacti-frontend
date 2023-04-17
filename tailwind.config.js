@@ -16,6 +16,9 @@ module.exports = {
           '100%': { content: "''" },
         },
       },
+      borderRadius: {
+        sm: '5px',
+      },
     },
   },
   plugins: [],

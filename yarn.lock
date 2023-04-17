@@ -1906,9 +1906,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/smart-order-router@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "@uniswap/smart-order-router@npm:3.5.0"
+"@uniswap/smart-order-router@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "@uniswap/smart-order-router@npm:3.11.0"
   dependencies:
     "@uniswap/default-token-list": ^2.0.0
     "@uniswap/permit2-sdk": ^1.2.0
@@ -1916,7 +1916,7 @@ __metadata:
     "@uniswap/swap-router-contracts": ^1.3.0
     "@uniswap/token-lists": ^1.0.0-beta.25
     "@uniswap/universal-router": ^1.0.1
-    "@uniswap/universal-router-sdk": ^1.3.0
+    "@uniswap/universal-router-sdk": ^1.3.9
     "@uniswap/v2-sdk": ^3.0.1
     "@uniswap/v3-sdk": ^3.7.0
     async-retry: ^1.3.1
@@ -1933,7 +1933,7 @@ __metadata:
     stats-lite: ^2.2.0
   peerDependencies:
     jsbi: ^3.2.0
-  checksum: 691f5465cde4995677640471575e523af006603d7d5d65df762df9598619c4600dc7acdc76acd6949a63d15fabbdf59ea278e8d53e89e24e7247f8d9e2d13e63
+  checksum: edc5d4d9ecc9e8abcce0559c9b78f9c1ddebeb7fa1ace004accb9449ec3e1b09f30007c04e7d78ccfc5548164ca5a38344f31897f787b2cfd29102482c347150
   languageName: node
   linkType: hard
 
@@ -1971,30 +1971,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/universal-router-sdk@npm:^1.3.0":
-  version: 1.3.7
-  resolution: "@uniswap/universal-router-sdk@npm:1.3.7"
+"@uniswap/universal-router-sdk@npm:^1.3.9":
+  version: 1.4.4
+  resolution: "@uniswap/universal-router-sdk@npm:1.4.4"
   dependencies:
     "@uniswap/permit2-sdk": ^1.2.0
     "@uniswap/router-sdk": ^1.4.0
     "@uniswap/sdk-core": ^3.1.0
-    "@uniswap/universal-router": 1.2.1
+    "@uniswap/universal-router": 1.3.1
     "@uniswap/v2-sdk": ^3.0.1
     "@uniswap/v3-sdk": ^3.9.0
     bignumber.js: ^9.0.2
     ethers: ^5.3.1
-  checksum: 310ed71941430bffc0f78e155f0dac528fee8f34f1228b39dc8efa2860a236c622635ae6c378dc691fd2e510f8969e5bb067566efe7e1136418fd5ce2aa0262e
+  checksum: c580b42645359b0b65bf2dd4fb96f750d191e926ce620c43f0f4edf6dbb01495853059bcc7de13068e4a7229dd0ea7b27703c547f6eedb035b7637b72e994611
   languageName: node
   linkType: hard
 
-"@uniswap/universal-router@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@uniswap/universal-router@npm:1.2.1"
+"@uniswap/universal-router@npm:1.3.1":
+  version: 1.3.1
+  resolution: "@uniswap/universal-router@npm:1.3.1"
   dependencies:
     "@openzeppelin/contracts": 4.7.0
     "@uniswap/v2-core": 1.0.1
     "@uniswap/v3-core": 1.0.0
-  checksum: 20686dbcf93afbad4460cf3b2d17055288463725b6c52c387486a19c9ceef59a5b8d02c598b3e4a3c922f591b111684d4e5d90666f478c5a4b8f937d120c4fbc
+  checksum: 91efb3a3e2d8c3b2050ff3fefa876d5e859e99b1cc83a99fc5ef75def2bc4377c950a25830a923b0123c866468dba4e356840e6202f087582e8999fdbe293f72
   languageName: node
   linkType: hard
 
@@ -3636,7 +3636,7 @@ __metadata:
     "@types/react": 18.0.27
     "@types/react-dom": 18.0.10
     "@uniswap/sdk-core": ^3.1.2
-    "@uniswap/smart-order-router": ^3.5.0
+    "@uniswap/smart-order-router": ^3.11.0
     "@uniswap/v3-periphery": ^1.4.3
     autoprefixer: ^10.4.13
     axios: ^1.3.4
@@ -3652,6 +3652,7 @@ __metadata:
     prettier-plugin-tailwindcss: ^0.2.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-loading-skeleton: ^3.2.0
     react-query: ^3.39.3
     react-use-websocket: ^4.3.1
     swr: ^2.0.4
@@ -7811,6 +7812,15 @@ __metadata:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
+  languageName: node
+  linkType: hard
+
+"react-loading-skeleton@npm:^3.2.0":
+  version: 3.2.1
+  resolution: "react-loading-skeleton@npm:3.2.1"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: e65cdfecedd4292c51556d44b4de298f35c6f4979d075ec9af75d1b23aece14c0e40d3b6cd07f77cd0d67e0880c83e4c54eb1fb960f69b7f34a960fabab64403
   languageName: node
   linkType: hard
 

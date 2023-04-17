@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { Chain, useNetwork } from 'wagmi';
+import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -17,9 +17,11 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
-import { UniswapButton } from '@/components/widgets/Uniswap';
+import Swap from '@/components/widgets/swap/Swap';
+import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
-import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import useToken from '@/hooks/useToken';
+import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import {
   NftAttributes,
@@ -44,7 +46,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return the string
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item, chain!)
+              typeof item === 'string' ? item : Widgetize(item)
             }
           </Fragment>
         );
@@ -61,22 +63,20 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const Widgetize = (widget: Widget, chain: Chain) => {
+const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = chain?.id || 1;
+  const chainId = useChainId();
+  const { getToken } = useToken();
 
   try {
     switch (fnName) {
       // Transfer widget
       case 'transfer': {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-        const amount = parseUnits(amtString, token.decimals);
+        const token = getToken(tokenSymbol);
+        const amount = parseUnits(amtString, token?.decimals);
         return (
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
@@ -86,7 +86,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           >
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <TransferButton {...{ amount, receiver, token }} />
+                <TransferButton {...{ amount, receiver, token: token! }} />
               </ConnectFirst>
             </div>
           </ActionPanel>
@@ -94,52 +94,31 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       }
       // Swap widget
       case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] =
+        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
 
-        const tokenIn =
-          tokenInSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenInSymbol, chainId);
-        const tokenOut =
-          tokenOutSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenOutSymbol, chainId);
-
-        const amountIn = parseUnits(amountInString, tokenIn.decimals);
+        const tokenIn = getToken(tokenInSymbol);
+        const amountIn = parseUnits(
+          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
+          tokenIn?.decimals
+        );
 
         return (
-          <ActionPanel
-            header={`Swap ${formatUnits(
-              amountIn.toString(),
-              tokenIn.decimals
-            )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
-            msg={inputString}
-            key={inputString}
-            centerTitle={true}
-          >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <UniswapButton
-                  {...{
-                    tokenIn,
-                    tokenOut,
-                    amountIn,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
+          <ConnectFirst>
+            <Swap
+              {...{
+                tokenInSymbol,
+                tokenOutSymbol,
+                amountIn,
+              }}
+            />
+          </ConnectFirst>
         );
       }
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-
-        const amount = parseUnits(amtString, token.decimals);
+        const token = getToken(tokenSymbol);
+        const amount = parseUnits(amtString, token?.decimals);
 
         const project = findProjectByName(projectName);
         return (
@@ -151,7 +130,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
             centerTitle={true}
           >
             <ConnectFirst>
-              <YieldFarm {...{ project, network, token, amount }} />
+              <YieldFarm {...{ project, network, token: token!, amount }} />
             </ConnectFirst>
           </ActionPanel>
         );
@@ -248,11 +227,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
+            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -266,16 +245,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { collection, assets } = JSON.parse(args);
         return (
           <NftCollectionAssetsContainer
-            collection={Widgetize(
-              { fnName: collection.name, args: JSON.stringify(collection.params) },
-              chain
-            )}
+            collection={Widgetize({
+              fnName: collection.name,
+              args: JSON.stringify(collection.params),
+            })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -304,7 +283,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
               {params.items?.map(
                 ({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                   </Fragment>
                 )
               ) || ''}
@@ -335,7 +314,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
                 };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
                   </Fragment>
                 );
               })}
