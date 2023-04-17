@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MessageItem, MessageItemWrap } from '@/components/MessageItem';
 import { useChatContext } from '@/contexts/ChatContext';
 import Avatar from './Avatar';
@@ -15,7 +15,7 @@ export const MessageList = () => {
     <div className="h-full">
       {messages.map((message, i) => {
         if (!showDebugMessages && message.actor == 'system') {
-          return <></>;
+          return <React.Fragment key={i} />;
         }
         return <MessageItem key={`m${i}`} message={message} />;
       })}
