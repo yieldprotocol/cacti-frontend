@@ -72,7 +72,7 @@ const useSubmitTx = (
   return {
     receipt,
     hash,
-    isLoading ,
+    isLoading,
     isPendingConfirm: isPending,
     isSuccess,
     isError,
