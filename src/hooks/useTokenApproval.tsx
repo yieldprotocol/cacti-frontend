@@ -48,7 +48,6 @@ const useTokenApproval = (
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
   const { data: balance } = useBalance(token?.address);
-  console.log('🦄 ~ file: useTokenApproval.tsx:51 ~ balance:', balance);
 
   const approve = async () => {
     setTxPending(true);
