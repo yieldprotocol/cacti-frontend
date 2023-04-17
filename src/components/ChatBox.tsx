@@ -7,7 +7,7 @@ import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 import { ResetButton } from './ResetButton';
 
-export const ChatBox = () => {
+const ChatBox = () => {
   const { messages } = useChatContext();
   const router = useRouter();
   const { s: threadId } = router.query;
@@ -36,3 +36,5 @@ export const ChatBox = () => {
     </div>
   );
 };
+
+export default ChatBox;
