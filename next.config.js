@@ -12,12 +12,24 @@ const nextConfig = {
         port: '',
         pathname: '/150/**',
       },
-    ],
-    domains: [
-      'assets.coingecko.com',
-      'zapper.xyz',
-      'raw.githubusercontent.com',
-      'storage.googleapis.com',
+      {
+        protocol: 'https',
+        hostname: 'assets.coingecko.com',
+        port: '',
+        pathname: '/coins/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        port: '',
+        pathname: '/zapper-fi-assets/tokens/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        port: '',
+        pathname: 'trustwallet/assets/**',
+      },
     ],
   },
 };
