@@ -358,6 +358,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
                     isApprovalTx,
                     errorMsg,
                     parsedUserRequest,
+                    description,
                   }}
                 />
               </ConnectFirst>
