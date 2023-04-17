@@ -1,5 +1,4 @@
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import type { AppProps } from 'next/app';
 import { CenterProvider } from '@center-inc/react';
