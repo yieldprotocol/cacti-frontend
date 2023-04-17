@@ -40,6 +40,7 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
+  console.log('🦄 ~ file: ChatContext.tsx:43 ~ ChatContextProvider ~ messages:', messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
@@ -176,17 +177,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const truncateAndSendMessage = (messageId: string, msg: string) => {
     // dedicated function to combine 2 changes to messages
     setIsBotThinking(true);
+    const idx = messages.findIndex((message) => message.messageId === messageId);
+    const message = {
+      messageId,
+      actor: 'user',
+      payload: msg,
+      feedback: 'n/a',
+    };
+
+    setMessages((messages) => (idx >= 0 ? [...messages.slice(0, idx), message] : [message]));
     wsSendMessage({ actor: 'user', type: 'text', payload: msg });
-    const idx = messages.findIndex((message) => message.messageId == messageId);
-    setMessages([
-      ...(idx >= 0 ? messages.slice(0, idx) : messages),
-      {
-        messageId: '',
-        actor: 'user',
-        payload: msg,
-        feedback: 'n/a',
-      },
-    ]);
   };
 
   const spoofBotMessage = (msg: string) => {

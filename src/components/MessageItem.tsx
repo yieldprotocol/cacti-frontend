@@ -1,10 +1,7 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import Avatar from '@/components/Avatar';
-import { CancelButton } from '@/components/CancelButton';
-import { EditButton } from '@/components/EditButton';
 import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessageTranslator } from '@/components/MessageTranslator';
-import { SubmitButton } from '@/components/SubmitButton';
 import { SystemMessage } from '@/components/SystemMessage';
 import { UserMessage } from '@/components/UserMessage';
 import { Message, useChatContext } from '@/contexts/ChatContext';
@@ -13,7 +10,7 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
   return (
     <div
       className={`
-      m-auto flex items-start gap-4 p-4 py-4 px-4 text-base md:gap-6 md:px-40 lg:px-64
+      m-auto flex items-start gap-4 p-4 px-4 py-4 text-base md:gap-6 md:px-40 lg:px-64
        ${actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'}`}
     >
       {children}
@@ -23,24 +20,9 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
-  const { sendAction, truncateAndSendMessage } = useChatContext();
-  const [text, setText] = useState(payload);
-  const [isEditing, setIsEditing] = useState(false);
+  const { truncateAndSendMessage } = useChatContext();
 
-  // These only apply for user messages
-  const startEdit = () => {
-    setIsEditing(true);
-  };
-  const submitEdit = () => {
-    // make this just do truncation
-    sendAction({ actionType: 'edit', messageId });
-    truncateAndSendMessage(messageId, text);
-    setIsEditing(false);
-  };
-  const cancelEdit = () => {
-    setText(payload);
-    setIsEditing(false);
-  };
+  const submitEdit = (text: string) => truncateAndSendMessage(messageId, text);
 
   return (
     <MessageItemWrap actor={actor}>
@@ -54,24 +36,12 @@ export const MessageItem = ({ message }: { message: Message }) => {
           <UserMessage
             {...{
               initialText: payload,
-              text,
-              isEditing,
-              cancelEdit,
-              setText,
+              submitEdit,
             }}
           />
         )}
-        {actor === 'user' && isEditing && (
-          <div
-            className={`m-auto flex items-start gap-4 p-4 py-2 px-4 text-base md:gap-6 md:px-40 lg:px-64`}
-          >
-            <SubmitButton onClick={submitEdit} />
-            <CancelButton onClick={cancelEdit} />
-          </div>
-        )}
       </div>
       {actor === 'bot' && <FeedbackButton message={message} />}
-      {actor === 'user' && !isEditing && <EditButton onClick={startEdit} />}
     </MessageItemWrap>
   );
 };
