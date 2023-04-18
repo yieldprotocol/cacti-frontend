@@ -31,12 +31,13 @@ const SettingsDropdown = () => {
             >
               <SignalIcon className="ml-1 h-5 w-5 text-white" />
               <div className="flex w-full justify-between">
-                <div>Use Fork</div>
+                <div>Use Fork (cntrl-f) </div>
+                
                 <Switch
                   checked={isFork}
                   onChange={setIsFork}
                   className={`${
-                    isFork ? 'bg-gray-600' : 'bg-gray-400'
+                    isFork ? 'bg-green-600' : 'bg-gray-600'
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span
