@@ -6,6 +6,7 @@ import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
+import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
 
 interface Props {
@@ -80,6 +81,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                       </div>
 
                       <div className="space-y-8 p-4 ">
+                        <ForkButton />
                         <CurrentForkInfo />
                         <ChangeForkId />
                         <MintButton />

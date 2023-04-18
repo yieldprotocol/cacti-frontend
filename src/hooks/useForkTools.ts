@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
 import { useAccount, useBalance, useProvider } from 'wagmi';
+import useShortcutKey from './useShortcutKey';
 
 type ForkTools = {
   isFork: boolean;
@@ -21,9 +22,13 @@ type ForkTools = {
 export const FORK_RPC_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
 
 const useForkTools = (): ForkTools => {
+  
   /* Get the fork url from a simple cache, or alternatively the env */
   const [forkUrl, setForkUrl] = useState<string>(FORK_RPC_URL || '');
   const [isFork, setIsFork] = useState<boolean>(false);
+
+  /* Add in a shortcut key to handle the fork */
+  useShortcutKey('ƒ', () => setIsFork(isFork));
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
