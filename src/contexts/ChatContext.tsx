@@ -18,8 +18,11 @@ export type ChatContextType = {
   replayUserMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
   truncateAndSendMessage: (messageId: string, msg: string) => void;
+  truncateUntilNextUserMessage: (messageId: string) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
+  insertBeforeMessageId: string | null;
+  setInsertBeforeMessageId: (arg0: string | null) => void;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
 };
@@ -30,8 +33,13 @@ const initialContext = {
   replayUserMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
   truncateAndSendMessage: (messageId: string, msg: string) => {},
+  truncateUntilNextUserMessage: (messageId: string) => {
+    return null;
+  },
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
+  insertBeforeMessageId: null,
+  setInsertBeforeMessageId: (arg0: string | null) => {},
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
 };
@@ -42,6 +50,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
+  const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const { setModal } = useModalContext();
 
@@ -110,8 +119,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!lastMessage) return;
     const obj = JSON.parse(lastMessage.data);
-    const payload = obj.payload;
-    const actor = obj.actor;
     if (obj.type == 'uuid') {
       const q = window.location.search;
       const params = new URLSearchParams(q);
@@ -121,6 +128,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
     setIsBotThinking(obj.stillThinking);
     setLastBotMessageId(obj.messageId);
+    const payload = obj.payload;
+    const actor = obj.actor;
+    const beforeMessageId = obj.beforeMessageId || null;
+    setInsertBeforeMessageId(beforeMessageId);
     const msg = {
       messageId: obj.messageId || '',
       payload,
@@ -128,20 +139,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       feedback: obj.feedback || 'none',
     };
     setMessages((messages) => {
+      // if beforeMessageId is specified, then we are inserting new messages before that point.
+      // break up our existing message list into 2 parts, those before the insertion point,
+      // and those after.
+      const idx = beforeMessageId
+        ? messages.findIndex((message) => message.messageId === beforeMessageId)
+        : -1;
+      const beforeMessages = idx >= 0 ? messages.slice(0, idx) : messages;
+      const afterMessages = idx >= 0 ? messages.slice(idx) : [];
       if (obj.operation == 'append') {
-        const lastMsg = messages[messages.length - 1];
+        const lastMsg = beforeMessages[beforeMessages.length - 1];
         const appendedMsg = {
           messageId: lastMsg.messageId,
           payload: lastMsg.payload + msg.payload,
           actor: lastMsg.actor,
           feedback: lastMsg.feedback,
         };
-        return [...messages.slice(0, -1), appendedMsg];
+        return [...beforeMessages.slice(0, -1), appendedMsg, ...afterMessages];
       } else if (obj.operation == 'replace' || obj.operation == 'create_then_replace') {
         // replace most recent
-        return [...messages.slice(0, -1), msg];
+        return [...beforeMessages.slice(0, -1), msg, ...afterMessages];
       } else {
-        return [...messages, msg];
+        return [...beforeMessages, msg, ...afterMessages];
       }
     });
   }, [lastMessage]);
@@ -187,6 +206,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'text', payload: msg });
   };
 
+  const truncateUntilNextUserMessage = (messageId: string): string | null => {
+    setIsBotThinking(true);
+    const idx = messages.findIndex((message) => message.messageId === messageId);
+    const beforeMessages = idx >= 0 ? messages.slice(0, idx + 1) : [];
+    const afterMessages = messages.slice(idx + 1);
+    const afterIdx = afterMessages.findIndex((message) => message.actor === 'user');
+    const nextUserMessageId = afterIdx >= 0 ? afterMessages[afterIdx].messageId : null;
+    const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
+    setMessages((messages) => [...beforeMessages, ...remainingMessages]);
+    return nextUserMessageId;
+  };
+
   const spoofBotMessage = (msg: string) => {
     setIsBotThinking(true);
     setTimeout(() => {
@@ -211,7 +242,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         replayUserMessage,
         sendAction,
         isBotThinking,
+        insertBeforeMessageId,
+        setInsertBeforeMessageId,
         truncateAndSendMessage,
+        truncateUntilNextUserMessage,
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,

@@ -20,11 +20,22 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
-  const { sendAction, truncateAndSendMessage } = useChatContext();
+  const {
+    sendAction,
+    truncateAndSendMessage,
+    truncateUntilNextUserMessage,
+    setInsertBeforeMessageId,
+  } = useChatContext();
 
   const submitEdit = (text: string) => {
     sendAction({ actionType: 'edit', messageId }); // this truncates message list on backend
     truncateAndSendMessage(messageId, text);
+  };
+
+  const submitRegenerate = () => {
+    sendAction({ actionType: 'regenerate', messageId });
+    const beforeMessageId = truncateUntilNextUserMessage(messageId);
+    setInsertBeforeMessageId(beforeMessageId);
   };
 
   return (
@@ -40,6 +51,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
             {...{
               initialText: payload,
               submitEdit,
+              submitRegenerate,
             }}
           />
         )}
