@@ -8,11 +8,6 @@ import SettingsContext from '@/contexts/SettingsContext';
 
 type ForkTools = {
 
-  // forkedEnv: boolean;
-  // forkUrl: string;
-  // setForkUrl: (url: string) => void;
-  // setIsFork: (usingFork: boolean) => void;
-
   forkTimestamp: number | undefined;
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
@@ -106,8 +101,6 @@ const useForkTools = (id?: string): ForkTools => {
   ); // don't run if not using forked env
 
   return {
-    // forkedEnv,
-    // forkUrl,
     forkTimestamp,
     forkStartBlock,
     createNewFork,
