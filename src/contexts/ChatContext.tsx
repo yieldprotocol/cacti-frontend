@@ -17,8 +17,7 @@ export type ChatContextType = {
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
   sendAction: (action: JsonValue) => void;
-  truncateAndSendMessage: (messageId: string, msg: string) => void;
-  truncateUntilNextUserMessage: (messageId: string) => string | null;
+  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   insertBeforeMessageId: string | null;
@@ -32,8 +31,7 @@ const initialContext = {
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
   sendAction: (action: JsonValue) => {},
-  truncateAndSendMessage: (messageId: string, msg: string) => {},
-  truncateUntilNextUserMessage: (messageId: string) => {
+  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => {
     return null;
   },
   spoofBotMessage: (msg: string) => {},
@@ -191,30 +189,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
-  const truncateAndSendMessage = (messageId: string, msg: string) => {
-    // dedicated function to combine 2 changes to messages
-    setIsBotThinking(true);
-    const idx = messages.findIndex((message) => message.messageId === messageId);
-    const message = {
-      messageId,
-      actor: 'user',
-      payload: msg,
-      feedback: 'n/a',
-    };
-
-    setMessages((messages) => (idx >= 0 ? [...messages.slice(0, idx), message] : [message]));
-    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
-  };
-
-  const truncateUntilNextUserMessage = (messageId: string): string | null => {
+  const truncateUntilNextUserMessage = (messageId: string, updatedText?: string): string | null => {
     setIsBotThinking(true);
     const idx = messages.findIndex((message) => message.messageId === messageId);
     const beforeMessages = idx >= 0 ? messages.slice(0, idx + 1) : [];
+    if (updatedText) {
+      beforeMessages[beforeMessages.length - 1].payload = updatedText;
+    }
     const afterMessages = messages.slice(idx + 1);
     const afterIdx = afterMessages.findIndex((message) => message.actor === 'user');
     const nextUserMessageId = afterIdx >= 0 ? afterMessages[afterIdx].messageId : null;
     const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
-    setMessages((messages) => [...beforeMessages, ...remainingMessages]);
+    setMessages([...beforeMessages, ...remainingMessages]);
     return nextUserMessageId;
   };
 
@@ -244,7 +230,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         isBotThinking,
         insertBeforeMessageId,
         setInsertBeforeMessageId,
-        truncateAndSendMessage,
         truncateUntilNextUserMessage,
         spoofBotMessage,
         showDebugMessages,
