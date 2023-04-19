@@ -20,9 +20,12 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
-  const { truncateAndSendMessage } = useChatContext();
+  const { sendAction, truncateAndSendMessage } = useChatContext();
 
-  const submitEdit = (text: string) => truncateAndSendMessage(messageId, text);
+  const submitEdit = (text: string) => {
+    sendAction({ actionType: 'edit', messageId }); // this truncates message list on backend
+    truncateAndSendMessage(messageId, text);
+  };
 
   return (
     <MessageItemWrap actor={actor}>

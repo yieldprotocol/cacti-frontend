@@ -74,9 +74,9 @@ export const UserMessage = ({
         </div>
       )}
       {hovered && !isEditing && (
-        <div className="flex p-2">
+        <button className="flex p-2" onClick={() => setIsEditing(true)}>
           <PencilSquareIcon className="h-4 w-4" />
-        </div>
+        </button>
       )}
     </div>
   );
