@@ -112,7 +112,7 @@ const SettingsProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-/* Exposed changeSettings action for updating */
+/* Exposed changeSettings() for updating */
 const changeSetting = (setting: Setting, value: string | number | boolean | undefined) =>  updateState({ type: setting, payload: value })
 
   return (
