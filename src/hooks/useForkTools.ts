@@ -1,15 +1,19 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
 import { useAccount, useBalance, useProvider } from 'wagmi';
+import SettingsContext from '@/contexts/SettingsContext';
 
 type ForkTools = {
-  isFork: boolean;
+
+  forkedEnv: boolean;
   forkUrl: string;
-  setForkUrl: (url: string) => void;
-  setIsFork: (usingFork: boolean) => void;
+  
+  // setForkUrl: (url: string) => void;
+  // setIsFork: (usingFork: boolean) => void;
+
   forkTimestamp: number | undefined;
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
@@ -18,12 +22,13 @@ type ForkTools = {
   signer?: ethers.Signer;
 };
 
-export const FORK_RPC_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
+const useForkTools = (id?: string): ForkTools => {
 
-const useForkTools = (): ForkTools => {
-  /* Get the fork url from a simple cache, or alternatively the env */
-  const [forkUrl, setForkUrl] = useState<string>(FORK_RPC_URL || '');
-  const [isFork, setIsFork] = useState<boolean>(false);
+  /* Get the useForkSettings the settings context */
+  const { settings }  = useContext(SettingsContext);
+  const { forkedEnv, forkId } = settings;
+
+  const forkUrl = id ? `https://rpc.tenderly.co/fork/${id}` :  `https://rpc.tenderly.co/fork/${forkId}`;
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
@@ -33,7 +38,7 @@ const useForkTools = (): ForkTools => {
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
-  const forkSigner = isFork && forkUrl ? forkProvider?.getSigner(account) : undefined;
+  const forkSigner = forkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -51,7 +56,7 @@ const useForkTools = (): ForkTools => {
   }, [provider]);
 
   const getForkTimestamp = useCallback(async () => {
-    if (!isFork || !provider) return;
+    if (!forkedEnv || !provider) return;
     try {
       const { timestamp } = await provider.getBlock('latest');
       console.log('Updated Forked Blockchain time: ', new Date(timestamp * 1000));
@@ -60,10 +65,10 @@ const useForkTools = (): ForkTools => {
       console.log('Error getting latest timestamp', e);
       return undefined;
     }
-  }, [provider, isFork]);
+  }, [provider, forkedEnv]);
 
   const getForkStartBlock = useCallback(async () => {
-    if (!isFork || !provider) return 'earliest';
+    if (!forkedEnv|| !provider) return 'earliest';
     try {
       const num = await forkProvider?.send('tenderly_getForkBlockNumber', []);
       const sBlock = +num.toString();
@@ -73,10 +78,10 @@ const useForkTools = (): ForkTools => {
       console.log('Could not get tenderly start block: ', e);
       return 'earliest';
     }
-  }, [isFork, provider, forkProvider]);
+  }, [forkedEnv, provider, forkProvider]);
 
   const fillEther = useCallback(async () => {
-    if (!provider || !isFork) return;
+    if (!provider || !forkedEnv) return;
 
     try {
       const transactionParameters = [
@@ -89,23 +94,21 @@ const useForkTools = (): ForkTools => {
     } catch (e) {
       console.log('Could not fill eth on Tenderly fork');
     }
-  }, [provider, isFork, account, forkProvider, refetch]);
+  }, [provider, forkedEnv, account, forkProvider, refetch]);
 
   /* keep track of forked blockchain time/ startblock */
   const { data: forkTimestamp } = useSWRImmutable(
-    isFork ? ['forkTimestamp', forkUrl] : null,
+    forkedEnv ? ['forkTimestamp', forkUrl] : null,
     getForkTimestamp
   ); // don't run if not using forked env
   const { data: forkStartBlock } = useSWRImmutable(
-    isFork ? ['forkStartBlock', forkUrl] : null,
+    forkedEnv ? ['forkStartBlock', forkUrl] : null,
     getForkStartBlock
   ); // don't run if not using forked env
 
   return {
-    isFork,
+    forkedEnv,
     forkUrl,
-    setForkUrl,
-    setIsFork,
     forkTimestamp,
     forkStartBlock,
     createNewFork,
