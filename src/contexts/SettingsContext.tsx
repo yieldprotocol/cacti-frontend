@@ -9,7 +9,8 @@ export enum Setting {
   DISCLAIMER_CHECKED = 'disclaimerChecked',
 
   FORCE_TRANSACTIONS = 'forceTransactions',
-  USE_FORKED_ENV = 'useForkedEnv',
+
+  FORKED_ENV = 'forkedEnv',
   FORK_ENV_URL = 'forkEnvUrl',
 }
 
@@ -31,8 +32,9 @@ export interface ISettings {
   forceTransactions: boolean;
   diagnostics: boolean;
 
-  useForkedEnv: boolean;
+  forkedEnv: boolean;
   forkEnvUrl: string;
+  forkId: string;
 
 }
 
@@ -65,10 +67,9 @@ const initState: ISettings = {
   diagnostics: false,
   
   /* use a forked network */
-  useForkedEnv: false,
-  forkEnvUrl:
-    process.env.REACT_APP_DEFAULT_FORK_RPC_URL || process.env.REACT_APP_LOCALHOST_RPC_URL || 'http://127.0.0.1:8545',
-
+  forkedEnv: false,
+  forkId: process.env.NEXT_PUBLIC_TENDERLY_FORK_ID || '',
+  forkEnvUrl: `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
 };
 
 const initChangeSetting = () => null;
@@ -96,7 +97,7 @@ function settingsReducer( state: ISettings, action: { type:Setting, payload: any
 }
 
 
-const SettingsProvider = ({ children }: { children: ReactNode }) => {
+export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   
   /* LOCAL STATE */
   const [settings, updateState] = useReducer(settingsReducer, initState);
@@ -122,5 +123,4 @@ const changeSetting = (setting: Setting, value: string | number | boolean | unde
   );
 };
 
-export { SettingsContext };
-export default SettingsProvider;
+export default SettingsContext;
