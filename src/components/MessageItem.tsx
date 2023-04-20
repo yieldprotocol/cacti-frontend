@@ -20,17 +20,26 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
-  const { sendAction, truncateUntilNextUserMessage, setInsertBeforeMessageId } = useChatContext();
+  const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
 
   const submitEdit = (text: string) => {
-    sendAction({ actionType: 'edit', messageId, text }); // this truncates message list on backend
-    const beforeMessageId = truncateUntilNextUserMessage(messageId, text);
+    sendAction({ actionType: 'edit', messageId, text }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
+      updatedText: text,
+      setBotThinking: actor === 'user',
+    });
     setInsertBeforeMessageId(beforeMessageId);
   };
 
   const submitRegenerate = () => {
-    sendAction({ actionType: 'regenerate', messageId });
-    const beforeMessageId = truncateUntilNextUserMessage(messageId);
+    sendAction({ actionType: 'regenerate', messageId }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { setBotThinking: true });
+    setInsertBeforeMessageId(beforeMessageId);
+  };
+
+  const submitDelete = () => {
+    sendAction({ actionType: 'delete', messageId }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { inclusive: true });
     setInsertBeforeMessageId(beforeMessageId);
   };
 
@@ -45,9 +54,11 @@ export const MessageItem = ({ message }: { message: Message }) => {
         ) : (
           <UserMessage
             {...{
+              actor,
               initialText: payload,
               submitEdit,
               submitRegenerate,
+              submitDelete,
             }}
           />
         )}

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { UserIcon } from '@heroicons/react/20/solid';
-import { CommandLineIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentListIcon, CommandLineIcon } from '@heroicons/react/24/outline';
 import profilePic from '@/public/punk2042.png';
 
 interface Props {
@@ -23,6 +23,8 @@ const Avatar = ({ actor }: Props) => {
         />
       ) : actor === 'system' ? (
         <CommandLineIcon className="h-8 w-8 text-black" />
+      ) : actor === 'commenter' ? (
+        <ClipboardDocumentListIcon className="h-8 w-8 text-black" />
       ) : (
         <img className="h-full w-8 max-w-none rounded-md" src={botAvatar} alt="bot avatar" />
       )}
