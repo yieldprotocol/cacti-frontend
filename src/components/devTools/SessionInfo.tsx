@@ -11,9 +11,9 @@ export const SessionInfo = () => {
 
   return ( 
     <div>
-      { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(user?.name || '')}</div> }
-      <div className='text-sm text-left'> status: {status } </div>
-      <div className='text-sm text-left'> token: </div>
+      {/* { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(user?.name || '')}</div> } */}
+      <div className='text-sm text-left'> Auth status:  { status } </div>
+      {/* <div className='text-sm text-left'> token: </div> */}
     </div>
   );
 };

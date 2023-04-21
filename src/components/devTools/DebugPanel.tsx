@@ -21,7 +21,7 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
             spoofBotMessage(spoofText);
           }}
         >
-          <span className="max-h-[64px] overflow-y-scroll text-xs">{spoofLabel}</span>
+          <span className="max-h-[32px] overflow-y-scroll text-xs">{spoofLabel}</span>
         </Button>
         <div className="flex flex-col justify-center break-words font-mono text-xs">
           {spoofLabel === CUSTOM_PROMPT ? (
@@ -34,7 +34,7 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
               placeholder="Prompt"
             ></input>
           ) : (
-            <div className="h-[66px] overflow-y-auto">{widgetString}</div>
+            <div className="h-[32px] overflow-y-auto">{widgetString}</div>
           )}
         </div>
       </Fragment>
@@ -42,15 +42,16 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
+    <div className="h-[700px] overflow-auto ">
+    <div className="grid grid-cols-2 gap-4 p-4 ">
       {debugMessage(CUSTOM_PROMPT, customMessage)}
       <div />
       <div />
       {spoofPrompts
-        .map((spoof) => {
-          return debugMessage(spoof[0], spoof[1]);
-        })
-        .reverse()}
+      .map((spoof) => {
+        return debugMessage(spoof[0], spoof[1]);
+      }).reverse()}
+    </div>
     </div>
   );
 };
