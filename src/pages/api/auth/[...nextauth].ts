@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
@@ -55,17 +55,20 @@ export default async function auth(req: any, res: any) {
 
   return await NextAuth(req, res, {
     // https://next-auth.js.org/configuration/providers/oauth
+    // adapters:{
+    //   MongoDb: MongoDbAdapter
+    // },
     providers,
     session: {
       strategy: "jwt",
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-      async session({ session, token }: { session: any; token: any }) {
+      async session({ session, token }: { session: any; token: any }) { 
         session.address = token.sub
         session.user.name = token.sub
-        session.user.image = "https://www.fillmurray.com/128/128"
-        return session
+        session.accessToken = token.accessToken
+        return session 
       },
     },
   })
