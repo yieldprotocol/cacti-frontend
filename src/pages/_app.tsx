@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
-import { ChatContextProvider } from '@/contexts/ChatContext';
+import { Session } from 'next-auth';
 import { ModalContextProvider } from '@/contexts/ModalContext';
 import '@/styles/globals.css';
 
@@ -16,10 +16,15 @@ const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
 });
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ConnectionWrapperDynamic>
+      <ConnectionWrapperDynamic {...pageProps}>
         <CenterProvider>
           <ModalContextProvider>
             <ChatContextDynamic>
