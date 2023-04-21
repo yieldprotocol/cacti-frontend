@@ -56,7 +56,7 @@ const ConnectionWrapper = ({children, pageProps }: any) => {
   });
 
   const getSiweMessageOptions: GetSiweMessageOptions = () => ({
-    statement: 'Sign in to my RainbowKit app',
+    statement: 'Sign me in to wc3 app',
   });
 
   return (
