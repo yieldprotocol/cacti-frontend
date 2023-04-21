@@ -16,10 +16,13 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
+  sendMultiStepClientMessage: (action: JsonValue) => void;
+  setMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
   truncateAndSendMessage: (messageId: string, msg: string) => void;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
+  multiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
 };
@@ -28,10 +31,13 @@ const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
+  sendMultiStepClientMessage: (action: JsonValue) => {},
+  setMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
   truncateAndSendMessage: (messageId: string, msg: string) => {},
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
+  multiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
 };
@@ -41,6 +47,9 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
+  const [multiStepInProgress, setMultiStepInProgress] = useState<boolean>(
+    initialContext.multiStepInProgress
+  );
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const { setModal } = useModalContext();
@@ -168,6 +177,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [wsSendMessage]
   );
 
+  const sendMultiStepClientMessage = useCallback(
+    (payload: JsonValue) => {
+      setMultiStepInProgress(true);
+      wsSendMessage({ actor: 'system', type: 'multistep-workflow', payload });
+    },
+    [wsSendMessage]
+  );
+
   const sendAction = (action: JsonValue) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
@@ -209,8 +226,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         messages,
         sendMessage,
         replayUserMessage,
+        sendMultiStepClientMessage,
         sendAction,
         isBotThinking,
+        multiStepInProgress,
+        setMultiStepInProgress,
         truncateAndSendMessage,
         spoofBotMessage,
         showDebugMessages,

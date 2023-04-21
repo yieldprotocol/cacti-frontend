@@ -23,13 +23,14 @@ import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
+import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
-import { SendTransaction } from './widgets/SendTransaction';
+import { SendTransactionWithReplayMsg } from './widgets/SendTransactionWithReplayMsg';
 import { YieldFarm } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
@@ -330,13 +331,48 @@ const Widgetize = (widget: Widget) => {
           <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <SendTransaction
+                <SendTransactionWithReplayMsg
                   {...{
                     userRequestStatus,
                     tx,
                     isApprovalTx,
                     errorMsg,
                     parsedUserRequest,
+                    description,
+                  }}
+                />
+              </ConnectFirst>
+            </div>
+          </ActionPanel>
+        );
+      }
+      case 'multistep-payload-container': {
+        const {
+          status,
+          workflowId,
+          workflowType,
+          stepId,
+          stepType,
+          userActionType,
+          tx,
+          errorMsg,
+          description,
+        } = JSON.parse(args);
+
+        return (
+          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <MultiStepContainer
+                  {...{
+                    status,
+                    workflowId,
+                    workflowType,
+                    stepId,
+                    stepType,
+                    userActionType,
+                    tx,
+                    errorMsg,
                     description,
                   }}
                 />

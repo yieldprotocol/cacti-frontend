@@ -4,7 +4,7 @@ import { useChatContext } from '@/contexts/ChatContext';
 import Avatar from './Avatar';
 
 export const MessageList = () => {
-  const { messages, isBotThinking, showDebugMessages } = useChatContext();
+  const { messages, isBotThinking, showDebugMessages, multiStepInProgress } = useChatContext();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,6 +19,14 @@ export const MessageList = () => {
         }
         return <MessageItem key={`m${i}`} message={message} />;
       })}
+      {multiStepInProgress && (
+        <MessageItemWrap actor={'Bot'}>
+          <Avatar actor={'Bot'} />
+          <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+            <span className="after:animate-ellipse">Multi-step workflow in progress...</span>
+          </div>
+        </MessageItemWrap>
+      )}
       {isBotThinking && (
         <MessageItemWrap actor={'Bot'}>
           <Avatar actor={'Bot'} />
