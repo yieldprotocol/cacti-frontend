@@ -8,6 +8,7 @@ import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
 import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
+import { SessionInfo } from './SessionInfo';
 
 interface Props {
   openState: boolean;
@@ -71,7 +72,11 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                         General
                       </div>
 
-                      <div className="mt- space-y-2 p-4">
+                      <div className="mt-4 space-y-8 p-4">
+                        <SessionInfo />
+                      </div>
+
+                      <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
 
                         <ResetButton />
