@@ -66,3 +66,7 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
   }
   return undefined;
 };
+
+/* handle Address/hash shortening */
+export const abbreviateHash = (addr: string, buffer: number = 4) =>
+  `${addr?.substring(0, buffer)}...${addr?.substring(addr.length - buffer)}`;

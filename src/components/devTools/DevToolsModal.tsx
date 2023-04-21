@@ -7,6 +7,7 @@ import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
 import { MintButton } from './MintButton';
+import { SessionInfo } from './SessionInfo';
 
 interface Props {
   openState: boolean;
@@ -68,6 +69,10 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
 
                       <div className="mt-8 flex px-4 text-left text-sm font-bold leading-6 text-gray-900">
                         General
+                      </div>
+
+                      <div className="mt-4 space-y-8 p-4">
+                        <SessionInfo />
                       </div>
 
                       <div className="mt-4 space-y-8 p-4">
