@@ -4,7 +4,7 @@ import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { sendMessage, interactor, setInteractor } = useChatContext();
 
@@ -62,8 +62,7 @@ export const MessageInput = ({}) => {
   return (
     <form onSubmit={handleSendMessage}>
       <div className="flex">
-        <input
-          type="text"
+        <textarea
           onChange={(e) => setMessageInput(e.target.value)}
           className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
           placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}

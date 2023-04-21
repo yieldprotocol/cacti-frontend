@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import ReactMarkdown from 'react-markdown';
 
 export const UserMessage = ({
   actor,
@@ -18,7 +19,7 @@ export const UserMessage = ({
   const [hovered, setHovered] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
@@ -29,7 +30,7 @@ export const UserMessage = ({
       }
 
       // submit edit
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && (actor === 'user' || !e.shiftKey)) {
         if (input !== initialText) {
           submitEdit(input);
         }
@@ -55,13 +56,16 @@ export const UserMessage = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <input
+      {actor === 'commenter' && !isEditing
+      ?
+      <ReactMarkdown>{input}</ReactMarkdown>
+      :
+      <textarea
         ref={inputRef}
         className={`
       flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none
       `}
         value={input}
-        onClick={() => setIsEditing(true)}
         onChange={(e) => {
           setIsEditing(true);
           setInput(e.target.value);
@@ -72,6 +76,7 @@ export const UserMessage = ({
         }}
         onFocus={() => setIsEditing(true)}
       />
+      }
       {isEditing && (
         <div className="m-auto mr-2 flex">
           <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
