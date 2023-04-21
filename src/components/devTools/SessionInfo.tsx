@@ -3,14 +3,17 @@ import { useSession } from 'next-auth/react';
 import { getToken } from 'next-auth/jwt';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 export const SessionInfo = () => {
-
   const { data, status } = useSession();
-  return (
+  const {user} = data!;
+
+  return ( 
     <div>
-      { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(data?.user?.name || '')}</div> }
+      { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(user?.name || '')}</div> }
       <div className='text-sm text-left'> status: {status } </div>
+      <div className='text-sm text-left'> token: </div>
     </div>
   );
 };
