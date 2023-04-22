@@ -353,14 +353,18 @@ const Widgetize = (widget: Widget) => {
           workflowType,
           stepId,
           stepType,
+          stepNumber,
+          totalSteps,
           userActionType,
           tx,
           errorMsg,
           description,
         } = JSON.parse(args);
 
+        const headerText = `Step ${stepNumber}/${totalSteps}: ${description}`;
+
         return (
-          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
+          <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
                 <MultiStepContainer
@@ -371,6 +375,8 @@ const Widgetize = (widget: Widget) => {
                     stepId,
                     stepType,
                     userActionType,
+                    stepNumber,
+                    totalSteps,
                     tx,
                     errorMsg,
                     description,

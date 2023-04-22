@@ -25,7 +25,7 @@ interface MultiStepContainerProps {
 
 interface UserActionTxTypeProps {
   tx: { from: string; to: string; value: string; data: string; gas: string } | null;
-  sendStepResult: (stepStatus: string, stepStatusMessage: string) => void;
+  sendStepResult: (stepStatus: string, stepStatusMessage: string, userActionData: string) => void;
   description: string;
 }
 
@@ -35,14 +35,25 @@ export const MultiStepContainer = ({
   workflowType,
   stepId,
   stepType,
+  stepNumber,
+  totalSteps,
   userActionType,
   tx,
   errorMsg,
   description,
 }: MultiStepContainerProps) => {
-  const { sendMultiStepClientMessage } = useChatContext();
+  const { sendMultiStepClientMessage, setMultiStepInProgress } = useChatContext();
 
-  const sendStepResult = useCallback((stepStatus: string, stepStatusMessage: string) => {
+  const sendStepResult = (
+    stepStatus: string,
+    stepStatusMessage: string,
+    userActionData: string
+  ) => {
+    if (stepStatus === 'success') {
+      setMultiStepInProgress(true);
+    } else {
+      setMultiStepInProgress(false);
+    }
     const payload = {
       workflow: {
         id: workflowId,
@@ -51,15 +62,21 @@ export const MultiStepContainer = ({
           id: stepId,
           type: stepType,
           status: stepStatus,
-          status_message: stepStatusMessage,
+          statusMessage: stepStatusMessage,
+          userActionData: userActionData,
         },
       },
     };
+
     sendMultiStepClientMessage(payload);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
+
+  if (stepNumber === totalSteps) {
+    setMultiStepInProgress(false);
+  }
 
   if (workflowStatus === 'error') {
+    setMultiStepInProgress(false);
     return <WidgetError>{errorMsg}</WidgetError>;
   }
 
@@ -83,9 +100,13 @@ export const UserActionTxType = ({ tx, sendStepResult, description }: UserAction
   ) => {
     if (sendError?.message || txError?.message) {
       const errMsg = sendError?.message || txError?.message;
-      sendStepResult('error', `TX failed, error: ${errMsg}`);
+      sendStepResult('error', `Transaction failed, error: ${errMsg}`, sendTxData?.hash);
     } else if (isTxSuccess && sendTxData?.hash) {
-      sendStepResult('success', `TX successful, hash: ${sendTxData?.hash}`);
+      sendStepResult(
+        'success',
+        `Transaction successful, hash: ${sendTxData?.hash}`,
+        sendTxData?.hash
+      );
     }
   };
 

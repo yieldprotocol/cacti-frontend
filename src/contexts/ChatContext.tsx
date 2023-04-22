@@ -179,7 +179,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const sendMultiStepClientMessage = useCallback(
     (payload: JsonValue) => {
-      setMultiStepInProgress(true);
       wsSendMessage({ actor: 'system', type: 'multistep-workflow', payload });
     },
     [wsSendMessage]
