@@ -19,9 +19,11 @@ export type ChatContextType = {
   sendMultiStepClientMessage: (action: JsonValue) => void;
   setMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
-  truncateAndSendMessage: (messageId: string, msg: string) => void;
+  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
+  insertBeforeMessageId: string | null;
+  setInsertBeforeMessageId: (arg0: string | null) => void;
   multiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
@@ -34,9 +36,13 @@ const initialContext = {
   sendMultiStepClientMessage: (action: JsonValue) => {},
   setMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
-  truncateAndSendMessage: (messageId: string, msg: string) => {},
+  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => {
+    return null;
+  },
   spoofBotMessage: (msg: string) => {},
   isBotThinking: false,
+  insertBeforeMessageId: null,
+  setInsertBeforeMessageId: (arg0: string | null) => {},
   multiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
@@ -51,6 +57,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     initialContext.multiStepInProgress
   );
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
+  const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const { setModal } = useModalContext();
 
@@ -119,8 +126,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!lastMessage) return;
     const obj = JSON.parse(lastMessage.data);
-    const payload = obj.payload;
-    const actor = obj.actor;
     if (obj.type == 'uuid') {
       const q = window.location.search;
       const params = new URLSearchParams(q);
@@ -130,6 +135,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
     setIsBotThinking(obj.stillThinking);
     setLastBotMessageId(obj.messageId);
+    const payload = obj.payload;
+    const actor = obj.actor;
+    const beforeMessageId = obj.beforeMessageId || null;
+    setInsertBeforeMessageId(beforeMessageId);
     const msg = {
       messageId: obj.messageId || '',
       payload,
@@ -137,20 +146,28 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       feedback: obj.feedback || 'none',
     };
     setMessages((messages) => {
+      // if beforeMessageId is specified, then we are inserting new messages before that point.
+      // break up our existing message list into 2 parts, those before the insertion point,
+      // and those after.
+      const idx = beforeMessageId
+        ? messages.findIndex((message) => message.messageId === beforeMessageId)
+        : -1;
+      const beforeMessages = idx >= 0 ? messages.slice(0, idx) : messages;
+      const afterMessages = idx >= 0 ? messages.slice(idx) : [];
       if (obj.operation == 'append') {
-        const lastMsg = messages[messages.length - 1];
+        const lastMsg = beforeMessages[beforeMessages.length - 1];
         const appendedMsg = {
           messageId: lastMsg.messageId,
           payload: lastMsg.payload + msg.payload,
           actor: lastMsg.actor,
           feedback: lastMsg.feedback,
         };
-        return [...messages.slice(0, -1), appendedMsg];
+        return [...beforeMessages.slice(0, -1), appendedMsg, ...afterMessages];
       } else if (obj.operation == 'replace' || obj.operation == 'create_then_replace') {
         // replace most recent
-        return [...messages.slice(0, -1), msg];
+        return [...beforeMessages.slice(0, -1), msg, ...afterMessages];
       } else {
-        return [...messages, msg];
+        return [...beforeMessages, msg, ...afterMessages];
       }
     });
   }, [lastMessage]);
@@ -188,19 +205,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
-  const truncateAndSendMessage = (messageId: string, msg: string) => {
-    // dedicated function to combine 2 changes to messages
+  const truncateUntilNextUserMessage = (messageId: string, updatedText?: string): string | null => {
     setIsBotThinking(true);
     const idx = messages.findIndex((message) => message.messageId === messageId);
-    const message = {
-      messageId,
-      actor: 'user',
-      payload: msg,
-      feedback: 'n/a',
-    };
-
-    setMessages((messages) => (idx >= 0 ? [...messages.slice(0, idx), message] : [message]));
-    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
+    const beforeMessages = idx >= 0 ? messages.slice(0, idx + 1) : [];
+    if (updatedText) {
+      beforeMessages[beforeMessages.length - 1].payload = updatedText;
+    }
+    const afterMessages = messages.slice(idx + 1);
+    const afterIdx = afterMessages.findIndex((message) => message.actor === 'user');
+    const nextUserMessageId = afterIdx >= 0 ? afterMessages[afterIdx].messageId : null;
+    const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
+    setMessages([...beforeMessages, ...remainingMessages]);
+    return nextUserMessageId;
   };
 
   const spoofBotMessage = (msg: string) => {
@@ -228,9 +245,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         sendMultiStepClientMessage,
         sendAction,
         isBotThinking,
+        insertBeforeMessageId,
+        setInsertBeforeMessageId,
         multiStepInProgress,
         setMultiStepInProgress,
-        truncateAndSendMessage,
+        truncateUntilNextUserMessage,
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,
