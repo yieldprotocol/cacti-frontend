@@ -21,6 +21,7 @@ export function mapExpiresAt(account: any): any {
 export default function PostgresAdapter(client: Pool): Adapter {
 
   return {
+
     async createVerificationToken(verificationToken: VerificationToken): Promise<VerificationToken> {
       const { identifier, expires, token } = verificationToken;
       const sql = `
@@ -30,6 +31,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
       await client.query(sql, [identifier, expires, token]);
       return verificationToken;
     },
+
     async useVerificationToken({ identifier, token }: { identifier: string; token: string }):
       Promise<VerificationToken> {
       const sql = `delete from verification_token
@@ -48,6 +50,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
       const result = await client.query(sql, [name, email, emailVerified, image]);
       return result.rows[0];
     },
+
     async getUser(id) {
       const sql = `select * from users where id = $1`;
       try {
@@ -57,11 +60,13 @@ export default function PostgresAdapter(client: Pool): Adapter {
         return null;
       }
     },
+
     async getUserByEmail(email) {
       const sql = `select * from users where email = $1`;
       const result = await client.query(sql, [email]);
       return result.rowCount !== 0 ? result.rows[0] : null;
     },
+
     async getUserByAccount({ providerAccountId, provider }): Promise<AdapterUser | null> {
       const sql = `
           select u.* from users u join accounts a on u.id = a."userId"
@@ -73,6 +78,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
       const result = await client.query(sql, [provider, providerAccountId]);
       return result.rowCount !== 0 ? result.rows[0] : null
     },
+
     async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
       const fetchSql = `select * from users where id = $1`;
       const query1 = await client.query(fetchSql, [user.id]);
@@ -93,6 +99,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
       const query2 = await client.query(updateSql, [id, name, email, emailVerified, image]);
       return query2.rows[0];
     },
+
     async linkAccount(account) {
       const sql = `
       insert into accounts 
@@ -142,6 +149,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
       const result = await client.query(sql, params);
       return mapExpiresAt(result.rows[0]);
     },
+
     async createSession({ sessionToken, userId, expires }) {
       if (userId === undefined) {
         throw Error(`userId is undef in createSession`)
@@ -178,6 +186,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
         user,
       };
     },
+
     async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">):
       Promise<AdapterSession | null | undefined> {
       const { sessionToken } = session;
@@ -203,15 +212,18 @@ export default function PostgresAdapter(client: Pool): Adapter {
       ]);
       return result.rows[0];
     },
+
     async deleteSession(sessionToken) {
       const sql = `delete from sessions where "sessionToken" = $1`;
       await client.query(sql, [sessionToken]);
     },
+
     async unlinkAccount(partialAccount) {
       const { provider, providerAccountId } = partialAccount;
       const sql = `delete from accounts where "providerAccountId" = $1 and provider = $2`;
       await client.query(sql, [providerAccountId, provider]);
     },
+    
     async deleteUser(userId: string) {
       await client.query(`delete from users where id = $1`, [userId]);
       await client.query(`delete from sessions where "userId" = $1`, [userId]);
