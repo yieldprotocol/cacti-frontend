@@ -18,6 +18,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     setInteractor,
     sendMessage,
   } = useChatContext();
+
   const actor = message?.actor || interactor;
   const messageId = message?.messageId;
 
@@ -30,25 +31,38 @@ const MessageInput = ({ message }: MessageInputProps) => {
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const submitEdit = useCallback(() => {
+    if (!messageId) return;
+
+    sendAction({ actionType: ActionType.EDIT, messageId, text: input }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
+      updatedText: input,
+      setBotThinking: actor === Actor.USER,
+    });
+    setInsertBeforeMessageId(beforeMessageId);
+  }, [
+    actor,
+    input,
+    messageId,
+    sendAction,
+    setInsertBeforeMessageId,
+    truncateUntilNextHumanMessage,
+  ]);
+
   const handleSubmit = useCallback(() => {
+    // edit message
+    if (message) {
+      return submitEdit();
+    }
+
+    // no message yet
     if (input.length > 0) {
       sendMessage(input);
-      setInput(initInput);
     }
-  }, [initInput, input, sendMessage]);
 
-  const submitEdit = useCallback(
-    (text: string) => {
-      if (!messageId) return;
-      sendAction({ actionType: ActionType.EDIT, messageId, text }); // this also truncates message list on backend
-      const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
-        updatedText: text,
-        setBotThinking: actor === Actor.USER,
-      });
-      setInsertBeforeMessageId(beforeMessageId);
-    },
-    [actor, messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]
-  );
+    // update state to use the latest message payload or the initial input (ie: "")
+    setInput(initInput);
+  }, [initInput, input, message, sendMessage, submitEdit]);
 
   const submitRegenerate = useCallback(() => {
     if (!messageId) return;
@@ -99,10 +113,12 @@ const MessageInput = ({ message }: MessageInputProps) => {
     return () => window.removeEventListener('keydown', handleKeys);
   }, [focusInput, handleSubmit, initInput, message]);
 
+  const inputStyle = `flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`;
+
   return (
     <div
       className={`
-        flex justify-between rounded-md bg-gray-700
+      flex h-full justify-between rounded-md bg-gray-700
       text-gray-50 caret-white  hover:bg-gray-700/20 hover:ring-1 
       hover:ring-gray-500/80 focus:text-gray-50 focus:ring-gray-500/80
        ${isEditing || !message ? 'ring-1 ring-gray-400/80' : ''}
@@ -115,7 +131,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
       {actor === Actor.COMMENTER && (
         <textarea
           ref={textAreaRef}
-          className={`flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`}
+          className={inputStyle}
           value={input}
           placeholder={!message ? 'Enter your comment...' : undefined}
           onChange={(e) => {
@@ -131,10 +147,10 @@ const MessageInput = ({ message }: MessageInputProps) => {
       )}
 
       {actor === Actor.USER && (
-        <>
+        <div className="flex h-full w-full">
           <input
             ref={inputRef}
-            className={`flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`}
+            className={inputStyle}
             value={input}
             placeholder={!message ? 'Enter your message...' : undefined}
             onChange={(e) => {
@@ -155,28 +171,26 @@ const MessageInput = ({ message }: MessageInputProps) => {
               </span>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {hovered && !isEditing && message && (
-        <>
+        <div className="flex h-full gap-2 p-1 align-top">
+          <InputTypeDropdown
+            activeType={inputType}
+            action={() => {
+              setInteractor(actor === Actor.USER ? Actor.COMMENTER : Actor.USER); // TODO handle changing interactor for each message, not just the bottom component
+            }}
+          />
           {actor === Actor.USER && (
-            <InputTypeDropdown
-              activeType={inputType}
-              action={() => {
-                setInteractor(actor === Actor.USER ? Actor.COMMENTER : Actor.USER);
-              }}
-            />
-          )}
-          {actor === Actor.USER && (
-            <button className="flex p-2" onClick={submitRegenerate}>
+            <button onClick={submitRegenerate}>
               <ArrowPathIcon className="h-4 w-4" />
             </button>
           )}
-          <button className="flex p-2" onClick={submitDelete}>
+          <button onClick={submitDelete}>
             <TrashIcon className="h-4 w-4" />
           </button>
-        </>
+        </div>
       )}
     </div>
   );
