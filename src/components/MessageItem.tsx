@@ -13,7 +13,7 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
     <div
       className={`
       m-auto flex items-start gap-4 p-4 px-4 py-4 text-base md:gap-6 md:px-40 lg:px-64
-       ${actor != 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'}`}
+       ${actor != Actor.USER ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'}`}
     >
       {children}
     </div>
@@ -21,29 +21,7 @@ export const MessageItemWrap = ({ actor, children }: { actor: string; children: 
 };
 
 export const MessageItem = ({ message }: { message: Message }) => {
-  const { actor, payload, messageId } = message;
-  const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
-
-  const submitEdit = (text: string) => {
-    sendAction({ actionType: ActionType.EDIT, messageId, text }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
-      updatedText: text,
-      setBotThinking: actor === Actor.USER,
-    });
-    setInsertBeforeMessageId(beforeMessageId);
-  };
-
-  const submitRegenerate = () => {
-    sendAction({ actionType: ActionType.REGENERATE, messageId }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { setBotThinking: true });
-    setInsertBeforeMessageId(beforeMessageId);
-  };
-
-  const submitDelete = () => {
-    sendAction({ actionType: ActionType.DELETE, messageId }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { inclusive: true });
-    setInsertBeforeMessageId(beforeMessageId);
-  };
+  const { actor, payload } = message;
 
   return (
     <MessageItemWrap actor={actor}>
@@ -56,11 +34,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
         ) : (
           <UserMessage
             {...{
-              actor,
-              initialText: payload,
-              submitEdit,
-              submitRegenerate,
-              submitDelete,
+              message,
             }}
           />
         )}
