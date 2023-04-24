@@ -78,17 +78,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     status: walletStatus,
     address: walletAddress,
   } = useAccount();
-  const sendWalletMessage = () => {
+
+  const sendWalletMessage = useCallback(() => {
     const walletPayload = {
       walletIsConnected,
       walletStatus,
       walletAddress,
     };
     wsSendMessage({ actor: 'system', type: 'wallet', payload: walletPayload });
-  };
+  }, [walletAddress, walletIsConnected, walletStatus, wsSendMessage]);
+
   useEffect(() => {
     sendWalletMessage();
-  }, [walletIsConnected, walletStatus, walletAddress]);
+  }, [walletIsConnected, walletStatus, walletAddress, sendWalletMessage]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
@@ -174,22 +176,25 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     });
   }, [lastMessage]);
 
-  const sendMessage = (msg: string) => {
-    setInsertBeforeMessageId(null);
-    if (interactor === 'user') {
-      setIsBotThinking(true);
-    }
-    wsSendMessage({ actor: interactor, type: 'text', payload: msg });
-    setMessages([
-      ...messages,
-      {
-        messageId: '',
-        actor: interactor,
-        payload: msg,
-        feedback: 'n/a',
-      },
-    ]);
-  };
+  const sendMessage = useCallback(
+    (msg: string) => {
+      setInsertBeforeMessageId(null);
+      if (interactor === 'user') {
+        setIsBotThinking(true);
+      }
+      wsSendMessage({ actor: interactor, type: 'text', payload: msg });
+      setMessages([
+        ...messages,
+        {
+          messageId: '',
+          actor: interactor,
+          payload: msg,
+          feedback: 'n/a',
+        },
+      ]);
+    },
+    [interactor, messages, wsSendMessage]
+  );
 
   const replayUserMessage = useCallback(
     (msg: string) => {
@@ -199,47 +204,53 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [wsSendMessage]
   );
 
-  const sendAction = (action: JsonValue) => {
-    wsSendMessage({ actor: 'user', type: 'action', payload: action });
-  };
+  const sendAction = useCallback(
+    (action: JsonValue) => {
+      wsSendMessage({ actor: 'user', type: 'action', payload: action });
+    },
+    [wsSendMessage]
+  );
 
-  const truncateUntilNextHumanMessage = (
-    messageId: string,
-    options?: TruncateOptions
-  ): string | null => {
-    if (options?.setBotThinking) {
+  const truncateUntilNextHumanMessage = useCallback(
+    (messageId: string, options?: TruncateOptions): string | null => {
+      if (options?.setBotThinking) {
+        setIsBotThinking(true);
+      }
+      const idx = messages.findIndex((message) => message.messageId === messageId);
+      const beforeMessages = idx >= 0 ? messages.slice(0, idx + (options?.inclusive ? 0 : 1)) : [];
+      if (options?.updatedText && !options?.inclusive) {
+        beforeMessages[beforeMessages.length - 1].payload = options.updatedText;
+      }
+      const afterMessages = messages.slice(idx + 1);
+      const afterIdx = afterMessages.findIndex(
+        (message) => message.actor === 'user' || message.actor === 'commenter'
+      );
+      const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
+      const nextUserMessageId = afterMessages.length > 0 ? afterMessages[0].messageId : null;
+      setMessages([...beforeMessages, ...remainingMessages]);
+      return nextUserMessageId;
+    },
+    [messages]
+  );
+
+  const spoofBotMessage = useCallback(
+    (msg: string) => {
       setIsBotThinking(true);
-    }
-    const idx = messages.findIndex((message) => message.messageId === messageId);
-    const beforeMessages = idx >= 0 ? messages.slice(0, idx + (options?.inclusive ? 0 : 1)) : [];
-    if (options?.updatedText && !options?.inclusive) {
-      beforeMessages[beforeMessages.length - 1].payload = options.updatedText;
-    }
-    const afterMessages = messages.slice(idx + 1);
-    const afterIdx = afterMessages.findIndex(
-      (message) => message.actor === 'user' || message.actor === 'commenter'
-    );
-    const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
-    const nextUserMessageId = afterMessages.length > 0 ? afterMessages[0].messageId : null;
-    setMessages([...beforeMessages, ...remainingMessages]);
-    return nextUserMessageId;
-  };
-
-  const spoofBotMessage = (msg: string) => {
-    setIsBotThinking(true);
-    setTimeout(() => {
-      setMessages([
-        ...messages,
-        {
-          messageId: '',
-          actor: 'bot',
-          payload: msg,
-          feedback: 'n/a',
-        },
-      ]);
-      setIsBotThinking(false);
-    }, 500);
-  };
+      setTimeout(() => {
+        setMessages([
+          ...messages,
+          {
+            messageId: '',
+            actor: 'bot',
+            payload: msg,
+            feedback: 'n/a',
+          },
+        ]);
+        setIsBotThinking(false);
+      }, 500);
+    },
+    [messages]
+  );
 
   return (
     <ChatContext.Provider
