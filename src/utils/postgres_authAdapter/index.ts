@@ -19,6 +19,7 @@ export function mapExpiresAt(account: any): any {
 }
 
 export default function PostgresAdapter(client: Pool): Adapter {
+
   return {
     async createVerificationToken(verificationToken: VerificationToken): Promise<VerificationToken> {
       const { identifier, expires, token } = verificationToken;

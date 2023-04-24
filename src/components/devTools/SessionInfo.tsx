@@ -6,9 +6,8 @@ import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
 export const SessionInfo = () => {
-  const { data, status } = useSession();
-  const {user} = data!;
-
+  const {  status } = useSession();
+  
   return ( 
     <div>
       {/* { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(user?.name || '')}</div> } */}

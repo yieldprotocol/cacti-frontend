@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-sudo -u postgres psql
-
 echo "Dropping DB adapter-postgres-test..."
-dropdb chatweb3-auth --if-exists
+dropdb chatdb --if-exists
 echo "Creating DB adapter-postgres-test..."
-createdb chatweb3-auth
+createdb chatdb
 
 echo "Creating tables in example-schema.sql..."
 psql -d chatweb3-auth -a -f ./example-schema.sql
