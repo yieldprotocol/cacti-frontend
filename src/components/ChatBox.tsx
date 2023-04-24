@@ -4,11 +4,13 @@ import MessageInput from '@/components/MessageInput';
 import { MessageList } from '@/components/MessageList';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
+import { Actor, InputType } from '@/types/chat';
 import { Spinner } from '@/utils';
+import InputTypeDropdown from './InputTypeDropdown';
 import { ResetButton } from './ResetButton';
 
 const ChatBox = () => {
-  const { messages } = useChatContext();
+  const { messages, interactor, setInteractor } = useChatContext();
   const router = useRouter();
   const { s: threadId } = router.query;
   const showMessageList = messages.length > 0 || threadId;
@@ -29,7 +31,13 @@ const ChatBox = () => {
         <div className="col-span-8">
           <MessageInput />
         </div>
-        <div className="col-span-2 px-8">
+        <div className="col-span-2 my-auto flex gap-4">
+          <InputTypeDropdown
+            activeType={interactor === Actor.USER ? InputType.CHAT : InputType.MARKDOWN}
+            action={() => {
+              setInteractor(interactor === Actor.USER ? Actor.COMMENTER : Actor.USER);
+            }}
+          />
           <ResetButton styleOption="iconAndText" />
         </div>
       </div>
