@@ -9,7 +9,7 @@ const InputTypeDropdown = ({
   activeType: InputType;
   action: () => void;
 }) => (
-  <Menu as="div" className="relative">
+  <Menu as="div" className="relative my-auto h-full">
     <Menu.Button className="rounded-sm bg-gray-800 p-1 align-middle text-xs uppercase text-gray-100 hover:bg-gray-500/25">
       {activeType}
     </Menu.Button>
