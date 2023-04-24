@@ -1,10 +1,12 @@
 import { ReactNode } from 'react';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import Avatar from '@/components/Avatar';
 import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessageTranslator } from '@/components/MessageTranslator';
 import { SystemMessage } from '@/components/SystemMessage';
 import { UserMessage } from '@/components/UserMessage';
 import { Message, useChatContext } from '@/contexts/ChatContext';
+import { ActionType, Actor } from '@/types/chat';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
@@ -23,22 +25,22 @@ export const MessageItem = ({ message }: { message: Message }) => {
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
 
   const submitEdit = (text: string) => {
-    sendAction({ actionType: 'edit', messageId, text }); // this also truncates message list on backend
+    sendAction({ actionType: ActionType.EDIT, messageId, text }); // this also truncates message list on backend
     const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
       updatedText: text,
-      setBotThinking: actor === 'user',
+      setBotThinking: actor === Actor.USER,
     });
     setInsertBeforeMessageId(beforeMessageId);
   };
 
   const submitRegenerate = () => {
-    sendAction({ actionType: 'regenerate', messageId }); // this also truncates message list on backend
+    sendAction({ actionType: ActionType.REGENERATE, messageId }); // this also truncates message list on backend
     const beforeMessageId = truncateUntilNextHumanMessage(messageId, { setBotThinking: true });
     setInsertBeforeMessageId(beforeMessageId);
   };
 
   const submitDelete = () => {
-    sendAction({ actionType: 'delete', messageId }); // this also truncates message list on backend
+    sendAction({ actionType: ActionType.DELETE, messageId }); // this also truncates message list on backend
     const beforeMessageId = truncateUntilNextHumanMessage(messageId, { inclusive: true });
     setInsertBeforeMessageId(beforeMessageId);
   };
@@ -46,10 +48,10 @@ export const MessageItem = ({ message }: { message: Message }) => {
   return (
     <MessageItemWrap actor={actor}>
       <Avatar actor={actor} />
-      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
-        {actor === 'bot' ? (
+      <div className={`flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+        {actor === Actor.BOT ? (
           <MessageTranslator message={payload} />
-        ) : actor === 'system' ? (
+        ) : actor === Actor.SYSTEM ? (
           <SystemMessage message={payload} />
         ) : (
           <UserMessage
@@ -63,7 +65,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
           />
         )}
       </div>
-      {actor === 'bot' && <FeedbackButton message={message} />}
+      {actor === Actor.BOT && <FeedbackButton message={message} />}
     </MessageItemWrap>
   );
 };
