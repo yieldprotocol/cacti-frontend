@@ -1,88 +1,185 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
-import { useChatContext } from '@/contexts/ChatContext';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
+import InputTypeDropdown from '@/components/InputTypeDropdown';
+import { Message, useChatContext } from '@/contexts/ChatContext';
+import { ActionType, Actor, InputType } from '@/types/chat';
 
-export const MessageInput = ({}) => {
-  const [messageInput, setMessageInput] = useState<string>('');
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+interface MessageInputProps {
+  message?: Message; // if no message, then this is the bottom component when message has not been established
+}
 
-  const { sendMessage, interactor, setInteractor } = useChatContext();
+const MessageInput = ({ message }: MessageInputProps) => {
+  const {
+    interactor,
+    sendAction,
+    truncateUntilNextHumanMessage,
+    setInsertBeforeMessageId,
+    setInteractor,
+    sendMessage,
+  } = useChatContext();
+  const actor = message?.actor || interactor;
+  const messageId = message?.messageId;
 
-  const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'I') {
-      e.preventDefault();
-      focusInput();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const initInput = message?.payload || '';
+  const [input, setInput] = useState(initInput);
+  const inputType = actor === Actor.USER ? InputType.CHAT : InputType.MARKDOWN;
+  const [hovered, setHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleSubmit = useCallback(() => {
+    if (input.length > 0) {
+      sendMessage(input);
+      setInput(initInput);
     }
-  }, []);
+  }, [initInput, input, sendMessage]);
 
-  const focusInput = () => {
-    inputRef.current?.focus();
-  };
-
-  useEffect(() => {
-    focusInput();
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress]);
-
-  const handleSendMessage = (e: FormEvent) => {
-    e.preventDefault();
-    if (messageInput.length > 0) {
-      sendMessage(messageInput);
-      setMessageInput('');
-    }
-  };
-  const toggleInteractionMode = (e: FormEvent) => {
-    e.preventDefault();
-    setInteractor(interactor === 'user' ? 'commenter' : 'user');
-  };
-
-  const sendButtonIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-5 w-5 focus:bg-gray-800"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-      />
-    </svg>
+  const submitEdit = useCallback(
+    (text: string) => {
+      if (!messageId) return;
+      sendAction({ actionType: ActionType.EDIT, messageId, text }); // this also truncates message list on backend
+      const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
+        updatedText: text,
+        setBotThinking: actor === Actor.USER,
+      });
+      setInsertBeforeMessageId(beforeMessageId);
+    },
+    [actor, messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]
   );
+
+  const submitRegenerate = useCallback(() => {
+    if (!messageId) return;
+
+    sendAction({ actionType: ActionType.REGENERATE, messageId }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { setBotThinking: true });
+    setInsertBeforeMessageId(beforeMessageId);
+  }, [messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]);
+
+  const submitDelete = useCallback(() => {
+    if (!messageId) return;
+
+    sendAction({ actionType: ActionType.DELETE, messageId }); // this also truncates message list on backend
+    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { inclusive: true });
+    setInsertBeforeMessageId(beforeMessageId);
+  }, [messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]);
+
+  const focusInput = useCallback(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  // focus input on mount if bottom component
+  useEffect(() => {
+    !message && focusInput();
+  }, [focusInput, message]);
+
+  // handle keyboard shortcuts from window
+  useEffect(() => {
+    const handleKeys = (e: globalThis.KeyboardEvent) => {
+      const { key } = e;
+      if (key === 'Escape') {
+        setInput(initInput);
+      }
+
+      if (key === 'Enter') {
+        handleSubmit();
+        inputRef.current?.blur();
+      }
+
+      if (key === 'I' && !message) {
+        e.preventDefault();
+        focusInput();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeys);
+
+    return () => window.removeEventListener('keydown', handleKeys);
+  }, [focusInput, handleSubmit, initInput, message]);
 
   return (
-    <form onSubmit={handleSendMessage}>
-      <div className="flex">
+    <div
+      className={`
+        flex justify-between rounded-md bg-gray-700
+      text-gray-50 caret-white  hover:bg-gray-700/20 hover:ring-1 
+      hover:ring-gray-500/80 focus:text-gray-50 focus:ring-gray-500/80
+       ${isEditing || !message ? 'ring-1 ring-gray-400/80' : ''}
+   `}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {!isEditing && inputType === InputType.MARKDOWN && <ReactMarkdown>{input}</ReactMarkdown>}
+
+      {actor === Actor.COMMENTER && (
         <textarea
-          onChange={(e) => setMessageInput(e.target.value)}
-          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
-          placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
-          tabIndex={0}
-          value={messageInput}
-          ref={inputRef}
+          ref={textAreaRef}
+          className={`flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`}
+          value={input}
+          placeholder={!message ? 'Enter your comment...' : undefined}
+          onChange={(e) => {
+            setIsEditing(true);
+            setInput(e.target.value);
+          }}
+          onBlur={() => {
+            setInput(input);
+            setIsEditing(false);
+          }}
+          onFocus={() => setIsEditing(true)}
         />
-        <button
-          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
-          onClick={handleSendMessage}
-        >
-          <div className="flex justify-center">{sendButtonIcon}</div>
-        </button>
-        <button
-          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out"
-          onClick={toggleInteractionMode}
-        >
-          {interactor === 'user' ? <ChatBubbleLeftEllipsisIcon /> : <ClipboardDocumentListIcon />}
-        </button>
-      </div>
-    </form>
+      )}
+
+      {actor === Actor.USER && (
+        <>
+          <input
+            ref={inputRef}
+            className={`flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`}
+            value={input}
+            placeholder={!message ? 'Enter your message...' : undefined}
+            onChange={(e) => {
+              setIsEditing(true);
+              setInput(e.target.value);
+            }}
+            onBlur={() => {
+              setInput(initInput);
+              setIsEditing(false);
+            }}
+            onFocus={() => setIsEditing(true)}
+          />
+
+          {isEditing && input !== '' && (
+            <div className="m-auto mr-2 flex">
+              <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
+                enter
+              </span>
+            </div>
+          )}
+        </>
+      )}
+
+      {hovered && !isEditing && message && (
+        <>
+          {actor === Actor.USER && (
+            <InputTypeDropdown
+              activeType={inputType}
+              action={() => {
+                setInteractor(actor === Actor.USER ? Actor.COMMENTER : Actor.USER);
+              }}
+            />
+          )}
+          {actor === Actor.USER && (
+            <button className="flex p-2" onClick={submitRegenerate}>
+              <ArrowPathIcon className="h-4 w-4" />
+            </button>
+          )}
+          <button className="flex p-2" onClick={submitDelete}>
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </>
+      )}
+    </div>
   );
 };
+
+export default MessageInput;

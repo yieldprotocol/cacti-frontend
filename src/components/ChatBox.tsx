@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { MessageInput } from '@/components/MessageInput';
+import MessageInput from '@/components/MessageInput';
 import { MessageList } from '@/components/MessageList';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
