@@ -3,9 +3,21 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
 
+import { Pool } from "pg";
+import PostgresAdapter from "@/utils/postgres_authAdapter";
+
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default async function auth(req: any, res: any) {
+
+  const client = new Pool({
+    user: 'chatdb',
+    host: 'localhost',
+    database: 'chatdb',
+    password: 'secretpassword',
+    port: 5432,
+  });
+
   const providers = [
     CredentialsProvider({
       name: "Ethereum",
@@ -58,9 +70,10 @@ export default async function auth(req: any, res: any) {
     // adapters:{
     //   MongoDb: MongoDbAdapter
     // },
+    adapter: PostgresAdapter(client),
     providers,
     session: {
-      strategy: "jwt",
+      strategy: "database",
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
