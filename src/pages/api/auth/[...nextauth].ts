@@ -16,6 +16,9 @@ export default async function auth(req: any, res: any) {
   });
 
   const providers = [
+
+    // OAuth authentication providers...
+
     CredentialsProvider({
       name: "Ethereum",
       credentials: {
@@ -50,6 +53,8 @@ export default async function auth(req: any, res: any) {
         }
       },
     }),
+
+
   ]
 
   const isDefaultSigninPage =
@@ -61,19 +66,27 @@ export default async function auth(req: any, res: any) {
   }
 
   return await NextAuth(req, res, {
-    adapter: PostgresAdapter(client),
+    // adapter: PostgresAdapter(client),
     providers,
     session: {
       strategy: "jwt",
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+      // async jwt({token, profile} : any) {
+      //   profile && console.log('profile', profile )
+      //   console.log('token', token )
+      //   return token;
+      // },
+
       async session({ session, token }: { session: any; token: any }) { 
         session.address = token.sub
         session.user.name = token.sub
-        session.accessToken = token.accessToken
+        session.jti = token.jti
+        console.log('session', session)
         return session 
       },
+
     },
   })
 }
