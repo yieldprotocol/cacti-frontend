@@ -7,7 +7,6 @@ const ChatBoxDynamic = dynamic(() => import('@/components/ChatBox'), {
   ssr: false,
 });
 
-
 export const Home = () => {
   return (
     <>
