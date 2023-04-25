@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/utils/backend';
 import NextAuth, { Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
@@ -31,10 +32,10 @@ export default async function auth(req: any, res: any) {
         try {
           // const siwe = new SiweMessage(JSON.parse(credentials?.message || "{}"))
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!);
-          const BACKEND_ADDR = '';
+          const backendUrl = getBackendUrl();
 
           // await for a random nonce from the backend
-          const nonce_res = await fetch(`${BACKEND_ADDR!}/nonce`, {
+          const nonce_res = await fetch(`${backendUrl}/nonce`, {
             credentials: 'include',
           });
 
@@ -52,7 +53,7 @@ export default async function auth(req: any, res: any) {
           console.log(message.prepareMessage());
 
           // send that prepared message back to the backend for validation
-          const verify_res = await fetch(`${BACKEND_ADDR!}/verify`, {
+          const verify_res = await fetch(`${backendUrl}/verify`, {
             credentials: 'include',
           });
           console.log(verify_res);
