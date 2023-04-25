@@ -42,17 +42,17 @@ export const MultiStepContainer = ({
   errorMsg,
   description,
 }: MultiStepContainerProps) => {
-  const { sendMultiStepClientMessage, setMultiStepInProgress } = useChatContext();
+  const { sendMultiStepClientMessage, setIsMultiStepInProgress } = useChatContext();
 
   const sendStepResult = (
     stepStatus: string,
     stepStatusMessage: string,
     userActionData: string
   ) => {
-    if (stepStatus === 'success') {
-      setMultiStepInProgress(true);
+    if (stepStatus === 'success' && stepNumber < totalSteps) {
+      setIsMultiStepInProgress(true);
     } else {
-      setMultiStepInProgress(false);
+      setIsMultiStepInProgress(false);
     }
     const payload = {
       workflow: {
@@ -71,12 +71,21 @@ export const MultiStepContainer = ({
     sendMultiStepClientMessage(payload);
   };
 
-  if (stepNumber === totalSteps) {
-    setMultiStepInProgress(false);
-  }
+  useEffect(() => {
+    if (stepNumber === totalSteps) {
+      setIsMultiStepInProgress(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepNumber, totalSteps]);
+
+  useEffect(() => {
+    if (workflowStatus === 'error') {
+      setIsMultiStepInProgress(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workflowStatus]);
 
   if (workflowStatus === 'error') {
-    setMultiStepInProgress(false);
     return <WidgetError>{errorMsg}</WidgetError>;
   }
 

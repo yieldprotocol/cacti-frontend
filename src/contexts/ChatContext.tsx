@@ -17,14 +17,14 @@ export type ChatContextType = {
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
   sendMultiStepClientMessage: (action: JsonValue) => void;
-  setMultiStepInProgress: (value: boolean) => void;
+  setIsMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
   truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
-  multiStepInProgress: boolean;
+  isMultiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
 };
@@ -34,7 +34,7 @@ const initialContext = {
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
   sendMultiStepClientMessage: (action: JsonValue) => {},
-  setMultiStepInProgress: (value: boolean) => {},
+  setIsMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
   truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => {
     return null;
@@ -43,7 +43,7 @@ const initialContext = {
   isBotThinking: false,
   insertBeforeMessageId: null,
   setInsertBeforeMessageId: (arg0: string | null) => {},
-  multiStepInProgress: false,
+  isMultiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
 };
@@ -53,8 +53,8 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
-  const [multiStepInProgress, setMultiStepInProgress] = useState<boolean>(
-    initialContext.multiStepInProgress
+  const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
+    initialContext.isMultiStepInProgress
   );
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
@@ -247,8 +247,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         isBotThinking,
         insertBeforeMessageId,
         setInsertBeforeMessageId,
-        multiStepInProgress,
-        setMultiStepInProgress,
+        isMultiStepInProgress,
+        setIsMultiStepInProgress,
         truncateUntilNextUserMessage,
         spoofBotMessage,
         showDebugMessages,

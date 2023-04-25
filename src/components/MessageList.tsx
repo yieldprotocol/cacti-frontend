@@ -4,8 +4,13 @@ import { useChatContext } from '@/contexts/ChatContext';
 import Avatar from './Avatar';
 
 export const MessageList = () => {
-  const { messages, isBotThinking, showDebugMessages, insertBeforeMessageId, multiStepInProgress } =
-    useChatContext();
+  const {
+    messages,
+    isBotThinking,
+    showDebugMessages,
+    insertBeforeMessageId,
+    isMultiStepInProgress,
+  } = useChatContext();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,6 +25,16 @@ export const MessageList = () => {
       </div>
     </MessageItemWrap>
   );
+
+  const multiStepInProgress = isMultiStepInProgress && (
+    <MessageItemWrap actor={'Bot'}>
+      <Avatar actor={'Bot'} />
+      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+        <span className="after:animate-ellipse">Multi-step workflow in progress</span>
+      </div>
+    </MessageItemWrap>
+  );
+
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
   return (
@@ -33,6 +48,7 @@ export const MessageList = () => {
             {message.messageId == insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
+                {multiStepInProgress}
                 {botThinking}
               </>
             )}
@@ -40,16 +56,9 @@ export const MessageList = () => {
           </React.Fragment>
         );
       })}
-      {multiStepInProgress && (
-        <MessageItemWrap actor={'Bot'}>
-          <Avatar actor={'Bot'} />
-          <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
-            <span className="after:animate-ellipse">Multi-step workflow in progress...</span>
-          </div>
-        </MessageItemWrap>
-      )}
       {!insertBeforeMessageId && (
         <>
+          {multiStepInProgress}
           {botThinking}
           {bottomRefDiv}
         </>
