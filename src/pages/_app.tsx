@@ -7,6 +7,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
 import { ModalContextProvider } from '@/contexts/ModalContext';
 import '@/styles/globals.css';
+import { getToken } from 'next-auth/jwt';
+
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
