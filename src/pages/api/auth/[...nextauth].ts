@@ -22,49 +22,48 @@ export default async function auth(req: any, res: any) {
           type: 'text',
           placeholder: '0x0',
         },
-        // address: {
-        //   label: 'Address',
-        //   type: 'text',
-        //   placeholder: '0x0',
-        // },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         try {
-          // const siwe = new SiweMessage(JSON.parse(credentials?.message || "{}"))
+
+          const creds_parsed = JSON.parse(credentials!.message!);          
+          console.log('creds', creds_parsed)
+
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!);
           const backendUrl = getBackendUrl();
 
-          // await for a random nonce from the backend
-          const nonce_res = await fetch(`${backendUrl}/nonce`, {
-            credentials: 'include',
-          });
+          /* wait for a random nonce from the backend */
+          // const nonce_res = await fetch(`${backendUrl}/nonce`, {
+          //   credentials: 'include',
+          // });
 
-          // use the nonce to create a SIWE message
-          const message = new SiweMessage({
-            domain: nextAuthUrl.host,
-            address: '', // '' credentials?.address,
-            statement: credentials?.message,
-            uri: origin,
-            version: '1',
-            chainId: 1,
-            nonce: await nonce_res.text(),
-          });
+          /* Use the creds to create a SIWE message */
+          const message = new SiweMessage( creds_parsed )
+          // const message = new SiweMessage({
+          //   domain: nextAuthUrl.host,
+          //   address:  creds_parsed.address, 
+          //   statement: creds_parsed.statement,
+          //   uri: origin,
+          //   version: '1',
+          //   chainId: 1,
+          //   nonce: await nonce_res.text(),
+          // });
+
           const preparedMessage = message.prepareMessage();
           console.log(message.prepareMessage());
 
-          // send that prepared message back to the backend for validation
-          const verify_res = await fetch(`${backendUrl}/verify`, {
-            credentials: 'include',
-          });
-          console.log(verify_res);
+          /* Send that prepared message back to the backend for validation */
+
+          // const verify_res = await fetch(`${backendUrl}/verify`, {
+          //   credentials: 'include',
+          // });
+          // console.log(verify_res);
 
           if (true) {
             return {
-              id: '', //credentials?.address,
+              id: creds_parsed.address, //credentials?.address,
             };
           }
-
-          // return null;
         } catch (e) {
           return null;
         }
