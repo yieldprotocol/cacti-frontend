@@ -70,7 +70,7 @@ export const ChangeForkId = () => {
 
   return (
     <div>
-      <div className="border space-y-2">
+      <div className="space-y-2 border">
         <div className="flex gap-1 p-2 text-xs">
           <input
             value={newUrl}

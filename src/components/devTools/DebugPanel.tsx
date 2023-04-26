@@ -46,9 +46,11 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
       {debugMessage(CUSTOM_PROMPT, customMessage)}
       <div />
       <div />
-      {spoofPrompts.map((spoof) => {
-        return debugMessage(spoof[0], spoof[1]);
-      }).reverse()}
+      {spoofPrompts
+        .map((spoof) => {
+          return debugMessage(spoof[0], spoof[1]);
+        })
+        .reverse()}
     </div>
   );
 };
