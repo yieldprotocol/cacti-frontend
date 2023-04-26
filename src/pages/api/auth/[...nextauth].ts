@@ -1,12 +1,14 @@
+import { useChatContext } from '@/contexts/ChatContext';
 import { getBackendUrl } from '@/utils/backend';
-import NextAuth, { Session } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { getCsrfToken } from 'next-auth/react';
+import useWebSocket from 'react-use-websocket';
 import { SiweMessage } from 'siwe';
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default async function auth(req: any, res: any) {
+
   const providers = [
 
     CredentialsProvider({
