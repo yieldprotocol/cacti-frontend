@@ -4,8 +4,8 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
 import { useAccount, useBalance, useProvider } from 'wagmi';
-import useShortcutKey from './useShortcutKey';
 import SettingsContext from '@/contexts/SettingsContext';
+import useShortcutKey from './useShortcutKey';
 
 type ForkTools = {
   forkTimestamp: number | undefined;
@@ -20,7 +20,7 @@ const useForkTools = (id?: string): ForkTools => {
   /* Get the useForkSettings the settings context */
   const { settings } = useContext(SettingsContext);
   const { isForkedEnv, forkId } = settings;
-  
+
   const forkUrl = id
     ? `https://rpc.tenderly.co/fork/${id}`
     : `https://rpc.tenderly.co/fork/${forkId}`;

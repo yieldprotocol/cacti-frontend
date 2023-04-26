@@ -1,16 +1,15 @@
+import { useContext } from 'react';
 import { Switch } from '@headlessui/react';
 import { SignalIcon } from '@heroicons/react/20/solid';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
-import { useContext } from 'react';
 
 const ForkButton = () => {
-
-  const {settings , changeSetting} = useContext(SettingsContext);
+  const { settings, changeSetting } = useContext(SettingsContext);
   const { isForkedEnv } = settings;
 
   const setIsFork = (val: boolean) => {
-    changeSetting( Setting.FORKED_ENV , val);
-  }
+    changeSetting(Setting.FORKED_ENV, val);
+  };
 
   return (
     <button

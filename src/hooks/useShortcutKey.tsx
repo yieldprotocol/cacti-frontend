@@ -1,10 +1,9 @@
-import { useEffect} from 'react';
+import { useEffect } from 'react';
 
 const useShortcutKey = (key: string, action: () => void, msg?: string) => {
-
   const handleKeyPress = (event: any) => {
     if (event.altKey === true) {
-      event.key === `${key}` &&  action()
+      event.key === `${key}` && action();
     }
   };
 
@@ -16,7 +15,6 @@ const useShortcutKey = (key: string, action: () => void, msg?: string) => {
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
-
 };
 
 export default useShortcutKey;
