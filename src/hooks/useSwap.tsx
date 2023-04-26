@@ -30,7 +30,9 @@ interface ExactInputSingleParams {
 
 const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNumber) => {
   /* Get the useForkSettings the settings context */
-  const { settings: {isForkedEnv} } = useContext(SettingsContext);
+  const {
+    settings: { isForkedEnv },
+  } = useContext(SettingsContext);
 
   const chainId = useChainId();
   const { address: account } = useAccount();

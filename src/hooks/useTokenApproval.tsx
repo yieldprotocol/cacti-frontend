@@ -9,12 +9,12 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import SettingsContext from '@/contexts/SettingsContext';
 import useBalance from '@/hooks/useBalance';
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import SettingsContext from '@/contexts/SettingsContext';
 
 const useTokenApproval = (
   address: `0x${string}`,
@@ -36,11 +36,10 @@ const useTokenApproval = (
     functionName: 'allowance',
     args: [account!, spenderAddress],
   });
-    /* Get the useForkSettings the settings context */
-    const {
-      settings: { isForkedEnv },
-    } = useContext(SettingsContext);
-
+  /* Get the useForkSettings the settings context */
+  const {
+    settings: { isForkedEnv },
+  } = useContext(SettingsContext);
 
   // for using in fork env
   const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
