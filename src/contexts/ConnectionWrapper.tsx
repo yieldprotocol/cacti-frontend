@@ -1,14 +1,13 @@
 import { ReactNode } from 'react';
 import { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
-import {
-  GetSiweMessageOptions,
-  RainbowKitSiweNextAuthProvider,
-} from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { SessionProvider } from 'next-auth/react';
+
+import { SessionProvider, getCsrfToken } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
+import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import { generateNonce } from 'siwe';
 
 const ConnectionWrapper = ({children, pageProps }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -59,10 +58,16 @@ const ConnectionWrapper = ({children, pageProps }: any) => {
     statement: 'Sign me in to wc3 app',
   });
 
+  const getCustomNonce = async () => {
+    /* add in any async call here to add a custom nonce eg. server call */
+    const nonce = generateNonce() ; // add in the call to the backend server here 
+    return nonce;
+  }
+
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
-        <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
+        <RainbowKitSiweNextAuthProvider getCustomNonce={getCustomNonce} getSiweMessageOptions={getSiweMessageOptions}>
           <RainbowKitProvider
             chains={chains}
             theme={lightTheme({ accentColor: '#1f2937' })}
