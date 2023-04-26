@@ -41,10 +41,10 @@ export const MessageList = () => {
     <div className="h-full">
       {messages.map((message, i) => {
         if (!showDebugMessages && message.actor == 'system') {
-          return <React.Fragment key={i} />;
+          return <React.Fragment key={message.messageId} />;
         }
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={message.messageId}>
             {message.messageId == insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
@@ -52,7 +52,7 @@ export const MessageList = () => {
                 {botThinking}
               </>
             )}
-            <MessageItem key={`m${i}`} message={message} />
+            <MessageItem message={message} />
           </React.Fragment>
         );
       })}

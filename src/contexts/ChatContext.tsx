@@ -12,6 +12,12 @@ export type Message = {
   feedback: string;
 };
 
+export type TruncateOptions = {
+  updatedText?: string;
+  inclusive?: boolean;
+  setBotThinking?: boolean;
+};
+
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
@@ -19,7 +25,7 @@ export type ChatContextType = {
   sendMultiStepClientMessage: (action: JsonValue) => void;
   setIsMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
-  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => string | null;
+  truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   insertBeforeMessageId: string | null;
@@ -27,6 +33,8 @@ export type ChatContextType = {
   isMultiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
+  interactor: string;
+  setInteractor: (arg0: string) => void;
 };
 
 const initialContext = {
@@ -36,7 +44,7 @@ const initialContext = {
   sendMultiStepClientMessage: (action: JsonValue) => {},
   setIsMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
-  truncateUntilNextUserMessage: (messageId: string, updatedText?: string) => {
+  truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => {
     return null;
   },
   spoofBotMessage: (msg: string) => {},
@@ -46,6 +54,8 @@ const initialContext = {
   isMultiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
+  interactor: 'user',
+  setInteractor: (arg0: string) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -59,6 +69,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
+  const [interactor, setInteractor] = useState<string>(initialContext.interactor);
   const { setModal } = useModalContext();
 
   const backendUrl = getBackendUrl();
@@ -173,13 +184,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   }, [lastMessage]);
 
   const sendMessage = (msg: string) => {
-    setIsBotThinking(true);
-    wsSendMessage({ actor: 'user', type: 'text', payload: msg });
+    setInsertBeforeMessageId(null);
+    if (interactor === 'user') {
+      setIsBotThinking(true);
+    }
+    wsSendMessage({ actor: interactor, type: 'text', payload: msg });
     setMessages([
       ...messages,
       {
         messageId: '',
-        actor: 'user',
+        actor: interactor,
         payload: msg,
         feedback: 'n/a',
       },
@@ -205,17 +219,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
-  const truncateUntilNextUserMessage = (messageId: string, updatedText?: string): string | null => {
-    setIsBotThinking(true);
+  const truncateUntilNextHumanMessage = (
+    messageId: string,
+    options?: TruncateOptions
+  ): string | null => {
+    if (options?.setBotThinking) {
+      setIsBotThinking(true);
+    }
     const idx = messages.findIndex((message) => message.messageId === messageId);
-    const beforeMessages = idx >= 0 ? messages.slice(0, idx + 1) : [];
-    if (updatedText) {
-      beforeMessages[beforeMessages.length - 1].payload = updatedText;
+    const beforeMessages = idx >= 0 ? messages.slice(0, idx + (options?.inclusive ? 0 : 1)) : [];
+    if (options?.updatedText && !options?.inclusive) {
+      beforeMessages[beforeMessages.length - 1].payload = options.updatedText;
     }
     const afterMessages = messages.slice(idx + 1);
-    const afterIdx = afterMessages.findIndex((message) => message.actor === 'user');
-    const nextUserMessageId = afterIdx >= 0 ? afterMessages[afterIdx].messageId : null;
+    const afterIdx = afterMessages.findIndex(
+      (message) => message.actor === 'user' || message.actor === 'commenter'
+    );
     const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
+    const nextUserMessageId = afterMessages.length > 0 ? afterMessages[0].messageId : null;
     setMessages([...beforeMessages, ...remainingMessages]);
     return nextUserMessageId;
   };
@@ -249,10 +270,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setInsertBeforeMessageId,
         isMultiStepInProgress,
         setIsMultiStepInProgress,
-        truncateUntilNextUserMessage,
+        truncateUntilNextHumanMessage,
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,
+        interactor,
+        setInteractor,
       }}
     >
       {children}
