@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, Contract, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
@@ -11,8 +11,8 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
+import SettingsContext from '@/contexts/SettingsContext';
 import useChainId from '@/hooks/useChainId';
-import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
@@ -29,9 +29,11 @@ interface ExactInputSingleParams {
 }
 
 const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNumber) => {
+  /* Get the useForkSettings the settings context */
+  const { settings: {isForkedEnv} } = useContext(SettingsContext);
+
   const chainId = useChainId();
   const { address: account } = useAccount();
-  const { isFork } = useForkTools();
   const { data: tokenIn, isETH: tokenInisETH } = useToken(tokenInSymbol);
   const { data: tokenInForPrice } = useToken(tokenInisETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOut, isETH: tokenOutisETH } = useToken(tokenOutSymbol);
@@ -91,7 +93,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
       value,
     },
     staleTime: Infinity,
-    enabled: !isFork,
+    enabled: !isForkedEnv,
   });
 
   const { writeAsync: swapWriteAsync } = useContractWrite(swapConfig);
@@ -99,7 +101,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   // handles both fork and non-fork envs
   const swap = async () => {
     setTxPending(true);
-    if (isFork) {
+    if (isForkedEnv) {
       const tx = (await contract?.connect(signer!).exactInputSingle(params, {
         value,
       })) as ContractTransaction;
@@ -123,7 +125,7 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
     swap,
     data,
     txSuccess: isSuccess,
-    prepareError: !isFork && prepareError,
+    prepareError: !isForkedEnv && prepareError,
     txError: isError,
     txPending: txPending || isLoading,
     quoteIsLoading,

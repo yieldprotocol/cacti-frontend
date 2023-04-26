@@ -8,7 +8,7 @@ import useForkTools from '@/hooks/useForkTools';
 
 const SettingsDropdown = () => {
   const {
-    settings: { forkedEnv },
+    settings: { isForkedEnv },
     changeSetting,
   } = useContext(SettingsContext);
 
@@ -32,21 +32,21 @@ const SettingsDropdown = () => {
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 text-white hover:bg-gray-700"
-              onClick={() => changeSetting(Setting.FORKED_ENV, !forkedEnv)}
+              onClick={() => changeSetting(Setting.FORKED_ENV, !isForkedEnv)}
             >
               <SignalIcon className="ml-1 h-5 w-5 text-white" />
               <div className="flex w-full justify-between">
                 <div>Use Fork</div>
                 <Switch
-                  checked={forkedEnv}
-                  onChange={() => changeSetting(Setting.FORKED_ENV, !forkedEnv)}
+                  checked={isForkedEnv}
+                  onChange={() => changeSetting(Setting.FORKED_ENV, !isForkedEnv)}
                   className={`${
-                    forkedEnv ? 'bg-green-600' : 'bg-gray-600'
+                    isForkedEnv ? 'bg-green-600' : 'bg-gray-600'
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span
                     className={`${
-                      forkedEnv ? 'translate-x-6' : 'translate-x-1'
+                      isForkedEnv ? 'translate-x-6' : 'translate-x-1'
                     } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                   />
                 </Switch>

@@ -18,7 +18,7 @@ type ForkTools = {
 const useForkTools = (id?: string): ForkTools => {
   /* Get the useForkSettings the settings context */
   const { settings } = useContext(SettingsContext);
-  const { forkedEnv, forkId } = settings;
+  const { isForkedEnv, forkId } = settings;
 
   const forkUrl = id
     ? `https://rpc.tenderly.co/fork/${id}`
@@ -32,7 +32,7 @@ const useForkTools = (id?: string): ForkTools => {
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
-  const forkSigner = forkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
+  const forkSigner = isForkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -50,7 +50,7 @@ const useForkTools = (id?: string): ForkTools => {
   }, [provider]);
 
   const getForkTimestamp = useCallback(async () => {
-    if (!forkedEnv || !provider) return;
+    if (!isForkedEnv || !provider) return;
     try {
       const { timestamp } = await provider.getBlock('latest');
       console.log('Updated Forked Blockchain time: ', new Date(timestamp * 1000));
@@ -59,10 +59,10 @@ const useForkTools = (id?: string): ForkTools => {
       console.log('Error getting latest timestamp', e);
       return undefined;
     }
-  }, [provider, forkedEnv]);
+  }, [provider, isForkedEnv]);
 
   const getForkStartBlock = useCallback(async () => {
-    if (!forkedEnv || !provider) return 'earliest';
+    if (!isForkedEnv || !provider) return 'earliest';
     try {
       const num = await forkProvider?.send('tenderly_getForkBlockNumber', []);
       const sBlock = +num.toString();
@@ -72,10 +72,10 @@ const useForkTools = (id?: string): ForkTools => {
       console.log('Could not get tenderly start block: ', e);
       return 'earliest';
     }
-  }, [forkedEnv, provider, forkProvider]);
+  }, [isForkedEnv, provider, forkProvider]);
 
   const fillEther = useCallback(async () => {
-    if (!provider || !forkedEnv) return;
+    if (!provider || !isForkedEnv) return;
 
     try {
       const transactionParameters = [
@@ -88,15 +88,15 @@ const useForkTools = (id?: string): ForkTools => {
     } catch (e) {
       console.log('Could not fill eth on Tenderly fork');
     }
-  }, [provider, forkedEnv, account, forkProvider, refetch]);
+  }, [provider, isForkedEnv, account, forkProvider, refetch]);
 
   /* keep track of forked blockchain time/ startblock */
   const { data: forkTimestamp } = useSWRImmutable(
-    forkedEnv ? ['forkTimestamp', forkUrl] : null,
+    isForkedEnv ? ['forkTimestamp', forkUrl] : null,
     getForkTimestamp
   ); // don't run if not using forked env
   const { data: forkStartBlock } = useSWRImmutable(
-    forkedEnv ? ['forkStartBlock', forkUrl] : null,
+    isForkedEnv ? ['forkStartBlock', forkUrl] : null,
     getForkStartBlock
   ); // don't run if not using forked env
 

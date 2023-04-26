@@ -10,7 +10,7 @@ export enum Setting {
 
   FORCE_TRANSACTIONS = 'forceTransactions',
 
-  FORKED_ENV = 'forkedEnv',
+  FORKED_ENV = 'isForkedEnv',
   FORK_ENV_URL = 'forkEnvUrl',
 }
 
@@ -32,7 +32,7 @@ export interface ISettings {
   forceTransactions: boolean;
   diagnostics: boolean;
 
-  forkedEnv: boolean;
+  isForkedEnv: boolean;
   forkEnvUrl: string;
   forkId: string;
 }
@@ -64,7 +64,7 @@ const initState: ISettings = {
   diagnostics: false,
 
   /* use a forked network */
-  forkedEnv: false,
+  isForkedEnv: false,
   forkId: process.env.NEXT_PUBLIC_TENDERLY_FORK_ID || '',
   forkEnvUrl: `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`,
 };
