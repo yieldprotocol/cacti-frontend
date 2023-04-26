@@ -31,7 +31,7 @@ const SettingsDropdown = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-4 w-56 origin-top-right rounded-md bg-gray-800 p-2 shadow-md focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 mt-4 origin-top-right rounded-md bg-gray-800 p-2 shadow-md focus:outline-none w-80">
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 text-white hover:bg-gray-700"

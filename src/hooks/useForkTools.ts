@@ -18,7 +18,7 @@ type ForkTools = {
 
 const useForkTools = (id?: string): ForkTools => {
   /* Get the useForkSettings the settings context */
-  const { settings,  } = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
   const { isForkedEnv, forkId } = settings;
   
   const forkUrl = id
