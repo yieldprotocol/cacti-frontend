@@ -23,47 +23,40 @@ export default async function auth(req: any, res: any) {
           placeholder: '0x0',
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         try {
 
-          const creds_parsed = JSON.parse(credentials!.message!);          
-          console.log('creds', creds_parsed)
+          const parsedCredentials = JSON.parse(credentials?.message || "{}");          
+          
+          /* DEBUGGING Log the creds + sig */
+          console.log('creds', parsedCredentials)
+          console.log('signature: ', credentials?.signature )
 
-          const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!);
+          const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!); // depreciated
           const backendUrl = getBackendUrl();
 
-          /* wait for a random nonce from the backend */
-          // const nonce_res = await fetch(`${backendUrl}/nonce`, {
-          //   credentials: 'include',
-          // });
-
           /* Use the creds to create a SIWE message */
-          const message = new SiweMessage( creds_parsed )
-          // const message = new SiweMessage({
-          //   domain: nextAuthUrl.host,
-          //   address:  creds_parsed.address, 
-          //   statement: creds_parsed.statement,
-          //   uri: origin,
-          //   version: '1',
-          //   chainId: 1,
-          //   nonce: await nonce_res.text(),
-          // });
+          const message = new SiweMessage( parsedCredentials );
 
+         /* Prepare the message for validation */
           const preparedMessage = message.prepareMessage();
-          console.log(message.prepareMessage());
-
-          /* Send that prepared message back to the backend for validation */
-
+          
+          /* Send prepared message back to the backend for validation */ 
+          const verified = await message.verify({
+            signature: credentials?.signature || ""
+          }); 
           // const verify_res = await fetch(`${backendUrl}/verify`, {
           //   credentials: 'include',
           // });
-          // console.log(verify_res);
 
-          if (true) {
+          if (verified.success) {
+            console.log('Access verified:' , parsedCredentials.address )
             return {
-              id: creds_parsed.address, //credentials?.address,
+              id: parsedCredentials.address, //credentials?.address,
             };
           }
+
+          return null;
         } catch (e) {
           return null;
         }
