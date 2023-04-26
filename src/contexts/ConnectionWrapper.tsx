@@ -60,7 +60,7 @@ const ConnectionWrapper = ({children, pageProps }: any) => {
 
   const getCustomNonce = async () => {
     /* add in any async call here to add a custom nonce eg. server call */
-    const nonce = generateNonce() ; // add in the call to the backend server here 
+    const nonce = await generateNonce() ; //TODO add in the call to the backend server here 
     return nonce;
   }
 
