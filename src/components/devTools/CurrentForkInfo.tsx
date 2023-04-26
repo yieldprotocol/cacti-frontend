@@ -6,12 +6,12 @@ import {
 } from '@heroicons/react/24/outline';
 import copy from 'copy-to-clipboard';
 import { Button } from '@/components/Button';
-
 import SettingsContext from '@/contexts/SettingsContext';
 
 export const CurrentForkInfo = () => {
-  
-  const {settings: {forkEnvUrl}} = useContext(SettingsContext);
+  const {
+    settings: { forkEnvUrl },
+  } = useContext(SettingsContext);
   const [tenderlyUrl, setTenderlyUrl] = useState<string>(forkEnvUrl);
   const [copied, setCopied] = useState<boolean>(false);
 

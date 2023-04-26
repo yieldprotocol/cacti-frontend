@@ -7,7 +7,6 @@ import { useAccount, useBalance, useProvider } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 
 type ForkTools = {
-
   forkTimestamp: number | undefined;
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
@@ -17,12 +16,13 @@ type ForkTools = {
 };
 
 const useForkTools = (id?: string): ForkTools => {
-
   /* Get the useForkSettings the settings context */
-  const { settings }  = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
   const { forkedEnv, forkId } = settings;
 
-  const forkUrl = id ? `https://rpc.tenderly.co/fork/${id}` :  `https://rpc.tenderly.co/fork/${forkId}`;
+  const forkUrl = id
+    ? `https://rpc.tenderly.co/fork/${id}`
+    : `https://rpc.tenderly.co/fork/${forkId}`;
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
@@ -62,7 +62,7 @@ const useForkTools = (id?: string): ForkTools => {
   }, [provider, forkedEnv]);
 
   const getForkStartBlock = useCallback(async () => {
-    if (!forkedEnv|| !provider) return 'earliest';
+    if (!forkedEnv || !provider) return 'earliest';
     try {
       const num = await forkProvider?.send('tenderly_getForkBlockNumber', []);
       const sBlock = +num.toString();

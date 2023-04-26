@@ -1,4 +1,4 @@
-import { createContext, Dispatch, ReactNode, useEffect, useReducer } from 'react';
+import { Dispatch, ReactNode, createContext, useEffect, useReducer } from 'react';
 
 export enum Setting {
   APPROVAL_METHOD = 'approvalMethod',
@@ -21,7 +21,7 @@ export enum ApprovalType {
 }
 
 export interface ISettings {
- /* User Settings ( getting from the cache first ) */
+  /* User Settings ( getting from the cache first ) */
   slippageTolerance: number;
   darkMode: boolean;
   approvalMethod: ApprovalType;
@@ -35,18 +35,15 @@ export interface ISettings {
   forkedEnv: boolean;
   forkEnvUrl: string;
   forkId: string;
-
 }
 
 export interface ISettingsContext {
   settings: ISettings;
-  changeSetting: (setting: Setting, value: string | number | boolean | ApprovalType) => void ;
+  changeSetting: (setting: Setting, value: string | number | boolean | ApprovalType) => void;
 }
 
-
 const initState: ISettings = {
-
-    /** App/User Settings **/
+  /** App/User Settings **/
 
   /* Use token approval by individual tranasaction */
   approvalMethod: ApprovalType.SIG,
@@ -65,11 +62,11 @@ const initState: ISettings = {
   forceTransactions: false,
   /* Show diagnostic messages in the console/chat */
   diagnostics: false,
-  
+
   /* use a forked network */
   forkedEnv: false,
   forkId: process.env.NEXT_PUBLIC_TENDERLY_FORK_ID || '',
-  forkEnvUrl: `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
+  forkEnvUrl: `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`,
 };
 
 const initChangeSetting = () => null;
@@ -79,10 +76,9 @@ const SettingsContext = createContext<ISettingsContext>({
   changeSetting: initChangeSetting,
 });
 
-function settingsReducer( state: ISettings, action: { type:Setting, payload: any} ): ISettings {
-  
+function settingsReducer(state: ISettings, action: { type: Setting; payload: any }): ISettings {
   /* Helper: if different from existing , update the state and cache */
-  const cacheAndUpdate = (_action: {type:Setting, payload: any}) => {
+  const cacheAndUpdate = (_action: { type: Setting; payload: any }) => {
     if (state[action.type] === _action.payload) {
       return state[action.type];
     }
@@ -90,15 +86,13 @@ function settingsReducer( state: ISettings, action: { type:Setting, payload: any
     return _action.payload;
   };
 
-  return { 
-    ...state,  // return original state 
-    [action.type]: cacheAndUpdate(action)  // but, overwrite the state with the new value
-    };
+  return {
+    ...state, // return original state
+    [action.type]: cacheAndUpdate(action), // but, overwrite the state with the new value
+  };
 }
 
-
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  
   /* LOCAL STATE */
   const [settings, updateState] = useReducer(settingsReducer, initState);
 
@@ -107,17 +101,18 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window !== 'undefined') {
       Object.values(Setting).forEach((setting: Setting) => {
         if (JSON.parse(localStorage.getItem(setting)!) !== null) {
-           updateState({ type: setting, payload: JSON.parse(localStorage.getItem(setting)!) });
+          updateState({ type: setting, payload: JSON.parse(localStorage.getItem(setting)!) });
         }
       });
     }
   }, []);
 
-/* Exposed changeSettings() for updating */
-const changeSetting = (setting: Setting, value: string | number | boolean | undefined) =>  updateState({ type: setting, payload: value })
+  /* Exposed changeSettings() for updating */
+  const changeSetting = (setting: Setting, value: string | number | boolean | undefined) =>
+    updateState({ type: setting, payload: value });
 
   return (
-    <SettingsContext.Provider value={{settings, changeSetting }}>
+    <SettingsContext.Provider value={{ settings, changeSetting }}>
       {children}
     </SettingsContext.Provider>
   );

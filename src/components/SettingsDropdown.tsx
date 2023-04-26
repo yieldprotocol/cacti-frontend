@@ -3,11 +3,14 @@ import { Menu, Switch, Transition } from '@headlessui/react';
 import { SignalIcon } from '@heroicons/react/20/solid';
 import { Cog8ToothIcon, WrenchIcon } from '@heroicons/react/24/outline';
 import { DevToolsModal } from '@/components/devTools/DevToolsModal';
-import useForkTools from '@/hooks/useForkTools';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
+import useForkTools from '@/hooks/useForkTools';
 
 const SettingsDropdown = () => {
-  const { settings: {forkedEnv}, changeSetting } = useContext(SettingsContext);
+  const {
+    settings: { forkedEnv },
+    changeSetting,
+  } = useContext(SettingsContext);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -36,7 +39,7 @@ const SettingsDropdown = () => {
                 <div>Use Fork</div>
                 <Switch
                   checked={forkedEnv}
-                  onChange={()=> changeSetting(Setting.FORKED_ENV, !forkedEnv)}
+                  onChange={() => changeSetting(Setting.FORKED_ENV, !forkedEnv)}
                   className={`${
                     forkedEnv ? 'bg-green-600' : 'bg-gray-600'
                   } relative inline-flex h-6 w-11 items-center rounded-full`}

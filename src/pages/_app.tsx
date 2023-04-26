@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { ModalContextProvider } from '@/contexts/ModalContext';
-import { SettingsProvider }   from '@/contexts/SettingsContext';
+import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
