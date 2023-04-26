@@ -24,9 +24,6 @@ export type ChatContextType = {
   setInsertBeforeMessageId: (arg0: string | null) => void;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
-
-  siweVerify: (msg: string) => void;
-  generateNonce: (msg: string) => void;
 };
 
 const initialContext = {
@@ -42,10 +39,7 @@ const initialContext = {
   insertBeforeMessageId: null,
   setInsertBeforeMessageId: (arg0: string | null) => {},
   showDebugMessages: false,
-  setShowDebugMessages: (arg0: boolean) => {},
-
-  siweVerify: (msg: string) => {},
-  generateNonce: (msg: string) => {},
+  setShowDebugMessages: (arg0: boolean) => {}
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -226,14 +220,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }, 500);
   };
 
-  const generateNonce = (msg:string) => { 
-    wsSendMessage({ actor: 'system', type: 'get-nonce', payload: msg });
-  }
-
-  const siweVerify = (msg:string) => { 
-    wsSendMessage({ actor: 'system', type: 'siwe-verify', payload: msg });
-  }
-
   return (
     <ChatContext.Provider
       value={{
@@ -248,8 +234,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         spoofBotMessage,
         showDebugMessages,
         setShowDebugMessages,
-        siweVerify,
-        generateNonce,
       }}
     >
       {children}
