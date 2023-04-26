@@ -1,12 +1,19 @@
 import { useState } from 'react';
 import { Switch } from '@headlessui/react';
 import { useChatContext } from '@/contexts/ChatContext';
+import { BugAntIcon } from '@heroicons/react/24/outline';
 
 export const DebugMessageToggle = () => {
   const { showDebugMessages, setShowDebugMessages } = useChatContext();
 
   return (
-    <div className="flex gap-2 self-center">
+    <button
+    className="text-md flex w-full items-center gap-2 rounded-xl p-2 hover:bg-slate-600"
+    onClick={() => setShowDebugMessages(!showDebugMessages)}
+  >
+    <BugAntIcon className="ml-1 h-5 w-5" />
+    <div className="flex w-full items-center justify-between hover:text-white">
+      <div className="text-xs" >Enable debug logs </div>
       <Switch
         checked={showDebugMessages}
         onChange={setShowDebugMessages}
@@ -20,7 +27,8 @@ export const DebugMessageToggle = () => {
           } inline-block h-4 w-4 transform rounded-full bg-white transition`}
         />
       </Switch>
-      <span>Enable debug logs</span>
     </div>
+  </button>
+
   );
 };

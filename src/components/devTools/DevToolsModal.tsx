@@ -71,20 +71,21 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                         General
                       </div>
 
-                      <div className="mt-4 space-y-8 p-4">
+                      <div className="mt- space-y-2 p-4">
                         <DebugMessageToggle />
+
                         <ResetButton />
                       </div>
 
-                      <div className="mt-8 px-4 text-left text-sm font-bold leading-6 text-gray-900">
+                      <div className="mt-8 flex px-4 text-left text-sm font-bold leading-6 text-gray-900">
                         Forked Environment
                       </div>
 
-                      <div className="space-y-8 p-4 ">
+                      <div className="space-y-4 p-4 ">
                         <ForkButton />
                         <CurrentForkInfo />
-                        <ChangeForkId />
                         <MintButton />
+                        <ChangeForkId />
                       </div>
                     </div>
 

@@ -18,7 +18,7 @@ const ForkButton = () => {
     >
       <SignalIcon className="ml-1 h-5 w-5" />
       <div className="flex w-full items-center justify-between hover:text-white">
-        <div>Use Fork </div>
+        <div className="text-xs">Use Fork </div>
         <div className="align-middle font-mono text-xs text-slate-500"> ( alt-f )</div>
 
         <Switch

@@ -10,7 +10,7 @@ import SettingsContext from '@/contexts/SettingsContext';
 
 export const CurrentForkInfo = () => {
   const {
-    settings: { forkEnvUrl },
+    settings: { isForkedEnv, forkEnvUrl },
   } = useContext(SettingsContext);
   const [tenderlyUrl, setTenderlyUrl] = useState<string>(forkEnvUrl);
   const [copied, setCopied] = useState<boolean>(false);
@@ -42,16 +42,23 @@ export const CurrentForkInfo = () => {
   return (
     <div>
       <div className="border">
-        <div className="p-4 font-mono text-xs">{forkEnvUrl}</div>
-        <div className="flex gap-2 p-2 text-xs">
+        <div
+          className={`p-2 text-left text-xs ${
+            isForkedEnv ? 'bg-green-300' : 'bg-red-300'
+          } bg-red-300`}
+        >
+          {isForkedEnv ? 'Current forked environment' : 'Default fork'}
+        </div>
+        <div className="overflow-x-scroll p-4 font-mono text-xs">{forkEnvUrl}</div>
+        <div className="flex gap-2 p-2 text-xs ">
           <Button onClick={copyUrl} disabled={copied}>
-            <div className="flex gap-2 text-xs">
+            <div className="flex gap-2 text-[0.75em]">
               <div className="w-4">{copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />} </div>
-              Copy RPC
+              Copy url
             </div>
           </Button>
           <Button onClick={goToTenderly} disabled={!forkEnvUrl}>
-            <div className="flex gap-2 text-xs">
+            <div className="flex gap-2 text-[0.75em]">
               <div className="w-4">
                 <ArrowTopRightOnSquareIcon />
               </div>
