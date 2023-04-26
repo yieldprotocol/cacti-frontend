@@ -32,7 +32,6 @@ export default async function auth(req: any, res: any) {
           console.log('creds', parsedCredentials)
           console.log('signature: ', credentials?.signature )
 
-          const nextAuthUrl = new URL(process.env.NEXTAUTH_URL!); // depreciated
           const backendUrl = getBackendUrl();
 
           /* Use the creds to create a SIWE message */
