@@ -35,8 +35,6 @@ export type ChatContextType = {
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
   setInteractor: (arg0: string) => void;
-  siweVerify: (msg: string) => void;
-  generateNonce: (msg: string) => void;
 };
 
 const initialContext = {
@@ -58,8 +56,6 @@ const initialContext = {
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
   setInteractor: (arg0: string) => {},
-  siweVerify: (msg: string) => {},
-  generateNonce: (msg: string) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -260,14 +256,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }, 500);
   };
 
-  const generateNonce = (msg:string) => {
-    wsSendMessage({ actor: 'system', type: 'get-nonce', payload: msg });
-  }
-
-  const siweVerify = (msg:string) => {
-    wsSendMessage({ actor: 'system', type: 'siwe-verify', payload: msg });
-  }
-
   return (
     <ChatContext.Provider
       value={{
@@ -287,8 +275,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setShowDebugMessages,
         interactor,
         setInteractor,
-        siweVerify,
-        generateNonce,
       }}
     >
       {children}
