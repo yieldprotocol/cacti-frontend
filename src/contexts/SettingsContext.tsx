@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import useShortcutKey from '@/hooks/useShortcutKey';
+import { toast } from 'react-toastify';
 
 export enum Setting {
   APPROVAL_METHOD = 'approvalMethod',
@@ -107,7 +107,11 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, updateState] = useReducer(settingsReducer, initState);
 
   /* Set universal Shortcut keys for the some settings */
-  useHotkeys('alt+f', () => changeSetting(Setting.FORKED_ENV, !settings.isForkedEnv));
+  useHotkeys('alt+f', () => {
+    const currentSetting = settings.isForkedEnv
+    changeSetting( Setting.FORKED_ENV, !currentSetting );
+    toast(`${!currentSetting ? 'Switched to using a forked Environment.' : 'Fork disconnected. Working on mainnet.'}`);
+  });
 
   /* Pre - Update all settings in state based on localStorage */
   useEffect(() => {
