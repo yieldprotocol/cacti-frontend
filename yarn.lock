@@ -1347,18 +1347,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rainbow-me/rainbowkit-siwe-next-auth@npm:^0.1.9":
-  version: 0.1.9
-  resolution: "@rainbow-me/rainbowkit-siwe-next-auth@npm:0.1.9"
-  peerDependencies:
-    "@rainbow-me/rainbowkit": 0.5.x || 0.6.x || 0.7.x || 0.8.x || 0.9.x || 0.10.x || 0.11.x || 0.12.x
-    next-auth: ^4.10.2
-    react: ">=17"
-    siwe: ^1.1.6
-  checksum: e1a629787b9591d62a338a99f1815c970c776614afce4e393d0f172ee238ffb0845a2408a5f2c5cddd2958999c673381cc7baa9cf69da08003a25bc7e925b4ac
-  languageName: node
-  linkType: hard
-
 "@rainbow-me/rainbowkit@npm:^0.8.1":
   version: 0.8.1
   resolution: "@rainbow-me/rainbowkit@npm:0.8.1"
@@ -3669,7 +3657,6 @@ __metadata:
     "@heroicons/react": ^2.0.14
     "@next/font": 13.1.2
     "@rainbow-me/rainbowkit": ^0.8.1
-    "@rainbow-me/rainbowkit-siwe-next-auth": ^0.1.9
     "@trivago/prettier-plugin-sort-imports": ^4.0.0
     "@types/node": 18.11.18
     "@types/react": 18.0.27

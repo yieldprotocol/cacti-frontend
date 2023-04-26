@@ -23,6 +23,7 @@ import {
   interface RainbowKitSiweNextAuthProviderProps {
     enabled?: boolean;
     getSiweMessageOptions?: GetSiweMessageOptions;
+    getCustomNonce?: ()=>Promise<string | undefined>;
     children: ReactNode;
   }
   
@@ -30,6 +31,7 @@ import {
     children,
     enabled,
     getSiweMessageOptions,
+    getCustomNonce
   }: RainbowKitSiweNextAuthProviderProps) {
     const { status } = useSession();
     const adapter = useMemo(
@@ -63,7 +65,7 @@ import {
           getMessageBody: ({ message }) => message.prepareMessage(),
   
           getNonce: async () => {
-            const nonce = await getCsrfToken();
+            const nonce = getCustomNonce ? await getCustomNonce() : await getCsrfToken();
             if (!nonce) throw new Error();
             return nonce;
           },
