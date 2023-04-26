@@ -1,8 +1,6 @@
-import { useChatContext } from '@/contexts/ChatContext';
 import { getBackendUrl } from '@/utils/backend';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import useWebSocket from 'react-use-websocket';
 import { SiweMessage } from 'siwe';
 
 // For more information on each option (and a full list of options) go to
