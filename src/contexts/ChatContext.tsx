@@ -22,12 +22,15 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
+  sendMultiStepClientMessage: (action: JsonValue) => void;
+  setIsMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
+  isMultiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
@@ -38,6 +41,8 @@ const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
+  sendMultiStepClientMessage: (action: JsonValue) => {},
+  setIsMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => {
     return null;
@@ -46,6 +51,7 @@ const initialContext = {
   isBotThinking: false,
   insertBeforeMessageId: null,
   setInsertBeforeMessageId: (arg0: string | null) => {},
+  isMultiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
@@ -57,6 +63,9 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
+  const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
+    initialContext.isMultiStepInProgress
+  );
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
@@ -199,6 +208,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [wsSendMessage]
   );
 
+  const sendMultiStepClientMessage = useCallback(
+    (payload: JsonValue) => {
+      wsSendMessage({ actor: 'system', type: 'multistep-workflow', payload });
+    },
+    [wsSendMessage]
+  );
+
   const sendAction = (action: JsonValue) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
@@ -247,10 +263,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         messages,
         sendMessage,
         replayUserMessage,
+        sendMultiStepClientMessage,
         sendAction,
         isBotThinking,
         insertBeforeMessageId,
         setInsertBeforeMessageId,
+        isMultiStepInProgress,
+        setIsMultiStepInProgress,
         truncateUntilNextHumanMessage,
         spoofBotMessage,
         showDebugMessages,
