@@ -1,16 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
 import { useAccount, useBalance, useProvider } from 'wagmi';
 import useShortcutKey from './useShortcutKey';
+import SettingsContext from '@/contexts/SettingsContext';
 
 type ForkTools = {
-  isFork: boolean;
-  forkUrl: string;
-  setForkUrl: (url: string) => void;
-  setIsFork: (usingFork: boolean) => void;
   forkTimestamp: number | undefined;
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
@@ -19,16 +16,14 @@ type ForkTools = {
   signer?: ethers.Signer;
 };
 
-export const FORK_RPC_URL = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
-
-const useForkTools = (): ForkTools => {
+const useForkTools = (id?: string): ForkTools => {
+  /* Get the useForkSettings the settings context */
+  const { settings,  } = useContext(SettingsContext);
+  const { isForkedEnv, forkId } = settings;
   
-  /* Get the fork url from a simple cache, or alternatively the env */
-  const [forkUrl, setForkUrl] = useState<string>(FORK_RPC_URL || '');
-  const [isFork, setIsFork] = useState<boolean>(false);
-
-  /* Add in a shortcut key to handle the fork */
-  useShortcutKey('ƒ', () => setIsFork(isFork));
+  const forkUrl = id
+    ? `https://rpc.tenderly.co/fork/${id}`
+    : `https://rpc.tenderly.co/fork/${forkId}`;
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
@@ -38,7 +33,7 @@ const useForkTools = (): ForkTools => {
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
-  const forkSigner = isFork && forkUrl ? forkProvider?.getSigner(account) : undefined;
+  const forkSigner = isForkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -56,7 +51,7 @@ const useForkTools = (): ForkTools => {
   }, [provider]);
 
   const getForkTimestamp = useCallback(async () => {
-    if (!isFork || !provider) return;
+    if (!isForkedEnv || !provider) return;
     try {
       const { timestamp } = await provider.getBlock('latest');
       console.log('Updated Forked Blockchain time: ', new Date(timestamp * 1000));
@@ -65,10 +60,10 @@ const useForkTools = (): ForkTools => {
       console.log('Error getting latest timestamp', e);
       return undefined;
     }
-  }, [provider, isFork]);
+  }, [provider, isForkedEnv]);
 
   const getForkStartBlock = useCallback(async () => {
-    if (!isFork || !provider) return 'earliest';
+    if (!isForkedEnv || !provider) return 'earliest';
     try {
       const num = await forkProvider?.send('tenderly_getForkBlockNumber', []);
       const sBlock = +num.toString();
@@ -78,10 +73,10 @@ const useForkTools = (): ForkTools => {
       console.log('Could not get tenderly start block: ', e);
       return 'earliest';
     }
-  }, [isFork, provider, forkProvider]);
+  }, [isForkedEnv, provider, forkProvider]);
 
   const fillEther = useCallback(async () => {
-    if (!provider || !isFork) return;
+    if (!provider || !isForkedEnv) return;
 
     try {
       const transactionParameters = [
@@ -94,23 +89,19 @@ const useForkTools = (): ForkTools => {
     } catch (e) {
       console.log('Could not fill eth on Tenderly fork');
     }
-  }, [provider, isFork, account, forkProvider, refetch]);
+  }, [provider, isForkedEnv, account, forkProvider, refetch]);
 
   /* keep track of forked blockchain time/ startblock */
   const { data: forkTimestamp } = useSWRImmutable(
-    isFork ? ['forkTimestamp', forkUrl] : null,
+    isForkedEnv ? ['forkTimestamp', forkUrl] : null,
     getForkTimestamp
   ); // don't run if not using forked env
   const { data: forkStartBlock } = useSWRImmutable(
-    isFork ? ['forkStartBlock', forkUrl] : null,
+    isForkedEnv ? ['forkStartBlock', forkUrl] : null,
     getForkStartBlock
   ); // don't run if not using forked env
 
   return {
-    isFork,
-    forkUrl,
-    setForkUrl,
-    setIsFork,
     forkTimestamp,
     forkStartBlock,
     createNewFork,
