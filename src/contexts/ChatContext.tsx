@@ -225,14 +225,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     wsSendMessage({ actor: 'user', type: 'action', payload: action });
   };
 
-  const generateNonce = (msg:string) => { 
-    wsSendMessage({ actor: 'system', type: 'get-nonce', payload: msg });
-  }
-
-  const siweVerify = (msg:string) => { 
-    wsSendMessage({ actor: 'system', type: 'siwe-verify', payload: msg });
-  }
-
   const truncateUntilNextHumanMessage = (
     messageId: string,
     options?: TruncateOptions
@@ -270,6 +262,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       setIsBotThinking(false);
     }, 500);
   };
+
+  const generateNonce = (msg:string) => { 
+    wsSendMessage({ actor: 'system', type: 'get-nonce', payload: msg });
+  }
+
+  const siweVerify = (msg:string) => { 
+    wsSendMessage({ actor: 'system', type: 'siwe-verify', payload: msg });
+  }
 
   return (
     <ChatContext.Provider
