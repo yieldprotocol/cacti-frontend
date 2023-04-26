@@ -9,8 +9,6 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { Session } from 'next-auth';
 import '@/styles/globals.css';
-import { getToken } from 'next-auth/jwt';
-
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
