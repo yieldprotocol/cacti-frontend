@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export const UserMessage = ({
+  actor,
   initialText,
   submitEdit,
+  submitRegenerate,
+  submitDelete,
 }: {
+  actor: string;
   initialText: string;
   submitEdit: (text: string) => void;
+  submitRegenerate: () => void;
+  submitDelete: () => void;
 }) => {
   const [input, setInput] = useState(initialText);
   const [hovered, setHovered] = useState(true);
@@ -74,9 +80,19 @@ export const UserMessage = ({
         </div>
       )}
       {hovered && !isEditing && (
-        <div className="flex p-2">
-          <PencilSquareIcon className="h-4 w-4" />
-        </div>
+        <>
+          <button className="flex p-2" onClick={() => setIsEditing(true)}>
+            <PencilSquareIcon className="h-4 w-4" />
+          </button>
+          {actor === 'user' && (
+            <button className="flex p-2" onClick={submitRegenerate}>
+              <ArrowPathIcon className="h-4 w-4" />
+            </button>
+          )}
+          <button className="flex p-2" onClick={submitDelete}>
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </>
       )}
     </div>
   );
