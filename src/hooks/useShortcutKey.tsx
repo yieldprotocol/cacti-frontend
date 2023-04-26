@@ -1,6 +1,6 @@
 import { useEffect} from 'react';
 
-const useShortcutKey = (key: string, action: () => void, msg?: string ) => {
+const useShortcutKey = (key: string, action: () => void, msg?: string) => {
 
   const handleKeyPress = (event: any) => {
     if (event.altKey === true) {

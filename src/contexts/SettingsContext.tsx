@@ -1,4 +1,7 @@
-import { Dispatch, ReactNode, createContext, useEffect, useReducer } from 'react';
+import useShortcutKey from '@/hooks/useShortcutKey';
+import { Dispatch, ReactNode, createContext, useContext, useEffect, useReducer, useState } from 'react';
+
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export enum Setting {
   APPROVAL_METHOD = 'approvalMethod',
@@ -95,6 +98,9 @@ function settingsReducer(state: ISettings, action: { type: Setting; payload: any
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   /* LOCAL STATE */
   const [settings, updateState] = useReducer(settingsReducer, initState);
+
+  /* Set universal Shortcut keys for the some settings */
+  useHotkeys('alt+f', () => changeSetting( Setting.FORKED_ENV, !settings.isForkedEnv ));
 
   /* Pre - Update all settings in state based on localStorage */
   useEffect(() => {
