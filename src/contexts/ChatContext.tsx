@@ -1,10 +1,9 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
 import { getBackendUrl } from '@/utils/backend';
-
-import { toast } from 'react-toastify';
 
 export type Message = {
   messageId: string;
@@ -118,11 +117,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // unused in production, but useful in debugging
   const onClose = () => {
-    toast.info('Websocket closed')
+    toast.info('Websocket closed');
   };
 
   const onError = () => {
-    toast.error('Websocket Error', {autoClose: false, closeOnClick: true})
+    toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {

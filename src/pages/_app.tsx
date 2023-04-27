@@ -35,9 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ConnectionWrapperDynamic>
           <CenterProvider>
-              <ChatContextDynamic>
-                <Component {...pageProps} />
-              </ChatContextDynamic>
+            <ChatContextDynamic>
+              <Component {...pageProps} />
+            </ChatContextDynamic>
           </CenterProvider>
         </ConnectionWrapperDynamic>
       </QueryClientProvider>

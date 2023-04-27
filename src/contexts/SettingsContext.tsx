@@ -108,9 +108,15 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
   /* Set universal Shortcut keys for the some settings */
   useHotkeys('alt+f', () => {
-    const currentSetting = settings.isForkedEnv
-    changeSetting( Setting.FORKED_ENV, !currentSetting );
-    toast(`${!currentSetting ? 'Switched to using a forked Environment.' : 'Fork disconnected. Working on mainnet.'}`);
+    const currentSetting = settings.isForkedEnv;
+    changeSetting(Setting.FORKED_ENV, !currentSetting);
+    toast(
+      `${
+        !currentSetting
+          ? 'Switched to using a forked Environment.'
+          : 'Fork disconnected. Working on mainnet.'
+      }`
+    );
   });
 
   /* Pre - Update all settings in state based on localStorage */
