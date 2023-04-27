@@ -26,8 +26,8 @@ export default async function auth(req: any, res: any) {
           const parsedCredentials = JSON.parse(credentials?.message || '{}');
 
           /* DEBUGGING Log the creds + sig */
-          console.log('creds', parsedCredentials);
-          console.log('signature: ', credentials?.signature);
+          // console.log('creds', parsedCredentials);
+          // console.log('signature: ', credentials?.signature);
 
           /* Use the creds to create a SIWE message */
           const message = new SiweMessage(parsedCredentials);
@@ -36,8 +36,6 @@ export default async function auth(req: any, res: any) {
           const verified = await message.verify({
             signature: credentials?.signature || '',
           });
-
-          console.log( verified.data )
 
           /* Store the signature and Eip with the session  -- note hack in NextAuth() callbacks */ 
           if (verified.success) {
