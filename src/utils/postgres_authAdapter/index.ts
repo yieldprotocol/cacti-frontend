@@ -1,28 +1,28 @@
-import { Adapter, AdapterUser, VerificationToken, AdapterSession } from "next-auth/adapters";
-import { Pool } from "pg";
+import { Adapter, AdapterSession, AdapterUser, VerificationToken } from 'next-auth/adapters';
+import { Pool } from 'pg';
 
 /**
  * Convert the value of expires_at in an object to be a number.
  * It is stored as a BIGINT in the Postgres schema but it appears to be converted
  * to a string by the `pg` adapter.
- * 
+ *
  * @param account Account object. Account is not exported from `next-auth/adapters` like
  * other types are.
  * @returns Account object with all keys/values identical but the account value.
  */
 export function mapExpiresAt(account: any): any {
-  const expires_at: number = parseInt(account.expires_at)
+  const expires_at: number = parseInt(account.expires_at);
   return {
     ...account,
-    expires_at
-  }
+    expires_at,
+  };
 }
 
 export default function PostgresAdapter(client: Pool): Adapter {
-
   return {
-
-    async createVerificationToken(verificationToken: VerificationToken): Promise<VerificationToken> {
+    async createVerificationToken(
+      verificationToken: VerificationToken
+    ): Promise<VerificationToken> {
       const { identifier, expires, token } = verificationToken;
       const sql = `
         INSERT INTO verification_token ( identifier, expires, token ) 
@@ -32,8 +32,13 @@ export default function PostgresAdapter(client: Pool): Adapter {
       return verificationToken;
     },
 
-    async useVerificationToken({ identifier, token }: { identifier: string; token: string }):
-      Promise<VerificationToken> {
+    async useVerificationToken({
+      identifier,
+      token,
+    }: {
+      identifier: string;
+      token: string;
+    }): Promise<VerificationToken> {
       const sql = `delete from verification_token
       where identifier = $1 and token = $2
       RETURNING identifier, expires, token `;
@@ -76,7 +81,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
           a."providerAccountId" = $2`;
 
       const result = await client.query(sql, [provider, providerAccountId]);
-      return result.rowCount !== 0 ? result.rows[0] : null
+      return result.rowCount !== 0 ? result.rows[0] : null;
     },
 
     async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
@@ -86,8 +91,8 @@ export default function PostgresAdapter(client: Pool): Adapter {
 
       const newUser = {
         ...oldUser,
-        ...user
-      }
+        ...user,
+      };
 
       const { id, name, email, emailVerified, image } = newUser;
       const updateSql = `
@@ -143,7 +148,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
         account.id_token,
         account.scope,
         account.session_state,
-        account.token_type
+        account.token_type,
       ];
 
       const result = await client.query(sql, params);
@@ -152,7 +157,7 @@ export default function PostgresAdapter(client: Pool): Adapter {
 
     async createSession({ sessionToken, userId, expires }) {
       if (userId === undefined) {
-        throw Error(`userId is undef in createSession`)
+        throw Error(`userId is undef in createSession`);
       }
       const sql = `insert into sessions ("userId", expires, "sessionToken")
       values ($1, $2, $3)
@@ -169,16 +174,17 @@ export default function PostgresAdapter(client: Pool): Adapter {
       if (sessionToken === undefined) {
         return null;
       }
-      const result1 = await client.query(`select * from sessions where "sessionToken" = $1`,
-        [sessionToken]);
+      const result1 = await client.query(`select * from sessions where "sessionToken" = $1`, [
+        sessionToken,
+      ]);
       if (result1.rowCount === 0) {
-        return null
+        return null;
       }
       let session: AdapterSession = result1.rows[0];
 
-      const result2 = await client.query("select * from users where id = $1", [session.userId]);
+      const result2 = await client.query('select * from users where id = $1', [session.userId]);
       if (result2.rowCount === 0) {
-        return null
+        return null;
       }
       const user = result2.rows[0];
       return {
@@ -187,28 +193,31 @@ export default function PostgresAdapter(client: Pool): Adapter {
       };
     },
 
-    async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">):
-      Promise<AdapterSession | null | undefined> {
+    async updateSession(
+      session: Partial<AdapterSession> & Pick<AdapterSession, 'sessionToken'>
+    ): Promise<AdapterSession | null | undefined> {
       const { sessionToken } = session;
-      const result1 = await client.query(
-        `select * from sessions where "sessionToken" = $1`
-        , [sessionToken]);
+      const result1 = await client.query(`select * from sessions where "sessionToken" = $1`, [
+        sessionToken,
+      ]);
       if (result1.rowCount === 0) {
-        return null
+        return null;
       }
       const originalSession: AdapterSession = result1.rows[0];
 
       const newSession: AdapterSession = {
         ...originalSession,
-        ...session
-      }
+        ...session,
+      };
       const sql = `
         UPDATE sessions set
         "userId" = $2, expires = $3
         where "sessionToken" = $1
         `;
       const result = await client.query(sql, [
-        newSession.sessionToken, newSession.userId, newSession.expires
+        newSession.sessionToken,
+        newSession.userId,
+        newSession.expires,
       ]);
       return result.rows[0];
     },
@@ -223,11 +232,11 @@ export default function PostgresAdapter(client: Pool): Adapter {
       const sql = `delete from accounts where "providerAccountId" = $1 and provider = $2`;
       await client.query(sql, [providerAccountId, provider]);
     },
-    
+
     async deleteUser(userId: string) {
       await client.query(`delete from users where id = $1`, [userId]);
       await client.query(`delete from sessions where "userId" = $1`, [userId]);
       await client.query(`delete from accounts where "userId" = $1`, [userId]);
-    }
-  }
+    },
+  };
 }

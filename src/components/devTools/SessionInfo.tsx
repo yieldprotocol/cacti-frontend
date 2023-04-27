@@ -1,17 +1,17 @@
-import { shortenAddress } from '@/utils';
-import { useSession } from 'next-auth/react';
-import { getToken } from 'next-auth/jwt';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
+import { useSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
+import { shortenAddress } from '@/utils';
 
 export const SessionInfo = () => {
-  const {  status } = useSession();
-  
-  return ( 
+  const { status } = useSession();
+
+  return (
     <div>
       {/* { data?.user && <div  className='text-sm text-left'> user: {shortenAddress(user?.name || '')}</div> } */}
-      <div className='text-sm text-left'> Auth status:  { status } </div>
+      <div className="text-left text-sm"> Auth status: {status} </div>
       {/* <div className='text-sm text-left'> token: </div> */}
     </div>
   );
