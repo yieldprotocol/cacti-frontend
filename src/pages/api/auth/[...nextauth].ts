@@ -1,14 +1,12 @@
-import { getBackendUrl } from '@/utils/backend';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { SiweMessage } from 'siwe';
+import { getBackendUrl } from '@/utils/backend';
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default async function auth(req: any, res: any) {
-
   const providers = [
-
     CredentialsProvider({
       name: 'Ethereum',
       credentials: {
@@ -25,31 +23,30 @@ export default async function auth(req: any, res: any) {
       },
       async authorize(credentials) {
         try {
+          const parsedCredentials = JSON.parse(credentials?.message || '{}');
 
-          const parsedCredentials = JSON.parse(credentials?.message || "{}");          
-          
           /* DEBUGGING Log the creds + sig */
-          console.log('creds', parsedCredentials)
-          console.log('signature: ', credentials?.signature )
+          console.log('creds', parsedCredentials);
+          console.log('signature: ', credentials?.signature);
 
           const backendUrl = getBackendUrl();
 
           /* Use the creds to create a SIWE message */
-          const message = new SiweMessage( parsedCredentials );
+          const message = new SiweMessage(parsedCredentials);
 
-         /* Prepare the message for validation */
+          /* Prepare the message for validation */
           const preparedMessage = message.prepareMessage();
-          
-          /* Send prepared message back to the backend for validation */ 
+
+          /* Send prepared message back to the backend for validation */
           const verified = await message.verify({
-            signature: credentials?.signature || ""
-          }); 
+            signature: credentials?.signature || '',
+          });
           // const verify_res = await fetch(`${backendUrl}/verify`, {
           //   credentials: 'include',
           // });
 
           if (verified.success) {
-            console.log('Access verified:' , parsedCredentials.address )
+            console.log('Access verified:', parsedCredentials.address);
             return {
               id: parsedCredentials.address, //credentials?.address,
             };

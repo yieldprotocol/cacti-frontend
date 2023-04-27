@@ -43,15 +43,16 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
 
   return (
     <div className="h-[700px] overflow-auto ">
-    <div className="grid grid-cols-2 gap-4 p-4 ">
-      {debugMessage(CUSTOM_PROMPT, customMessage)}
-      <div />
-      <div />
-      {spoofPrompts
-      .map((spoof) => {
-        return debugMessage(spoof[0], spoof[1]);
-      }).reverse()}
-    </div>
+      <div className="grid grid-cols-2 gap-4 p-4 ">
+        {debugMessage(CUSTOM_PROMPT, customMessage)}
+        <div />
+        <div />
+        {spoofPrompts
+          .map((spoof) => {
+            return debugMessage(spoof[0], spoof[1]);
+          })
+          .reverse()}
+      </div>
     </div>
   );
 };
