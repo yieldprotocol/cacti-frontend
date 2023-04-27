@@ -1,4 +1,4 @@
-TODO: Change out for official package when it is available. 
+TODO: Change out for official package when it is available.
 
 Add to your `pages/api/[...nextauth].js` next-auth configuration object.
 
