@@ -141,7 +141,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // unused in production, but useful in debugging
   const onClose = () => {
-    toast.info('Websocket closed');
+    // toast.info('Websocket closed');
   };
 
   const onError = () => {
