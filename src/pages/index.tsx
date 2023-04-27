@@ -1,7 +1,4 @@
 import dynamic from 'next/dynamic';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { getServerSession } from 'next-auth';
-import { getToken } from 'next-auth/jwt';
 
 const HeaderDynamic = dynamic(() => import('@/components/Header'), {
   ssr: false,

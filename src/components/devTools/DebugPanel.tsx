@@ -21,7 +21,7 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
             spoofBotMessage(spoofText);
           }}
         >
-          <span className="max-h-[32px] overflow-y-scroll text-xs">{spoofLabel}</span>
+          <span className="max-h-[64px] overflow-y-scroll text-xs">{spoofLabel}</span>
         </Button>
         <div className="flex flex-col justify-center break-words font-mono text-xs">
           {spoofLabel === CUSTOM_PROMPT ? (

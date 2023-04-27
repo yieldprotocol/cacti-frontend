@@ -1,66 +1,55 @@
 import { useEffect } from 'react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { BigNumber } from 'ethers';
-import { usePrepareSendTransaction, useSendTransaction } from 'wagmi';
-import { useChatContext } from '../../contexts/ChatContext';
+import { usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from 'wagmi';
 import { Spinner } from '../../utils';
 import { Button } from '../Button';
 import { TxStatus } from '../TxStatus';
 import { WidgetError } from './helpers';
 
-// status, tx, isApprovalTx, errorMsg, parsedUserRequest, description
-
 interface SendTransactionProps {
-  userRequestStatus: 'success' | 'error';
   tx: { from: string; to: string; value: string; data: string; gas: string } | null;
-  isApprovalTx: boolean;
-  errorMsg: string;
-  parsedUserRequest: string;
   description: string;
+  onResult: (
+    sendError: Error | null,
+    txError: Error | null,
+    isTxSuccess: boolean,
+    sendTxData: any
+  ) => void;
 }
 
-export const SendTransaction = ({
-  userRequestStatus,
-  tx,
-  isApprovalTx,
-  errorMsg,
-  parsedUserRequest,
-  description,
-}: SendTransactionProps) => {
-  const { replayUserMessage } = useChatContext();
-
+export const SendTransaction = ({ tx, description, onResult }: SendTransactionProps) => {
   const { to, from, value, data, gas } = tx || { to: '', from: '', value: '', data: '', gas: '' };
   const { config } = usePrepareSendTransaction({
     request: { to, from, value, data, gasLimit: gas },
   });
   const {
-    data: txResponse,
+    data: sendTxData,
     isLoading,
-    isSuccess,
-    error,
+    isSuccess: isSendSuccess,
+    error: sendError,
     sendTransaction,
   } = useSendTransaction(config);
   const addRecentTransaction = useAddRecentTransaction();
 
-  useEffect(() => {
-    if (isApprovalTx && isSuccess) {
-      replayUserMessage(parsedUserRequest);
-    }
-  }, [isApprovalTx, isSuccess, parsedUserRequest, replayUserMessage]);
+  const { isSuccess: isTxSuccess, error: txError } = useWaitForTransaction({
+    hash: sendTxData?.hash,
+  });
 
   useEffect(() => {
-    if (txResponse) {
-      addRecentTransaction({ hash: txResponse.hash!, description });
-    }
-  }, [addRecentTransaction, description, txResponse]);
+    onResult(sendError, txError, isTxSuccess, sendTxData);
+    // Disable for onResult not to be in dependcies array so as to prevent duplicate calls
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendError, txError, isTxSuccess, sendTxData]);
 
-  if (userRequestStatus === 'error') {
-    return <WidgetError>{errorMsg}</WidgetError>;
-  }
+  useEffect(() => {
+    if (sendTxData) {
+      addRecentTransaction({ hash: sendTxData.hash!, description });
+    }
+  }, [addRecentTransaction, description, sendTxData]);
 
   return (
     <div className="flex justify-end">
-      {!isSuccess && (
+      {!isSendSuccess && (
         <Button
           className="px-4"
           disabled={isLoading}
@@ -74,8 +63,8 @@ export const SendTransaction = ({
           </div>
         </Button>
       )}
-      {isSuccess && <TxStatus hash={txResponse?.hash!} />}
-      {error && <WidgetError>Error simulating transaction: {error.message}</WidgetError>}
+      {isSendSuccess && <TxStatus hash={sendTxData?.hash!} />}
+      {sendError && <WidgetError>Error simulating transaction: {sendError.message}</WidgetError>}
     </div>
   );
 };
