@@ -35,15 +35,15 @@ const SettingsDropdown = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-4 w-80 origin-top-right rounded-md bg-gray-800 p-2 shadow-md focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 mt-4 w-48 origin-top-right rounded-md bg-gray-800 p-2 shadow-md focus:outline-none">
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 px-2 py-2 text-white hover:bg-gray-700"
               onClick={() => setOpenModal(true)}
             >
-              <WrenchIcon className="ml-1 h-5 w-5 text-white" />
-              <div>Developer Tools </div>
-              <div className="align-middle font-mono text-xs text-slate-500"> ( alt-d )</div>
+              <WrenchIcon className="h-5 w-5 text-white" />
+              <div>Dev Tools </div>
+              <div className="align-middle font-mono text-[0.5em] text-slate-500"> ( alt-d )</div>
             </button>
           </Menu.Item>
         </Menu.Items>
