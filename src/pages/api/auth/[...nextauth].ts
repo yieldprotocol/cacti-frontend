@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { SiweMessage } from 'siwe';
 import { getBackendUrl } from '@/utils/backend';
@@ -48,13 +48,18 @@ export default async function auth(req: any, res: any) {
           if (verified.success) {
             console.log('Access verified:', parsedCredentials.address);
             return {
-              id: parsedCredentials.address, //credentials?.address,
+              id: parsedCredentials.address,
+              signature: credentials?.signature,
+              credentials: parsedCredentials,
             };
           }
 
           return null;
+
         } catch (e) {
+
           return null;
+
         }
       },
     }),
@@ -74,13 +79,28 @@ export default async function auth(req: any, res: any) {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+      async signIn({ user, account }) {
+        account!.signature = (user as any).signature;
+        account!.credentials = (user as any).credentials;
+        return true
+      },
+      async jwt({ token, account }) {
+        if (account) {
+          token.signature = account.signature
+          token.credentials = account.credentials
+        }
+        return token
+      },
       async session({ session, token, user }: { session: any; token: any; user: any }) {
         session.address = token.sub;
         session.user.name = token.sub;
         session.jti = token.jti;
+        session.signature = token.signature;
+        session.credentials = token.credentials;
         console.log('Session:', session);
         return session;
       },
     },
+    
   });
 }
