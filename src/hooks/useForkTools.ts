@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
 import { useAccount, useBalance, useProvider } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
+import useShortcutKey from './useShortcutKey';
 
 type ForkTools = {
   forkTimestamp: number | undefined;

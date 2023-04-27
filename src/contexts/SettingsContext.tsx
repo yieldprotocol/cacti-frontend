@@ -1,4 +1,14 @@
-import { Dispatch, ReactNode, createContext, useEffect, useReducer } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { toast } from 'react-toastify';
 
 export enum Setting {
   APPROVAL_METHOD = 'approvalMethod',
@@ -95,6 +105,19 @@ function settingsReducer(state: ISettings, action: { type: Setting; payload: any
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   /* LOCAL STATE */
   const [settings, updateState] = useReducer(settingsReducer, initState);
+
+  /* Set universal Shortcut keys for the some settings */
+  useHotkeys('alt+f', () => {
+    const currentSetting = settings.isForkedEnv;
+    changeSetting(Setting.FORKED_ENV, !currentSetting);
+    toast(
+      `${
+        !currentSetting
+          ? 'Switched to using a forked Environment.'
+          : 'Fork disconnected. Working on mainnet.'
+      }`
+    );
+  });
 
   /* Pre - Update all settings in state based on localStorage */
   useEffect(() => {

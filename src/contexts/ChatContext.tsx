@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
-import { useModalContext } from '@/contexts/ModalContext';
 import { getBackendUrl } from '@/utils/backend';
 
 export type Message = {
@@ -70,7 +70,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
-  const { setModal } = useModalContext();
 
   const backendUrl = getBackendUrl();
   const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(backendUrl, {
@@ -127,11 +126,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // unused in production, but useful in debugging
   const onClose = () => {
-    // console.log('websocket closed');
+    toast.info('Websocket closed');
   };
 
   const onError = () => {
-    setModal(<div>Websocket error</div>);
+    toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
