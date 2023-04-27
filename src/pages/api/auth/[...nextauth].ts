@@ -79,11 +79,13 @@ export default async function auth(req: any, res: any) {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+      /* This is step 1 of a hack to pass the info from the credentials provider to the session */
       async signIn({ user, account }) {
         account!.signature = (user as any).signature;
         account!.credentials = (user as any).credentials;
         return true
       },
+      /* This is step 2:  append the token with the updated account info  */
       async jwt({ token, account }) {
         if (account) {
           token.signature = account.signature
