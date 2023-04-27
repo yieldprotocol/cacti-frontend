@@ -1,4 +1,4 @@
-import NextAuth, { User } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { SiweMessage } from 'siwe';
 import { getBackendUrl } from '@/utils/backend';
@@ -29,37 +29,28 @@ export default async function auth(req: any, res: any) {
           console.log('creds', parsedCredentials);
           console.log('signature: ', credentials?.signature);
 
-          const backendUrl = getBackendUrl();
-
           /* Use the creds to create a SIWE message */
           const message = new SiweMessage(parsedCredentials);
 
-          /* Prepare the message for validation */
-          const preparedMessage = message.prepareMessage();
-
-          /* Send prepared message back to the backend for validation */
+          /* Verify the message clientside   */
           const verified = await message.verify({
             signature: credentials?.signature || '',
           });
-          // const verify_res = await fetch(`${backendUrl}/verify`, {
-          //   credentials: 'include',
-          // });
 
+          console.log( verified.data )
+
+          /* Store the signature and Eip with the session  -- note hack in NextAuth() callbacks */ 
           if (verified.success) {
-            console.log('Access verified:', parsedCredentials.address);
+            console.log('Access verified:', verified.data.address);
             return {
-              id: parsedCredentials.address,
+              id: verified.data.address,
               signature: credentials?.signature,
-              credentials: parsedCredentials,
+              eip4361: JSON.stringify(verified.data),
             };
           }
-
           return null;
-
         } catch (e) {
-
           return null;
-
         }
       },
     }),
@@ -82,14 +73,14 @@ export default async function auth(req: any, res: any) {
       /* This is step 1 of a hack to pass the info from the credentials provider to the session */
       async signIn({ user, account }) {
         account!.signature = (user as any).signature;
-        account!.credentials = (user as any).credentials;
+        account!.eip4361 = (user as any).eip4361;
         return true
       },
       /* This is step 2:  append the token with the updated account info  */
       async jwt({ token, account }) {
         if (account) {
           token.signature = account.signature
-          token.credentials = account.credentials
+          token.eip4361 = account.eip4361
         }
         return token
       },
@@ -98,7 +89,7 @@ export default async function auth(req: any, res: any) {
         session.user.name = token.sub;
         session.jti = token.jti;
         session.signature = token.signature;
-        session.credentials = token.credentials;
+        session.eip4361 = token.eip4361;
         console.log('Session:', session);
         return session;
       },
