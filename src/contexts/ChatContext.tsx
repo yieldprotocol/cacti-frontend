@@ -4,6 +4,7 @@ import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
 import { getBackendUrl } from '@/utils/backend';
+import { useSession } from 'next-auth/react';
 
 export type Message = {
   messageId: string;
@@ -93,6 +94,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     status: walletStatus,
     address: walletAddress,
   } = useAccount();
+
+  const { data: session, status } = useSession()
+  useEffect(()=>{
+    console.log( session, status)
+  },[])
+
   const sendWalletMessage = () => {
     const walletPayload = {
       walletIsConnected,
@@ -101,6 +108,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     };
     wsSendMessage({ actor: 'system', type: 'wallet', payload: walletPayload });
   };
+
   useEffect(() => {
     sendWalletMessage();
   }, [walletIsConnected, walletStatus, walletAddress]);
