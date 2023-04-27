@@ -1,12 +1,17 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { Menu, Switch, Transition } from '@headlessui/react';
 import { SignalIcon } from '@heroicons/react/20/solid';
 import { Cog8ToothIcon, WrenchIcon } from '@heroicons/react/24/outline';
 import { DevToolsModal } from '@/components/devTools/DevToolsModal';
+import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import useForkTools from '@/hooks/useForkTools';
 
 const SettingsDropdown = () => {
-  const { isFork, setIsFork } = useForkTools();
+  const {
+    settings: { isForkedEnv },
+    changeSetting,
+  } = useContext(SettingsContext);
+
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -27,21 +32,21 @@ const SettingsDropdown = () => {
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 text-white hover:bg-gray-700"
-              onClick={() => setIsFork(!isFork)}
+              onClick={() => changeSetting(Setting.FORKED_ENV, !isForkedEnv)}
             >
               <SignalIcon className="ml-1 h-5 w-5 text-white" />
               <div className="flex w-full justify-between">
                 <div>Use Fork</div>
                 <Switch
-                  checked={isFork}
-                  onChange={setIsFork}
+                  checked={isForkedEnv}
+                  onChange={() => changeSetting(Setting.FORKED_ENV, !isForkedEnv)}
                   className={`${
-                    isFork ? 'bg-gray-600' : 'bg-gray-400'
+                    isForkedEnv ? 'bg-green-600' : 'bg-gray-600'
                   } relative inline-flex h-6 w-11 items-center rounded-full`}
                 >
                   <span
                     className={`${
-                      isFork ? 'translate-x-6' : 'translate-x-1'
+                      isForkedEnv ? 'translate-x-6' : 'translate-x-1'
                     } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                   />
                 </Switch>

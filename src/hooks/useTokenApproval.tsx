@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { BigNumber } from 'ethers';
 import {
   erc20ABI,
@@ -9,6 +9,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import SettingsContext from '@/contexts/SettingsContext';
 import useBalance from '@/hooks/useBalance';
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
@@ -26,7 +27,6 @@ const useTokenApproval = (
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
-  const { isFork } = useForkTools();
   const signer = useSigner();
   const { address: account } = useAccount();
   // Get allowance amount
@@ -36,6 +36,10 @@ const useTokenApproval = (
     functionName: 'allowance',
     args: [account!, spenderAddress],
   });
+  /* Get the useForkSettings the settings context */
+  const {
+    settings: { isForkedEnv },
+  } = useContext(SettingsContext);
 
   // for using in fork env
   const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
@@ -53,7 +57,7 @@ const useTokenApproval = (
     setTxPending(true);
 
     try {
-      if (isFork) {
+      if (isForkedEnv) {
         const tx = await contract?.approve(spenderAddress, amountToUse);
         setHash(tx?.hash as `0x${string}`);
       } else {
