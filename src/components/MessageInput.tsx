@@ -26,6 +26,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
   const initInput = message?.payload || '';
   const [input, setInput] = useState(initInput);
   const inputType = actor === Actor.USER ? InputType.CHAT : InputType.MARKDOWN;
+  const refToUse = inputType === InputType.CHAT ? inputRef : textAreaRef;
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -43,6 +44,12 @@ const MessageInput = ({ message }: MessageInputProps) => {
 
     setIsEditing(false);
   }, [editMessage, initInput, input, message, sendMessage]);
+
+  const handleCancel = useCallback(() => {
+    setIsEditing(false);
+    message && setInput(initInput); // keep input if no message yet
+    refToUse.current?.blur();
+  }, [initInput, message, refToUse]);
 
   const focusInput = useCallback(() => {
     (inputType === InputType.CHAT ? inputRef : textAreaRef).current?.focus();
@@ -117,11 +124,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
               setIsEditing(true);
               textAreaRef.current?.focus();
             }}
-            onBlur={() => {
-              setIsEditing(false);
-              setInput(initInput);
-              textAreaRef.current?.blur();
-            }}
+            onBlur={handleCancel}
           >
             {!isEditing && message ? (
               <ReactMarkdown className={inputStyle}>{input}</ReactMarkdown>
@@ -135,10 +138,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
                   setIsEditing(true);
                   setInput(e.target.value);
                 }}
-                onBlur={() => {
-                  setIsEditing(false);
-                  setInput(initInput);
-                }}
+                onBlur={handleCancel}
                 onFocus={() => setIsEditing(true)}
               />
             )}
@@ -155,10 +155,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
               setIsEditing(true);
               setInput(e.target.value);
             }}
-            onBlur={() => {
-              setInput(initInput);
-              setIsEditing(false);
-            }}
+            onBlur={handleCancel}
             onFocus={() => setIsEditing(true)}
           />
         )}
