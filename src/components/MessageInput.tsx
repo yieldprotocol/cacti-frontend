@@ -20,7 +20,6 @@ const MessageInput = ({ message }: MessageInputProps) => {
     sendAction,
     truncateUntilNextHumanMessage,
     setInsertBeforeMessageId,
-    setInteractor,
     sendMessage,
   } = useChatContext();
 
@@ -62,12 +61,12 @@ const MessageInput = ({ message }: MessageInputProps) => {
     }
 
     // edit message
-    if (message && message.payload !== input) {
+    if (message && initInput !== input) {
       submitEdit();
     }
 
     setIsEditing(false);
-  }, [input, message, sendMessage, submitEdit]);
+  }, [initInput, input, message, sendMessage, submitEdit]);
 
   const submitRegenerate = useCallback(() => {
     if (!messageId) return;
@@ -109,9 +108,11 @@ const MessageInput = ({ message }: MessageInputProps) => {
         inputRef.current?.blur();
       }
 
-      if (inputType === InputType.MARKDOWN && key === 'Enter' && shiftKey) {
-        handleSubmit();
-        textAreaRef.current?.blur();
+      if (inputType === InputType.MARKDOWN && key === 'Enter') {
+        if (shiftKey) {
+          handleSubmit();
+          textAreaRef.current?.blur();
+        }
       }
 
       if (key === 'I' && !message) {
@@ -142,17 +143,18 @@ const MessageInput = ({ message }: MessageInputProps) => {
       <div className="flex h-full w-full">
         {actor === Actor.COMMENTER && (
           <div
-            className="flex h-full w-full"
+            className="flex h-full w-full hover:cursor-text"
             onClick={() => {
               setIsEditing(true);
               textAreaRef.current?.focus();
             }}
             onBlur={() => {
               setIsEditing(false);
-              setInput(input);
+              setInput(initInput);
+              textAreaRef.current?.blur();
             }}
           >
-            {!isEditing ? (
+            {!isEditing && message ? (
               <ReactMarkdown className={inputStyle}>{input}</ReactMarkdown>
             ) : (
               <textarea
@@ -165,8 +167,8 @@ const MessageInput = ({ message }: MessageInputProps) => {
                   setInput(e.target.value);
                 }}
                 onBlur={() => {
-                  setInput(input);
                   setIsEditing(false);
+                  setInput(initInput);
                 }}
                 onFocus={() => setIsEditing(true)}
               />
