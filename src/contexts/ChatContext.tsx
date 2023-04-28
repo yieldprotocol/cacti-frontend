@@ -3,6 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
 import { useModalContext } from '@/contexts/ModalContext';
+import { ActionType, Actor } from '@/types/chat';
 import { getBackendUrl } from '@/utils/backend';
 
 export type Message = {
@@ -32,6 +33,7 @@ export type ChatContextType = {
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
   setInteractor: (arg0: string) => void;
+  editMessage: (message: Message, text: string) => void;
 };
 
 const initialContext = {
@@ -252,6 +254,18 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [messages]
   );
 
+  const editMessage = useCallback(
+    (message: Message, text: string) => {
+      sendAction({ actionType: ActionType.EDIT, messageId: message.messageId, text }); // this also truncates message list on backend
+      const beforeMessageId = truncateUntilNextHumanMessage(message.messageId, {
+        updatedText: text,
+        setBotThinking: message.actor === Actor.USER,
+      });
+      setInsertBeforeMessageId(beforeMessageId);
+    },
+    [sendAction, truncateUntilNextHumanMessage]
+  );
+
   return (
     <ChatContext.Provider
       value={{
@@ -268,6 +282,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setShowDebugMessages,
         interactor,
         setInteractor,
+        editMessage,
       }}
     >
       {children}

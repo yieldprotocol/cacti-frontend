@@ -21,6 +21,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     setInsertBeforeMessageId,
     sendMessage,
     interactor,
+    editMessage,
   } = useChatContext();
 
   const actor = message ? message.actor : interactor;
@@ -35,24 +36,6 @@ const MessageInput = ({ message }: MessageInputProps) => {
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const submitEdit = useCallback(() => {
-    if (!messageId) return;
-
-    sendAction({ actionType: ActionType.EDIT, messageId, text: input }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
-      updatedText: input,
-      setBotThinking: actor === Actor.USER,
-    });
-    setInsertBeforeMessageId(beforeMessageId);
-  }, [
-    actor,
-    input,
-    messageId,
-    sendAction,
-    setInsertBeforeMessageId,
-    truncateUntilNextHumanMessage,
-  ]);
-
   const handleSubmit = useCallback(() => {
     // no message yet
     if (input.length > 0 && !message) {
@@ -62,11 +45,11 @@ const MessageInput = ({ message }: MessageInputProps) => {
 
     // edit message
     if (message && initInput !== input) {
-      submitEdit();
+      editMessage(message, input);
     }
 
     setIsEditing(false);
-  }, [initInput, input, message, sendMessage, submitEdit]);
+  }, [editMessage, initInput, input, message, sendMessage]);
 
   const submitRegenerate = useCallback(() => {
     if (!messageId) return;
