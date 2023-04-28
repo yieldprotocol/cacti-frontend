@@ -22,6 +22,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     sendMessage,
     interactor,
     editMessage,
+    regenerateMessage,
   } = useChatContext();
 
   const actor = message ? message.actor : interactor;
@@ -50,14 +51,6 @@ const MessageInput = ({ message }: MessageInputProps) => {
 
     setIsEditing(false);
   }, [editMessage, initInput, input, message, sendMessage]);
-
-  const submitRegenerate = useCallback(() => {
-    if (!messageId) return;
-
-    sendAction({ actionType: ActionType.REGENERATE, messageId }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { setBotThinking: true });
-    setInsertBeforeMessageId(beforeMessageId);
-  }, [messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]);
 
   const submitDelete = useCallback(() => {
     if (!messageId) return;
@@ -188,7 +181,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
       {hovered && !isEditing && message && (
         <div className="flex h-full gap-2 p-2 align-top">
           {actor === Actor.USER && (
-            <button onClick={submitRegenerate}>
+            <button onClick={() => regenerateMessage(message)}>
               <ArrowPathIcon className="h-4 w-4" />
             </button>
           )}

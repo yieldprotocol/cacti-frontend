@@ -34,6 +34,7 @@ export type ChatContextType = {
   interactor: string;
   setInteractor: (arg0: string) => void;
   editMessage: (message: Message, text: string) => void;
+  regenerateMessage: (message: Message) => void;
 };
 
 const initialContext = {
@@ -52,6 +53,8 @@ const initialContext = {
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
   setInteractor: (arg0: string) => {},
+  editMessage: (message: Message, text: string) => {},
+  regenerateMessage: (message: Message) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -266,6 +269,17 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [sendAction, truncateUntilNextHumanMessage]
   );
 
+  const regenerateMessage = useCallback(
+    (message: Message) => {
+      sendAction({ actionType: ActionType.REGENERATE, messageId: message.messageId }); // this also truncates message list on backend
+      const beforeMessageId = truncateUntilNextHumanMessage(message.messageId, {
+        setBotThinking: true,
+      });
+      setInsertBeforeMessageId(beforeMessageId);
+    },
+    [sendAction, truncateUntilNextHumanMessage]
+  );
+
   return (
     <ChatContext.Provider
       value={{
@@ -283,6 +297,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         interactor,
         setInteractor,
         editMessage,
+        regenerateMessage,
       }}
     >
       {children}
