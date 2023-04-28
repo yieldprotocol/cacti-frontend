@@ -32,7 +32,6 @@ const MessageInput = ({ message }: MessageInputProps) => {
   const initInput = message?.payload || '';
   const [input, setInput] = useState(initInput);
   const inputType = actor === Actor.USER ? InputType.CHAT : InputType.MARKDOWN;
-  console.log('🦄 ~ file: MessageInput.tsx:35 ~ MessageInput ~ inputType:', inputType);
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
