@@ -126,6 +126,11 @@ const MessageInput = ({ message }: MessageInputProps) => {
     return () => window.removeEventListener('keydown', handleKeys);
   }, [focusInput, handleSubmit, initInput, inputType, message]);
 
+  // update input on message changes
+  useEffect(() => {
+    message && message.payload !== input && !isEditing && setInput(message.payload);
+  }, [input, isEditing, message]);
+
   // shared style between textarea and input
   const inputStyle = `flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`;
 
