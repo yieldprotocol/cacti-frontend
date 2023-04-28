@@ -16,14 +16,14 @@ const KeyStrokePill = ({ label }: { label: string }) => (
 
 const MessageInput = ({ message }: MessageInputProps) => {
   const {
-    interactor,
     sendAction,
     truncateUntilNextHumanMessage,
     setInsertBeforeMessageId,
     sendMessage,
+    interactor,
   } = useChatContext();
 
-  const actor = message?.actor || interactor;
+  const actor = message ? message.actor : interactor;
   const messageId = message?.messageId;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +32,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
   const initInput = message?.payload || '';
   const [input, setInput] = useState(initInput);
   const inputType = actor === Actor.USER ? InputType.CHAT : InputType.MARKDOWN;
+  console.log('🦄 ~ file: MessageInput.tsx:35 ~ MessageInput ~ inputType:', inputType);
   const [hovered, setHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -103,13 +104,12 @@ const MessageInput = ({ message }: MessageInputProps) => {
       }
 
       if (inputType === InputType.CHAT && key === 'Enter') {
-        e.preventDefault();
         handleSubmit();
         inputRef.current?.blur();
       }
 
-      if (inputType === InputType.MARKDOWN && key === 'Enter') {
-        if (shiftKey) {
+      if (inputType === InputType.MARKDOWN && shiftKey) {
+        if (key === 'Enter') {
           handleSubmit();
           textAreaRef.current?.blur();
         }
