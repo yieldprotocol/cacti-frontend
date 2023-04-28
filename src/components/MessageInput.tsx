@@ -52,8 +52,8 @@ const MessageInput = ({ message }: MessageInputProps) => {
   }, [initInput, message, refToUse]);
 
   const focusInput = useCallback(() => {
-    (inputType === InputType.CHAT ? inputRef : textAreaRef).current?.focus();
-  }, [inputType]);
+    refToUse.current?.focus();
+  }, [refToUse]);
 
   // focus input on mount if bottom component
   useEffect(() => {
