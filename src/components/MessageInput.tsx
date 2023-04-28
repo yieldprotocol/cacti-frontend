@@ -9,6 +9,12 @@ interface MessageInputProps {
   message?: Message; // if no message, then this is the bottom component when message has not been established
 }
 
+const KeyStrokePill = ({ label }: { label: string }) => (
+  <div className="m-auto mr-2 flex">
+    <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">{label}</span>
+  </div>
+);
+
 const MessageInput = ({ message }: MessageInputProps) => {
   const {
     interactor,
@@ -50,19 +56,17 @@ const MessageInput = ({ message }: MessageInputProps) => {
   ]);
 
   const handleSubmit = useCallback(() => {
-    // edit message
-    if (message) {
-      return submitEdit();
-    }
-
     // no message yet
-    if (input.length > 0) {
+    if (input.length > 0 && !message) {
       sendMessage(input);
+      setInput('');
     }
 
-    // update state to use the latest message payload or the initial input (ie: "")
-    setInput(initInput);
-  }, [initInput, input, message, sendMessage, submitEdit]);
+    // edit message
+    if (message && message.payload !== input) {
+      submitEdit();
+    }
+  }, [input, message, sendMessage, submitEdit]);
 
   const submitRegenerate = useCallback(() => {
     if (!messageId) return;
@@ -92,14 +96,23 @@ const MessageInput = ({ message }: MessageInputProps) => {
   // handle keyboard shortcuts from window
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
-      const { key } = e;
+      const { key, shiftKey } = e;
       if (key === 'Escape') {
         setInput(initInput);
       }
 
-      if (key === 'Enter') {
+      if (inputType === InputType.CHAT && key === 'Enter') {
+        e.preventDefault();
         handleSubmit();
         inputRef.current?.blur();
+      }
+
+      if (inputType === InputType.MARKDOWN && key === 'Enter') {
+        if (shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+          inputRef.current?.blur();
+        }
       }
 
       if (key === 'I' && !message) {
@@ -111,7 +124,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     window.addEventListener('keydown', handleKeys);
 
     return () => window.removeEventListener('keydown', handleKeys);
-  }, [focusInput, handleSubmit, initInput, message]);
+  }, [focusInput, handleSubmit, initInput, inputType, message]);
 
   const inputStyle = `flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`;
 
@@ -126,28 +139,30 @@ const MessageInput = ({ message }: MessageInputProps) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {!isEditing && inputType === InputType.MARKDOWN && <ReactMarkdown>{input}</ReactMarkdown>}
-
-      {actor === Actor.COMMENTER && (
-        <textarea
-          ref={textAreaRef}
-          className={inputStyle}
-          value={input}
-          placeholder={!message ? 'Enter your comment...' : undefined}
-          onChange={(e) => {
-            setIsEditing(true);
-            setInput(e.target.value);
-          }}
-          onBlur={() => {
-            setInput(input);
-            setIsEditing(false);
-          }}
-          onFocus={() => setIsEditing(true)}
-        />
+      {!isEditing && inputType === InputType.MARKDOWN && !!message && (
+        <ReactMarkdown className={inputStyle}>{input}</ReactMarkdown>
       )}
 
-      {actor === Actor.USER && (
-        <div className="flex h-full w-full">
+      <div className="flex h-full w-full">
+        {actor === Actor.COMMENTER && (
+          <textarea
+            ref={textAreaRef}
+            className={inputStyle}
+            value={input}
+            placeholder={!message ? 'Enter your comment in markdown...' : undefined}
+            onChange={(e) => {
+              setIsEditing(true);
+              setInput(e.target.value);
+            }}
+            onBlur={() => {
+              setInput(input);
+              setIsEditing(false);
+            }}
+            onFocus={() => setIsEditing(true)}
+          />
+        )}
+
+        {actor === Actor.USER && (
           <input
             ref={inputRef}
             className={inputStyle}
@@ -163,25 +178,14 @@ const MessageInput = ({ message }: MessageInputProps) => {
             }}
             onFocus={() => setIsEditing(true)}
           />
-
-          {isEditing && input !== '' && (
-            <div className="m-auto mr-2 flex">
-              <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
-                enter
-              </span>
-            </div>
-          )}
-        </div>
+        )}
+      </div>
+      {isEditing && input !== '' && (
+        <KeyStrokePill label={inputType === InputType.CHAT ? 'enter' : 'shift+enter'} />
       )}
 
       {hovered && !isEditing && message && (
-        <div className="flex h-full gap-2 p-1 align-top">
-          <InputTypeDropdown
-            activeType={inputType}
-            action={() => {
-              setInteractor(actor === Actor.USER ? Actor.COMMENTER : Actor.USER); // TODO handle changing interactor for each message, not just the bottom component
-            }}
-          />
+        <div className="flex h-full gap-2 p-2 align-top">
           {actor === Actor.USER && (
             <button onClick={submitRegenerate}>
               <ArrowPathIcon className="h-4 w-4" />
