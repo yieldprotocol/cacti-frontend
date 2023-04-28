@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
-import { useModalContext } from '@/contexts/ModalContext';
 import { ActionType, Actor } from '@/types/chat';
 import { getBackendUrl } from '@/utils/backend';
 
@@ -23,12 +23,15 @@ export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
+  sendMultiStepClientMessage: (action: JsonValue) => void;
+  setIsMultiStepInProgress: (value: boolean) => void;
   sendAction: (action: JsonValue) => void;
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
+  isMultiStepInProgress: boolean;
   showDebugMessages: boolean;
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
@@ -42,6 +45,8 @@ const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
+  sendMultiStepClientMessage: (action: JsonValue) => {},
+  setIsMultiStepInProgress: (value: boolean) => {},
   sendAction: (action: JsonValue) => {},
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => {
     return null;
@@ -50,6 +55,7 @@ const initialContext = {
   isBotThinking: false,
   insertBeforeMessageId: null,
   setInsertBeforeMessageId: (arg0: string | null) => {},
+  isMultiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
@@ -64,11 +70,13 @@ const ChatContext = createContext<ChatContextType>(initialContext);
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
+  const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
+    initialContext.isMultiStepInProgress
+  );
   const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
-  const { setModal } = useModalContext();
 
   const backendUrl = getBackendUrl();
   const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(backendUrl, {
@@ -127,11 +135,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   // unused in production, but useful in debugging
   const onClose = () => {
-    // console.log('websocket closed');
+    toast.info('Websocket closed');
   };
 
   const onError = () => {
-    setModal(<div>Websocket error</div>);
+    toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
@@ -239,6 +247,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     },
     [messages]
   );
+  const sendMultiStepClientMessage = useCallback(
+    (payload: JsonValue) => {
+      wsSendMessage({ actor: 'system', type: 'multistep-workflow', payload });
+    },
+    [wsSendMessage]
+  );
 
   const spoofBotMessage = useCallback(
     (msg: string) => {
@@ -297,10 +311,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         messages,
         sendMessage,
         replayUserMessage,
+        sendMultiStepClientMessage,
         sendAction,
         isBotThinking,
         insertBeforeMessageId,
         setInsertBeforeMessageId,
+        isMultiStepInProgress,
+        setIsMultiStepInProgress,
         truncateUntilNextHumanMessage,
         spoofBotMessage,
         showDebugMessages,

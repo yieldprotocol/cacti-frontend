@@ -3707,9 +3707,11 @@ __metadata:
     prettier-plugin-tailwindcss: ^0.2.1
     react: 18.2.0
     react-dom: 18.2.0
+    react-hotkeys-hook: ^4.4.0
     react-loading-skeleton: ^3.2.0
     react-markdown: ^8.0.7
     react-query: ^3.39.3
+    react-toastify: ^9.1.2
     react-use-websocket: ^4.3.1
     swr: ^2.0.4
     tailwindcss: ^3.2.4
@@ -3822,7 +3824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0":
+"clsx@npm:^1.1.0, clsx@npm:^1.1.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -8243,6 +8245,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hotkeys-hook@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "react-hotkeys-hook@npm:4.4.0"
+  peerDependencies:
+    react: ">=16.8.1"
+    react-dom: ">=16.8.1"
+  checksum: 1c39bbcbb29bea15fec225facee27fb2b24bc84b385f4492d0eebdafa70a2eb0835454d9ba14d81eb9930cf469600b86e21113cd0899e15d8d5163b26819c5dd
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -8359,6 +8371,18 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7ee8ef3aab74c7ae1d70ff34a27643d11ba1a8d62d072c767827d9ff9a520905223e567002e0bf6c772929d8ea1c781a3ba0cc4a563e92b1e3dc2eaa817ecbe8
+  languageName: node
+  linkType: hard
+
+"react-toastify@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "react-toastify@npm:9.1.2"
+  dependencies:
+    clsx: ^1.1.1
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 0b21851bbb03592aa6e318ca62622016a6aa37cc52484c4a2fee39ce38c9933993e570c8ad9375f0a7061d3401fd175796b74f851b7d5a711b4802e0a3f9f34a
   languageName: node
   linkType: hard
 

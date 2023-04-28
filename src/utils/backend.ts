@@ -8,13 +8,13 @@ const DEFAULT_ENV_TAG = EnvTag.Dev;
 
 const BACKEND_URL_BY_ENV_TAG: { [key in EnvTag]: string } = {
   // chatweb3-backend-dev on GCP Cloud Run (runs up-to-date master)
-  [EnvTag.Dev]: 'wss://chatweb3-backend-dev-go3k2a3aca-ue.a.run.app',
+  [EnvTag.Dev]: 'wss://chatweb3-backend-dev-go3k2a3aca-ue.a.run.app/chat',
 
   // chatweb3-backend-prod on GCP Cloud Run
-  [EnvTag.Prod]: 'wss://chatweb3-backend-prod-go3k2a3aca-ue.a.run.app',
+  [EnvTag.Prod]: 'wss://chatweb3-backend-prod-go3k2a3aca-ue.a.run.app/chat',
 
   // locally running backend
-  [EnvTag.Local]: 'ws://localhost:9999',
+  [EnvTag.Local]: 'ws://localhost:9999/chat',
 };
 
 function isEnvTag(envTag: any): envTag is EnvTag {

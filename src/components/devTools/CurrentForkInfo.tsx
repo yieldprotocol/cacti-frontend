@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
@@ -6,11 +6,13 @@ import {
 } from '@heroicons/react/24/outline';
 import copy from 'copy-to-clipboard';
 import { Button } from '@/components/Button';
-import useCachedState from '@/hooks/useCachedState';
+import SettingsContext from '@/contexts/SettingsContext';
 
 export const CurrentForkInfo = () => {
-  const [url] = useCachedState('forkUrl');
-  const [tenderlyUrl, setTenderlyUrl] = useState<string>(url);
+  const {
+    settings: { isForkedEnv, forkEnvUrl },
+  } = useContext(SettingsContext);
+  const [tenderlyUrl, setTenderlyUrl] = useState<string>(forkEnvUrl);
   const [copied, setCopied] = useState<boolean>(false);
 
   /* set a timer controlling it has been copied */
@@ -20,17 +22,17 @@ export const CurrentForkInfo = () => {
 
   /* Monitor rpc url and update link to tenderly TODO: increase robustness here */
   useEffect(() => {
-    if (url) {
-      const forkId = url.split('/')[4];
+    if (forkEnvUrl) {
+      const forkId = forkEnvUrl.split('/')[4];
       setTenderlyUrl(
         `https://dashboard.tenderly.co/${process.env.NEXT_PUBLIC_TENDERLY_USER}/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork/${forkId}`
       );
     }
-  }, [url]);
+  }, [forkEnvUrl]);
 
   const copyUrl = () => {
     setCopied(true);
-    copy(url);
+    copy(forkEnvUrl);
   };
 
   const goToTenderly = () => {
@@ -40,16 +42,23 @@ export const CurrentForkInfo = () => {
   return (
     <div>
       <div className="border">
-        <div className="p-4 font-mono text-xs">{url}</div>
-        <div className="flex gap-2 p-2 text-xs">
+        <div
+          className={`p-2 text-left text-xs ${
+            isForkedEnv ? 'bg-green-300' : 'bg-red-300'
+          } bg-red-300`}
+        >
+          {isForkedEnv ? 'Current forked environment' : 'Default fork'}
+        </div>
+        <div className="overflow-x-scroll p-4 font-mono text-xs">{forkEnvUrl}</div>
+        <div className="flex gap-2 p-2 text-xs ">
           <Button onClick={copyUrl} disabled={copied}>
-            <div className="flex gap-2 text-xs">
+            <div className="flex gap-2 text-[0.75em]">
               <div className="w-4">{copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />} </div>
-              Copy RPC
+              Copy url
             </div>
           </Button>
-          <Button onClick={goToTenderly} disabled={!url}>
-            <div className="flex gap-2 text-xs">
+          <Button onClick={goToTenderly} disabled={!forkEnvUrl}>
+            <div className="flex gap-2 text-[0.75em]">
               <div className="w-4">
                 <ArrowTopRightOnSquareIcon />
               </div>

@@ -1,5 +1,4 @@
 import dynamic from 'next/dynamic';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const HeaderDynamic = dynamic(() => import('@/components/Header'), {
   ssr: false,
