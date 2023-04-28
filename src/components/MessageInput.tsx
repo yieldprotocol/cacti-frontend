@@ -45,8 +45,8 @@ const MessageInput = ({ message }: MessageInputProps) => {
   }, [editMessage, initInput, input, message, sendMessage]);
 
   const focusInput = useCallback(() => {
-    inputRef.current?.focus();
-  }, []);
+    (inputType === InputType.CHAT ? inputRef : textAreaRef).current?.focus();
+  }, [inputType]);
 
   // focus input on mount if bottom component
   useEffect(() => {
@@ -89,6 +89,11 @@ const MessageInput = ({ message }: MessageInputProps) => {
   useEffect(() => {
     message && message.payload !== input && !isEditing && setInput(message.payload);
   }, [input, isEditing, message]);
+
+  // focus input on interactor change
+  useEffect(() => {
+    focusInput();
+  }, [focusInput, interactor]);
 
   // shared style between textarea and input
   const inputStyle = `flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`;
