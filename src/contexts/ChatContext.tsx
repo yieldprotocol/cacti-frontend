@@ -99,7 +99,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     sendWalletMessage();
   }, [walletIsConnected, walletStatus, walletAddress, sendWalletMessage]);
 
-  const onOpen = () => {
+  const onOpen = useCallback(() => {
     console.log(`Connected to backend: ${backendUrl}`);
 
     const q = window.location.search;
@@ -123,7 +123,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
     sendWalletMessage();
-  };
+  }, [backendUrl, lastBotMessageId, sendWalletMessage, wsSendMessage]);
 
   // unused in production, but useful in debugging
   const onClose = () => {
