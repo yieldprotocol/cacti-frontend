@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
-import InputTypeDropdown from '@/components/InputTypeDropdown';
 import { Message, useChatContext } from '@/contexts/ChatContext';
 import { ActionType, Actor, InputType } from '@/types/chat';
 
@@ -66,6 +65,8 @@ const MessageInput = ({ message }: MessageInputProps) => {
     if (message && message.payload !== input) {
       submitEdit();
     }
+
+    setIsEditing(false);
   }, [input, message, sendMessage, submitEdit]);
 
   const submitRegenerate = useCallback(() => {
@@ -98,6 +99,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
       const { key, shiftKey } = e;
       if (key === 'Escape') {
+        setIsEditing(false);
         setInput(initInput);
       }
 
@@ -107,12 +109,9 @@ const MessageInput = ({ message }: MessageInputProps) => {
         inputRef.current?.blur();
       }
 
-      if (inputType === InputType.MARKDOWN && key === 'Enter') {
-        if (shiftKey) {
-          e.preventDefault();
-          handleSubmit();
-          inputRef.current?.blur();
-        }
+      if (inputType === InputType.MARKDOWN && key === 'Enter' && shiftKey) {
+        handleSubmit();
+        textAreaRef.current?.blur();
       }
 
       if (key === 'I' && !message) {
@@ -126,6 +125,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
     return () => window.removeEventListener('keydown', handleKeys);
   }, [focusInput, handleSubmit, initInput, inputType, message]);
 
+  // shared style between textarea and input
   const inputStyle = `flex h-full w-full flex-col gap-3 rounded-md bg-gray-700 p-3 hover:bg-gray-700/20 focus:outline-none`;
 
   return (
@@ -139,27 +139,39 @@ const MessageInput = ({ message }: MessageInputProps) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {!isEditing && inputType === InputType.MARKDOWN && !!message && (
-        <ReactMarkdown className={inputStyle}>{input}</ReactMarkdown>
-      )}
-
       <div className="flex h-full w-full">
         {actor === Actor.COMMENTER && (
-          <textarea
-            ref={textAreaRef}
-            className={inputStyle}
-            value={input}
-            placeholder={!message ? 'Enter your comment in markdown...' : undefined}
-            onChange={(e) => {
+          <div
+            className="flex h-full w-full"
+            onClick={() => {
               setIsEditing(true);
-              setInput(e.target.value);
+              textAreaRef.current?.focus();
             }}
             onBlur={() => {
-              setInput(input);
               setIsEditing(false);
+              setInput(input);
             }}
-            onFocus={() => setIsEditing(true)}
-          />
+          >
+            {!isEditing ? (
+              <ReactMarkdown className={inputStyle}>{input}</ReactMarkdown>
+            ) : (
+              <textarea
+                ref={textAreaRef}
+                className={inputStyle}
+                value={input}
+                placeholder={!message ? 'Enter your comment in markdown...' : undefined}
+                onChange={(e) => {
+                  setIsEditing(true);
+                  setInput(e.target.value);
+                }}
+                onBlur={() => {
+                  setInput(input);
+                  setIsEditing(false);
+                }}
+                onFocus={() => setIsEditing(true)}
+              />
+            )}
+          </div>
         )}
 
         {actor === Actor.USER && (
