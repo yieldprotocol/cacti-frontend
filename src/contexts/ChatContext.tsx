@@ -35,6 +35,7 @@ export type ChatContextType = {
   setInteractor: (arg0: string) => void;
   editMessage: (message: Message, text: string) => void;
   regenerateMessage: (message: Message) => void;
+  deleteMessage: (message: Message) => void;
 };
 
 const initialContext = {
@@ -55,6 +56,7 @@ const initialContext = {
   setInteractor: (arg0: string) => {},
   editMessage: (message: Message, text: string) => {},
   regenerateMessage: (message: Message) => {},
+  deleteMessage: (message: Message) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -280,6 +282,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [sendAction, truncateUntilNextHumanMessage]
   );
 
+  const deleteMessage = useCallback(
+    (message: Message) => {
+      sendAction({ actionType: ActionType.DELETE, messageId: message.messageId }); // this also truncates message list on backend
+      const beforeMessageId = truncateUntilNextHumanMessage(message.messageId, { inclusive: true });
+      setInsertBeforeMessageId(beforeMessageId);
+    },
+    [sendAction, truncateUntilNextHumanMessage]
+  );
+
   return (
     <ChatContext.Provider
       value={{
@@ -298,6 +309,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setInteractor,
         editMessage,
         regenerateMessage,
+        deleteMessage,
       }}
     >
       {children}

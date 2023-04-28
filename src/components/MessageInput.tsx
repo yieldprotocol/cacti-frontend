@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Message, useChatContext } from '@/contexts/ChatContext';
-import { ActionType, Actor, InputType } from '@/types/chat';
+import { Actor, InputType } from '@/types/chat';
 
 interface MessageInputProps {
   message?: Message; // if no message, then this is the bottom component when message has not been established
@@ -15,18 +15,10 @@ const KeyStrokePill = ({ label }: { label: string }) => (
 );
 
 const MessageInput = ({ message }: MessageInputProps) => {
-  const {
-    sendAction,
-    truncateUntilNextHumanMessage,
-    setInsertBeforeMessageId,
-    sendMessage,
-    interactor,
-    editMessage,
-    regenerateMessage,
-  } = useChatContext();
+  const { interactor, sendMessage, editMessage, regenerateMessage, deleteMessage } =
+    useChatContext();
 
   const actor = message ? message.actor : interactor;
-  const messageId = message?.messageId;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -51,14 +43,6 @@ const MessageInput = ({ message }: MessageInputProps) => {
 
     setIsEditing(false);
   }, [editMessage, initInput, input, message, sendMessage]);
-
-  const submitDelete = useCallback(() => {
-    if (!messageId) return;
-
-    sendAction({ actionType: ActionType.DELETE, messageId }); // this also truncates message list on backend
-    const beforeMessageId = truncateUntilNextHumanMessage(messageId, { inclusive: true });
-    setInsertBeforeMessageId(beforeMessageId);
-  }, [messageId, sendAction, setInsertBeforeMessageId, truncateUntilNextHumanMessage]);
 
   const focusInput = useCallback(() => {
     inputRef.current?.focus();
@@ -185,7 +169,7 @@ const MessageInput = ({ message }: MessageInputProps) => {
               <ArrowPathIcon className="h-4 w-4" />
             </button>
           )}
-          <button onClick={submitDelete}>
+          <button onClick={() => deleteMessage(message)}>
             <TrashIcon className="h-4 w-4" />
           </button>
         </div>
