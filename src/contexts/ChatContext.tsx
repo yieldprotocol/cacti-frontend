@@ -2,9 +2,9 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
 import { getBackendUrl } from '@/utils/backend';
-import { useSession } from 'next-auth/react';
 
 export type Message = {
   messageId: string;
@@ -58,7 +58,7 @@ const initialContext = {
   isMultiStepInProgress: false,
   showDebugMessages: false,
   setShowDebugMessages: (arg0: boolean) => {},
-  
+
   interactor: 'user',
   setInteractor: (arg0: string) => {},
 
@@ -95,10 +95,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     address: walletAddress,
   } = useAccount();
 
-  const { data: session, status } = useSession()
-  useEffect(()=>{
-    console.log( session, status)
-  },[])
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    console.log(session, status);
+  }, []);
 
   const sendWalletMessage = () => {
     const walletPayload = {
@@ -271,13 +271,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }, 500);
   };
 
-  const generateNonce = (msg:string) => { 
+  const generateNonce = (msg: string) => {
     wsSendMessage({ actor: 'system', type: 'get-nonce', payload: msg });
-  }
+  };
 
-  const siweVerify = (msg:string) => { 
+  const siweVerify = (msg: string) => {
     wsSendMessage({ actor: 'system', type: 'siwe-verify', payload: msg });
-  }
+  };
 
   return (
     <ChatContext.Provider

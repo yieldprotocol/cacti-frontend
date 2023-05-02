@@ -58,8 +58,8 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   });
 
   const getCustomNonce = async () => {
-
     console.log('Existing Session: ', pageProps?.session);
+
     /* add in any async call here to add a custom nonce eg. server call */
     const nonce = await generateNonce(); //TODO add in the call to the backend server here
     return nonce;
