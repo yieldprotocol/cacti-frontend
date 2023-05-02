@@ -56,11 +56,12 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   });
 
   const getCustomNonce = async () => {
-    
-    console.log('Fetching NEW nonce from server');
-    
+    console.log('Fetching NONCE from server');
     /* add in any async call here to add a custom nonce eg. server call */
     const nonce = await generateNonce(); //TODO add in the call to the backend server here
+    
+    /*dev timeout */
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return nonce;
   };
 
