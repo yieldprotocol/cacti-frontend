@@ -1,9 +1,7 @@
-import { ReactNode } from 'react';
-import { AppProps } from 'next/app';
-import { AuthenticationStatus, RainbowKitAuthenticationProvider, RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
-import { SessionProvider, getCsrfToken } from 'next-auth/react';
+import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import { SessionProvider } from 'next-auth/react';
 import { generateNonce } from 'siwe';
-import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createClient, useAccount } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { GetSiweMessageOptions, CustomAuthProvider } from '@/utils/rainbowSIWEmod';
@@ -58,8 +56,9 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   });
 
   const getCustomNonce = async () => {
-    console.log('Existing Session: ', pageProps?.session);
-
+    
+    console.log('Fetching NEW nonce from server');
+    
     /* add in any async call here to add a custom nonce eg. server call */
     const nonce = await generateNonce(); //TODO add in the call to the backend server here
     return nonce;

@@ -11,7 +11,7 @@ import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
-  ssr: false,
+  ssr: true,
 });
 const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
   ssr: false,

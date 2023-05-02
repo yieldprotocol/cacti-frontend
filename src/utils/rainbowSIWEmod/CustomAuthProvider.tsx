@@ -1,10 +1,11 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import {
   RainbowKitAuthenticationProvider,
   createAuthenticationAdapter,
 } from '@rainbow-me/rainbowkit';
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
+import { useAccount } from 'wagmi';
 
 type UnconfigurableMessageOptions = {
   address: string;
@@ -30,8 +31,17 @@ export function CustomAuthProvider({
   getSiweMessageOptions,
   getCustomNonce,
 }: RainbowKitSiweNextAuthProviderProps) {
-  const { status } = useSession();
+  const { data:session, status, update  } = useSession();
+  const { address: account } = useAccount();
   
+  /* force logout if account changes */
+  useEffect(()=>{
+    if (session && session?.user?.name !== account ) {
+      signOut({ redirect: false });
+      // console.log( 'loggin out here')
+    }
+  },[account, session])
+
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
