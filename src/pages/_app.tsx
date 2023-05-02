@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
+import { Session } from 'next-auth';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { Session } from 'next-auth';
 import '@/styles/globals.css';

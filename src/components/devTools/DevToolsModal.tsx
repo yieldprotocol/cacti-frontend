@@ -75,10 +75,8 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                       <div className="mt-4 space-y-8 p-4">
                         <SessionInfo />
                       </div>
-
-                      <div className="mt-4 space-y-8 p-4">
+                      <div className="mt- space-y-2 p-4">
                         <DebugMessageToggle />
-
                         <ResetButton />
                       </div>
 
