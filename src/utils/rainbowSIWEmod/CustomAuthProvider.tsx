@@ -9,7 +9,6 @@ import { SiweMessage } from 'siwe';
 type UnconfigurableMessageOptions = {
   address: string;
   chainId: number;
-  nonce: string;
 };
 
 type ConfigurableMessageOptions = Partial<Omit<SiweMessage, keyof UnconfigurableMessageOptions>> & {
@@ -25,13 +24,14 @@ interface RainbowKitSiweNextAuthProviderProps {
   children: ReactNode;
 }
 
-export function RainbowKitSiweNextAuthProvider({
+export function CustomAuthProvider({
   children,
   enabled,
   getSiweMessageOptions,
   getCustomNonce,
 }: RainbowKitSiweNextAuthProviderProps) {
   const { status } = useSession();
+  
   const adapter = useMemo(
     () =>
       createAuthenticationAdapter({
@@ -46,7 +46,6 @@ export function RainbowKitSiweNextAuthProvider({
           const unconfigurableOptions: UnconfigurableMessageOptions = {
             address,
             chainId,
-            nonce,
           };
 
           return new SiweMessage({

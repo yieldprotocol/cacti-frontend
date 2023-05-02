@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import { AppProps } from 'next/app';
-import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import { AuthenticationStatus, RainbowKitAuthenticationProvider, RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
 import { SessionProvider, getCsrfToken } from 'next-auth/react';
 import { generateNonce } from 'siwe';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
-import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import { GetSiweMessageOptions, CustomAuthProvider } from '@/utils/rainbowSIWEmod';
 
 const ConnectionWrapper = ({ children, pageProps }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -68,7 +68,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
-        <RainbowKitSiweNextAuthProvider
+        <CustomAuthProvider
           getCustomNonce={getCustomNonce}
           getSiweMessageOptions={getSiweMessageOptions}
         >
@@ -79,7 +79,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
           >
             {children}
           </RainbowKitProvider>
-        </RainbowKitSiweNextAuthProvider>
+        </CustomAuthProvider>
       </SessionProvider>
     </WagmiConfig>
   );
