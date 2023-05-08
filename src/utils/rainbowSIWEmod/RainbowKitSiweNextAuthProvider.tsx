@@ -22,6 +22,7 @@ interface RainbowKitSiweNextAuthProviderProps {
   enabled?: boolean;
   getSiweMessageOptions?: GetSiweMessageOptions;
   getCustomNonce?: () => Promise<string | undefined>;
+  getSignoutCallback?: () => Promise<void>;
   children: ReactNode;
 }
 
@@ -30,6 +31,7 @@ export function RainbowKitSiweNextAuthProvider({
   enabled,
   getSiweMessageOptions,
   getCustomNonce,
+  getSignoutCallback,
 }: RainbowKitSiweNextAuthProviderProps) {
   const { status } = useSession();
   const adapter = useMemo(
@@ -70,6 +72,9 @@ export function RainbowKitSiweNextAuthProvider({
 
         signOut: async () => {
           await signOut({ redirect: false });
+          if (getSignoutCallback) {
+            await getSignoutCallback();
+          }
         },
 
         verify: async ({ message, signature }) => {

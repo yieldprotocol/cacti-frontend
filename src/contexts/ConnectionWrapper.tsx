@@ -70,12 +70,18 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     return nonce;
   };
 
+  const getSignoutCallback = async () => {
+    const backendUrl = getBackendApiUrl();
+    await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true } );
+  };
+
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
         <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}
           getSiweMessageOptions={getSiweMessageOptions}
+          getSignoutCallback={getSignoutCallback}
         >
           <RainbowKitProvider
             chains={chains}
