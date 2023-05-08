@@ -8,6 +8,7 @@ import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import { getBackendApiUrl } from '@/utils/backend';
 
 const ConnectionWrapper = ({ children, pageProps }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -60,7 +61,12 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
 
   const getCustomNonce = async () => {
     /* add in any async call here to add a custom nonce eg. server call */
-    const nonce = await generateNonce(); //TODO add in the call to the backend server here
+    const backendUrl = getBackendApiUrl();
+    const resp = await axios.get(`${backendUrl}/nonce`);
+    const nonce = resp.data as string;
+    // for some reason, we still need to call the old generate function
+    // or else we get an error
+    await generateNonce();
     return nonce;
   };
 
