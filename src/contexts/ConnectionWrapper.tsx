@@ -62,7 +62,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   const getCustomNonce = async () => {
     /* add in any async call here to add a custom nonce eg. server call */
     const backendUrl = getBackendApiUrl();
-    const resp = await axios.get(`${backendUrl}/nonce`);
+    const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
     const nonce = resp.data as string;
     // for some reason, we still need to call the old generate function
     // or else we get an error
