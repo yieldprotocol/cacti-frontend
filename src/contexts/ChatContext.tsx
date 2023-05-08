@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useAccount } from 'wagmi';
-import { getBackendUrl } from '@/utils/backend';
+import { getBackendWebsocketUrl } from '@/utils/backend';
 import { useSession } from 'next-auth/react';
 
 export type Message = {
@@ -72,7 +72,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
-  const backendUrl = getBackendUrl();
+  const backendUrl = getBackendWebsocketUrl();
   const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(backendUrl, {
     onOpen: (evt) => onOpen(),
     onClose: (evt) => onClose(),
