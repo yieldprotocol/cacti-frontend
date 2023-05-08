@@ -2,9 +2,9 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
 import { getBackendWebsocketUrl } from '@/utils/backend';
-import { useSession } from 'next-auth/react';
 
 export type Message = {
   messageId: string;
@@ -88,10 +88,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     address: walletAddress,
   } = useAccount();
 
-  const { data: session, status } = useSession()
-  useEffect(()=>{
-    console.log( session, status)
-  },[])
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    console.log(session, status);
+  }, []);
 
   const sendWalletMessage = () => {
     const walletPayload = {

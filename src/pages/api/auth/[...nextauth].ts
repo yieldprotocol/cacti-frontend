@@ -36,7 +36,7 @@ export default async function auth(req: any, res: any) {
             signature: credentials?.signature || '',
           });
 
-          /* Store the signature and Eip with the session  -- note hack in NextAuth() callbacks */ 
+          /* Store the signature and Eip with the session  -- note hack in NextAuth() callbacks */
           if (verified.success) {
             console.log('Access verified:', verified.data.address);
             return {
@@ -71,15 +71,15 @@ export default async function auth(req: any, res: any) {
       async signIn({ user, account }) {
         account!.signature = (user as any).signature;
         account!.eip4361 = (user as any).eip4361;
-        return true
+        return true;
       },
       /* This is step 2:  append the token with the updated account info  */
       async jwt({ token, account }) {
         if (account) {
-          token.signature = account.signature
-          token.eip4361 = account.eip4361
+          token.signature = account.signature;
+          token.eip4361 = account.eip4361;
         }
-        return token
+        return token;
       },
       async session({ session, token, user }: { session: any; token: any; user: any }) {
         session.address = token.sub;
@@ -91,6 +91,5 @@ export default async function auth(req: any, res: any) {
         return session;
       },
     },
-    
   });
 }

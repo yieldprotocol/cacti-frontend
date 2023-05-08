@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import axios from 'axios';
 import { SessionProvider, getCsrfToken } from 'next-auth/react';
 import { generateNonce } from 'siwe';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
