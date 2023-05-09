@@ -2,10 +2,8 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useAccount } from 'wagmi';
-import { getBackendApiUrl, getBackendWebsocketUrl } from '@/utils/backend';
+import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
   messageId: string;
@@ -76,22 +74,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
   useEffect(() => {
     console.log(session, status);
-    if (status == 'authenticated') {
-      const eip4361 = (session as any).eip4361;
-      const signature = (session as any).signature;
-      const login = async () => {
-        const backendUrl = getBackendApiUrl();
-        await axios.post(
-          `${backendUrl}/login`,
-          {
-            eip4361,
-            signature,
-          },
-          { withCredentials: true }
-        );
-      };
-      login().catch(console.error);
-    }
   }, [session, status]);
 
   const shouldConnect = status === 'authenticated';

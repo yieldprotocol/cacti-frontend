@@ -22,6 +22,7 @@ interface RainbowKitSiweNextAuthProviderProps {
   enabled?: boolean;
   getSiweMessageOptions?: GetSiweMessageOptions;
   getCustomNonce?: () => Promise<string | undefined>;
+  getSigninCallback?: (message: string, signature: string) => Promise<boolean>;
   getSignoutCallback?: () => Promise<void>;
   children: ReactNode;
 }
@@ -31,6 +32,7 @@ export function RainbowKitSiweNextAuthProvider({
   enabled,
   getSiweMessageOptions,
   getCustomNonce,
+  getSigninCallback,
   getSignoutCallback,
 }: RainbowKitSiweNextAuthProviderProps) {
   const { status } = useSession();
@@ -71,6 +73,9 @@ export function RainbowKitSiweNextAuthProvider({
         },
 
         signOut: async () => {
+          // signout on frontend first, so that we don't end up in situation
+          // where frontend is signed in but backend is signed out, which will
+          // be confusing to the user
           await signOut({ redirect: false });
           if (getSignoutCallback) {
             await getSignoutCallback();
@@ -78,12 +83,20 @@ export function RainbowKitSiweNextAuthProvider({
         },
 
         verify: async ({ message, signature }) => {
+          const messageJson = JSON.stringify(message);
+          // signin on backend first, so that any issues there will not lead to
+          // an inconsistent signin state with frontend
+          if (getSigninCallback) {
+            const result = await getSigninCallback(messageJson, signature);
+            if (!result) {
+              return false;
+            }
+          }
           const response = await signIn('credentials', {
-            message: JSON.stringify(message),
+            message: messageJson,
             redirect: false,
             signature,
           });
-
           return response?.ok ?? false;
         },
       }),

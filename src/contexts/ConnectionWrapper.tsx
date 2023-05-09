@@ -64,12 +64,17 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     const backendUrl = getBackendApiUrl();
     const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
     const nonce = resp.data as string;
-    // for some reason, we still need to call the old generate function
-    // or else we get an error
-    await generateNonce();
     return nonce;
   };
 
+  const getSigninCallback = async (message: string, signature: string) => {
+    const backendUrl = getBackendApiUrl();
+    const result = await axios.post(`${backendUrl}/login`, {
+      eip4361: message,
+      signature
+    }, { withCredentials: true } );
+    return !!result.data;
+  }
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true } );
@@ -81,6 +86,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
         <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}
           getSiweMessageOptions={getSiweMessageOptions}
+          getSigninCallback={getSigninCallback}
           getSignoutCallback={getSignoutCallback}
         >
           <RainbowKitProvider
