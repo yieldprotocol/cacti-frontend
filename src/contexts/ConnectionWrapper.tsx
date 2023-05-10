@@ -7,8 +7,8 @@ import { generateNonce } from 'siwe';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
-import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import { getBackendApiUrl } from '@/utils/backend';
+import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 
 const ConnectionWrapper = ({ children, pageProps }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -69,15 +69,19 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
 
   const getSigninCallback = async (message: string, signature: string) => {
     const backendUrl = getBackendApiUrl();
-    const result = await axios.post(`${backendUrl}/login`, {
-      eip4361: message,
-      signature
-    }, { withCredentials: true } );
+    const result = await axios.post(
+      `${backendUrl}/login`,
+      {
+        eip4361: message,
+        signature,
+      },
+      { withCredentials: true }
+    );
     return !!result.data;
-  }
+  };
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
-    await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true } );
+    await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
   };
 
   return (
