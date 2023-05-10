@@ -50,5 +50,3 @@ export const Button = ({
     </button>
   );
 };
-
-
