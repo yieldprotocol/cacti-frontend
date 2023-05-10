@@ -7,9 +7,19 @@ const meta: Meta<typeof InlineChip> = {
   component: InlineChip,
   tags: ['autodocs'],
   argTypes: {
-    backgroundColor: {
-      control: 'color',
+    label : {
+      description: 'Text to display. Will be shortened if an address("0x"prefix).',
+      default: '0x1Bd3Abb6ef058408734EA01cA81D325039cd7bcA',
+      control: 'text',
     },
+    showCopyButton: {
+      default: false,
+      description: 'Show copy button',
+      controls: 'boolean',
+    },
+    image: { 
+      control: { type: 'file', accept: ['.jpg', '.svg', '.png' ] } 
+    }
   },
 };
 
@@ -19,8 +29,9 @@ type Story = StoryObj<typeof InlineChip>;
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Primary: Story = {
   args: {
-    primary: true,
-    label: 'InlineChip',
+    // primary: true,
+    label: '0x1Bd3Abb6ef058408734EA01cA81D325039cd7bcA',
+    showCopyButton: false,
   },
 };
 
@@ -33,6 +44,7 @@ Primary.parameters = {
 
 export const AnotherVariant: Story = {
   args: {
-    label: 'InlineChip',
+    label: '0x1Bd3Abb6ef058408734EA01cA81D325039cd7bcA',
+    showCopyButton: true,
   },
 };
