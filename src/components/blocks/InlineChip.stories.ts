@@ -36,17 +36,3 @@ export const AnotherVariant: Story = {
     label: 'InlineChip',
   },
 };
-
-// export const Large: Story = {
-//   args: {
-//     size: 'large',
-//     label: 'InlineChip',
-//   },
-// };
-
-// export const Small: Story = {
-//   args: {
-//     size: 'small',
-//     label: 'InlineChip',
-//   }, 
-// };
