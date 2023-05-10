@@ -43,6 +43,8 @@ export const MessageList = () => {
         if (!showDebugMessages && message.actor == 'system') {
           return <React.Fragment key={message.messageId} />;
         }
+
+        console.log( {message })
         return (
           <React.Fragment key={message.messageId}>
             {message.messageId == insertBeforeMessageId && (
