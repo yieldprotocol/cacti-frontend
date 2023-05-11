@@ -1,4 +1,6 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect ,createElement } from 'react';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -19,7 +21,10 @@ import {
   useSharedStateContext,
 } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import { shortenAddress } from '@/utils';
+import { findProjectByName, shortenAddress } from '@/utils';
+import useToken from '@/hooks/useToken';
+import * as cw3Components from './cw3Components';
+import { Cw3Component } from './cw3Components';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -34,24 +39,25 @@ import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import { SwapWidget } from './widgets/swap/SwapWidget';
+import { getToken } from 'next-auth/jwt';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
   return (
     <SharedStateContextProvider>
-      <div className="flex flex-col gap-3">
-        {stringsAndWidgets.map((item, i) => {
-          return (
-            <Fragment key={`i${i}`}>
-              {
-                // if it's a string, just return the string
-                // otherwise, let's try to translate the widget
-                typeof item === 'string' ? item : Widgetize(item)
-              }
-            </Fragment>
-          );
-        })}
-      </div>
+    <div className="flex flex-col gap-3">
+      {stringsAndWidgets.map((item, i) => {
+        return (
+          <Fragment key={`i${i}`}>
+            {
+              // if it's a string, just return the string
+              // otherwise, let's try to translate the widget
+              typeof item === 'string' ? WidgetFromString(item) : Widgetize(item)
+            }
+          </Fragment>
+        );
+      })}
+    </div>
     </SharedStateContextProvider>
   );
 };
@@ -62,6 +68,28 @@ const parseArgsStripQuotes = (args: string): any[] => {
         JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
       )
     : [];
+};
+
+const WidgetFromString = (item: string): React.ReactElement => {
+  // testing demo exmaple item input (array of cw3Components)
+  const demoInput = `[{"componentType":"TextResponse", "props": {"text":"Hello World" } }]`;
+
+  const parsedItems = JSON.parse(demoInput) as {
+    componentType: Cw3Component;
+    props?: any;
+    children?: any;
+  }[];
+
+  // If we have a component that matches a cw3Component type, create a component with it
+  const components = parsedItems.map((parsedItem) => {
+    if (cw3Components[parsedItem.componentType]) {
+      return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
+    }
+    // if not a cw3Component resort to default: a text response with the item as the input
+    return createElement(cw3Components[Cw3Component.TextResponse], { text: item });
+    // TODO also can handle an error here:
+  });
+  return <>{components}</>;
 };
 
 const Widgetize = (widget: Widget) => {
@@ -88,6 +116,9 @@ const Widgetize = (widget: Widget) => {
       }
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
+        const token = getToken(tokenSymbol);
+        // const amount = parseUnits(amtString, token?.decimals);
+        // const project = findProjectByName(projectName);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
