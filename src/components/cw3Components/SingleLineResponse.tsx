@@ -24,24 +24,24 @@ export const SingleLineResponse = (props: any) => {
   return (
     <div
       className={`
-    height-[32px]    
+    height-[32px] 
+       
     rounded-[8px]
-    border-[1px]
-   border-white
-   border-opacity-10 
-   p-[12px]
-   text-[12px]
-   text-white
-   text-opacity-50
+
+    border-[1px] border-white border-opacity-10 
+
+    py-[8px] px-[24px]
+
+    text-[12px] text-white text-opacity-50
    `}
     >
-      <div >
-          {token && (
-            <div className="flex justify-between gap-[8px] items-center">
-              <InlineChip label={token?.symbol} image={token?.logoURI}/>
-              <div className="text-lg">{props.value}</div>
-            </div>
-          )}
+      <div>
+        {token && (
+          <div className="flex items-center justify-between gap-[8px]">
+            <InlineChip label={token?.symbol} image={token?.logoURI} />
+            <div className="text-lg">{props.value}</div>
+          </div>
+        )}
       </div>
     </div>
   );

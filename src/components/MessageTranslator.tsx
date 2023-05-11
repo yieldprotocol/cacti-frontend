@@ -77,7 +77,12 @@ const parseArgsStripQuotes = (args: string): any[] => {
  */
 const WidgetFromString = (input: string): React.ReactElement => {
   // Testing demo exmaple item input (array of cw3Components)
-  const demoInput = `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`;
+  const demoInput = `[
+    {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
+    [ {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}}, 
+    {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}} ],
+    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}
+  ]`;
 
   // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(demoInput) as {
@@ -88,11 +93,26 @@ const WidgetFromString = (input: string): React.ReactElement => {
 
   // Go through array and create a component for each component desciption
   const components = parsedItems.map((parsedItem) => {
-    // If we have a component that matches a cw3Component type, create a component with it
+    // Case 1: If we have a component that matches a cw3Component type, create a component with it
     if (cw3Components[parsedItem.componentType]) {
       return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
     }
-    // If not a cw3Component resort to default: a text response with the item as the input
+
+    // Case 2: If we have an array of components, create single line of components including all the elements
+    if (Array.isArray(parsedItem)) {
+      const singleLineOfComponents = parsedItem.map((item) => {
+        return createElement(cw3Components[item.componentType as Cw3Component], item.props);
+      });
+      return (
+        <div className="flex w-full justify-between gap-2">
+          {singleLineOfComponents.map((c) => (
+            <div className="flex-grow">{c}</div>
+          ))}
+        </div>
+      );
+    }
+
+    // Case 3: If not a cw3Component resort to default: a text response with the item as the input
     return createElement(cw3Components[Cw3Component.TextResponse], { text: input });
     // TODO also can handle an error here
   });

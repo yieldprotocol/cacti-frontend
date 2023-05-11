@@ -18,8 +18,8 @@ export const HeaderResponse = (props: any) => {
   useEffect(() => {
     if (props.projectName) {
       try {
-      const project = findProjectByName(props.projectName);
-      setProject(project);
+        const project = findProjectByName(props.projectName);
+        setProject(project);
       } catch (e) {
         // console.error(e);
         setProject(undefined);
@@ -38,15 +38,16 @@ export const HeaderResponse = (props: any) => {
    border-white
    border-opacity-10 
 
-   p-[20px]
+   py-[8px]
+   px-[24px]
+   
    text-[12px]
    text-white
    text-opacity-50
-
    `}
     >
-      <div className="flex justify-between gap-[8px]">
-        <div className="flex gap-[8px]">
+      <div className="flex items-center justify-between gap-[8px]">
+        <div className="flex items-center gap-[8px]">
           {project?.logo || props.altImageUrl ? (
             <img
               className="h-[16px] w-[16px] rounded-full"

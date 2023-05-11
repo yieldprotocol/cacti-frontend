@@ -1,3 +1,4 @@
+import tokenList from "../../../utils/TokenList.json";
 import Code from "./assets/code-brackets.svg";
 import Colors from "./assets/colors.svg";
 import Comments from "./assets/comments.svg";
@@ -9,17 +10,15 @@ import StackAlt from "./assets/stackalt.svg";
 import { Meta } from "@storybook/blocks";
 import Image from "next/image";
 
-import tokenList from "../../../utils/TokenList.json";
-
 <Meta title="cw3/TokenList" />
 
 # Token List
 
 <div className="subheading">Tokens</div>
 <div>
-  { tokenList.tokens.map((token) => (
-      <div>
-        <strong>{token.name}</strong> - {token.symbol}
-      </div>
+  {tokenList.tokens.map((token) => (
+    <div>
+      <strong>{token.name}</strong> - {token.symbol}
+    </div>
   ))}
 </div>
