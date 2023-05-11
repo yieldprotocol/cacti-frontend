@@ -16,17 +16,10 @@ import tokenList from "../../../utils/TokenList.json";
 # Token List
 
 <div className="subheading">Tokens</div>
-
-<div className="link-list">
+<div>
   { tokenList.tokens.map((token) => (
-     <>
-      <div className="link-item-img-wrapper">
-        <Image src={token.icon} alt={token.name} />
+      <div>
+        <strong>{token.name}</strong> - {token.symbol}
       </div>
-      <span>
-        <strong>{token.name}</strong>
-        {token.description}
-      </span>
-      </>
   ))}
 </div>
