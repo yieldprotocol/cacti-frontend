@@ -18,14 +18,10 @@ export const InlineChip = (props: any) => {
       height-[32px] 
       inline-block 
       rounded-[8px] 
-      bg-white
-     bg-opacity-5 p-[8px]
-      text-[12px]
-      text-white
-     text-opacity-70
-     hover:shadow-lg 
-     focus:shadow-lg
-     focus:outline-none
+      bg-white bg-opacity-5 
+      px-[8px] py-[2px]
+      text-[12px] text-white text-opacity-70
+      hover:shadow-lg focus:shadow-lg focus:outline-none
      `}
     >
       <div className="flex gap-[8px]">
@@ -42,11 +38,13 @@ export const InlineChip = (props: any) => {
           {/* If the label is an address, shorten it */}
           <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
         </div>
+        <div>
         {props.showCopyButton && (
           <div className="w-[16px]">
             <DocumentDuplicateIcon />
           </div>
         )}
+        </div>
       </div>
     </div>
   );

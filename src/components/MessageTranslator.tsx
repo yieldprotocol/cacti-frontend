@@ -75,10 +75,15 @@ const WidgetFromString = (input: string): React.ReactElement => {
   // Testing demo exmaple item input (array of cw3Components)
   const demoInput = `[
     {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
-    [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
-    {"componentType":"IconResponse", "props": {"icon":"forward"}},
-    {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}}],
-    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}]`;
+    [
+      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
+      {"componentType":"IconResponse", "props": {"icon":"plus"}},
+      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
+      {"componentType":"IconResponse", "props": {"icon":"forward"}},
+      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}
+    ],
+    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}
+  ]`;
 
   // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(demoInput) as {
@@ -100,11 +105,8 @@ const WidgetFromString = (input: string): React.ReactElement => {
         return createElement(cw3Components[item.componentType as Cw3Component], item.props);
       });
       return (
-        <div className="flex w-full items-center gap-2">
+        <div className="flex items-center gap-2">
           {singleLineOfComponents}
-          {/* {singleLineOfComponents.map((c) => (
-            <div className="flex-auto">{c}</div>
-          ))} */}
         </div>
       );
     }
