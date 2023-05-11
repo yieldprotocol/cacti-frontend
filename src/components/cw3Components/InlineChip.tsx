@@ -30,13 +30,13 @@ export const InlineChip = (props: any) => {
      `}
     >
       <div className="flex gap-[8px]">
-        <div className="flex gap-[8px] items-center">
+        <div className="flex items-center gap-[8px]">
           {props.image ? (
-            <img src={props.image} className={`w-[16px]  h-[16px] rounded-full`} alt="Avatar" />
+            <img src={props.image} className={`h-[16px]  w-[16px] rounded-full`} alt="Avatar" />
           ) : (
             <Image
               src={profilePic}
-              className={`w-[16px] h-[16px] rounded-full bg-slate-600 ${!props.image && 'p-1'}`}
+              className={`h-[16px] w-[16px] rounded-full bg-slate-600 ${!props.image && 'p-1'}`}
               alt="Avatar"
             />
           )}

@@ -11,13 +11,13 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 export const TextResponse = (props: any) => {
   return (
-    <div className="rounded-[8px] border-[0.5px] border-white border-opacity-50 ">
+    <div className="rounded-[8px] border-[0.5px] border-white border-opacity-10 ">
       {props.title && !props.collapsible && (
         <div
           className="
         flex justify-between 
-        p-[8px] text-[12px] text-white
-        text-opacity-70"
+        py-[8px] px-[24px]
+        text-[12px] text-white text-opacity-70"
         >
           <div>{props.title}</div>
         </div>
