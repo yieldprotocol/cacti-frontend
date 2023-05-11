@@ -26,13 +26,12 @@ export const InlineChip = (props: any) => {
      hover:shadow-lg 
      focus:shadow-lg
      focus:outline-none
-     focus:ring-0
      `}
     >
       <div className="flex gap-[8px]">
         <div className="flex items-center gap-[8px]">
           {props.image ? (
-            <img src={props.image} className={`h-[16px]  w-[16px] rounded-full`} alt="Avatar" />
+            <img src={props.image} className={`h-[16px] w-[16px] rounded-full`} alt="Avatar" />
           ) : (
             <Image
               src={profilePic}
