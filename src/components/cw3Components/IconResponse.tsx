@@ -15,11 +15,11 @@ export enum IconType {
 }
 
 const IconSet: Map<IconType, React.ReactElement> = new Map([
-  [IconType.FORWARD, <ArrowSmallRightIcon />],
-  [IconType.BACK, <ArrowSmallLeftIcon />],
-  [IconType.PLUS, <PlusIcon />],
-  [IconType.MINUS, <MinusIcon />],
-  [IconType.EXCHANGE, <ArrowsRightLeftIcon />],
+  [IconType.FORWARD, <ArrowSmallRightIcon className='stroke-2' />],
+  [IconType.BACK, <ArrowSmallLeftIcon className='stroke-2' />],
+  [IconType.PLUS, <PlusIcon className='stroke-2' />],
+  [IconType.MINUS, <MinusIcon className='stroke-2' />],
+  [IconType.EXCHANGE, <ArrowsRightLeftIcon className='stroke-2' />],
 ]);
 
 /**
@@ -28,5 +28,5 @@ const IconSet: Map<IconType, React.ReactElement> = new Map([
  */
 export const IconResponse = (props: any) => {
   const icon = IconSet.has(props.icon) ? IconSet.get(props.icon) : null;
-  return <>{icon && <div className="h-[24px] w-[24px] text-white text-opacity-70 ">{icon}</div>}</>;
+  return <>{icon && <div className="h-[24px] w-[24px] text-white text-opacity-70">{icon}</div>}</>;
 };
