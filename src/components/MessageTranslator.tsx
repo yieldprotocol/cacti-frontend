@@ -70,27 +70,38 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const WidgetFromString = (item: string): React.ReactElement => {
-  // testing demo exmaple item input (array of cw3Components)
-  const demoInput = `[{"componentType":"TextResponse", "props": {"text":"Hello World" } }]`;
+/**
+ * Create a bundled set of react components from a string describing the components.
+ * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]` 
+ * @returns React.ReactElement 
+ */
+const WidgetFromString = (input: string): React.ReactElement => {
+  
+  // Testing demo exmaple item input (array of cw3Components)
+  const demoInput = `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`;
 
+  // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(demoInput) as {
     componentType: Cw3Component;
     props?: any;
     children?: any;
   }[];
 
-  // If we have a component that matches a cw3Component type, create a component with it
+  // Go through array and create a component for each component desciption
   const components = parsedItems.map((parsedItem) => {
+    // If we have a component that matches a cw3Component type, create a component with it
     if (cw3Components[parsedItem.componentType]) {
       return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
     }
-    // if not a cw3Component resort to default: a text response with the item as the input
-    return createElement(cw3Components[Cw3Component.TextResponse], { text: item });
-    // TODO also can handle an error here:
+    // If not a cw3Component resort to default: a text response with the item as the input
+    return createElement(cw3Components[Cw3Component.TextResponse], { text: input });
+    // TODO also can handle an error here
   });
+
+  // Returns the list of compiled components
   return <>{components}</>;
 };
+
 
 const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
