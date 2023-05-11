@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { SingleLineResponse } from './SingleLineResponse';
 
 const meta: Meta<typeof SingleLineResponse> = {
-  title: 'Example/SingleLineResponse',
+  title: 'cw3/SingleLineResponse',
   component: SingleLineResponse,
   tags: ['autodocs'],
   argTypes: {
@@ -20,11 +20,6 @@ const meta: Meta<typeof SingleLineResponse> = {
       description: 'Custom Image to display instead of the one associated with the project name.',
       default: undefined,
       control: 'file',
-    },
-    altUrl: {
-      description: 'Custom Url to use instead of the one associated with the project name.',
-      default: undefined,
-      control: 'text',
     },
   },
 };

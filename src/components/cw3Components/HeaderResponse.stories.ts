@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { HeaderResponse } from './HeaderResponse';
 
 const meta: Meta<typeof HeaderResponse> = {
-  title: 'Example/HeaderResponse',
+  title: 'cw3/HeaderResponse',
   component: HeaderResponse,
   tags: ['autodocs'],
   argTypes: {
