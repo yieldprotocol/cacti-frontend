@@ -4,6 +4,7 @@ import tokenListJson from '@/utils/TokenList.json';
 import { Project } from '../types';
 
 export const shortenAddress = (address: string) => address.slice(0, 6) + '...' + address.slice(-4);
+
 export const findTokenBySymbol = (symbol: string, chainId: number) =>
   tokenListJson.tokens.find(
     (token) => token.symbol.toUpperCase() === symbol.toUpperCase() && token.chainId === chainId
@@ -20,7 +21,8 @@ export const findProjectByName = (name: string): Project => {
   const found = projectListJson.find(
     (project) =>
       project.name.toLowerCase() == name.toLowerCase() ||
-      project.slug.toLowerCase() == name.toLowerCase()
+      project.slug.toLowerCase() == name.toLowerCase() ||
+      project.id.toLowerCase() == name.toLowerCase()
   );
   if (!found) throw new Error(`No project found for name ${name}`);
 
