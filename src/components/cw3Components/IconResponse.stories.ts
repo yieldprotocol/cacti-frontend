@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconResponse } from './IconResponse';
+import { IconResponse, IconType } from './IconResponse';
+
+
 
 const meta: Meta<typeof IconResponse> = {
   title: 'cw3/IconResponse',
@@ -8,8 +10,9 @@ const meta: Meta<typeof IconResponse> = {
   argTypes: {
     icon: {
       description: 'Icon to display.',
-      default: 'forward',
-      control: 'select',
+      default: IconType.FORWARD,
+      options: Object.values(IconType),
+      control: { type: 'select' },
     },
     color: {
       description: 'Icon color',
@@ -29,7 +32,7 @@ type Story = StoryObj<typeof IconResponse>;
 
 export const Primary: Story = {
   args: {
-    icon: 'forward',
+    icon: IconType.FORWARD,
   },
 };
 
@@ -40,16 +43,33 @@ Primary.parameters = {
   },
 };
 
-// export const NoTitle: Story = {
-//   args: {
-//     text: demoText,
-//   },
-// };
+export const Forward: Story = {
+  args: {
+    icon: IconType.FORWARD,
+  },
+};
 
-// export const Collapsible: Story = {
-//   args: {
-//     title: 'Title',
-//     text: demoText,
-//     collapsible: true,
-//   },
-// };
+export const Back: Story = {
+  args: {
+    icon: IconType.BACK,
+  },
+};
+
+export const Exchange: Story = {
+  args: {
+    icon: IconType.EXCHANGE,
+  },
+};
+
+export const Plus: Story = {
+  args: {
+    icon: IconType.PLUS,
+  },
+};
+
+export const Minus: Story = {
+  args: {
+    icon: IconType.MINUS,
+  },
+};
+
