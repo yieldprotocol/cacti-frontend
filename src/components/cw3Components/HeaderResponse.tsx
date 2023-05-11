@@ -51,7 +51,7 @@ export const HeaderResponse = (props: any) => {
           ) : (
             <div className="h-[16px] w-[16px] rounded-full bg-teal-700" />
           )}
-          <div>{props.text }</div>
+          <div>{props.text}</div>
         </div>
         {(project?.url || props.altUrl) && (
           <div

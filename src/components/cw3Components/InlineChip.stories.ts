@@ -7,7 +7,7 @@ const meta: Meta<typeof InlineChip> = {
   component: InlineChip,
   tags: ['autodocs'],
   argTypes: {
-    label : {
+    label: {
       description: 'Text to display. Will be shortened if an address("0x"prefix).',
       default: '0x1Bd3Abb6ef058408734EA01cA81D325039cd7bcA',
       control: 'text',
@@ -17,9 +17,9 @@ const meta: Meta<typeof InlineChip> = {
       description: 'Show copy button',
       controls: 'boolean',
     },
-    image: { 
-      control: { type: 'file', accept: ['.jpg', '.svg', '.png' ] } 
-    }
+    image: {
+      control: { type: 'file', accept: ['.jpg', '.svg', '.png'] },
+    },
   },
 };
 

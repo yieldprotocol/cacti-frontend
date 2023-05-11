@@ -32,11 +32,11 @@ export const findProjectByName = (name: string): Project => {
     /* optionals */
     url: found.url,
     logo: found.logo,
-    description:  found.description,
+    description: found.description,
     slug: found.slug,
     category: found.category,
     twitter: found.twitter,
-    parentProtocol: found.parentProtocol
+    parentProtocol: found.parentProtocol,
   };
 };
 
