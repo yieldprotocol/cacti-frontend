@@ -29,7 +29,7 @@ export const SingleLineResponse = (props: any) => {
     border-[1px]
    border-white
    border-opacity-10 
-   p-[20px]
+   p-[12px]
    text-[12px]
    text-white
    text-opacity-50
@@ -39,7 +39,7 @@ export const SingleLineResponse = (props: any) => {
           {token && (
             <div className="flex justify-between gap-[8px] items-center">
               <InlineChip label={token?.symbol} image={token?.logoURI}/>
-              <div  className="text-[16px]">{props.value}</div>
+              <div className="text-lg">{props.value}</div>
             </div>
           )}
       </div>

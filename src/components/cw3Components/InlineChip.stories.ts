@@ -3,7 +3,7 @@ import { InlineChip } from './InlineChip';
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction
 const meta: Meta<typeof InlineChip> = {
-  title: 'Example/InlineChip',
+  title: 'cw3/InlineChip',
   component: InlineChip,
   tags: ['autodocs'],
   argTypes: {
