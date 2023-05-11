@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, createElement } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
@@ -22,6 +22,8 @@ import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import * as cw3Components from './cw3Components';
+import { Cw3Component } from './cw3Components';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -47,7 +49,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return the string
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item)
+              typeof item === 'string' ? WidgetFromString(item) : Widgetize(item)
             }
           </Fragment>
         );
@@ -62,6 +64,28 @@ const parseArgsStripQuotes = (args: string): any[] => {
         JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
       )
     : [];
+};
+
+const WidgetFromString = (item: string): React.ReactElement => {
+  // testing demo exmaple item input (array of cw3Components)
+  const demoInput = `[{"componentType":"TextResponse", "props": {"text":"Hello World" } }]`;
+
+  const parsedItems = JSON.parse(demoInput) as {
+    componentType: Cw3Component;
+    props?: any;
+    children?: any;
+  }[];
+
+  // If we have a component that matches a cw3Component type, create a component with it
+  const components = parsedItems.map((parsedItem) => {
+    if (cw3Components[parsedItem.componentType]) {
+      return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
+    }
+    // if not a cw3Component resort to default: a text response with the item as the input
+    return createElement(cw3Components[Cw3Component.TextResponse], { text: item });
+    // TODO also can handle an error here:
+  });
+  return <>{components}</>;
 };
 
 const Widgetize = (widget: Widget) => {
@@ -120,7 +144,6 @@ const Widgetize = (widget: Widget) => {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
         const amount = parseUnits(amtString, token?.decimals);
-
         const project = findProjectByName(projectName);
         return (
           <ActionPanel
