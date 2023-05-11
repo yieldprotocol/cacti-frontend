@@ -29,6 +29,14 @@ export const findProjectByName = (name: string): Project => {
   return {
     id: found.slug,
     name: found.name,
+    /* optionals */
+    url: found.url,
+    logo: found.logo,
+    description:  found.description,
+    slug: found.slug,
+    category: found.category,
+    twitter: found.twitter,
+    parentProtocol: found.parentProtocol
   };
 };
 

@@ -10,6 +10,13 @@ export interface Token {
 export interface Project {
   id: string;
   name: string;
+  url?: string;
+  logo?: string;
+  description?: string;
+  slug?: string;
+  category?: string;
+  twitter?: string;
+  parentProtocol?: string;
 }
 
 export { Order };
