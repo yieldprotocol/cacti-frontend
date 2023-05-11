@@ -11,6 +11,14 @@
     {
       "chainId": 1,
       "address": "0x111111111117dC0aa78b770fA6A738034120C302",
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1608803028"
+    },
+    {
+      "chainId": 1,
+      "address": "0x111111111117dC0aa78b770fA6A738034120C302",
       "name": "1inch",
       "symbol": "1INCH",
       "decimals": 18,
