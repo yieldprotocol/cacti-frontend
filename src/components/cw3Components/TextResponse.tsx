@@ -3,7 +3,7 @@ import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 /**
- * Simple Text response.
+ * Simple Text response element
  *
  * Includes:
  * Text

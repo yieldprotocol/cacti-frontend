@@ -79,10 +79,10 @@ const WidgetFromString = (input: string): React.ReactElement => {
   // Testing demo exmaple item input (array of cw3Components)
   const demoInput = `[
     {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
-    [ {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}}, 
-    {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}} ],
-    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}
-  ]`;
+    [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
+    {"componentType":"IconResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
+    {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}}],
+    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}]`;
 
   // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(demoInput) as {
@@ -104,7 +104,7 @@ const WidgetFromString = (input: string): React.ReactElement => {
         return createElement(cw3Components[item.componentType as Cw3Component], item.props);
       });
       return (
-        <div className="flex w-full justify-between gap-2">
+        <div className="flex w-full gap-2 items-center">
           {singleLineOfComponents.map((c) => (
             <div className="flex-grow">{c}</div>
           ))}
