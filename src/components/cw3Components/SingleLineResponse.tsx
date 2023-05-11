@@ -24,7 +24,8 @@ export const SingleLineResponse = (props: any) => {
   return (
     <div
       className={`
-    height-[32px] 
+      height-[32px]
+    flex-grow 
        
     rounded-[8px]
 
@@ -33,6 +34,7 @@ export const SingleLineResponse = (props: any) => {
     py-[8px] px-[24px]
 
     text-[12px] text-white text-opacity-50
+    
    `}
     >
       <div>

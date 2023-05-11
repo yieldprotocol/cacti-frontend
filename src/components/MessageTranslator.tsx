@@ -76,7 +76,7 @@ const WidgetFromString = (input: string): React.ReactElement => {
   const demoInput = `[
     {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
     [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
-    {"componentType":"IconResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
+    {"componentType":"IconResponse", "props": {"icon":"forward"}},
     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}}],
     {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}]`;
 
@@ -100,10 +100,11 @@ const WidgetFromString = (input: string): React.ReactElement => {
         return createElement(cw3Components[item.componentType as Cw3Component], item.props);
       });
       return (
-        <div className="flex w-full gap-2 items-center">
-          {singleLineOfComponents.map((c) => (
-            <div className="flex-grow">{c}</div>
-          ))}
+        <div className="flex w-full items-center gap-2">
+          {singleLineOfComponents}
+          {/* {singleLineOfComponents.map((c) => (
+            <div className="flex-auto">{c}</div>
+          ))} */}
         </div>
       );
     }
