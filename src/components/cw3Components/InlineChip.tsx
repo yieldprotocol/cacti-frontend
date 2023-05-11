@@ -40,8 +40,8 @@ export const InlineChip = (props: any) => {
               alt="Avatar"
             />
           )}
-          {/* If the label is an address, shorten it */ }
-          <div>{props.label.slice(0,2) !== '0x' ? props.label : shortenAddress(props.label) }</div>
+          {/* If the label is an address, shorten it */}
+          <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
         </div>
         {props.showCopyButton && (
           <div className="w-[16px]">

@@ -1,16 +1,11 @@
-import { HeaderResponse } from "./HeaderResponse";
-import { InlineChip } from "./InlineChip";
-import { TextResponse } from "./TextResponse";
-
+import { HeaderResponse } from './HeaderResponse';
+import { InlineChip } from './InlineChip';
+import { TextResponse } from './TextResponse';
 
 export enum Cw3Component {
-    InlineChip = 'InlineChip',
-    TextResponse = 'TextResponse',
-    HeaderResponse = 'HeaderResponse',
+  InlineChip = 'InlineChip',
+  TextResponse = 'TextResponse',
+  HeaderResponse = 'HeaderResponse',
 }
 
-export  { 
-    InlineChip,
-    TextResponse,
-    HeaderResponse,
-};
+export { InlineChip, TextResponse, HeaderResponse };

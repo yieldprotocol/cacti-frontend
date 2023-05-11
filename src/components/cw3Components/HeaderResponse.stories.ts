@@ -6,7 +6,7 @@ const meta: Meta<typeof HeaderResponse> = {
   component: HeaderResponse,
   tags: ['autodocs'],
   argTypes: {
-    text : {
+    text: {
       description: 'Text to display.',
       default: 'Swap with ',
       control: 'text',
@@ -16,16 +16,16 @@ const meta: Meta<typeof HeaderResponse> = {
       default: 'compound',
       control: 'text',
     },
-    altImageUrl : {
+    altImageUrl: {
       description: 'Custom Image to display instead of the one associated with the project name.',
       default: undefined,
       control: 'file',
     },
-    altUrl : {
+    altUrl: {
       description: 'Custom Url to use instead of the one associated with the project name.',
       default: undefined,
       control: 'text',
-    }
+    },
   },
 };
 

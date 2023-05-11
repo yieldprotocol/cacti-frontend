@@ -72,11 +72,10 @@ const parseArgsStripQuotes = (args: string): any[] => {
 
 /**
  * Create a bundled set of react components from a string describing the components.
- * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]` 
- * @returns React.ReactElement 
+ * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`
+ * @returns React.ReactElement
  */
 const WidgetFromString = (input: string): React.ReactElement => {
-  
   // Testing demo exmaple item input (array of cw3Components)
   const demoInput = `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`;
 
@@ -101,7 +100,6 @@ const WidgetFromString = (input: string): React.ReactElement => {
   // Returns the list of compiled components
   return <>{components}</>;
 };
-
 
 const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
