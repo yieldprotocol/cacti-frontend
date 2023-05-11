@@ -42,9 +42,15 @@ Primary.parameters = {
   },
 };
 
-export const AnotherVariant: Story = {
+export const CopyButton: Story = {
   args: {
     label: '0x1Bd3Abb6ef058408734EA01cA81D325039cd7bcA',
     showCopyButton: true,
+  },
+};
+
+export const NonAddressText: Story = {
+  args: {
+    label: 'Ethereum',
   },
 };
