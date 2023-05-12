@@ -90,14 +90,14 @@ const WidgetFromString = (input: string): React.ReactElement => {
     children?: any;
   }[];
 
-  // Go through array and create a component for each component desciption
+  // Create a component for each component desciption in the array
   const components = parsedItems.map((parsedItem) => {
     // Case 1: If we have a component that matches a cw3Component type, create a component with it
     if (cw3Components[parsedItem.componentType]) {
       return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
     }
 
-    // Case 2: If we have an array of components, create single line of components including all the elements
+    // Case 2: If we have a nested array of components, create single line of components including all those elements
     if (Array.isArray(parsedItem)) {
       const singleLineOfComponents = parsedItem.map((item) => {
         return createElement(cw3Components[item.componentType as Cw3Component], item.props);
@@ -107,6 +107,7 @@ const WidgetFromString = (input: string): React.ReactElement => {
 
     // Case 3: If not a cw3Component resort to default: a text response with the item as the input
     return createElement(cw3Components[Cw3Component.TextResponse], { text: input });
+    
     // TODO also can handle an error here
   });
 

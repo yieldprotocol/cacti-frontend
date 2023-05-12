@@ -53,6 +53,7 @@ export const UserMessage = ({
       ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
       items-center
       px-[24px]
+      mt-[24px]
    `}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
