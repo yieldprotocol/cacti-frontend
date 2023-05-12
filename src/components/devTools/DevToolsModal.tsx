@@ -9,6 +9,7 @@ import { DebugMessageToggle } from './DebugMessageToggle';
 import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
 import { SessionInfo } from './SessionInfo';
+import { ExperimentalUiToggle } from './ExperimentalUiToggle';
 
 interface Props {
   openState: boolean;
@@ -78,7 +79,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
 
                       <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
-
+                        <ExperimentalUiToggle />
                         <ResetButton />
                       </div>
 

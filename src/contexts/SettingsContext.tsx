@@ -22,6 +22,8 @@ export enum Setting {
 
   FORKED_ENV = 'isForkedEnv',
   FORK_ENV_URL = 'forkEnvUrl',
+
+  EXPERIMENTAL_UI = 'experimentalUi',
 }
 
 export enum ApprovalType {
