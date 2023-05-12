@@ -1,7 +1,16 @@
 import { Fragment, createElement } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
+import { SendTransactionWithReplayMsg } from '@/components//widgets/SendTransactionWithReplayMsg';
+import { YieldFarm } from '@/components//widgets/YieldFarm';
+import { YieldRowContainer } from '@/components//widgets/YieldRowContainer';
+import { ActionPanel } from '@/components//widgets/helpers/ActionPanel';
+import { ConnectFirst } from '@/components//widgets/helpers/ConnectFirst';
 import Grid from '@/components/Grid';
+import * as cw3Components from '@/components/cw3Components';
+import { Cw3Component } from '@/components/cw3Components';
+import { BuyNFT } from '@/components/widgets/BuyNFT';
+import { MultiStepContainer } from '@/components/widgets/MultiStepContainer';
 import {
   NftAssetContainer,
   NftAssetTraitValueContainer,
@@ -15,6 +24,7 @@ import {
   NftCollectionTraitValuesContainer,
   NftCollectionTraitsContainer,
 } from '@/components/widgets/NftCollectionContainer';
+import { NftSearch } from '@/components/widgets/NftSearch';
 import { Price } from '@/components/widgets/Price';
 import { TransferButton } from '@/components/widgets/Transfer';
 import Swap from '@/components/widgets/swap/Swap';
@@ -22,21 +32,11 @@ import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
-import * as cw3Components from '@/components/cw3Components';
-import { Cw3Component } from '@/components/cw3Components';
-import { BuyNFT } from '@/components/widgets/BuyNFT';
-import { MultiStepContainer } from '@/components/widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from '../widgets/NftAttributes';
-import { NftSearch } from '@/components/widgets/NftSearch';
-import { SendTransactionWithReplayMsg } from '@/components//widgets/SendTransactionWithReplayMsg';
-import { YieldFarm } from '@/components//widgets/YieldFarm';
-import { YieldRowContainer } from '@/components//widgets/YieldRowContainer';
-import { ActionPanel } from '@/components//widgets/helpers/ActionPanel';
-import { ConnectFirst } from '@/components//widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   // const { chain } = useNetwork();
@@ -76,8 +76,6 @@ const WidgetFromString = (input: string): React.ReactElement => {
   const demoInput = `[
     {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
     [
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
-      {"componentType":"IconResponse", "props": {"icon":"plus"}},
       {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
       {"componentType":"IconResponse", "props": {"icon":"forward"}},
       {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}
@@ -104,11 +102,7 @@ const WidgetFromString = (input: string): React.ReactElement => {
       const singleLineOfComponents = parsedItem.map((item) => {
         return createElement(cw3Components[item.componentType as Cw3Component], item.props);
       });
-      return (
-        <div className="flex items-center gap-2">
-          {singleLineOfComponents}
-        </div>
-      );
+      return <div className="flex items-center gap-2">{singleLineOfComponents}</div>;
     }
 
     // Case 3: If not a cw3Component resort to default: a text response with the item as the input

@@ -39,11 +39,11 @@ export const InlineChip = (props: any) => {
           <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
         </div>
         <div>
-        {props.showCopyButton && (
-          <div className="w-[16px]">
-            <DocumentDuplicateIcon />
-          </div>
-        )}
+          {props.showCopyButton && (
+            <div className="w-[16px]">
+              <DocumentDuplicateIcon />
+            </div>
+          )}
         </div>
       </div>
     </div>

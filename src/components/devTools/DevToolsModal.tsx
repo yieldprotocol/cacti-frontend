@@ -6,9 +6,9 @@ import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
+import { ExperimentalUiToggle } from './ExperimentalUiToggle';
 import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
-import { ExperimentalUiToggle } from './ExperimentalUiToggle';
 
 interface Props {
   openState: boolean;

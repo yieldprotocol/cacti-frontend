@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-
-
+import { ResetButton } from '@/components/ResetButton';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import { ResetButton } from '@/components/ResetButton';
-
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
@@ -24,7 +21,6 @@ const ChatBox = () => {
 
   return (
     <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
-      
       <div className="min-h-full overflow-auto ">
         {ready ? messageContentComponent : <Spinner />}
       </div>

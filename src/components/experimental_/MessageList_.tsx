@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { MessageItem, MessageItemWrap } from './MessageItem_';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
+import { MessageItem, MessageItemWrap } from './MessageItem_';
 
 export const MessageList = () => {
   const {
@@ -30,7 +30,7 @@ export const MessageList = () => {
     <MessageItemWrap actor={'Bot'}>
       <BotThinking />
     </MessageItemWrap>
-  )
+  );
 
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
@@ -60,7 +60,6 @@ export const MessageList = () => {
           {bottomRefDiv}
         </>
       )}
-
     </div>
   );
 };

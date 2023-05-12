@@ -1,5 +1,10 @@
 import { ReactNode, useContext } from 'react';
-import { RainbowKitProvider, getDefaultWallets, lightTheme, darkTheme } from '@rainbow-me/rainbowkit';
+import {
+  RainbowKitProvider,
+  darkTheme,
+  getDefaultWallets,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
@@ -12,7 +17,9 @@ const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
 
-  const {settings: {experimentalUi}} = useContext(SettingsContext);
+  const {
+    settings: { experimentalUi },
+  } = useContext(SettingsContext);
 
   const mainnetFork = {
     id: 1,
@@ -56,7 +63,11 @@ const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider
         chains={chains}
-        theme={experimentalUi ? darkTheme({ accentColor: '#1f2937' }) : lightTheme({ accentColor: '#1f2937' })}
+        theme={
+          experimentalUi
+            ? darkTheme({ accentColor: '#1f2937' })
+            : lightTheme({ accentColor: '#1f2937' })
+        }
         showRecentTransactions={true}
       >
         {children}

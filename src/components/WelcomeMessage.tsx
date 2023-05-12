@@ -18,7 +18,9 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
       className={`
       my-4 max-w-[250px]  rounded-lg text-white 
       ${
-        experimentalUi ? 'border-[1px] border-white border-opacity-10 text-opacity-70' : ' bg-gray-600'
+        experimentalUi
+          ? 'border-[1px] border-white border-opacity-10 text-opacity-70'
+          : ' bg-gray-600'
       } 
       p-4 text-center  md:p-2 ${onClickClasses}`}
       onClick={onClick}
