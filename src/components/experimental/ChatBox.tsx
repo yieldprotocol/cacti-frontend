@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { MessageInput } from '@/components/MessageInput';
-import { MessageList } from '@/components/MessageList';
+
+
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import { ResetButton } from './ResetButton';
+import { ResetButton } from '@/components/ResetButton';
 
-const ChatBox2 = () => {
+// Use experimental components
+import { MessageInput } from './MessageInput';
+import { MessageList } from './MessageList';
+
+const ChatBox = () => {
   const { messages } = useChatContext();
   const router = useRouter();
   const { s: threadId } = router.query;
@@ -37,4 +41,4 @@ const ChatBox2 = () => {
   );
 };
 
-export default ChatBox2;
+export default ChatBox;
