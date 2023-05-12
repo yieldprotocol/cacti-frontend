@@ -7736,6 +7736,7 @@ __metadata:
     storybook: ^7.0.10
     storybook-addon-designs: beta
     swr: ^2.0.4
+    tailwind-styled-components: ^2.2.0
     tailwindcss: ^3.2.4
     typescript: 4.9.4
     wagmi: ^0.10.11
@@ -15959,6 +15960,25 @@ __metadata:
     "@pkgr/utils": ^2.3.1
     tslib: ^2.4.0
   checksum: 83e054fe4494dab42114fc4ed36a11b85e18742d304ade3f40d3afb4ba4145d76183adba1f29e2c36e9a0a453b93a83e2387505f96a0efd901f562927a968c44
+  languageName: node
+  linkType: hard
+
+"tailwind-merge@npm:^1.3.0":
+  version: 1.12.0
+  resolution: "tailwind-merge@npm:1.12.0"
+  checksum: 5ef323eec1051c4aa9626e29498f6c058dbbb242ca8156aa298de41ada3eda05a8f5f1260a57112c155f63b2e94c4b4ccab5386d60fae54de07aac6d9dbc60e4
+  languageName: node
+  linkType: hard
+
+"tailwind-styled-components@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "tailwind-styled-components@npm:2.2.0"
+  dependencies:
+    tailwind-merge: ^1.3.0
+  peerDependencies:
+    react: ">= 16.8.0"
+    react-dom: ">= 16.8.0"
+  checksum: 482eb7651a04eb078f96e172b5c4c011be4eb887fa97355b5ac8bdce2de11c6f3ca8723d5023aa236f0e9d813bf3c4cd1e1d3c8ab68d511b22f92ea5a88ed695
   languageName: node
   linkType: hard
 
