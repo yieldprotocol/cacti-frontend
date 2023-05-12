@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
 import { FeedbackButton } from '@/components/FeedbackButton';
-import { SystemMessage } from '@/components/SystemMessage';
-import { UserMessage } from '@/components/UserMessage';
 import { Message, useChatContext } from '@/contexts/ChatContext';
+
 import { MessageTranslator } from './MessageTranslator_';
+import { SystemMessage } from './SystemMessage_';
+import { UserMessage } from './UserMessage_';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
@@ -47,7 +48,6 @@ export const MessageItem = ({ message }: { message: Message }) => {
         {actor === 'user' && (
           <UserMessage
             {...{
-              actor,
               initialText: payload,
               submitEdit,
               submitRegenerate,
