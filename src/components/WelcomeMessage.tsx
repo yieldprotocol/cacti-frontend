@@ -1,16 +1,26 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
+import SettingsContext from '@/contexts/SettingsContext';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col">{children}</div>;
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
+  const {
+    settings: { experimentalUi },
+  } = useContext(SettingsContext);
+
   const onClickClasses = onClick ? 'cursor-pointer hover:bg-gray-500' : '';
   return (
     <div
-      className={`my-4 max-w-[250px]  rounded-lg bg-gray-600 p-4 text-center text-white md:p-2 ${onClickClasses}`}
+      className={`
+      my-4 max-w-[250px]  rounded-lg text-white 
+      ${
+        experimentalUi ? 'border-[1px] border-white border-opacity-10 text-opacity-70' : ' bg-gray-600'
+      } 
+      p-4 text-center  md:p-2 ${onClickClasses}`}
       onClick={onClick}
     >
       <p className="flex min-h-[48px] items-center justify-center">{children}</p>
