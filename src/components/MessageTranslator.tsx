@@ -49,7 +49,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return the string
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? WidgetFromString(item) : Widgetize(item)
+              typeof item === 'string' ? item : Widgetize(item)
             }
           </Fragment>
         );
@@ -64,60 +64,6 @@ const parseArgsStripQuotes = (args: string): any[] => {
         JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
       )
     : [];
-};
-
-/**
- * Create a bundled set of react components from a string describing the components.
- * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`
- * @returns React.ReactElement
- */
-const WidgetFromString = (input: string): React.ReactElement => {
-  // Testing demo exmaple item input (array of cw3Components)
-  const demoInput = `[
-    {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
-    [
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"ETH", "value":"10234"}},
-      {"componentType":"IconResponse", "props": {"icon":"plus"}},
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
-      {"componentType":"IconResponse", "props": {"icon":"forward"}},
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}
-    ],
-    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}
-  ]`;
-
-  // Parse the array of strings describing each component.
-  const parsedItems = JSON.parse(demoInput) as {
-    componentType: Cw3Component;
-    props?: any;
-    children?: any;
-  }[];
-
-  // Go through array and create a component for each component desciption
-  const components = parsedItems.map((parsedItem) => {
-    // Case 1: If we have a component that matches a cw3Component type, create a component with it
-    if (cw3Components[parsedItem.componentType]) {
-      return createElement(cw3Components[parsedItem.componentType], parsedItem.props);
-    }
-
-    // Case 2: If we have an array of components, create single line of components including all the elements
-    if (Array.isArray(parsedItem)) {
-      const singleLineOfComponents = parsedItem.map((item) => {
-        return createElement(cw3Components[item.componentType as Cw3Component], item.props);
-      });
-      return (
-        <div className="flex items-center gap-2">
-          {singleLineOfComponents}
-        </div>
-      );
-    }
-
-    // Case 3: If not a cw3Component resort to default: a text response with the item as the input
-    return createElement(cw3Components[Cw3Component.TextResponse], { text: input });
-    // TODO also can handle an error here
-  });
-
-  // Returns the list of compiled components
-  return <>{components}</>;
 };
 
 const Widgetize = (widget: Widget) => {
