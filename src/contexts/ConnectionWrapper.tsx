@@ -1,10 +1,12 @@
-import { ReactNode } from 'react';
+
+import { ReactNode,useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import {
   AvatarComponent,
   RainbowKitProvider,
   getDefaultWallets,
   lightTheme,
+  darkTheme
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { Session } from 'next-auth';
@@ -14,6 +16,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import SettingsContext from './SettingsContext';
+
 
 const ConnectionWrapper = ({ children, session }: { children: ReactNode; session: Session }) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -21,6 +25,8 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
+
+  const {settings: {experimentalUi}} = useContext(SettingsContext);
 
   const mainnetFork = {
     id: 1,
@@ -116,7 +122,7 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
         >
           <RainbowKitProvider
             chains={chains}
-            theme={lightTheme({ accentColor: '#1f2937' })}
+            theme={experimentalUi ? darkTheme({ accentColor: '#1f2937' }) : lightTheme({ accentColor: '#1f2937' })}
             showRecentTransactions={true}
             avatar={CustomAvatar}
           >

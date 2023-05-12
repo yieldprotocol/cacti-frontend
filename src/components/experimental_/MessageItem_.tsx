@@ -1,14 +1,15 @@
 import { ReactNode } from 'react';
-import { FeedbackButton } from '@/components/FeedbackButton';
+
 import { Message, useChatContext } from '@/contexts/ChatContext';
 
 import { MessageTranslator } from './MessageTranslator_';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
+import { FeedbackButton } from './FeedbackButton_';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
-    <div className={`m-auto flex items-start gap-4 p-4 px-4 py-4 text-base md:gap-6 md:px-40 lg:px-64`}>
+    <div className={`m-auto flex items-start gap-4 p-2 md:gap-6 md:px-40 lg:px-64`}>
       {children}
     </div>
   );
@@ -42,7 +43,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   return (
     <MessageItemWrap actor={actor}>
-      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+      <div className={`flex w-[90%] flex-col gap-1 md:gap-3`}>
         {actor === 'bot' && <MessageTranslator message={payload} />}
         {actor === 'system' && <SystemMessage message={payload} />}
         {actor === 'user' && (
@@ -55,8 +56,10 @@ export const MessageItem = ({ message }: { message: Message }) => {
             }}
           />
         )}
-      </div>
-      {actor === 'bot' && <FeedbackButton message={message} />}
-    </MessageItemWrap>
+     </div>
+      {actor === 'bot' && <div className="w-[10%]"> <FeedbackButton message={message} /> </div>}
+      {actor === 'user' && <div className="w-[10%]" />}
+      {actor === 'system' && <div className="w-[10%]" />}
+     </MessageItemWrap>
   );
 };
