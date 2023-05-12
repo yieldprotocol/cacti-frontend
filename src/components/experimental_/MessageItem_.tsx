@@ -38,7 +38,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
 
   return (
     <MessageItemWrap actor={actor}>
-      <div className={`flex w-[90%] flex-col gap-1 md:gap-3`}>
+      <div className={`flex w-[90%] flex-col`}>
         {actor === 'bot' && <MessageTranslator message={payload} />}
         {actor === 'system' && <SystemMessage message={payload} />}
         {actor === 'user' && (
