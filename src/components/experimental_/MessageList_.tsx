@@ -11,6 +11,7 @@ export const MessageList = () => {
     insertBeforeMessageId,
     isMultiStepInProgress,
   } = useChatContext();
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export const MessageList = () => {
           {bottomRefDiv}
         </>
       )}
+
     </div>
   );
 };
