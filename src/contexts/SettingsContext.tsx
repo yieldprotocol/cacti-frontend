@@ -42,6 +42,8 @@ export interface ISettings {
   forceTransactions: boolean;
   diagnostics: boolean;
 
+  experimentalUi: boolean;
+
   isForkedEnv: boolean;
   forkEnvUrl: string;
   forkId: string;
@@ -65,6 +67,9 @@ const initState: ISettings = {
   darkMode: false,
   /* Has the usage disclaimer been checked? */
   disclaimerChecked: false,
+
+  /* UI test */
+  experimentalUi: true,
 
   /** Development settings **/
 
