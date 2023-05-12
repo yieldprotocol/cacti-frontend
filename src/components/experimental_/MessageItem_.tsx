@@ -7,7 +7,7 @@ import { UserMessage } from '@/components/UserMessage';
 
 import { Message, useChatContext } from '@/contexts/ChatContext';
 
-import { MessageTranslator } from './MessageTranslator';
+import { MessageTranslator } from './MessageTranslator_';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
