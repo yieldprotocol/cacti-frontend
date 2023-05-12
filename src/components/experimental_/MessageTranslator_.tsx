@@ -1,4 +1,4 @@
-import { Fragment, createElement } from 'react';
+import { Fragment, createElement, useEffect, useState } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork } from 'wagmi';
 import { SendTransactionWithReplayMsg } from '@/components//widgets/SendTransactionWithReplayMsg';
@@ -37,6 +37,7 @@ import {
   NftCollectionAttributes,
   NftsWithAttributes,
 } from '../widgets/NftAttributes';
+import { toast } from 'react-toastify';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   // const { chain } = useNetwork();
@@ -47,9 +48,11 @@ export const MessageTranslator = ({ message }: { message: string }) => {
         return (
           <Fragment key={`i${i}`}>
             {
-              // if it's a string, just return the string
+              // if it's a string, just return the TextResponse Component
               // otherwise, let's try to translate the widget
-              typeof item === 'string' ? WidgetFromString(item) : Widgetize(item)
+              typeof item === 'string' 
+              ? item // WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
+              : Widgetize(item)
             }
           </Fragment>
         );
@@ -71,20 +74,17 @@ const parseArgsStripQuotes = (args: string): any[] => {
  * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`
  * @returns React.ReactElement
  */
-const WidgetFromString = (input: string): React.ReactElement => {
+export const WidgetFromString = (input: string): React.ReactElement => {
+
   // Testing demo exmaple item input (array of cw3Components)
-  const demoInput = `[
-    {"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
-    [
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
+  const demoInput = `[{"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
+    [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
       {"componentType":"IconResponse", "props": {"icon":"forward"}},
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}
-    ],
-    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}
-  ]`;
+      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}],
+    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}]`;
 
   // Parse the array of strings describing each component.
-  const parsedItems = JSON.parse(demoInput) as {
+  const parsedItems = JSON.parse(input) as {
     componentType: Cw3Component;
     props?: any;
     children?: any;
@@ -115,7 +115,8 @@ const WidgetFromString = (input: string): React.ReactElement => {
   return <>{components}</>;
 };
 
-const Widgetize = (widget: Widget) => {
+const Widgetize = (widget: Widget): JSX.Element => {
+
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
@@ -124,6 +125,7 @@ const Widgetize = (widget: Widget) => {
 
   try {
     switch (fnName) {
+
       // Transfer widget
       case 'transfer': {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
@@ -144,29 +146,41 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       // Swap widget
       case 'uniswap': {
+
         const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
-
         const tokenIn = getToken(tokenInSymbol);
         const amountIn = parseUnits(
           cleanValue(amountInStrRaw, tokenIn?.decimals)!,
           tokenIn?.decimals
         );
 
+        const [ amountOut, setAmountOut ] = useState<string>('|pending|');
+
+        const swapInput = `[{"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }}, 
+        [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountIn}"}},
+          {"componentType":"IconResponse", "props": {"icon":"forward"}},
+          {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}],
+          {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}},
+          {"componentType":"SubmitResponse", "props": {"text":"Swapping with Aave"}}
+        ]`;
+
+        (async()=> {
+           /* do any async stuff here */
+            await new Promise(r => setTimeout(r, 2000));
+            setAmountOut('1000.45');
+        })()
+    
         return (
           <ConnectFirst>
-            <Swap
-              {...{
-                tokenInSymbol,
-                tokenOutSymbol,
-                amountIn,
-              }}
-            />
+            { WidgetFromString(swapInput) }
           </ConnectFirst>
         );
       }
+
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
@@ -233,6 +247,7 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-search': {
         const query = args;
         return (
@@ -241,6 +256,7 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'buy-nft': {
         const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
         return (

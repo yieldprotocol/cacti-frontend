@@ -17,18 +17,18 @@ export const TextResponse = (props: any) => {
           className="
         flex justify-between 
         py-[8px] px-[24px]
-        text-[12px] text-white text-opacity-70"
+        text-sm text-white text-opacity-70"
         >
           <div>{props.title}</div>
         </div>
       )}
 
       {props.title && !props.collapsible && (
-        <div className="p-[8px] text-[12px] text-white text-opacity-70">{props.text}</div>
+        <div className=" py-[8px] px-[24px] text-sm text-white text-opacity-70">{props.text}</div>
       )}
 
       {!props.title && (
-        <div className="p-[8px] text-[12px] text-white text-opacity-70">{props.text}</div>
+        <div className=" py-[8px] px-[24px] text-sm text-white text-opacity-70">{props.text}</div>
       )}
 
       {props.title && props.collapsible && (
@@ -37,12 +37,12 @@ export const TextResponse = (props: any) => {
             <>
               <Disclosure.Button
                 as="div"
-                className="flex justify-between p-[8px] text-[12px] text-white text-opacity-70"
+                className="flex justify-between py-[8px] px-[24px] text-sm text-white text-opacity-70"
               >
                 <div>{props.title}</div>
                 <div className="w-[16px]">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
               </Disclosure.Button>
-              <Disclosure.Panel as="div" className="p-[8px] text-[12px] text-white text-opacity-70">
+              <Disclosure.Panel as="div" className=" py-[8px] px-[24px] text-sm text-white text-opacity-70">
                 {props.text}
               </Disclosure.Panel>
             </>

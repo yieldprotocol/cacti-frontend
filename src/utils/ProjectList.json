@@ -44,5 +44,16 @@
     "oracles": ["Chainlink"],
     "parentProtocol": "AAVE",
     "slug": "aave-v2"
+  },
+  {
+
+    "name": "Uniswap",
+    "symbol": "UNI",
+    "url": "https://app.uniswap.org/#/swap",
+    "description": "Uniswap is a protocol for automated token exchange on Ethereum",
+    "chain": "Ethereum",
+    "logo": "https://icons.llama.fi/uniswap.png",
+    "parentProtocol": "Uniswap",
+    "slug": "uniswap"
   }
 ]
