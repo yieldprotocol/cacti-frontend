@@ -24,7 +24,8 @@ const ChatBox = () => {
 
   return (
     <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
-      <div className="min-h-full overflow-auto">
+      
+      <div className="min-h-full overflow-auto ">
         {ready ? messageContentComponent : <Spinner />}
       </div>
 
