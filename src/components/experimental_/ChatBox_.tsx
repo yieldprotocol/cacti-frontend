@@ -8,8 +8,8 @@ import { Spinner } from '@/utils';
 import { ResetButton } from '@/components/ResetButton';
 
 // Use experimental components
-import { MessageInput } from './MessageInput';
-import { MessageList } from './MessageList';
+import { MessageInput } from './MessageInput_';
+import { MessageList } from './MessageList_';
 
 const ChatBox = () => {
   const { messages } = useChatContext();

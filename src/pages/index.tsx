@@ -10,7 +10,7 @@ const ChatBoxDynamic = dynamic(() => import('@/components/ChatBox'), {
 });
 
 /* experimental imports */
-const ExperimentalChatBox = dynamic(() => import('@/components/experimental/ChatBox'), {
+const ExperimentalChatBox = dynamic(() => import('@/components/experimental_/ChatBox_'), {
   ssr: false,
 });
 
