@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* BOT LIGHTS */
+:root {    
+    --light-width: 50%;
+    --light-color-on: rgba(255,0,0,1);
+    --light-color-off: rgba(255,0,0,.25);
+  }
+  
+  .botLight {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: calc(var(--light-width) / 2 * -1); /* hidden start */
+    width: var(--light-width);
+    background: linear-gradient(90deg, transparent 0%, var(--light-color-on) 45%, var(--light-color-on) 55%, transparent 100%);
+    animation: KITT 2s infinite ease-in-out alternate;
+  }
+  
+  @keyframes KITT {
+    0%, 100% {
+      left: calc(var(--light-width) / 2 * -1);
+    }
+    50% {
+      left: calc(100% - var(--light-width) / 2);
+    }
+  }

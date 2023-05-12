@@ -21,7 +21,7 @@ export const Home = () => {
 
   return (
     <>
-      <div className={`flex h-screen ${experimentalUi ? 'bg-[#1C282E]' : 'bg-gray-700'}`}>
+      <div className={`flex h-screen ${experimentalUi ? 'bg-[#031016]' : 'bg-gray-700'}`}>
          <HeaderDynamic />
         <div className="w-full">{!experimentalUi ? <ChatBoxDynamic /> : <ExperimentalChatBox />}</div>
       </div>
