@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconResponse, IconType } from './IconResponse';
 
-
-
 const meta: Meta<typeof IconResponse> = {
   title: 'cw3/IconResponse',
   component: IconResponse,
@@ -72,4 +70,3 @@ export const Minus: Story = {
     icon: IconType.MINUS,
   },
 };
-

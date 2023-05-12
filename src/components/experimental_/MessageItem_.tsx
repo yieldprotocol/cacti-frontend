@@ -1,22 +1,17 @@
 import { ReactNode } from 'react';
-
 import { Message, useChatContext } from '@/contexts/ChatContext';
-
+import { FeedbackButton } from './FeedbackButton_';
 import { MessageTranslator } from './MessageTranslator_';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
-import { FeedbackButton } from './FeedbackButton_';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
-    <div className={`m-auto flex items-start gap-4 p-2 md:gap-6 md:px-40 lg:px-64`}>
-      {children}
-    </div>
+    <div className={`m-auto flex items-start gap-4 p-2 md:gap-6 md:px-40 lg:px-64`}>{children}</div>
   );
 };
 
 export const MessageItem = ({ message }: { message: Message }) => {
-  
   const { actor, payload, messageId } = message;
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
 
@@ -56,10 +51,15 @@ export const MessageItem = ({ message }: { message: Message }) => {
             }}
           />
         )}
-     </div>
-      {actor === 'bot' && <div className="w-[10%]"> <FeedbackButton message={message} /> </div>}
+      </div>
+      {actor === 'bot' && (
+        <div className="w-[10%]">
+          {' '}
+          <FeedbackButton message={message} />{' '}
+        </div>
+      )}
       {actor === 'user' && <div className="w-[10%]" />}
       {actor === 'system' && <div className="w-[10%]" />}
-     </MessageItemWrap>
+    </MessageItemWrap>
   );
 };

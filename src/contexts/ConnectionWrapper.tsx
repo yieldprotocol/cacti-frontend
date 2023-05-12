@@ -26,7 +26,9 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
 
-  const {settings: {experimentalUi}} = useContext(SettingsContext);
+  const {
+    settings: { experimentalUi },
+  } = useContext(SettingsContext);
 
   const mainnetFork = {
     id: 1,

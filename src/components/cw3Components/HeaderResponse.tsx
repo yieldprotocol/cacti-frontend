@@ -38,7 +38,7 @@ export const HeaderResponse = (props: any) => {
    border-white
    border-opacity-10 
 
-   py-[8px]
+   py-[12px]
    px-[24px]
    
    text-[12px]

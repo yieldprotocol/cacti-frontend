@@ -4,11 +4,14 @@ import { BeakerIcon } from '@heroicons/react/24/outline';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 
 export const ExperimentalUiToggle = () => {
-  const { settings: {experimentalUi}, changeSetting } = useContext(SettingsContext);
+  const {
+    settings: { experimentalUi },
+    changeSetting,
+  } = useContext(SettingsContext);
 
   const toggleUI = () => {
     changeSetting(Setting.EXPERIMENTAL_UI, !experimentalUi);
-  }
+  };
 
   return (
     <button

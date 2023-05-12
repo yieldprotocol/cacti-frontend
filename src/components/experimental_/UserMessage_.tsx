@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { InlineChip } from '../cw3Components';
 
 export const UserMessage = ({
@@ -57,7 +57,6 @@ export const UserMessage = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-
       <div>
         <div className="h-[16px] w-[16px] rounded-full bg-teal-500"> </div>
       </div>
@@ -92,20 +91,21 @@ export const UserMessage = ({
         </div>
       ) : (
         <>
-          <button className="flex p-2" onClick={() => setIsEditing(true)}>
-            <PencilSquareIcon className="h-4 w-4" />
+          <button className="flex p-2 text-white/70" onClick={() => setIsEditing(true)}>
+            <PencilIcon className="h-4 w-4" />
           </button>
 
-          <button className="flex p-2" onClick={submitRegenerate}>
-            <ArrowPathIcon className="h-4 w-4" />
-          </button>
-
-          <button className="flex p-2" onClick={submitDelete}>
+          <button className="flex p-2 text-white/70" onClick={submitDelete}>
             <TrashIcon className="h-4 w-4" />
+          </button>
+
+          <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
+            <div className=" h-[20px] w-[20px] rounded-sm bg-[#8B0000] bg-teal-900 p-1 text-white/70">
+              <PlayIcon />
+            </div>
           </button>
         </>
       )}
-
     </div>
   );
 };
