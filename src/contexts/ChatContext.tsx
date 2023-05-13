@@ -128,6 +128,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const onClose = () => {
     console.log('Websocket closed');
     setIsBotThinking(false);
+    // toast.info('Websocket closed');
+  };
+
+  const onError = () => {
+    // toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
