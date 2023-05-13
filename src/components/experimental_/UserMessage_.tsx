@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export const UserMessage = ({
+  actor,
   initialText,
   submitEdit,
   submitRegenerate,
   submitDelete,
 }: {
+  actor:string
   initialText: string;
   submitEdit: (text: string) => void;
   submitRegenerate: () => void;
@@ -17,6 +19,8 @@ export const UserMessage = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isCommenter = (actor === 'commenter');
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
@@ -45,7 +49,7 @@ export const UserMessage = ({
   return (
     <div
       className={`
-      flex justify-between bg-white bg-opacity-5
+      flex justify-between ${isCommenter ? 'bg-yellow-300 bg-opacity-5 ' : 'bg-white bg-opacity-5 ' } 
      hover:bg-gray-700/20 hover:ring-1
       hover:ring-gray-500/80 focus:text-gray-50
       focus:ring-gray-500/80
@@ -58,7 +62,9 @@ export const UserMessage = ({
       onMouseLeave={() => setHovered(false)}
     >
       <div>
-        <div className="h-[16px] w-[16px] rounded-full bg-teal-500"> </div>
+        {!isCommenter ? 
+        <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
+        : <ChatBubbleLeftIcon className="h-[16px] w-[16px] text-teal-500" />}
       </div>
 
       <input
@@ -84,9 +90,12 @@ export const UserMessage = ({
       />
 
       {isEditing ? (
-        <div className="m-auto mr-2 flex">
+        <div className="m-auto mr-2 flex gap-2">
           <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
             enter
+          </span>
+          <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
+            esc
           </span>
         </div>
       ) : (
@@ -99,11 +108,13 @@ export const UserMessage = ({
             <TrashIcon className="h-4 w-4" />
           </button>
 
+          {!isCommenter && (
           <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
             <div className=" h-[20px] w-[20px] rounded-sm bg-[#8B0000] bg-teal-900 p-1 text-white/70">
               <PlayIcon />
             </div>
-          </button>
+          </button>)}
+
         </>
       )}
     </div>

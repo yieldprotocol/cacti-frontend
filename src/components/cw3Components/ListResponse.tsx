@@ -28,15 +28,14 @@ const ListTitle = ({ title }: { title: string }) => {
 export const ListResponse = ({
   data,
   title,
-  collapsible,
-  ...props
+  collapsible = true,
 }: {
   data: string[][];
   title: string;
   collapsible: boolean;
 }) => {
   return (
-    <div className="rounded-[8px] border-[0.5px] border-white border-opacity-10">
+    <div className="rounded-[8px] border-[1px] border-white border-opacity-10">
       {title && collapsible && (
         <Disclosure as="div" defaultOpen>
           {({ open }) => (

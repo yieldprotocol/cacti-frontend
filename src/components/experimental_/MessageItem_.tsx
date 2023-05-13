@@ -15,6 +15,8 @@ export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
 
+  const isUser = (actor === 'user' || actor === 'commenter');
+
   const submitEdit = (text: string) => {
     sendAction({ actionType: 'edit', messageId, text }); // this also truncates message list on backend
     const beforeMessageId = truncateUntilNextHumanMessage(messageId, {
@@ -41,9 +43,10 @@ export const MessageItem = ({ message }: { message: Message }) => {
       <div className={`flex w-[90%] flex-col`}>
         {actor === 'bot' && <MessageTranslator message={payload} />}
         {actor === 'system' && <SystemMessage message={payload} />}
-        {actor === 'user' && (
+        { isUser && (
           <UserMessage
             {...{
+              actor,
               initialText: payload,
               submitEdit,
               submitRegenerate,
@@ -54,12 +57,11 @@ export const MessageItem = ({ message }: { message: Message }) => {
       </div>
       {actor === 'bot' && (
         <div className="w-[10%]">
-          {' '}
-          <FeedbackButton message={message} />{' '}
+          <FeedbackButton message={message} />
         </div>
       )}
-      {actor === 'user' && <div className="w-[10%]" />}
       {actor === 'system' && <div className="w-[10%]" />}
+      {isUser && <div className="w-[10%]" />}
     </MessageItemWrap>
   );
 };

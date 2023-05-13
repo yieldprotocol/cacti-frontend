@@ -40,7 +40,6 @@ import {
 import { toast } from 'react-toastify';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
-  // const { chain } = useNetwork();
   const stringsAndWidgets = useParseMessage(message);
   return (
     <div className="flex flex-col gap-3">
@@ -48,15 +47,16 @@ export const MessageTranslator = ({ message }: { message: string }) => {
         return (
           <Fragment key={`i${i}`}>
             {
-              // if it's a string, just return the TextResponse Component
+              // if it's a string, just return a TextResponse Component
               // otherwise, let's try to translate the widget
               typeof item === 'string' 
-              ? item // WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
+              ? item && WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
               : Widgetize(item)
             }
           </Fragment>
         );
       })}
+
     </div>
   );
 };
@@ -164,8 +164,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
         [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountIn}"}},
           {"componentType":"IconResponse", "props": {"icon":"forward"}},
           {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}],
-          {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}},
-          {"componentType":"SubmitResponse", "props": {"text":"Swapping with Aave"}}
+          {"componentType":"ListResponse", "props": {"data":[["Slippage","0.5%" ],["Gas Fees","0.034" ],["Route","USDC-DAI"]], "title":"Breakdown"}}
         ]`;
 
         (async()=> {
