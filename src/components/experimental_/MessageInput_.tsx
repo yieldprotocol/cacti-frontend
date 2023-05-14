@@ -61,7 +61,7 @@ export const MessageInput = ({}) => {
 
   return (
     <form onSubmit={handleSendMessage}>
-      <div className="flex">
+      <div className="flex bg-red-600">
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}

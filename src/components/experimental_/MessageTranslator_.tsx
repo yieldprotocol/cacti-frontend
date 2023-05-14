@@ -1,43 +1,18 @@
-import { Fragment, createElement, useEffect, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork } from 'wagmi';
-import { SendTransactionWithReplayMsg } from '@/components//widgets/SendTransactionWithReplayMsg';
-import { YieldFarm } from '@/components//widgets/YieldFarm';
-import { YieldRowContainer } from '@/components//widgets/YieldRowContainer';
-import { ActionPanel } from '@/components//widgets/helpers/ActionPanel';
-import { ConnectFirst } from '@/components//widgets/helpers/ConnectFirst';
+import { Fragment, createElement, useMemo, useState } from 'react';
+import { parseUnits } from 'ethers/lib/utils.js';
+import { ActionPanel } from './widgets/helpers/ActionPanel';
+import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Grid from '@/components/Grid';
 import * as cw3Components from '@/components/cw3Components';
 import { Cw3Component } from '@/components/cw3Components';
-import { BuyNFT } from '@/components/widgets/BuyNFT';
-import { MultiStepContainer } from '@/components/widgets/MultiStepContainer';
-import {
-  NftAssetContainer,
-  NftAssetTraitValueContainer,
-  NftAssetTraitsContainer,
-} from '@/components/widgets/NftAssetContainer';
-import {
-  NftCollectionAssetsContainer,
-  NftCollectionContainer,
-  NftCollectionTraitContainer,
-  NftCollectionTraitValueContainer,
-  NftCollectionTraitValuesContainer,
-  NftCollectionTraitsContainer,
-} from '@/components/widgets/NftCollectionContainer';
-import { NftSearch } from '@/components/widgets/NftSearch';
-import { Price } from '@/components/widgets/Price';
-import { TransferButton } from '@/components/widgets/Transfer';
-import Swap from '@/components/widgets/swap/Swap';
+
+import Swap from './widgets/swap/Swap';
 import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-import {
-  NftAttributes,
-  NftCollectionAttributes,
-  NftsWithAttributes,
-} from '../widgets/NftAttributes';
+
+
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -125,6 +100,13 @@ const Widgetize = (widget: Widget): JSX.Element => {
 
   const { getToken } = useToken();
 
+  const parsedArgs = parseArgsStripQuotes(args);
+
+  // const widgets = new Map<string, JSX.Element>([
+  //   ['uniswap', <Uniswap args={parsedArgs} /> ],
+
+  // ]);
+
   try {
     switch (fnName) {
       // Transfer widget
@@ -140,11 +122,10 @@ const Widgetize = (widget: Widget): JSX.Element => {
             key={inputString}
             centerTitle={true}
           >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
+            <div />
+              {/* <ConnectFirst>
                 <TransferButton {...{ amount, receiver, token: token! }} />
-              </ConnectFirst>
-            </div>
+              </ConnectFirst> */}
           </ActionPanel>
         );
       }
@@ -204,7 +185,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
             centerTitle={true}
           >
             <ConnectFirst>
-              <YieldFarm {...{ project, network, token: token!, amount }} />
+              <div />
+              {/* <YieldFarm {...{ project, network, token: token!, amount }} /> */}
             </ConnectFirst>
           </ActionPanel>
         );
@@ -218,9 +200,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
             msg={inputString}
             centerTitle={true}
           >
-            <div className="flex w-[100%] justify-end">
-              <Price baseToken={baseToken} queryToken={queryToken} />
-            </div>
+            <div />
+              {/* <Price baseToken={baseToken} queryToken={queryToken} /> */}
           </ActionPanel>
         );
       }
@@ -233,14 +214,15 @@ const Widgetize = (widget: Widget): JSX.Element => {
             header={`Query for NFT ${shortenAddress(nftAddress)}:${tokenID} traits`}
             msg={inputString}
           >
-            <NftAttributes nftAddress={nftAddress} tokenID={tokenID} />
+            <div />
+            {/* <NftAttributes nftAddress={nftAddress} tokenID={tokenID} /> */}
           </ActionPanel>
         );
       }
 
       case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
-        return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
+        // return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
 
       case 'nfts-by-traits': {
@@ -252,11 +234,12 @@ const Widgetize = (widget: Widget): JSX.Element => {
             header={`Query for NFTs with ${traitValue} ${traitType}`}
             msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}`}
           >
-            <NftsWithAttributes
+           <div />
+            {/* <NftsWithAttributes
               nftAddress={nftAddr}
               traitType={traitType}
               traitValue={traitValue}
-            />
+            /> */}
           </ActionPanel>
         );
       }
@@ -265,7 +248,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
         const query = args;
         return (
           <ActionPanel header={`Query for ${query} NFTs`} msg={inputString} direction="col">
-            <NftSearch {...{ query }} />
+            {/* <NftSearch {...{ query }} /> */}
+            <div />
           </ActionPanel>
         );
       }
@@ -278,7 +262,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
             msg={inputString}
             direction="col"
           >
-            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
+            <div />
+            {/* <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} /> */}
           </ActionPanel>
         );
       }
@@ -290,7 +275,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
           const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
           params = { network, address, name, numAssets, previewImageUrl };
         }
-        return <NftCollectionContainer {...params} />;
+        // return <NftCollectionContainer {...params} />;
       }
       case 'nft-asset-container': {
         let params;
@@ -301,65 +286,68 @@ const Widgetize = (widget: Widget): JSX.Element => {
             parseArgsStripQuotes(args);
           params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
         }
-        return <NftAssetContainer {...params} />;
+        // return <NftAssetContainer {...params} />;
       }
       case 'nft-asset-traits-container': {
         const { asset, values } = JSON.parse(args);
         return (
-          <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
-          >
-            {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
-              <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
-              </Fragment>
-            )) || ''}
-          </NftAssetTraitsContainer>
+          <div />
+          // <NftAssetTraitsContainer
+          //   asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
+          // >
+          //   {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
+          //     <Fragment key={`i${i}`}>
+          //       {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+          //     </Fragment>
+          //   )) || ''}
+          // </NftAssetTraitsContainer>
         );
       }
       case 'nft-asset-trait-value-container': {
         const params = JSON.parse(args);
-        return <NftAssetTraitValueContainer {...params} />;
+        return <div /> // <NftAssetTraitValueContainer {...params} />;
       }
       case 'nft-collection-assets-container': {
         const { collection, assets } = JSON.parse(args);
         return (
-          <NftCollectionAssetsContainer
-            collection={Widgetize({
-              fnName: collection.name,
-              args: JSON.stringify(collection.params),
-            })}
-          >
-            <div className="text-black">
-              <Grid>
-                {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
-                  </Fragment>
-                )) || ''}
-              </Grid>
-            </div>
-          </NftCollectionAssetsContainer>
+          <div />
+          // <NftCollectionAssetsContainer
+          //   collection={Widgetize({
+          //     fnName: collection.name,
+          //     args: JSON.stringify(collection.params),
+          //   })}
+          // >
+          //   <div className="text-black">
+          //     <Grid>
+          //       {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
+          //         <Fragment key={`i${i}`}>
+          //           {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+          //         </Fragment>
+          //       )) || ''}
+          //     </Grid>
+          //   </div>
+          // </NftCollectionAssetsContainer>
         );
       }
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
-        return <NftCollectionTraitsContainer {...params} />;
+        return <div /> //  <NftCollectionTraitsContainer {...params} />;
       }
       case 'nft-collection-trait-values-container': {
         const params = JSON.parse(args);
-        return <NftCollectionTraitValuesContainer {...params} />;
+        return <div /> // <NftCollectionTraitValuesContainer {...params} />;
       }
       case 'yield-container': {
         const params = JSON.parse(args);
 
-        return <YieldRowContainer {...params} />;
+        return <div /> // <YieldRowContainer {...params} />;
       }
       case 'list-container': {
         const params = JSON.parse(args);
         return (
           <div className="text-black">
-            <Grid>
+            <div /> 
+            {/* <Grid>
               {params.items?.map(
                 ({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
@@ -367,7 +355,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
                   </Fragment>
                 )
               ) || ''}
-            </Grid>
+            </Grid> */}
           </div>
         );
       }
@@ -376,30 +364,33 @@ const Widgetize = (widget: Widget): JSX.Element => {
         const headers = params.headers;
         const rows = params.rows;
         return (
-          <table className="table-auto border border-gray-500">
-            <thead className="bg-gray-800 text-left">
-              <tr className="border-b border-gray-400">
-                {headers.map(({ displayName }: { displayName: string }, i: number) => (
-                  <th className="px-2 py-1" key={`i${i}`}>
-                    {displayName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
-                const rowArgs = {
-                  headers,
-                  rowParams: params,
-                };
-                return (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
+
+          <div />
+
+          // <table className="table-auto border border-gray-500">
+          //   <thead className="bg-gray-800 text-left">
+          //     <tr className="border-b border-gray-400">
+          //       {headers.map(({ displayName }: { displayName: string }, i: number) => (
+          //         <th className="px-2 py-1" key={`i${i}`}>
+          //           {displayName}
+          //         </th>
+          //       ))}
+          //     </tr>
+          //   </thead>
+          //   <tbody>
+          //     {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
+          //       const rowArgs = {
+          //         headers,
+          //         rowParams: params,
+          //       };
+          //       return (
+          //         <Fragment key={`i${i}`}>
+          //           {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
+          //         </Fragment>
+          //       );
+          //     })}
+          //   </tbody>
+          // </table>
         );
       }
       case 'tx-payload-for-sending-container': {
@@ -410,7 +401,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
           <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <SendTransactionWithReplayMsg
+              <div />
+                {/* <SendTransactionWithReplayMsg
                   {...{
                     userRequestStatus,
                     tx,
@@ -419,7 +411,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
                     parsedUserRequest,
                     description,
                   }}
-                />
+                /> */}
               </ConnectFirst>
             </div>
           </ActionPanel>
@@ -446,7 +438,8 @@ const Widgetize = (widget: Widget): JSX.Element => {
           <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <MultiStepContainer
+              <div />
+                {/* <MultiStepContainer
                   {...{
                     status,
                     workflowId,
@@ -460,7 +453,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
                     errorMsg,
                     description,
                   }}
-                />
+                /> */}
               </ConnectFirst>
             </div>
           </ActionPanel>

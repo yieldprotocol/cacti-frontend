@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
-import { MessageItem, MessageItemWrap } from './MessageItem_';
+import { MessageItem } from './MessageItem_';
 
 export const MessageList = () => {
   const {
@@ -19,23 +19,15 @@ export const MessageList = () => {
   }, [messages]);
 
   const multiStepInProgress = isMultiStepInProgress && (
-    <MessageItemWrap actor={'Bot'}>
       <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
         <span className="after:animate-ellipse">Multi-step workflow in progress</span>
       </div>
-    </MessageItemWrap>
-  );
-
-  const botThinking = isBotThinking && (
-    <MessageItemWrap actor={'Bot'}>
-      <BotThinking />
-    </MessageItemWrap>
   );
 
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
   return (
-    <div className="h-full">
+    <div className= "h-full">
       {messages.map((message, i) => {
         if (!showDebugMessages && message.actor == 'system') {
           return <React.Fragment key={message.messageId} />;
@@ -46,7 +38,7 @@ export const MessageList = () => {
               <>
                 {bottomRefDiv}
                 {multiStepInProgress}
-                {botThinking}
+                {isBotThinking && <BotThinking />}
               </>
             )}
             <MessageItem message={message} />
@@ -56,7 +48,7 @@ export const MessageList = () => {
       {!insertBeforeMessageId && (
         <>
           {multiStepInProgress}
-          {botThinking}
+          {isBotThinking &&  <BotThinking />}
           {bottomRefDiv}
         </>
       )}
