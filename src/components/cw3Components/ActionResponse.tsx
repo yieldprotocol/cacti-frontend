@@ -32,13 +32,13 @@ const stylingByState = {
  * Action Response
  * Includes: Text, ProjectId, Image, Button (Go to Service)
  **/
-export const ActionResponse = (props:any) => {
+export const ActionResponse = (props: any) => {
   const styleClassName = stylingByState[props.state as ActionResponseState];
   return (
-    <div className='flex w-full justify-center' >
-    <StyledButton className={styleClassName} onClick={props.action}>
-      {props.label}
-    </StyledButton>
+    <div className="flex w-full justify-center">
+      <StyledButton className={styleClassName} onClick={props.action}>
+        {props.label}
+      </StyledButton>
     </div>
   );
 };

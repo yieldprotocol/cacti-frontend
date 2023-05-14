@@ -86,4 +86,3 @@ export const Success: Story = {
     state: ActionResponseState.SUCCESS,
   },
 };
-

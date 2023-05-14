@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ListResponse } from './ListResponse';
 
-const testData = [ 
+const testData = [
   ['Transaction details', '0.0'],
   ['Transaction details', '0.0'],
   ['Transaction details', '0.0'],
-]
+];
 
 const meta: Meta<typeof ListResponse> = {
   title: 'cw3/ListResponse',
