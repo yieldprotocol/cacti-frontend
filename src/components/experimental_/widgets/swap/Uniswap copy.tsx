@@ -15,11 +15,9 @@ import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 
 interface UniswapProps {
-
-  args: [ string, string, BigNumber]
-  // tokenInSymbol: string;
-  // tokenOutSymbol: string;
-  // amountIn: BigNumber;
+  tokenInSymbol: string;
+  tokenOutSymbol: string;
+  amountIn: string;
 }
 
 interface ExactInputSingleParams {
@@ -33,12 +31,9 @@ interface ExactInputSingleParams {
   sqrtPriceLimitX96: BigNumber;
 }
 
-const Uniswap = ({ args } : UniswapProps) => {
+const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn } : UniswapProps) => {
   
   const chainId = useChainId();
-
-  const [tokenInSymbol, tokenOutSymbol, amount] = args;
-  
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);

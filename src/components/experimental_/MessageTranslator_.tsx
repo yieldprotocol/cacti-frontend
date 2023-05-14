@@ -1,18 +1,12 @@
 import { Fragment, createElement, useMemo, useState } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { ActionPanel } from './widgets/helpers/ActionPanel';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import Grid from '@/components/Grid';
 import * as cw3Components from '@/components/cw3Components';
 import { Cw3Component } from '@/components/cw3Components';
-
-import Swap from './widgets/swap/Swap';
-import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-
-
+import { ActionPanel } from './widgets/helpers/ActionPanel';
+import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -93,6 +87,34 @@ export const WidgetFromString = (input: string): React.ReactElement => {
   return <>{components}</>;
 };
 
+const getWidget = (widget: Widget): JSX.Element => {
+  const { fnName: fn, args } = widget;
+  const fnName = fn.toLowerCase().replace('display-', '');
+  const inputString = `${fnName}(${args})`;
+  const parsedArgs = parseArgsStripQuotes(args);
+
+  const widgets = new Map<string, JSX.Element>([
+    [
+      'uniswap',
+      <Uniswap
+        tokenInSymbol={parsedArgs[0]}
+        tokenOutSymbol={parsedArgs[1]}
+        amountIn={parsedArgs[3]}
+        key="uniswap"
+      />,
+    ],
+    // ['transfer', ]
+  ]);
+
+  return (
+    widgets.get(fnName) || (
+      <div className="inline-block bg-slate-500 p-5 text-white">
+        Widget not implemented for <code>{inputString}</code>
+      </div>
+    )
+  );
+};
+
 const Widgetize = (widget: Widget): JSX.Element => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
@@ -102,10 +124,18 @@ const Widgetize = (widget: Widget): JSX.Element => {
 
   const parsedArgs = parseArgsStripQuotes(args);
 
-  // const widgets = new Map<string, JSX.Element>([
-  //   ['uniswap', <Uniswap args={parsedArgs} /> ],
-
-  // ]);
+  const widgets = new Map<string, JSX.Element>([
+    [
+      'uniswap',
+      <Uniswap
+        tokenInSymbol={parsedArgs[0]}
+        tokenOutSymbol={parsedArgs[1]}
+        amountIn={parsedArgs[3]}
+        key="uniswap"
+      />,
+    ],
+    // ['transfer', ]
+  ]);
 
   try {
     switch (fnName) {
@@ -123,7 +153,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
             centerTitle={true}
           >
             <div />
-              {/* <ConnectFirst>
+            {/* <ConnectFirst>
                 <TransferButton {...{ amount, receiver, token: token! }} />
               </ConnectFirst> */}
           </ActionPanel>
@@ -139,36 +169,36 @@ const Widgetize = (widget: Widget): JSX.Element => {
           ? parseUnits(cleanValue(amountInStrRaw, tokenIn?.decimals)!, tokenIn?.decimals)
           : undefined;
 
-        const [amountOut, setAmountOut] = useState<string>('|pending|');
-        const [slippage, setSlippage] = useState<string>('|pending|');
-        const [gasFees, setGasFees] = useState<string>('|pending|');
+        // const [amountOut, setAmountOut] = useState<string>('|pending|');
+        // const [slippage, setSlippage] = useState<string>('|pending|');
+        // const [gasFees, setGasFees] = useState<string>('|pending|');
 
-        const swapInput = `[
-          {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }}, 
-          [
-            {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
-            {"componentType":"IconResponse", "props": {"icon":"forward"}},
-            {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}
-          ],
-          {"componentType":"ListResponse", "props": {"data":[["Slippage","${slippage}" ],["Gas Fees","${gasFees}" ],["Route","${tokenInSymbol}-${tokenOutSymbol}"]], "title":"Breakdown"}},
-          {"componentType":"ActionResponse", "props": {"label":"Swap", "state":"disabled"}}   
-        ]`;
+        // const swapInput = `[
+        //   {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }},
+        //   [
+        //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
+        //     {"componentType":"IconResponse", "props": {"icon":"forward"}},
+        //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}
+        //   ],
+        //   {"componentType":"ListResponse", "props": {"data":[["Slippage","${slippage}" ],["Gas Fees","${gasFees}" ],["Route","${tokenInSymbol}-${tokenOutSymbol}"]], "title":"Breakdown"}},
+        //   {"componentType":"ActionResponse", "props": {"label":"Swap", "state":"disabled"}}
+        // ]`;
 
-        useMemo(() => {
-          (async () => {
-            /* Run the async code here to update the fields */
-            console.log('running async');
-            /* Do any async stuff here */
-            await new Promise((r) => setTimeout(r, 2000));
-            setAmountOut('1000.45');
-            await new Promise((r) => setTimeout(r, 1000));
-            setSlippage('0.1%');
-            await new Promise((r) => setTimeout(r, 5));
-            setGasFees('0.0001 ETH');
-          })();
-        }, []);
+        // useMemo(() => {
+        //   (async () => {
+        //     /* Run the async code here to update the fields */
+        //     console.log('running async');
+        //     /* Do any async stuff here */
+        //     await new Promise((r) => setTimeout(r, 2000));
+        //     setAmountOut('1000.45');
+        //     await new Promise((r) => setTimeout(r, 1000));
+        //     setSlippage('0.1%');
+        //     await new Promise((r) => setTimeout(r, 5));
+        //     setGasFees('0.0001 ETH');
+        //   })();
+        // }, []);
 
-        return <ConnectFirst>{WidgetFromString(swapInput)}</ConnectFirst>;
+       //  return <ConnectFirst>{WidgetFromString(swapInput)}</ConnectFirst>;
       }
 
       case 'yield-farm': {
@@ -201,7 +231,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
             centerTitle={true}
           >
             <div />
-              {/* <Price baseToken={baseToken} queryToken={queryToken} /> */}
+            {/* <Price baseToken={baseToken} queryToken={queryToken} /> */}
           </ActionPanel>
         );
       }
@@ -234,7 +264,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
             header={`Query for NFTs with ${traitValue} ${traitType}`}
             msg={`Query for ${shortenAddress(nftAddr)} with ${traitValue} ${traitType}`}
           >
-           <div />
+            <div />
             {/* <NftsWithAttributes
               nftAddress={nftAddr}
               traitType={traitType}
@@ -305,7 +335,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
       }
       case 'nft-asset-trait-value-container': {
         const params = JSON.parse(args);
-        return <div /> // <NftAssetTraitValueContainer {...params} />;
+        return <div />; // <NftAssetTraitValueContainer {...params} />;
       }
       case 'nft-collection-assets-container': {
         const { collection, assets } = JSON.parse(args);
@@ -331,22 +361,22 @@ const Widgetize = (widget: Widget): JSX.Element => {
       }
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
-        return <div /> //  <NftCollectionTraitsContainer {...params} />;
+        return <div />; //  <NftCollectionTraitsContainer {...params} />;
       }
       case 'nft-collection-trait-values-container': {
         const params = JSON.parse(args);
-        return <div /> // <NftCollectionTraitValuesContainer {...params} />;
+        return <div />; // <NftCollectionTraitValuesContainer {...params} />;
       }
       case 'yield-container': {
         const params = JSON.parse(args);
 
-        return <div /> // <YieldRowContainer {...params} />;
+        return <div />; // <YieldRowContainer {...params} />;
       }
       case 'list-container': {
         const params = JSON.parse(args);
         return (
           <div className="text-black">
-            <div /> 
+            <div />
             {/* <Grid>
               {params.items?.map(
                 ({ name, params }: { name: string; params: string }, i: number) => (
@@ -364,7 +394,6 @@ const Widgetize = (widget: Widget): JSX.Element => {
         const headers = params.headers;
         const rows = params.rows;
         return (
-
           <div />
 
           // <table className="table-auto border border-gray-500">
@@ -401,7 +430,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
           <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-              <div />
+                <div />
                 {/* <SendTransactionWithReplayMsg
                   {...{
                     userRequestStatus,
@@ -438,7 +467,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
           <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-              <div />
+                <div />
                 {/* <MultiStepContainer
                   {...{
                     status,
