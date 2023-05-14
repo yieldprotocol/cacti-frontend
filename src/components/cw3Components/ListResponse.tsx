@@ -27,53 +27,43 @@ const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70'
  * Includes:
  * Text
  */
-export const ListResponse = ({
-  data,
-  title,
-  collapsible = true,
-}: {
-  data: string[][];
-  title: string;
-  collapsible: boolean;
-}) => {
+export const ListResponse = (props : any ) => {
+
+  const rows = props.data.map((dataRow:any,i:number) => (
+    <ListRow dataRow={dataRow} key={i+dataRow[0]} />
+  ))
+
   return (
     <div className="rounded-[8px] border-[1px] border-white border-opacity-10">
-      {title && collapsible && (
+      {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen >
           {({ open }) => (
             <>
               <Disclosure.Button as="div" className="flex justify-between py-[8px] px-[24px] text-white text-opacity-70">
-                <ListTitle title={title} />
+                <ListTitle title={props.title} />
                 <div className="w-[16px] stroke-2">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
               </Disclosure.Button>
 
               <Disclosure.Panel as="div" className="py-[8px] px-[24px]" >
-                {data.map((dataRow) => (
-                  <ListRow dataRow={dataRow} />
-                ))}
+                {rows}
               </Disclosure.Panel>
             </>
           )}
         </Disclosure>
       )}
 
-      {title && !collapsible && (
+      {props.title && !props.collapsible && (
         <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">
           <div className='py-[8px]'>
-          <ListTitle title={title} />
+          <ListTitle title={props.title} />
           </div>
-          {data.map((dataRow) => (
-            <ListRow dataRow={dataRow} />
-          ))}
-          
+          {rows}
         </div>
       )}
 
-      {!title && (
+      {!props.title && (
         <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">
-          {data.map((dataRow) => (
-            <ListRow dataRow={dataRow} />
-          ))}
+          {rows}
         </div>
       )}
     </div>

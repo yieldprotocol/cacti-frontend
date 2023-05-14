@@ -1,3 +1,4 @@
+import { ActionResponse } from './ActionResponse';
 import { HeaderResponse } from './HeaderResponse';
 import { IconResponse } from './IconResponse';
 import { InlineChip } from './InlineChip';
@@ -12,6 +13,15 @@ export enum Cw3Component {
   SingleLineResponse = 'SingleLineResponse',
   IconResponse = 'IconResponse',
   ListResponse = 'ListResponse',
+  ActionResponse = 'ActionResponse',
 }
 
-export { InlineChip, TextResponse, HeaderResponse, SingleLineResponse, IconResponse, ListResponse };
+export {
+  InlineChip,
+  TextResponse,
+  HeaderResponse,
+  SingleLineResponse,
+  IconResponse,
+  ListResponse,
+  ActionResponse,
+};

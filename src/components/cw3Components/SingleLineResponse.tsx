@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useState } from 'react';
-import { Spinner, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { useMemo, useState } from 'react';
+import { findTokenBySymbol } from '@/utils';
 import { InlineChip } from './InlineChip';
 import Skeleton from '@/components/SkeletonWrap';
 
@@ -11,18 +11,6 @@ export const SingleLineResponse = (props: any) => {
   
   const [token, setToken] = useState<any>();
   const [amount, setAmount] = useState<any>(props.value);
-
-  // useEffect(() => {
-  //   if (props.tokenSymbol) {
-  //     try {
-  //       const token = findTokenBySymbol(props.tokenSymbol, 1);
-  //       setToken(token);
-  //     } catch (e) {
-  //       // console.error(e);
-  //       setToken(undefined);
-  //     }
-  //   }
-  // }, [props.tokenSymbol]);
 
   useMemo(()=>{
     if (props.tokenSymbol) {
