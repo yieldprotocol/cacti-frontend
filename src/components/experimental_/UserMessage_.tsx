@@ -8,7 +8,7 @@ export const UserMessage = ({
   submitRegenerate,
   submitDelete,
 }: {
-  actor:string
+  actor: string;
   initialText: string;
   submitEdit: (text: string) => void;
   submitRegenerate: () => void;
@@ -20,7 +20,7 @@ export const UserMessage = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isCommenter = (actor === 'commenter');
+  const isCommenter = actor === 'commenter';
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
@@ -49,22 +49,26 @@ export const UserMessage = ({
   return (
     <div
       className={`
-      flex justify-between ${isCommenter ? 'bg-yellow-300 bg-opacity-5 ' : 'bg-white bg-opacity-5 ' } 
+      flex justify-between ${
+        isCommenter ? 'bg-yellow-300 bg-opacity-5 ' : 'bg-white bg-opacity-5 '
+      } 
      hover:bg-gray-700/20 hover:ring-1
       hover:ring-gray-500/80 focus:text-gray-50
       focus:ring-gray-500/80
       ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
+      mt-[24px]
       items-center
       px-[24px]
-      mt-[24px]
    `}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <div>
-        {!isCommenter ? 
-        <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
-        : <ChatBubbleLeftIcon className="h-[16px] w-[16px] text-teal-500" />}
+        {!isCommenter ? (
+          <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
+        ) : (
+          <ChatBubbleLeftIcon className="h-[16px] w-[16px] text-teal-500" />
+        )}
       </div>
 
       <input
@@ -109,12 +113,12 @@ export const UserMessage = ({
           </button>
 
           {!isCommenter && (
-          <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
-            <div className=" h-[20px] w-[20px] rounded-sm bg-[#8B0000] bg-teal-900 p-1 text-white/70">
-              <PlayIcon />
-            </div>
-          </button>)}
-
+            <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
+              <div className=" h-[20px] w-[20px] rounded-sm bg-[#8B0000] bg-teal-900 p-1 text-white/70">
+                <PlayIcon />
+              </div>
+            </button>
+          )}
         </>
       )}
     </div>

@@ -99,9 +99,13 @@ export const WidgetFromString = (input: string): React.ReactElement => {
     // Case 2: If we have a nested array of components, create single line of components including all those elements
     if (Array.isArray(parsedItem)) {
       const singleLineOfComponents = parsedItem.map((item) => {
-        return createElement(cw3Components[item.componentType as Cw3Component], { ...item.props } );
+        return createElement(cw3Components[item.componentType as Cw3Component], { ...item.props });
       });
-      return <div className="flex items-center gap-2" key='listKey'>{singleLineOfComponents}</div>;
+      return (
+        <div className="flex items-center gap-2" key="listKey">
+          {singleLineOfComponents}
+        </div>
+      );
     }
 
     // Case 3: If not a cw3Component resort to default: a text response with the item as the input
@@ -128,7 +132,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
         const amount = parseUnits(amtString, token?.decimals);
-        
+
         return (
           <ActionPanel
             header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
@@ -150,10 +154,9 @@ const Widgetize = (widget: Widget): JSX.Element => {
         const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
         const tokenIn = getToken(tokenInSymbol);
-        const amountIn = amountInStrRaw ? parseUnits(
-          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
-          tokenIn?.decimals
-        ) : undefined
+        const amountIn = amountInStrRaw
+          ? parseUnits(cleanValue(amountInStrRaw, tokenIn?.decimals)!, tokenIn?.decimals)
+          : undefined;
 
         const [amountOut, setAmountOut] = useState<string>('|pending|');
         const [slippage, setSlippage] = useState<string>('|pending|');
@@ -170,10 +173,10 @@ const Widgetize = (widget: Widget): JSX.Element => {
           {"componentType":"ActionResponse", "props": {"label":"Swap", "state":"disabled"}}   
         ]`;
 
-        useMemo(()=>{
+        useMemo(() => {
           (async () => {
             /* Run the async code here to update the fields */
-            console.log('running async')
+            console.log('running async');
             /* Do any async stuff here */
             await new Promise((r) => setTimeout(r, 2000));
             setAmountOut('1000.45');
@@ -182,7 +185,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
             await new Promise((r) => setTimeout(r, 5));
             setGasFees('0.0001 ETH');
           })();
-        },[])
+        }, []);
 
         return <ConnectFirst>{WidgetFromString(swapInput)}</ConnectFirst>;
       }
@@ -234,7 +237,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
           </ActionPanel>
         );
       }
-      
+
       case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;

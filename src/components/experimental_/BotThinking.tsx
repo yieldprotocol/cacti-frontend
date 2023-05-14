@@ -5,6 +5,7 @@ export const BotThinking = () => {
     >
       <div className="relative h-[24px] overflow-hidden ">
         <div className="botLight" />
+        <div className="grid-rows-10 grid grid-cols-12 gap-0 border-black" />
       </div>
     </div>
   );

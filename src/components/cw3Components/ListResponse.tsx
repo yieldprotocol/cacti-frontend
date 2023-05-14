@@ -4,7 +4,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   return (
-    <div className="flex justify-between py-[4px] text-sm text-white/70 font-thin">
+    <div className="flex justify-between py-[4px] text-sm font-thin text-white/70">
       <div>{dataRow[0]}</div>
       <div>{dataRow[1]}</div>
     </div>
@@ -19,7 +19,7 @@ const ListTitle = ({ title }: { title: string }) => {
   );
 };
 
-const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70'
+const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70';
 
 /**
  * List response element
@@ -27,24 +27,28 @@ const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70'
  * Includes:
  * Text
  */
-export const ListResponse = (props : any ) => {
-
-  const rows = props.data.map((dataRow:any,i:number) => (
-    <ListRow dataRow={dataRow} key={i+dataRow[0]} />
-  ))
+export const ListResponse = (props: any) => {
+  const rows = props.data.map((dataRow: any, i: number) => (
+    <ListRow dataRow={dataRow} key={i + dataRow[0]} />
+  ));
 
   return (
     <div className="rounded-[8px] border-[1px] border-white border-opacity-10">
       {props.title && props.collapsible && (
-        <Disclosure as="div" defaultOpen >
+        <Disclosure as="div" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button as="div" className="flex justify-between py-[8px] px-[24px] text-white text-opacity-70">
+              <Disclosure.Button
+                as="div"
+                className="flex justify-between py-[8px] px-[24px] text-white text-opacity-70"
+              >
                 <ListTitle title={props.title} />
-                <div className="w-[16px] stroke-2">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
+                <div className="w-[16px] stroke-2">
+                  {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                </div>
               </Disclosure.Button>
 
-              <Disclosure.Panel as="div" className="py-[8px] px-[24px]" >
+              <Disclosure.Panel as="div" className="py-[8px] px-[24px]">
                 {rows}
               </Disclosure.Panel>
             </>
@@ -54,17 +58,15 @@ export const ListResponse = (props : any ) => {
 
       {props.title && !props.collapsible && (
         <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">
-          <div className='py-[8px]'>
-          <ListTitle title={props.title} />
+          <div className="py-[8px]">
+            <ListTitle title={props.title} />
           </div>
           {rows}
         </div>
       )}
 
       {!props.title && (
-        <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">
-          {rows}
-        </div>
+        <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">{rows}</div>
       )}
     </div>
   );
