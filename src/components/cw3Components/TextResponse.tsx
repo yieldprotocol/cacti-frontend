@@ -8,7 +8,6 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
  * Includes:
  * Text
  */
-
 export const TextResponse = (props: any) => {
   return (
     <div className="rounded-[8px] border-[0.5px] border-white border-opacity-10 ">

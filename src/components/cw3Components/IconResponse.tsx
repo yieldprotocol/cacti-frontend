@@ -15,11 +15,11 @@ export enum IconType {
 }
 
 const IconSet: Map<IconType, React.ReactElement> = new Map([
-  [IconType.FORWARD, <ArrowSmallRightIcon className="stroke-2" />],
-  [IconType.BACK, <ArrowSmallLeftIcon className="stroke-2" />],
-  [IconType.PLUS, <PlusIcon className="stroke-2" />],
-  [IconType.MINUS, <MinusIcon className="stroke-2" />],
-  [IconType.EXCHANGE, <ArrowsRightLeftIcon className="stroke-2" />],
+  [IconType.FORWARD, <ArrowSmallRightIcon className="stroke-2" key={'for'} />],
+  [IconType.BACK, <ArrowSmallLeftIcon className="stroke-2" key={'bac'} />],
+  [IconType.PLUS, <PlusIcon className="stroke-2" key={'plu'} />],
+  [IconType.MINUS, <MinusIcon className="stroke-2" key={'min'} />],
+  [IconType.EXCHANGE, <ArrowsRightLeftIcon className="stroke-2" key={'exc'} />],
 ]);
 
 /**
