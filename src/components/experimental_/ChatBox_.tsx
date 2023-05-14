@@ -21,13 +21,14 @@ const ChatBox = () => {
 
   return (
     <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
-      <div className="min-h-full overflow-auto ">
-        {ready ? messageContentComponent : <Spinner />}
+      <div className="grid min-h-full grid-cols-12 overflow-auto ">
+        <div className="col-span-2" />
+        <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
       </div>
 
-      <div className="grid w-full grid-cols-12 gap-2 py-5">
+      <div className="grid w-full grid-cols-12 gap-2 py-5 ">
         <div className="col-span-2" />
-        <div className="col-span-8">
+        <div className="col-span-6">
           <MessageInput />
         </div>
         <div className="col-span-2 px-8">

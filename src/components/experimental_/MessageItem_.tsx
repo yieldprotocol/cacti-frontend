@@ -5,12 +5,6 @@ import { MessageTranslator } from './MessageTranslator_';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
 
-export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
-  return (
-    <div className={`m-auto flex items-start gap-4 p-2 md:gap-6 md:px-40 lg:px-64`}>{children}</div>
-  );
-};
-
 export const MessageItem = ({ message }: { message: Message }) => {
   const { actor, payload, messageId } = message;
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
@@ -39,8 +33,8 @@ export const MessageItem = ({ message }: { message: Message }) => {
   };
 
   return (
-    <MessageItemWrap actor={actor}>
-      <div className={`flex w-[90%] flex-col`}>
+    <div className={`flex py-2`}>
+      <div className={`flex w-full flex-col py-[1px]`}>
         {actor === 'bot' && <MessageTranslator message={payload} />}
         {actor === 'system' && <SystemMessage message={payload} />}
         {isUser && (
@@ -62,6 +56,6 @@ export const MessageItem = ({ message }: { message: Message }) => {
       )}
       {actor === 'system' && <div className="w-[10%]" />}
       {isUser && <div className="w-[10%]" />}
-    </MessageItemWrap>
+    </div>
   );
 };
