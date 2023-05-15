@@ -8,28 +8,10 @@ export const MessageInput = ({}) => {
 
   const { sendMessage, interactor, setInteractor } = useChatContext();
 
-  // const handleKeyPress = useCallback((e: KeyboardEvent) => {
-  //   if (e.key === 'I') {
-  //     e.preventDefault();
-  //     focusInput();
-  //   }
-  // }, []);
-
-  const focusInput = () => {
+  useEffect(() => {
+    /* set input focus on mount */
     inputRef.current?.focus();
-  };
-
-  useEffect(() => {
-    focusInput();
   }, []);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress]);
-
   
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
