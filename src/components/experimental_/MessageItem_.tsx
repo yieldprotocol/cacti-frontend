@@ -49,6 +49,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
           />
         )}
       </div>
+
       {actor === 'bot' && (
         <div className="w-[10%]">
           <FeedbackButton message={message} />
@@ -56,6 +57,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
       )}
       {actor === 'system' && <div className="w-[10%]" />}
       {isUser && <div className="w-[10%]" />}
+      
     </div>
   );
 };
