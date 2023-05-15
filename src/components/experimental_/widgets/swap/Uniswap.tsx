@@ -3,10 +3,14 @@ import { BigNumber, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
-import ApproveTokens from '@/components/ApproveTokens';
-import SubmitButton from '@/components/widgets/swap/SubmitButton';
-import SwapItem from '@/components/widgets/swap/SwapItem';
-import TransactionBreakdown from '@/components/widgets/swap/TransactionBreakdown';
+import {
+  ActionResponse,
+  HeaderResponse,
+  IconResponse,
+  ListResponse,
+  SingleLineResponse,
+} from '@/components/cw3Components';
+import { ResponseRow } from '@/components/cw3Components/helpers/cw3Layout';
 import useChainId from '@/hooks/useChainId';
 import useSubmitTx from '@/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
@@ -107,88 +111,32 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: UniswapProps) => {
 
   const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
     useSubmitTx(swapConfig.request);
+  //   {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }},
+  //   [
+  //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
+  //     {"componentType":"IconResponse", "props": {"icon":"forward"}},
+  //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}
+  //   ],
+  //   {"componentType":"ListResponse", "props": {"data":[["Slippage","${slippage}" ],["Gas Fees","${gasFees}" ],["Route","${tokenInSymbol}-${tokenOutSymbol}"]], "title":"Breakdown"}},
+  //   {"componentType":"ActionResponse", "props": {"label":"Swap", "state":"disabled"}}
 
-  return (
-    <div className="grid w-full gap-2 self-center xl:max-w-4xl">
-      <div className="grid gap-2 xl:flex">
-        <SwapItem
-          tokenSymbol={tokenInSymbol}
-          amount={amountIn_}
-          amountUSD={
-            tokenInSymbol === 'USDC'
-              ? amountIn_
-              : quoteIsLoadingUSDC
-              ? undefined
-              : cleanValue(quoteUSDC?.humanReadableAmount, 2)
-          }
-          priceUSD={
-            tokenInSymbol === 'USDC'
-              ? '1.00'
-              : quoteIsLoadingUSDC
-              ? undefined
-              : cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, amountIn_), 2)
-          }
-        />
-        <SwapItem
-          tokenSymbol={tokenOutSymbol}
-          amount={quoteIsLoading ? undefined : cleanValue(amountOut_, 2)}
-          amountUSD={
-            tokenOutSymbol === 'USDC'
-              ? amountOut_
-              : quoteIsLoadingTokenOutUSDC
-              ? undefined
-              : cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)
-          }
-          priceUSD={
-            tokenOutSymbol === 'USDC'
-              ? '1.00'
-              : quoteIsLoadingTokenOutUSDC
-              ? undefined
-              : cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut_), 2)
-          }
-        />
-      </div>
-      <TransactionBreakdown
-        tokenInSymbol={tokenInSymbol}
-        tokenOutSymbol={tokenOutSymbol}
-        exchangeRate={calcPrice(quote?.humanReadableAmount, amountIn_)}
-        amountOutMinimum={amountOutMinimum_}
+  return (<>
+      <HeaderResponse text="Swap with uniswap" projectName="uniswap" />
+      <ResponseRow>
+        <SingleLineResponse tokenSymbol={tokenInSymbol} value={amountIn} />
+        <IconResponse icon="forward" />
+        <SingleLineResponse tokenSymbol={tokenOutSymbol} value={amountOut_} />
+      </ResponseRow>
+      <ListResponse
+        title="Breakdown"
+        data={[
+          ['Slippage', '0.5%'],
+          ['Gas Fees', '0.32'],
+          ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
+        ]}
       />
-      {!tokenInIsETH && !hasAllowance ? (
-        <ApproveTokens
-          {...{
-            token: tokenIn!,
-            amount: amountInToUse,
-            spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
-          }}
-        />
-      ) : (
-        <SubmitButton
-          label={
-            !hasBalance
-              ? 'Insufficient balance'
-              : isPendingConfirm
-              ? 'Waiting for confirmation in wallet...'
-              : isLoading
-              ? 'Swapping...'
-              : isError
-              ? 'Swap error'
-              : !isPrepared
-              ? 'Error preparing swap'
-              : isSuccess
-              ? 'Swap successful'
-              : 'Swap'
-          }
-          onClick={submitTx}
-          isPendingConfirm={isPendingConfirm}
-          isLoading={isLoading}
-          isSuccess={isSuccess}
-          isError={isError || !hasBalance}
-          disabled={quoteIsLoading || !isPrepared || !submitTx}
-        />
-      )}
-    </div>
-  );
+      <ActionResponse label="Swap" state="disabled" />
+    </>)
 };
 
 export default Uniswap;
