@@ -43,17 +43,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
 
-  // const amount = inputAmount;
-
-  console.log( 'inputAmount: ', inputAmount );
-  // const amountInToUse = BigNumber.from(cleanValue(inputAmount.toString(), tokenInChecked?.decimals));
-  
   const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
-  
   const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
-  const amountIn_str = amountIn.toString();
-
-  // const amountIn = formatUnits(amountInToUse, tokenInChecked?.decimals);
 
   // token out quote for amount in
   const { isLoading: quoteIsLoading, data: quote } = useUniswapQuote({
@@ -146,17 +137,17 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}
-          tokenUsd={ cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2) }
+          tokenUsd={cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2)}
           amount={inputCleaned}
-          amountUsd={quoteUSDC?.humanReadableAmount}
+          amountUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
         />
 
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          amountUsd={quoteTokenOutUSDC?.humanReadableAmount}
-          amount={amountOut}
-          tokenUsd={ cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut),2) }
+          amountUsd={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
+          amount={cleanValue(amountOut, 2)}
+          tokenUsd={cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut), 2)}
         />
       </ResponseRow>
       <ListResponse
