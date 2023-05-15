@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentListIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
@@ -8,11 +8,11 @@ export const MessageInput = ({}) => {
 
   const { sendMessage, interactor, setInteractor } = useChatContext();
 
+  /* set input focus on mount */
   useEffect(() => {
-    /* set input focus on mount */
     inputRef.current?.focus();
   }, []);
-  
+
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     if (messageInput.length > 0) {
@@ -44,30 +44,57 @@ export const MessageInput = ({}) => {
   );
 
   return (
-    <form onSubmit={handleSendMessage}>
-      <div className="flex bg-red-600">
-        <input
-          type="text"
-          onChange={(e) => setMessageInput(e.target.value)}
-          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
-          placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
-          tabIndex={0}
-          value={messageInput}
-          ref={inputRef}
-        />
-        <button
-          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
-          onClick={handleSendMessage}
-        >
-          <div className="flex justify-center">{sendButtonIcon}</div>
-        </button>
-        <button
+    <div
+      className={`w-[90%] bg-white bg-opacity-5 p-[8px] grid grid-cols-12 items-center gap-2`}
+    >
+      <div className='col-span-2 text-end'>
+      <button
           className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out"
           onClick={toggleInteractionMode}
         >
           {interactor === 'user' ? <ChatBubbleLeftEllipsisIcon /> : <ClipboardDocumentListIcon />}
         </button>
       </div>
-    </form>
+      
+      <div className='col-span-8'>
+        <form onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            onChange={(e) => setMessageInput(e.target.value)}
+            placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
+            tabIndex={0}
+            value={messageInput}
+            ref={inputRef}
+            className={`   
+            w-full
+            rounded-[8px] 
+            p-2
+            text-white/70
+            bg-transparent
+            hover:bg-gray-700/20
+            hover:ring-1
+            focus:ring-1
+            
+            hover:ring-gray-500/80
+            focus:text-gray-50
+            focus:outline-none
+            focus:ring-gray-500/80
+          `}
+          />
+        </form>
+
+      </div>
+
+      <div className='col-span-2' >
+        <button
+          className="p-[8px] cursor-pointer select-none text-center text-white transition ease-in-out bg-teal-600 rounded-[8px]"
+          onClick={handleSendMessage}
+        >
+          {/* <div className="flex justify-center">{sendButtonIcon}</div> */}
+          <div className="flex justify-center text-white/70"> Submit </div>
+        </button>
+
+      </div>
+    </div>
   );
 };
