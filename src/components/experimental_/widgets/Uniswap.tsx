@@ -8,7 +8,6 @@ import {
   HeaderResponse,
   IconResponse,
   ListResponse,
-  SingleLineResponse,
 } from '@/components/cw3Components';
 import { DoubleLineResponse } from '@/components/cw3Components/DoubleLineResponse';
 import { ResponseRow } from '@/components/cw3Components/helpers/cw3Layout';
@@ -60,7 +59,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { isLoading: quoteIsLoading, data: quote } = useUniswapQuote({
     baseTokenSymbol: tokenInSymbol,
     quoteTokenSymbol: tokenOutSymbol,
-    amount: amountIn_str,
+    amount: inputCleaned,
   });
 
   // formatted amount out quote value
@@ -71,7 +70,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
     baseTokenSymbol: tokenInSymbol,
     quoteTokenSymbol: 'USDC',
-    amount: amountIn_str,
+    amount: inputCleaned,
   });
 
   // usdc quote for token out
@@ -103,7 +102,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
-  const { config: swapConfig } = usePrepareContractWrite({
+  const tx = {
     address: SWAP_ROUTER_02_ADDRESSES(chainId),
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
@@ -111,7 +110,17 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
-  });
+  };
+
+  // const { config: swapConfig } = usePrepareContractWrite({
+  //   address: SWAP_ROUTER_02_ADDRESSES(chainId),
+  //   abi: SwapRouter02Abi,
+  //   functionName: 'exactInputSingle',
+  //   args: [params],
+  //   overrides: {
+  //     value: tokenInIsETH ? amountIn : 0,
+  //   },
+  // });
 
   const { hasBalance, hasAllowance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
@@ -119,8 +128,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
-  const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
-    useSubmitTx(swapConfig.request);
+  // const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
+  //   useSubmitTx(swapConfig.request);
+
   //   {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }},
   //   [
   //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
@@ -136,16 +146,17 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}
-          tokenUsd={calcPrice(inputCleaned, quoteUSDC?.humanReadableAmount)}
+          tokenUsd={ cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2) }
           amount={inputCleaned}
           amountUsd={quoteUSDC?.humanReadableAmount}
         />
+
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          tokenUsd={calcPrice(quote?.humanReadableAmount, quoteTokenOutUSDC?.humanReadableAmount)}
-          amount={amountOut}
           amountUsd={quoteTokenOutUSDC?.humanReadableAmount}
+          amount={amountOut}
+          tokenUsd={ cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut),2) }
         />
       </ResponseRow>
       <ListResponse
@@ -156,7 +167,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
       />
-      <ActionResponse label="Swap" state="disabled" />
+      <ActionResponse label="Swap" tx={tx} />
     </>
   );
 };
