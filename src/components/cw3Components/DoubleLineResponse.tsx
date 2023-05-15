@@ -47,16 +47,17 @@ export const DoubleLineResponse = (props: any) => {
       <div>
         {token && (
           <div className="flex items-center justify-between gap-[8px]">
-            <div>
+            
+            <div className="text-start" >
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
               <div className="p-1">$ {tokenUsd ? tokenUsd : <Skeleton width={50} />}</div>
             </div>
 
-            <div>
-              <div className="text-xl">{amount ? amount : <Skeleton width={50} />}</div>
-              <div className="p-1 text-end">${amountUsd ? amountUsd : <Skeleton width={50} />}</div>
+            <div className="text-end">
+              <div className="text-xl ">{amount ? amount : <Skeleton width={50} />}</div>
+              <div className="p-1">$ {amountUsd ? amountUsd : <Skeleton width={50} />}</div>
             </div>
           </div>
         )}
