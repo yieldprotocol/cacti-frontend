@@ -7,6 +7,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import Uniswap from './widgets/swap/Uniswap';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -198,7 +199,7 @@ const Widgetize = (widget: Widget): JSX.Element => {
         //   })();
         // }, []);
 
-       //  return <ConnectFirst>{WidgetFromString(swapInput)}</ConnectFirst>;
+        //  return <ConnectFirst>{WidgetFromString(swapInput)}</ConnectFirst>;
       }
 
       case 'yield-farm': {
