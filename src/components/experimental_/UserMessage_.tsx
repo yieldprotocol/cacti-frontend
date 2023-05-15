@@ -52,7 +52,7 @@ export const UserMessage = ({
       flex justify-between ${
         isCommenter ? 'bg-yellow-300 bg-opacity-5 ' : 'bg-white bg-opacity-5 '
       } 
-     hover:bg-gray-700/20 hover:ring-1
+      hover:bg-gray-700/20 hover:ring-1
       hover:ring-gray-500/80 focus:text-gray-50
       focus:ring-gray-500/80
       ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
@@ -77,8 +77,8 @@ export const UserMessage = ({
         flex h-full w-full flex-col 
         gap-3 bg-transparent
         p-3
-         text-white/70
-         focus:outline-none
+        text-white/70
+        focus:outline-none
       `}
         value={input}
         onClick={() => setIsEditing(true)}
