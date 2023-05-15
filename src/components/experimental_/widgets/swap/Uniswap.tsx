@@ -31,8 +31,7 @@ interface ExactInputSingleParams {
   sqrtPriceLimitX96: BigNumber;
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn } : UniswapProps) => {
-  
+const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: UniswapProps) => {
   const chainId = useChainId();
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
@@ -40,6 +39,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn } : UniswapProps) => 
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
 
+  // const amount
   const amountInToUse = BigNumber.from(cleanValue(amountIn.toString(), tokenInChecked?.decimals));
   const amountIn_ = formatUnits(amountInToUse, tokenInChecked?.decimals);
 
@@ -95,13 +95,13 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn } : UniswapProps) => 
     functionName: 'exactInputSingle',
     args: [params],
     overrides: {
-      value: tokenInIsETH ? amountIn : 0,
+      value: tokenInIsETH ? amountInToUse : 0,
     },
   });
 
   const { hasBalance, hasAllowance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
-    amountIn,
+    amountInToUse,
     SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
@@ -158,7 +158,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, amountIn } : UniswapProps) => 
         <ApproveTokens
           {...{
             token: tokenIn!,
-            amount: amountIn,
+            amount: amountInToUse,
             spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
           }}
         />

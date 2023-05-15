@@ -21,8 +21,8 @@ export const findProjectByName = (name: string): Project => {
   const found = projectListJson.find(
     (project) =>
       project.name.toLowerCase() == name.toLowerCase() ||
-      project.slug.toLowerCase() == name.toLowerCase() ||
-      project.id.toLowerCase() == name.toLowerCase()
+      project.slug?.toLowerCase() == name.toLowerCase() ||
+      project.id?.toLowerCase() == name.toLowerCase()
   );
   if (!found) throw new Error(`No project found for name ${name}`);
 
