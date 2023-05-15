@@ -27,11 +27,10 @@ export const SingleLineResponse = (props: any) => {
   return (
     <div
       className={`
-      height-[32px]
        flex-grow 
         rounded-[8px]
         border-[1px] border-white border-opacity-10 
-        py-[8px] px-[24px]
+        px-[24px] py-[16px]
         text-sm text-white text-opacity-50
    `}
     >
