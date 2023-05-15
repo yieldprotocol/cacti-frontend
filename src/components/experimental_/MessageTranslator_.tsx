@@ -1,13 +1,12 @@
 import { Fragment, createElement, useMemo, useState } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
 import * as cw3Components from '@/components/cw3Components';
-import { Cw3Component, TextResponse } from '@/components/cw3Components';
+import { Cw3Component } from '@/components/cw3Components';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import Uniswap from './widgets/swap/Uniswap';
+import Uniswap from './widgets/Uniswap';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -99,8 +98,7 @@ const getWidget = (widget: Widget): JSX.Element => {
       <ConnectFirst><Uniswap
         tokenInSymbol={parsedArgs[0]}
         tokenOutSymbol={parsedArgs[1]}
-        amountIn={parsedArgs[3]}
-        key="uniswap"
+        inputAmount={parsedArgs[3]}
       /></ConnectFirst>,
     ],
     // ['transfer', <ConnectFirst><div/> </ConnectFirst>],
