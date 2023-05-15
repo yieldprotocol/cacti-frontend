@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftIcon, PaperClipIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export const UserMessage = ({
   actor,
@@ -67,7 +67,7 @@ export const UserMessage = ({
         {!isCommenter ? (
           <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
         ) : (
-          <ChatBubbleLeftIcon className="h-[16px] w-[16px] text-teal-500" />
+          <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
         )}
       </div>
 

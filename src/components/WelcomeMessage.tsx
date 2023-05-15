@@ -17,10 +17,11 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
     <div
       className={`
       my-4 max-w-[250px]  rounded-lg text-white 
+
       ${
         experimentalUi
           ? 'border-[1px] border-white border-opacity-10 text-opacity-70'
-          : ' bg-gray-600'
+          : 'bg-gray-600'
       } 
       p-4 text-center  md:p-2 ${onClickClasses}`}
       onClick={onClick}
@@ -41,7 +42,7 @@ const WelcomeMessage = () => {
       <h1 className="md:pd-0 mb-8 py-5 text-center text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
         ChatWeb3
       </h1>
-      <div className="flex h-full w-full justify-center gap-x-8">
+      <div className="flex h-full justify-center gap-x-8 w-[90%] ">
         <WelcomeColumn>
           <BoltIcon className="mt-3 h-12 text-gray-300" />
           <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>

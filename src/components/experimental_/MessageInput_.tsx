@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentListIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleBottomCenterIcon, ChatBubbleBottomCenterTextIcon, ChatBubbleLeftEllipsisIcon, ChatBubbleLeftRightIcon, ClipboardDocumentListIcon, PaperAirplaneIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
@@ -45,26 +45,27 @@ export const MessageInput = ({}) => {
 
   return (
     <div
-      className={`w-[90%] bg-white bg-opacity-5 p-[8px] grid grid-cols-12 items-center gap-2`}
+      className={`w-[90%] bg-white bg-opacity-5 p-[8px] grid grid-cols-12 items-center gap-3`}
     >
-      <div className='col-span-2 text-end'>
+      <div className='col-span-1 text-end'>
       <button
-          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out"
+          className="w-[24px] align-middle cursor-pointer select-none text-white/70 hover:text-white transition ease-in-out"
           onClick={toggleInteractionMode}
         >
-          {interactor === 'user' ? <ChatBubbleLeftEllipsisIcon /> : <ClipboardDocumentListIcon />}
+          {interactor === 'user' ? <ChatBubbleLeftRightIcon  /> : <PaperClipIcon />}
         </button>
       </div>
       
-      <div className='col-span-8'>
+      <div className='col-span-9'>
         <form onSubmit={handleSendMessage}>
           <input
             type="text"
             onChange={(e) => setMessageInput(e.target.value)}
-            placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
+            placeholder={interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'}
             tabIndex={0}
             value={messageInput}
             ref={inputRef}
+            
             className={`   
             w-full
             rounded-[8px] 
@@ -82,7 +83,6 @@ export const MessageInput = ({}) => {
           `}
           />
         </form>
-
       </div>
 
       <div className='col-span-2' >
