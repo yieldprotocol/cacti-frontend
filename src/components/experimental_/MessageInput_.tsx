@@ -8,12 +8,12 @@ export const MessageInput = ({}) => {
 
   const { sendMessage, interactor, setInteractor } = useChatContext();
 
-  const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'I') {
-      e.preventDefault();
-      focusInput();
-    }
-  }, []);
+  // const handleKeyPress = useCallback((e: KeyboardEvent) => {
+  //   if (e.key === 'I') {
+  //     e.preventDefault();
+  //     focusInput();
+  //   }
+  // }, []);
 
   const focusInput = () => {
     inputRef.current?.focus();
@@ -30,6 +30,7 @@ export const MessageInput = ({}) => {
     };
   }, [handleKeyPress]);
 
+  
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     if (messageInput.length > 0) {
@@ -37,6 +38,7 @@ export const MessageInput = ({}) => {
       setMessageInput('');
     }
   };
+
   const toggleInteractionMode = (e: FormEvent) => {
     e.preventDefault();
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
