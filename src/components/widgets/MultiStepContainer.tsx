@@ -16,7 +16,7 @@ interface MultiStepContainerProps {
   stepId: string;
   stepType: string;
   userActionType: 'tx' | 'acknowledge';
-  totalSteps: number;
+  isFinalStep: boolean;
   stepNumber: number;
   tx: { from: string; to: string; value: string; data: string; gas: string } | null;
   errorMsg: string;
@@ -36,7 +36,7 @@ export const MultiStepContainer = ({
   stepId,
   stepType,
   stepNumber,
-  totalSteps,
+  isFinalStep,
   userActionType,
   tx,
   errorMsg,
@@ -49,7 +49,7 @@ export const MultiStepContainer = ({
     stepStatusMessage: string,
     userActionData: string
   ) => {
-    if (stepStatus === 'success' && stepNumber < totalSteps) {
+    if (stepStatus === 'success' && !isFinalStep) {
       setIsMultiStepInProgress(true);
     } else {
       setIsMultiStepInProgress(false);
@@ -72,11 +72,11 @@ export const MultiStepContainer = ({
   };
 
   useEffect(() => {
-    if (stepNumber === totalSteps) {
+    if (isFinalStep) {
       setIsMultiStepInProgress(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepNumber, totalSteps]);
+  }, [stepNumber, isFinalStep]);
 
   useEffect(() => {
     if (workflowStatus === 'error') {
