@@ -36,7 +36,6 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
-
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -76,9 +75,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
 
   const calcUSDValue = (amount: string | undefined) =>
-    !tokenOutUSDRate?.humanReadableAmount || !amount 
-    ? undefined 
-    : cleanValue(( +amount * +tokenOutUSDRate.humanReadableAmount ).toString(), 2);
+    !tokenOutUSDRate?.humanReadableAmount || !amount
+      ? undefined
+      : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
 
   const amountOutMinimum = quote?.value
     ? ethers.utils.parseUnits(quote.value.toExact(), tokenOutChecked?.decimals).div('1000')
@@ -147,9 +146,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount,2)}
+          tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount, 2)}
           amount={cleanValue(quoteTokenOut, 2)}
-          amountValueInUsd={ cleanValue(calcUSDValue(quoteTokenOut), 2)}
+          amountValueInUsd={cleanValue(calcUSDValue(quoteTokenOut), 2)}
         />
       </ResponseRow>
       <ListResponse
