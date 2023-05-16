@@ -3,6 +3,14 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
 
   theme: {
+    fontFamily: {
+      sans: [
+        "Inter var, sans-serif",
+        {
+          fontFeatureSettings: '"zero", "lnum" on, "pnum" on',
+        },
+      ],
+    },
     extend: {
       animation: {
         ellipse: 'dotty steps(1,end) 1s infinite',
