@@ -15,9 +15,9 @@ User Amount in $
 export const DoubleLineResponse = (props: any) => {
   const [token, setToken] = useState<any>();
 
-  const [tokenValueInUsd, setTokenUsd] = useState<number>(props.tokenUsd);
+  const [tokenValueInUsd, setTokenValueInUsd] = useState<number>(props.tokenUsd);
   const [amount, setAmount] = useState<number>(props.amount);
-  const [amountValueInUsd, setAmountUsd] = useState<number>(props.amountUsd);
+  const [amountValueInUsd, setAmountValueInUsd] = useState<number>(props.amountUsd);
 
   useMemo(() => {
     if (props.tokenSymbol) {
@@ -30,8 +30,8 @@ export const DoubleLineResponse = (props: any) => {
       }
     }
     setAmount(props.amount);
-    setAmountUsd(props.amountUsd);
-    setTokenUsd(props.tokenUsd);
+    setAmountValueInUsd(props.amountValueInUsd);
+    setTokenValueInUsd(props.tokenValueInUsd);
   }, [props]);
 
   return (
@@ -47,17 +47,20 @@ export const DoubleLineResponse = (props: any) => {
       <div>
         {token && (
           <div className="flex items-center justify-between gap-[8px]">
-            
-            <div className="text-start" >
+            <div className="text-start">
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
-              <div className="p-1">$ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}</div>
+              <div className="p-1">
+                $ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}
+              </div>
             </div>
 
             <div className="text-end">
               <div className="text-xl ">{amount ? amount : <Skeleton width={50} />}</div>
-              <div className="p-1">$ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}</div>
+              <div className="p-1">
+                $ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}
+              </div>
             </div>
           </div>
         )}

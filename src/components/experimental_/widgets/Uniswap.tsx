@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
@@ -12,7 +13,6 @@ import {
 import { DoubleLineResponse } from '@/components/cw3Components/DoubleLineResponse';
 import { ResponseRow } from '@/components/cw3Components/helpers/cw3Layout';
 import useChainId from '@/hooks/useChainId';
-import useSubmitTx from '@/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
@@ -36,7 +36,9 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
+  const [quote_, setQuote] = useState();
   const chainId = useChainId();
+
   const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
@@ -68,7 +70,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { isLoading: quoteIsLoadingTokenOutUSDC, data: quoteTokenOutUSDC } = useUniswapQuote({
     baseTokenSymbol: tokenOutSymbol,
     quoteTokenSymbol: 'USDC',
-    amount: amountOut,
+    amount: quote?.value?.toExact(),
   });
 
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
@@ -141,11 +143,13 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
           amount={inputCleaned}
           amountValueInUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
         />
-
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          tokenValueInUsd={cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut), 2)}
+          tokenValueInUsd={cleanValue(
+            calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut),
+            2
+          )}
           amount={cleanValue(amountOut, 2)}
           amountValueInUsd={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
         />

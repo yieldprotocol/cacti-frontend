@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DoubleLineResponse} from './DoubleLineResponse';
+import { DoubleLineResponse } from './DoubleLineResponse';
 
 const meta: Meta<typeof DoubleLineResponse> = {
   title: 'cw3/DoubleLineResponse',

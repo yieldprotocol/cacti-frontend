@@ -2,7 +2,6 @@
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-
     extend: {
       animation: {
         ellipse: 'dotty steps(1,end) 1s infinite',
@@ -23,10 +22,8 @@ module.exports = {
         '40px': '40px',
       },
       fontFamily: {
-      sans: [
-        "Inter, sans-serif", {fontFeatureSettings: '"zero", "lnum", "pnum"'},
-      ],
-    },
+        sans: ['Inter, sans-serif', { fontFeatureSettings: '"zero", "lnum", "pnum"' }],
+      },
     },
   },
   plugins: [],

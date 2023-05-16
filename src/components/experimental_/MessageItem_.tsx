@@ -57,7 +57,6 @@ export const MessageItem = ({ message }: { message: Message }) => {
       )}
       {actor === 'system' && <div className="w-[10%]" />}
       {isUser && <div className="w-[10%]" />}
-      
     </div>
   );
 };
