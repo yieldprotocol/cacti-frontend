@@ -72,9 +72,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const { data: session, status } = useSession();
-  useEffect(() => {
-    console.log(session, status);
-  }, [session, status]);
+  //useEffect(() => {
+  //  console.log(session, status);
+  //}, [session, status]);
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();

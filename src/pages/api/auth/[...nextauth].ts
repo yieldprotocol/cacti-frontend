@@ -87,7 +87,7 @@ export default async function auth(req: any, res: any) {
         session.jti = token.jti;
         session.signature = token.signature;
         session.eip4361 = token.eip4361;
-        console.log('Session:', session);
+        //console.log('Session:', session);
         return session;
       },
     },
