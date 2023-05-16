@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
+import { Session } from 'next-auth';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
@@ -17,7 +18,12 @@ const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
 });
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <SettingsProvider>
       <ToastContainer
@@ -33,7 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <ConnectionWrapperDynamic>
+        <ConnectionWrapperDynamic {...pageProps}>
           <CenterProvider>
             <ChatContextDynamic>
               <Component {...pageProps} />
