@@ -36,7 +36,7 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
-  const [swapQuote, setSwapQuote] = useState<string>();
+
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -55,13 +55,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: inputCleaned,
   });
 
-  useEffect(()=>{
-    swapQuote && setSwapQuote(quote?.value?.toExact())
-  },[quote])
-
   // formatted amount out quote value
-  const amountOut = quote?.value?.toExact();
-  // const amountOut_str = quote?.humanReadableAmount;
+  const quoteTokenOut = quote?.value?.toExact();
 
   // usdc quote for amount in
   const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
@@ -70,7 +65,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: inputCleaned,
   });
 
-  // usdc quote for token out
+  // usdc RATE for token out (1 USDC)
   const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
     baseTokenSymbol: tokenOutSymbol,
     quoteTokenSymbol: 'USDC',
@@ -130,9 +125,6 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     SWAP_ROUTER_02_ADDRESSES(chainId)
   );
 
-  // const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
-  //   useSubmitTx(swapConfig.request);
-
   //   {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }},
   //   [
   //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
@@ -156,8 +148,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
           tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount,2)}
-          amount={cleanValue(amountOut, 2)}
-          amountValueInUsd={ cleanValue(calcUSDValue(amountOut), 2)}
+          amount={cleanValue(quoteTokenOut, 2)}
+          amountValueInUsd={ cleanValue(calcUSDValue(quoteTokenOut), 2)}
         />
       </ResponseRow>
       <ListResponse

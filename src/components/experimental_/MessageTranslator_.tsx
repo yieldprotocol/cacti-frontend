@@ -44,6 +44,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
  * @returns React.ReactElement
  */
 export const WidgetFromString = (input: string): React.ReactElement => {
+  
   // Testing demo exmaple item input (array of cw3Components)
   const demoInput = `[{"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
     [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
