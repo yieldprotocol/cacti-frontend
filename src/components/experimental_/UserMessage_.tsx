@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftIcon, PaperClipIcon, PencilIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  ChatBubbleLeftIcon,
+  PaperClipIcon,
+  PencilIcon,
+  PlayIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 
 export const UserMessage = ({
   actor,

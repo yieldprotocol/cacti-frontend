@@ -1,7 +1,7 @@
-import useSubmitTx from '@/hooks/useSubmitTx';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import tw from 'tailwind-styled-components';
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import useSubmitTx from '@/hooks/useSubmitTx';
 
 export enum ActionResponseState {
   PENDING = 'pending',
@@ -36,24 +36,23 @@ const stylingByState = {
  * Includes: Label, action, state, preparedContractWrite
  **/
 export const ActionResponse = (props: any) => {
-
-  const { address  } = useAccount();
+  const { address } = useAccount();
 
   const styleClassName = stylingByState[props.state as ActionResponseState];
   const { config } = usePrepareContractWrite(props.preparedContractWrite);
 
   const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
-  useSubmitTx(config.request);
-  
+    useSubmitTx(config.request);
+
   return (
     <div className="flex w-full justify-center">
-
-      {address ? 
-      <StyledButton className={styleClassName} onClick={props.action}>
-        {props.label}
-      </StyledButton>
-      : <ConnectButton />}
+      {address ? (
+        <StyledButton className={styleClassName} onClick={props.action}>
+          {props.label}
+        </StyledButton>
+      ) : (
+        <ConnectButton />
+      )}
     </div>
   );
-
 };

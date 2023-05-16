@@ -5,8 +5,8 @@ import { Cw3Component } from '@/components/cw3Components';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/Uniswap';
+import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -19,7 +19,8 @@ export const MessageTranslator = ({ message }: { message: string }) => {
               // if it's a string, just return a TextResponse Component
               // otherwise, let's try to translate the widget
               typeof item === 'string'
-                ? item && WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
+                ? item &&
+                  WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
                 : getWidget(item) // Widgetize(item)
             }
           </Fragment>
@@ -95,11 +96,13 @@ const getWidget = (widget: Widget): JSX.Element => {
   const widgets = new Map<string, JSX.Element>([
     [
       'uniswap',
-      <ConnectFirst><Uniswap
-        tokenInSymbol={parsedArgs[0]}
-        tokenOutSymbol={parsedArgs[1]}
-        inputAmount={parsedArgs[3]}
-      /></ConnectFirst>,
+      <ConnectFirst>
+        <Uniswap
+          tokenInSymbol={parsedArgs[0]}
+          tokenOutSymbol={parsedArgs[1]}
+          inputAmount={parsedArgs[3]}
+        />
+      </ConnectFirst>,
     ],
     // ['transfer', <ConnectFirst><div/> </ConnectFirst>],
   ]);

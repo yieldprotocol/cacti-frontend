@@ -14,11 +14,9 @@
     "format": "yarn prettier --write .",
     "mint": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/mint.ts",
     "createFork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/createFork.ts",
-    
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -s public",
     "serve-storybook": "serve storybook -static"
-
   },
   "dependencies": {
     "@center-inc/react": "^1.1.7",
