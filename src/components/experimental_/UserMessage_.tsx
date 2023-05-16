@@ -120,7 +120,7 @@ export const UserMessage = ({
 
           {!isCommenter && (
             <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
-              <div className=" h-[20px] w-[20px] rounded-sm bg-[#8B0000] bg-teal-900 p-1 text-white/70">
+              <div className=" h-[20px] w-[20px] rounded-sm bg-teal-900 p-1 text-white/70">
                 <PlayIcon />
               </div>
             </button>

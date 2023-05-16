@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
@@ -36,7 +36,7 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
-  const [quote_, setQuote] = useState();
+  const [swapQuote, setSwapQuote] = useState<string>();
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -55,6 +55,10 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: inputCleaned,
   });
 
+  useEffect(()=>{
+    swapQuote && setSwapQuote(quote?.value?.toExact())
+  },[quote])
+
   // formatted amount out quote value
   const amountOut = quote?.value?.toExact();
   // const amountOut_str = quote?.humanReadableAmount;
@@ -67,14 +71,19 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   });
 
   // usdc quote for token out
-  const { isLoading: quoteIsLoadingTokenOutUSDC, data: quoteTokenOutUSDC } = useUniswapQuote({
+  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
     baseTokenSymbol: tokenOutSymbol,
     quoteTokenSymbol: 'USDC',
-    amount: quote?.value?.toExact(),
+    amount: undefined,
   });
 
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
+
+  const calcUSDValue = (amount: string | undefined) =>
+    !tokenOutUSDRate?.humanReadableAmount || !amount 
+    ? undefined 
+    : cleanValue(( +amount * +tokenOutUSDRate.humanReadableAmount ).toString(), 2);
 
   const amountOutMinimum = quote?.value
     ? ethers.utils.parseUnits(quote.value.toExact(), tokenOutChecked?.decimals).div('1000')
@@ -146,12 +155,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          tokenValueInUsd={cleanValue(
-            calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut),
-            2
-          )}
+          tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount,2)}
           amount={cleanValue(amountOut, 2)}
-          amountValueInUsd={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
+          amountValueInUsd={ cleanValue(calcUSDValue(amountOut), 2)}
         />
       </ResponseRow>
       <ListResponse
