@@ -98,7 +98,7 @@ export const MessageInput = ({}) => {
           onClick={handleSendMessage}
         >
           {/* <div className="flex justify-center">{sendButtonIcon}</div> */}
-          <div className="flex w-full justify-center px-2 text-white/70 text-sm">
+          <div className="flex w-full justify-center px-2 text-sm text-white/70">
             <div>Submit</div>
           </div>
         </button>

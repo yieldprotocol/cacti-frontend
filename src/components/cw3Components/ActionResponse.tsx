@@ -39,7 +39,7 @@ export const ActionResponse = (props: any) => {
   const { address } = useAccount();
 
   const styleClassName = stylingByState[props.state as ActionResponseState];
-  
+
   const { config } = usePrepareContractWrite(props.preparedContractWrite);
 
   const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
