@@ -15,9 +15,9 @@ User Amount in $
 export const DoubleLineResponse = (props: any) => {
   const [token, setToken] = useState<any>();
 
-  const [tokenUsd, setTokenUsd] = useState<number>(props.tokenUsd);
+  const [tokenValueInUsd, setTokenUsd] = useState<number>(props.tokenUsd);
   const [amount, setAmount] = useState<number>(props.amount);
-  const [amountUsd, setAmountUsd] = useState<number>(props.amountUsd);
+  const [amountValueInUsd, setAmountUsd] = useState<number>(props.amountUsd);
 
   useMemo(() => {
     if (props.tokenSymbol) {
@@ -52,12 +52,12 @@ export const DoubleLineResponse = (props: any) => {
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
-              <div className="p-1">$ {tokenUsd ? tokenUsd : <Skeleton width={50} />}</div>
+              <div className="p-1">$ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}</div>
             </div>
 
             <div className="text-end">
               <div className="text-xl ">{amount ? amount : <Skeleton width={50} />}</div>
-              <div className="p-1">$ {amountUsd ? amountUsd : <Skeleton width={50} />}</div>
+              <div className="p-1">$ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}</div>
             </div>
           </div>
         )}

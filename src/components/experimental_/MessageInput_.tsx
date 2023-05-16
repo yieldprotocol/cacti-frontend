@@ -87,7 +87,7 @@ export const MessageInput = ({}) => {
 
       <div className='col-span-2' >
         <button
-          className="p-[8px] cursor-pointer select-none text-center text-white transition ease-in-out bg-teal-600 rounded-[8px]"
+          className="p-[8px] cursor-pointer select-none text-center text-white transition ease-in-out bg-teal-900 rounded-[8px]"
           onClick={handleSendMessage}
         >
           {/* <div className="flex justify-center">{sendButtonIcon}</div> */}
