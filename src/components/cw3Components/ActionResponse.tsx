@@ -28,7 +28,7 @@ const stylingByState = {
   [ActionResponseState.ERROR]: 'bg-red-800',
   [ActionResponseState.DISABLED]: 'bg-opacity-50 text-white text-opacity-50 cursor-not-allowed',
   [ActionResponseState.LOADING]: 'cursor-not-allowed',
-  [ActionResponseState.DEFAULT]: 'bg-[#2E8C87]',
+  [ActionResponseState.DEFAULT]: '',
 };
 
 /**
@@ -47,7 +47,7 @@ export const ActionResponse = (props: any) => {
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={styleClassName} onClick={props.action}>
+        <StyledButton className={`bg-teal-900 ${styleClassName}`} onClick={props.action}>
           {props.label}
         </StyledButton>
       ) : (
