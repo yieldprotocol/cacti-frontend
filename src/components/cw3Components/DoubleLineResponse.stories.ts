@@ -11,7 +11,7 @@ const meta: Meta<typeof DoubleLineResponse> = {
       default: 'ETH',
       control: 'text',
     },
-    tokenUsd: {
+    tokenValueInUsd: {
       description: 'Numeric Value to display.',
       default: undefined,
       control: 'number',
@@ -21,7 +21,7 @@ const meta: Meta<typeof DoubleLineResponse> = {
       default: undefined,
       control: 'number',
     },
-    amountUsd: {
+    amountValueInUsd: {
       description: 'Numeric Value to display.',
       default: undefined,
       control: 'number',

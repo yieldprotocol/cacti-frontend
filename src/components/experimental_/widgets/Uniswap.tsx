@@ -137,17 +137,17 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}
-          tokenUsd={cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2)}
+          tokenValueInUsd={cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2)}
           amount={inputCleaned}
-          amountUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
+          amountValueInUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
         />
 
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
-          amountUsd={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
+          tokenValueInUsd={cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut), 2)}
           amount={cleanValue(amountOut, 2)}
-          tokenUsd={cleanValue(calcPrice(quoteTokenOutUSDC?.humanReadableAmount, amountOut), 2)}
+          amountValueInUsd={cleanValue(quoteTokenOutUSDC?.humanReadableAmount, 2)}
         />
       </ResponseRow>
       <ListResponse
