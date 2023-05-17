@@ -68,7 +68,9 @@ export const WidgetFromString = (input: string): React.ReactElement => {
     // Case 2: If we have a nested array of components, create single line of components including all those elements
     if (Array.isArray(parsedItem)) {
       const singleLineOfComponents = parsedItem.map((item) => {
-        return createElement(cactiComponents[item.componentType as cactiComponent], { ...item.props });
+        return createElement(cactiComponents[item.componentType as cactiComponent], {
+          ...item.props,
+        });
       });
       return (
         <div className="flex items-center gap-2" key="listKey">
@@ -90,25 +92,29 @@ export const WidgetFromString = (input: string): React.ReactElement => {
 const getWidget = (widget: Widget): JSX.Element => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
-  const inputString = `${fnName}(${args})`;
   const parsedArgs = parseArgsStripQuotes(args);
 
-  const widgets = new Map<string, JSX.Element>([
+  const inputString = `${fnName}(${args})`;
+
+  const widgets = new Map<string, () => JSX.Element>([
     [
       'uniswap',
-      <ConnectFirst>
-        <Uniswap
-          tokenInSymbol={parsedArgs[0]}
-          tokenOutSymbol={parsedArgs[1]}
-          inputAmount={parsedArgs[3]}
-        />
-      </ConnectFirst>,
+      () => (
+        <ConnectFirst>
+          <Uniswap
+            tokenInSymbol={parsedArgs[0]}
+            tokenOutSymbol={parsedArgs[1]}
+            inputAmount={parsedArgs[3]}
+            // key={'uniswap'}
+          />
+        </ConnectFirst>
+      ),
     ],
     // ['transfer', <ConnectFirst><div/> </ConnectFirst>],
   ]);
 
   return (
-    widgets.get(fnName) || (
+    widgets.get(fnName)!() || (
       <div className="inline-block bg-slate-500 p-5 text-white">
         Widget not implemented for <code>{inputString}</code>
       </div>
