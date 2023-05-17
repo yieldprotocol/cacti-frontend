@@ -105,7 +105,6 @@ const getWidget = (widget: Widget): JSX.Element => {
             tokenInSymbol={parsedArgs[0]}
             tokenOutSymbol={parsedArgs[1]}
             inputAmount={parsedArgs[3]}
-            // key={'uniswap'}
           />
         </ConnectFirst>
       ),
