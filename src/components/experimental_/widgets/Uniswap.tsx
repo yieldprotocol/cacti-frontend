@@ -9,9 +9,9 @@ import {
   HeaderResponse,
   IconResponse,
   ListResponse,
-} from '@/components/cw3Components';
-import { DoubleLineResponse } from '@/components/cw3Components/DoubleLineResponse';
-import { ResponseRow } from '@/components/cw3Components/helpers/cw3Layout';
+} from '@/components/cactiComponents';
+import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
+import { ResponseRow } from '@/components/cactiComponents/helpers/cactiLayout';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';

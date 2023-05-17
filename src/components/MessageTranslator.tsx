@@ -21,10 +21,10 @@ import {
   useSharedStateContext,
 } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import { findProjectByName, shortenAddress } from '@/utils';
 import useToken from '@/hooks/useToken';
-import * as cw3Components from './cw3Components';
-import { Cw3Component } from './cw3Components';
+import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import * as cactiComponents from './cactiComponents';
+import { cactiComponent } from './cactiComponents';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {

@@ -1,0 +1,24 @@
+import tokenList from "../../../utils/TokenList.json";
+import Code from "./assets/code-brackets.svg";
+import Colors from "./assets/colors.svg";
+import Comments from "./assets/comments.svg";
+import Direction from "./assets/direction.svg";
+import Flow from "./assets/flow.svg";
+import Plugin from "./assets/plugin.svg";
+import Repo from "./assets/repo.svg";
+import StackAlt from "./assets/stackalt.svg";
+import { Meta } from "@storybook/blocks";
+import Image from "next/image";
+
+<Meta title="cacti/TokenList" />
+
+# Token List
+
+<div className="subheading">Tokens</div>
+<div>
+  {tokenList.tokens.map((token) => (
+    <div>
+      <strong>{token.name}</strong> - {token.symbol}
+    </div>
+  ))}
+</div>

@@ -5,8 +5,7 @@ import ConnectionWrapper from '../src/contexts/ConnectionWrapper';
 export const Decorators = [
   (Story) => (
     <ConnectionWrapper>
-      {' '}
-      <Story />{' '}
+      <Story />
     </ConnectionWrapper>
   ),
 ];
