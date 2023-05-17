@@ -1,0 +1,32 @@
+import projectList from "../../../utils/ProjectList.json";
+import Code from "./assets/code-brackets.svg";
+import Colors from "./assets/colors.svg";
+import Comments from "./assets/comments.svg";
+import Direction from "./assets/direction.svg";
+import Flow from "./assets/flow.svg";
+import Plugin from "./assets/plugin.svg";
+import Repo from "./assets/repo.svg";
+import StackAlt from "./assets/stackalt.svg";
+import { Meta } from "@storybook/blocks";
+import Image from "next/image";
+
+<Meta title="cacti/ProjectList" />
+
+# Project List
+
+<div className="subheading">Projects</div>
+
+<div>
+  { projectList.map((token) => (
+
+    <div className="mb-2">
+      <div className="gap-8">
+        <strong>{token.name}</strong>
+      </div>
+
+{token.description}
+
+</div>
+))}
+
+</div>
