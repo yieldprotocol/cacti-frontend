@@ -25,7 +25,6 @@ const preview: Preview = {
       ],
     },
   },
-
   decorators: Decorators,
 };
 

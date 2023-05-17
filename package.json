@@ -15,8 +15,8 @@
     "mint": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/mint.ts",
     "createFork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/createFork.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "serve-storybook": "serve storybook -static"
+    "build-storybook": "storybook build -o ./.storybook/build -s ./src/public",
+    "serve-storybook": "serve ./.storybook/build"
   },
   "dependencies": {
     "@center-inc/react": "^1.1.7",
