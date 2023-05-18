@@ -39,7 +39,7 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="mt-4 md:mt-2 md:px-6">
-      <h1 className="md:pd-0 mb-8 py-5 text-center text-4xl font-bold text-white md:mb-2 md:pt-0 md:pb-2">
+      <h1 className="md:pd-0 mb-8 py-5 text-center text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
         ChatWeb3
       </h1>
       <div className="flex h-full w-[90%] justify-center gap-x-8 ">
@@ -52,8 +52,8 @@ const WelcomeMessage = () => {
           <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
             &rdquo;Swap 0.1 ETH for DAI on Uniswap&rdquo;
           </WelcomeBox>
-          <WelcomeBox onClick={() => sendMessage('Get the price of ETH in terms of USDC')}>
-            &rdquo;Get the price of ETH in terms of USDC&rdquo;
+          <WelcomeBox onClick={() => sendMessage('Get the price of ETH in terms of USD')}>
+            &rdquo;Get the price of ETH in terms of USD&rdquo;
           </WelcomeBox>
         </WelcomeColumn>
         <WelcomeColumn>

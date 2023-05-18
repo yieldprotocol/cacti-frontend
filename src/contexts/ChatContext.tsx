@@ -2,8 +2,8 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { toast } from 'react-toastify';
 import useWebSocket from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
-import { useAccount } from 'wagmi';
-import { getBackendUrl } from '@/utils/backend';
+import { useSession } from 'next-auth/react';
+import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
   messageId: string;
@@ -71,32 +71,24 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
-  const backendUrl = getBackendUrl();
-  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(backendUrl, {
-    onOpen: (evt) => onOpen(),
-    onClose: (evt) => onClose(),
-    onError: (evt) => onError(),
-    shouldReconnect: (closeEvent) => true,
-    reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
-  });
+  const { data: session, status } = useSession();
+  //useEffect(() => {
+  //  console.log(session, status);
+  //}, [session, status]);
 
-  // Connected wallet status
-  const {
-    isConnected: walletIsConnected,
-    status: walletStatus,
-    address: walletAddress,
-  } = useAccount();
-  const sendWalletMessage = () => {
-    const walletPayload = {
-      walletIsConnected,
-      walletStatus,
-      walletAddress,
-    };
-    wsSendMessage({ actor: 'system', type: 'wallet', payload: walletPayload });
-  };
-  useEffect(() => {
-    sendWalletMessage();
-  }, [walletIsConnected, walletStatus, walletAddress]);
+  const shouldConnect = status === 'authenticated';
+  const backendUrl = getBackendWebsocketUrl();
+  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
+    backendUrl,
+    {
+      onOpen: (evt) => onOpen(),
+      onClose: (evt) => onClose(),
+      onError: (evt) => onError(),
+      shouldReconnect: (closeEvent) => true,
+      reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
+    },
+    shouldConnect
+  );
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
@@ -121,7 +113,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         wsSendMessage({ actor: 'system', type: 'cfg', payload: payload });
       }
     }
-    sendWalletMessage();
   };
 
   // unused in production, but useful in debugging

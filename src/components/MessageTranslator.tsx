@@ -355,14 +355,15 @@ const Widgetize = (widget: Widget) => {
           stepId,
           stepType,
           stepNumber,
-          totalSteps,
+          isFinalStep,
           userActionType,
           tx,
           errorMsg,
           description,
         } = JSON.parse(args);
 
-        const headerText = `Step ${stepNumber}/${totalSteps}: ${description}`;
+        const headerText =
+          stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
 
         return (
           <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
@@ -377,7 +378,7 @@ const Widgetize = (widget: Widget) => {
                     stepType,
                     userActionType,
                     stepNumber,
-                    totalSteps,
+                    isFinalStep,
                     tx,
                     errorMsg,
                     description,
