@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { findProjectByName, shortenAddress } from '@/utils';
 import projectList from '@/utils/ProjectList.json';
+import { ResponseWrap } from './helpers/cactiLayout';
 
 /**
  * Header Response Elements are indicating with what app, service, or contract a user is about to interact. User have the option to leave the service and open in a new window a direct link to the app or service if they want to interact through their UI rather through our interface.
@@ -28,24 +29,7 @@ export const HeaderResponse = (props: any) => {
   }, [props.projectName]);
 
   return (
-    <div
-      className={`
-    height-[32px]
-    
-    rounded-[8px]
-
-    border-[1px]
-   border-white
-   border-opacity-10 
-
-   py-[12px]
-   px-[24px]
-   
-   text-sm
-   text-white
-   text-opacity-50
-   `}
-    >
+    <ResponseWrap>
       <div className="flex items-center justify-between gap-[8px]">
         <div className="flex items-center gap-[8px]">
           {project?.logo || props.altImageUrl ? (
@@ -68,6 +52,6 @@ export const HeaderResponse = (props: any) => {
           </div>
         )}
       </div>
-    </div>
+    </ResponseWrap>
   );
 };

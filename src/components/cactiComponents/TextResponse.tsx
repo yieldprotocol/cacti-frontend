@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ResponseWrap } from './helpers/cactiLayout';
 
 /**
  * Simple Text response element
@@ -10,7 +11,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
  */
 export const TextResponse = (props: any) => {
   return (
-    <div className="rounded-[8px] border-[0.5px] border-white border-opacity-10 ">
+    <ResponseWrap>
       {props.title && !props.collapsible && (
         <div
           className="
@@ -51,6 +52,6 @@ export const TextResponse = (props: any) => {
           )}
         </Disclosure>
       )}
-    </div>
+    </ResponseWrap>
   );
 };

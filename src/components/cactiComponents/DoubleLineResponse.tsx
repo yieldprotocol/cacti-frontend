@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import Skeleton from '@/components/SkeletonWrap';
 import { findTokenBySymbol } from '@/utils';
 import { InlineChip } from './InlineChip';
+import { ResponseWrap } from './helpers/cactiLayout';
 
 /**
 * Dual Line Response Elements are generally used for swap, trading etc. interfaces where user wants to get addtional information about a market, or token.  
@@ -35,15 +36,7 @@ export const DoubleLineResponse = (props: any) => {
   }, [props]);
 
   return (
-    <div
-      className={`
-       flex-grow 
-        rounded-[8px]
-        border-[1px] border-white border-opacity-10 
-        px-[24px] py-[16px]
-        text-sm text-white text-opacity-50
-   `}
-    >
+    <ResponseWrap>
       <div>
         {token && (
           <div className="flex items-center justify-between gap-[8px]">
@@ -65,6 +58,6 @@ export const DoubleLineResponse = (props: any) => {
           </div>
         )}
       </div>
-    </div>
+    </ResponseWrap>
   );
 };

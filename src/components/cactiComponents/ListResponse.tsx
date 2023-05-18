@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ResponseWrap } from './helpers/cactiLayout';
 
 const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   return (
@@ -33,7 +34,7 @@ export const ListResponse = (props: any) => {
   ));
 
   return (
-    <div className="rounded-[8px] border-[1px] border-white border-opacity-10">
+    <ResponseWrap>
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
           {({ open }) => (
@@ -68,6 +69,6 @@ export const ListResponse = (props: any) => {
       {!props.title && (
         <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">{rows}</div>
       )}
-    </div>
+    </ResponseWrap>
   );
 };

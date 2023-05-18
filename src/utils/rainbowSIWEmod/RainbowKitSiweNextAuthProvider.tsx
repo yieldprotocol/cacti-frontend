@@ -27,6 +27,8 @@ interface RainbowKitSiweNextAuthProviderProps {
   children: ReactNode;
 }
 
+console.log(window.location.host)
+
 export function RainbowKitSiweNextAuthProvider({
   children,
   enabled,
