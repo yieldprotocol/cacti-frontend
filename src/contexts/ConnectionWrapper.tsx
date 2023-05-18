@@ -1,21 +1,19 @@
 import { ReactNode, useContext } from 'react';
+import { AppProps } from 'next/app';
 import {
   RainbowKitProvider,
   darkTheme,
   getDefaultWallets,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
+import axios from 'axios';
+import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
-import SettingsContext from './SettingsContext';
-
-
-import { AppProps } from 'next/app';
-import axios from 'axios';
-import { SessionProvider } from 'next-auth/react';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import SettingsContext from './SettingsContext';
 
 const ConnectionWrapper = ({ children, pageProps }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
@@ -71,7 +69,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   });
 
   const getCustomNonce = async () => {
-    /* add in any async call here to add a custom nonce eg. server call */
+    /* Async call to retrieve a custom nonce */
     const backendUrl = getBackendApiUrl();
     const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
     const nonce = resp.data as string;
@@ -90,6 +88,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     );
     return !!result.data;
   };
+
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
