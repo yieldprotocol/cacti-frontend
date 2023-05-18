@@ -5,7 +5,7 @@ import { cactiComponent } from '@/components/cactiComponents';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-import Uniswap from './widgets/Uniswap';
+import Uniswap from './widgets/uniswap/Uniswap';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
