@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import Skeleton from '@/components/SkeletonWrap';
 import { findTokenBySymbol } from '@/utils';
 import { InlineChip } from './InlineChip';
+import { ResponseWrap } from './helpers/cactiLayout';
 
 /**
  * Header Response Elements are indicating with what app, service, or contract a user is about to interact. User have the option to leave the service and open in a new window a direct link to the app or service if they want to interact through their UI rather through our interface.
@@ -25,15 +26,7 @@ export const SingleLineResponse = (props: any) => {
   }, [props]);
 
   return (
-    <div
-      className={`
-       flex-grow 
-        rounded-[8px]
-        border-[1px] border-white border-opacity-10 
-        px-[24px] py-[16px]
-        text-sm text-white text-opacity-50
-   `}
-    >
+  <ResponseWrap>
       <div>
         {token && (
           <div className="flex items-center justify-between gap-[8px]">
@@ -44,6 +37,6 @@ export const SingleLineResponse = (props: any) => {
           </div>
         )}
       </div>
-    </div>
+    </ResponseWrap>
   );
 };
