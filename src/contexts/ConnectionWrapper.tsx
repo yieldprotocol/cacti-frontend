@@ -1,6 +1,7 @@
 
 import { ReactNode,useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   RainbowKitProvider,
@@ -73,7 +74,7 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
   });
 
   const getCustomNonce = async () => {
-    /* add in any async call here to add a custom nonce eg. server call */
+    /* Async call to retrieve a custom nonce */
     const backendUrl = getBackendApiUrl();
     const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
     const nonce = resp.data as string;
