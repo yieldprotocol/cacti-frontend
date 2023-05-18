@@ -16,9 +16,9 @@ export const ResponseWrap = (props: any) => (
     className={`
     flex-grow 
     rounded-[8px]
-    border-[1px] border-white border-opacity-10 hover:border-opacity-30
-    px-[24px] py-[16px]
-    text-sm text-white text-opacity-50
+    border-[1px] border-white border-opacity-10 px-[24px]
+    py-[16px] text-sm
+    text-white text-opacity-50 hover:border-opacity-30
   `}
   >
     {props.children}
