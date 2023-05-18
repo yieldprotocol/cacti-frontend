@@ -1,6 +1,7 @@
 import { ActionResponse } from './ActionResponse';
 import { HeaderResponse } from './HeaderResponse';
 import { IconResponse } from './IconResponse';
+import { ImageResponse } from './ImageResponse';
 import { InlineChip } from './InlineChip';
 import { ListResponse } from './ListResponse';
 import { SingleLineResponse } from './SingleLineResponse';
@@ -11,17 +12,18 @@ export enum cactiComponent {
   TextResponse = 'TextResponse',
   HeaderResponse = 'HeaderResponse',
   SingleLineResponse = 'SingleLineResponse',
-  IconResponse = 'IconResponse',
+  // IconResponse = 'IconResponse', // should not be needed - this is more of an internal component
   ListResponse = 'ListResponse',
   ActionResponse = 'ActionResponse',
+  ImageResponse = 'ImageResponse',
 }
 
 export {
-  InlineChip,
   TextResponse,
   HeaderResponse,
   SingleLineResponse,
   IconResponse,
   ListResponse,
   ActionResponse,
+  ImageResponse,
 };
