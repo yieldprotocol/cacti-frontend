@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core';
 import { AlphaRouter } from '@uniswap/smart-order-router';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import useSWR from 'swr';
 import { useProvider } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';

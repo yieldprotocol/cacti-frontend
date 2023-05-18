@@ -1,7 +1,7 @@
 /**
  * Block Element for displaying a block of cacti Responses
  */
-export const ResponseGrid = (props: any) => <div>{...props.children}</div>;
+export const ResponseGrid = (props: any) => <div>{props.children}</div>;
 
 /**
  * Simple Row Element for displaying a single line of responses
