@@ -15,7 +15,7 @@ import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
 
-const ConnectionWrapper = ({ children, pageProps }: any) => {
+const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -96,8 +96,10 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
+
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
-        <RainbowKitSiweNextAuthProvider
+
+        {useSiwe && <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}
           getSiweMessageOptions={getSiweMessageOptions}
           getSigninCallback={getSigninCallback}
@@ -114,7 +116,19 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
           >
             {children}
           </RainbowKitProvider>
-        </RainbowKitSiweNextAuthProvider>
+        </RainbowKitSiweNextAuthProvider>}
+
+        {!useSiwe && <RainbowKitProvider
+            chains={chains}
+            theme={
+              experimentalUi
+                ? darkTheme({ accentColor: '#1f2937' })
+                : lightTheme({ accentColor: '#1f2937' })
+            }
+            showRecentTransactions={true}
+          >
+            {children}
+          </RainbowKitProvider>}
       </SessionProvider>
     </WagmiConfig>
   );
