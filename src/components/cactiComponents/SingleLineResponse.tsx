@@ -26,7 +26,7 @@ export const SingleLineResponse = (props: any) => {
   }, [props]);
 
   return (
-  <ResponseWrap>
+    <ResponseWrap>
       <div>
         {token && (
           <div className="flex items-center justify-between gap-[8px]">
