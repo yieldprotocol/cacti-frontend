@@ -25,30 +25,38 @@ const TagItem = (props: { tag: string }) => {
  * @returns
  */
 export const ImageResponse = (props: any) => {
-  const tagList = props.imageTags;
+  const tagList = props.imageTags || [];
 
   return (
     <ResponseWrap classNameExtra="w-[400px]">
-      <ResponseTitle>
-        {props.title}
-        <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
-      </ResponseTitle>
+      {props.title && ( // if has title
+        <ResponseTitle>
+          {props.title}
+
+          {props.imageLink && ( // if has external link
+            <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
+          )}
+        </ResponseTitle>
+      )}
 
       <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded p-2">
         <img className="w-full" src={props.image} alt={props.title} />
-        {tagList.length && (
+        {tagList.length > 1 && ( // if has tags
           <div className="space-y-1 space-x-2 py-2 ">
             {tagList.map((tag: string) => (
               <TagItem tag={tag} key={tag} />
             ))}
           </div>
         )}
-        <div> {props.description} </div>
+        
+        {props.description && <div> {props.description} </div>}
 
-        <div className="pt-4 flex justify-between">
-          <div>{props.priceLabel}</div>
-          <div>{props.priceValue}</div>
-        </div>
+        {(props.actionLabel || props.actionValue) && ( // if has actionLbel or actionValue
+          <div className="flex justify-between pt-4">
+            <div>{props.actionLabel}</div>
+            <div>{props.actionValue}</div>
+          </div>
+        )}
       </div>
     </ResponseWrap>
   );
