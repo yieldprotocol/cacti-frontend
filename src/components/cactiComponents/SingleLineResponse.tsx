@@ -29,7 +29,7 @@ export const SingleLineResponse = (props: any) => {
     <ResponseWrap>
       <div>
         {token && (
-          <div className="flex items-center justify-between gap-[8px]">
+          <div className="flex items-center justify-between p-2">
             <InlineChip label={token?.symbol} image={token?.logoURI} />
             <div className="text-lg">
               {amount !== '<pending>' ? amount : <Skeleton width={50} />}

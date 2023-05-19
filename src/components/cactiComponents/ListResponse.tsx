@@ -50,7 +50,7 @@ export const ListResponse = (props: any) => {
                 </div>
               </Disclosure.Button>
 
-              <Disclosure.Panel as="div" className="py-[8px] px-[24px]">
+              <Disclosure.Panel as="div" className="p-2">
                 {rows}
               </Disclosure.Panel>
             </>
@@ -61,12 +61,12 @@ export const ListResponse = (props: any) => {
       {props.title && !props.collapsible && (
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
-          <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">{rows}</div>
+          <div className="p-2 text-sm text-white text-opacity-70">{rows}</div>
         </>
       )}
 
       {!props.title && (
-        <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">{rows}</div>
+        <div className="p-2 text-sm text-white text-opacity-70">{rows}</div>
       )}
     </ResponseWrap>
   );
