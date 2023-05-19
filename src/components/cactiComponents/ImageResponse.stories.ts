@@ -30,6 +30,24 @@ const meta: Meta<typeof ImageResponse> = {
       default: mockImage,
       control: 'file',
     },
+
+    priceLabel: {
+      description: 'label to add - likely Price',
+      default: 'Price',
+      control: 'text',
+    },
+
+    priceValue: {
+      description: 'Price value',
+      default: 'Price',
+      control: 'text',
+    },
+
+    action: {
+      description: 'txAction',
+      default: undefined,
+      control: 'text',
+    }
   },
 };
 
@@ -42,6 +60,8 @@ export const Primary: Story = {
     description: mockText,
     image: mockImage,
     imageTags: mockTags,
+    priceLabel  : 'Price',
+    priceValue  : '0.5 ETH',
   },
 };
 

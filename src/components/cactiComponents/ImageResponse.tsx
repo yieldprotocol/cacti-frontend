@@ -43,12 +43,12 @@ export const ImageResponse = (props: any) => {
             ))}
           </div>
         )}
-
         <div> {props.description} </div>
 
-        <div className="flex justify-between">
-          cost
-          </div>
+        <div className="pt-4 flex justify-between">
+          <div>{props.priceLabel}</div>
+          <div>{props.priceValue}</div>
+        </div>
       </div>
     </ResponseWrap>
   );
