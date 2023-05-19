@@ -41,9 +41,9 @@ type Story = StoryObj<typeof DoubleLineResponse>;
 export const Primary: Story = {
   args: {
     tokenSymbol: 'DAI',
-    tokenUsd: 1.01,
+    tokenValueInUsd: 1.01,
     amount: 100.67,
-    amountUsd: 99.03,
+    amountValueInUsd: 99.03,
   },
 };
 

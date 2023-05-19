@@ -1,11 +1,23 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { ArrowTopRightOnSquareIcon, ArrowUpOnSquareIcon, ArrowUpRightIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowTopRightOnSquareIcon,
+  ArrowUpOnSquareIcon,
+  ArrowUpRightIcon,
+} from '@heroicons/react/24/outline';
 import Skeleton from '@/components/SkeletonWrap';
 import { findTokenBySymbol } from '@/utils';
 import { InlineChip } from './InlineChip';
-import { ResponseTitle, ResponseWrap } from './helpers/cactiLayout';
+import { ResponseTitle, ResponseWrap } from './helpers/layout';
 import { mockText } from './helpers/mocks';
+
+const TagItem = (props: { tag: string }) => {
+  return (
+    <span className="boder-white/10 inline-block rounded-full border-[1px] px-3 py-1 text-[0.5em] uppercase">
+      {props.tag}
+    </span>
+  );
+};
 
 /**
  * Image response element
@@ -13,34 +25,30 @@ import { mockText } from './helpers/mocks';
  * @returns
  */
 export const ImageResponse = (props: any) => {
-  const [token, setToken] = useState<any>();
-  const [amount, setAmount] = useState<any>(props.value);
+  const tagList = props.imageTags;
 
   return (
-    <ResponseWrap classNameExtra='w-max-2 '>
+    <ResponseWrap classNameExtra="w-[400px]">
       <ResponseTitle>
         {props.title}
         <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
       </ResponseTitle>
 
-      <div className="max-w-sm overflow-hidden rounded p-[8px]">
+      <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded p-2">
         <img className="w-full" src={props.image} alt={props.title} />
-        
-        <div className="px-6 py-4">
-          <p className="text-base text-gray-700"> {props.description} </p>
-        </div>
+        {tagList.length && (
+          <div className="space-y-1 space-x-2 py-2 ">
+            {tagList.map((tag: string) => (
+              <TagItem tag={tag} key={tag} />
+            ))}
+          </div>
+        )}
 
-        <div className="px-6 pt-4 pb-2">
-          <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #photography
-          </span>
-          <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #travel
-          </span>
-          <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #winter
-          </span>
-        </div>
+        <div> {props.description} </div>
+
+        <div className="flex justify-between">
+          cost
+          </div>
       </div>
     </ResponseWrap>
   );

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ImageResponse } from './ImageResponse';
 import { mockImage, mockText, mockTitle } from './helpers/mocks';
 
+const mockTags = ['some tag', 'Another tag'];
 
 const meta: Meta<typeof ImageResponse> = {
   title: 'cacti/ImageResponse',
@@ -19,6 +20,11 @@ const meta: Meta<typeof ImageResponse> = {
       default: mockText,
       control: 'text',
     },
+    imageTags: {
+      description: ' tags to display with the image (e.g. traits or  "dog, animal, cute")',
+      default: mockTags,
+      control: 'list',
+    },
     imageUrl: {
       description: 'Custom Image to display instead of the one associated with the project name.',
       default: mockImage,
@@ -35,6 +41,7 @@ export const Primary: Story = {
     title: mockTitle,
     description: mockText,
     image: mockImage,
+    imageTags: mockTags,
   },
 };
 
@@ -45,11 +52,14 @@ Primary.parameters = {
   },
 };
 
-// export const NoTitle: Story = {
-//   args: {
-//     text: 'swap',
-//   },
-// };
+export const LotsOfTags: Story = {
+  args: {
+    title: mockTitle,
+    description: mockText,
+    image: mockImage,
+    imageTags: [...mockTags,...mockTags,...mockTags],
+  },
+};
 
 // export const Collapsible: Story = {
 //   args: {
