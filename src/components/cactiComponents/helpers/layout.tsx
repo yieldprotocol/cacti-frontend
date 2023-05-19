@@ -1,5 +1,5 @@
 /**
- * Block Element for displaying a block of cacti Responses
+ * Grid Element for displaying a block of cacti Responses
  */
 export const ResponseGrid = (props: any) => <div>{props.children}</div>;
 
@@ -22,6 +22,7 @@ export const ResponseWrap = (props: any) => (
     className={`
     flex
     flex-col
+    flex-grow
     rounded-[8px]
     border-[1px] border-white border-opacity-10 hover:border-opacity-20
     text-sm text-white text-opacity-75 

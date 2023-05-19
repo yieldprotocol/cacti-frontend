@@ -1,7 +1,7 @@
 import { Fragment, createElement, useMemo, useState } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
 import * as cactiComponents from '@/components/cactiComponents';
-import { cactiComponent } from '@/components/cactiComponents';
+import { CactiResponse } from '@/components/cactiComponents';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
@@ -44,16 +44,10 @@ const parseArgsStripQuotes = (args: string): any[] => {
  * @returns React.ReactElement
  */
 export const WidgetFromString = (input: string): React.ReactElement => {
-  // Testing demo exmaple item input (array of cactiComponents)
-  const demoInput = `[{"componentType":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}, 
-    [{"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}},
-      {"componentType":"IconResponse", "props": {"icon":"forward"}},
-      {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}],
-    {"componentType":"TextResponse", "props": {"text":"Swapping with Aave"}}]`;
 
   // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(input) as {
-    componentType: cactiComponent;
+    componentType: CactiResponse;
     props?: any;
     children?: any;
   }[];
@@ -68,7 +62,7 @@ export const WidgetFromString = (input: string): React.ReactElement => {
     // Case 2: If we have a nested array of components, create single line of components including all those elements
     if (Array.isArray(parsedItem)) {
       const singleLineOfComponents = parsedItem.map((item) => {
-        return createElement(cactiComponents[item.componentType as cactiComponent], {
+        return createElement(cactiComponents[item.componentType as CactiResponse], {
           ...item.props,
         });
       });
@@ -80,7 +74,7 @@ export const WidgetFromString = (input: string): React.ReactElement => {
     }
 
     // Case 3: If not a cactiComponent resort to default: a text response with the item as the input
-    return createElement(cactiComponents[cactiComponent.TextResponse], { text: input });
+    return createElement(cactiComponents[CactiResponse.TextResponse], { text: input });
 
     // TODO also can handle an error here
   });
