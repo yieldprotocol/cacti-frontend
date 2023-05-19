@@ -12,10 +12,10 @@ export const ResponseRow = (props: any) => (
 );
 
 /**
- * Generic Element for wrapping responses. 
+ * Generic Element for wrapping responses.
  * Border and padding are applied here.
- * @param props 
- * @returns 
+ * @param props
+ * @returns
  */
 export const ResponseWrap = (props: any) => (
   <div
@@ -31,4 +31,17 @@ export const ResponseWrap = (props: any) => (
   </div>
 );
 
-
+/**
+ * Response Title Element
+ *
+ * props.title string
+ * props.children: JSX.element
+ *
+ * Childern get rendered as a button on the right of  the title element
+ *
+ */
+export const ResponseTitle = (props: any) => (
+  <div className={`flex justify-between rounded-[8px] py-[8px] px-[24px] text-sm text-white text-opacity-70`}>
+    {props.children}
+  </div>
+);

@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TextResponse } from './TextResponse';
-
-const demoText =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+import { mockText, mockTitle } from './helpers/mocks';
 
 const meta: Meta<typeof TextResponse> = {
   title: 'cacti/TextResponse',
@@ -11,12 +9,12 @@ const meta: Meta<typeof TextResponse> = {
   argTypes: {
     text: {
       description: 'Text to display.',
-      default: demoText,
+      default: mockText,
       control: 'text',
     },
     title: {
       description: 'Title to display.',
-      default: 'Title',
+      default: mockTitle,
       control: 'text',
     },
     collapsible: {
@@ -32,8 +30,8 @@ type Story = StoryObj<typeof TextResponse>;
 
 export const Primary: Story = {
   args: {
-    text: demoText,
-    title: 'Title',
+    text: mockText,
+    title: mockTitle,
     collapsible: false,
   },
 };
@@ -47,14 +45,14 @@ Primary.parameters = {
 
 export const NoTitle: Story = {
   args: {
-    text: demoText,
+    text: mockText,
   },
 };
 
 export const Collapsible: Story = {
   args: {
-    title: 'Title',
-    text: demoText,
+    title: mockTitle,
+    text: mockText,
     collapsible: true,
   },
 };

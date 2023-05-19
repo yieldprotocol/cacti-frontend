@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { ResponseWrap } from './helpers/cactiLayout';
+import { ResponseTitle, ResponseWrap } from './helpers/cactiLayout';
 
 const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   return (
@@ -39,13 +39,14 @@ export const ListResponse = (props: any) => {
         <Disclosure as="div" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button
-                as="div"
-                className="flex justify-between py-[8px] px-[24px] text-white text-opacity-70"
-              >
-                <ListTitle title={props.title} />
-                <div className="w-[16px] stroke-2">
-                  {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              <Disclosure.Button as="div">
+                <div className="rounded-[8px] hover:bg-white hover:bg-opacity-5">
+                  <ResponseTitle>
+                    {props.title}
+                    <div className="w-[16px] stroke-2">
+                      {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                    </div>
+                  </ResponseTitle>
                 </div>
               </Disclosure.Button>
 
@@ -58,12 +59,10 @@ export const ListResponse = (props: any) => {
       )}
 
       {props.title && !props.collapsible && (
-        <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">
-          <div className="py-[8px]">
-            <ListTitle title={props.title} />
-          </div>
-          {rows}
-        </div>
+        <>
+          <ResponseTitle>{props.title}</ResponseTitle>
+          <div className="py-[8px] px-[24px] text-sm text-white text-opacity-70">{rows}</div>
+        </>
       )}
 
       {!props.title && (
