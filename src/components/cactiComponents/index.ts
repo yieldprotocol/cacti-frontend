@@ -7,7 +7,7 @@ import { ListResponse } from './ListResponse';
 import { SingleLineResponse } from './SingleLineResponse';
 import { TextResponse } from './TextResponse';
 
-export enum cactiComponent {
+export enum CactiResponse {
   // InlineChip = 'InlineChip', // should not be needed - this is more of an internal component
   TextResponse = 'TextResponse',
   HeaderResponse = 'HeaderResponse',
