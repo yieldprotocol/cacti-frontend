@@ -21,30 +21,34 @@ const meta: Meta<typeof ImageResponse> = {
       control: 'text',
     },
     imageTags: {
-      description: ' tags to display with the image (e.g. traits or  "dog, animal, cute")',
+      description: 'tags to display with the image (e.g. traits or  "dog, animal, cute")',
       default: mockTags,
-      control: 'list',
+      control: 'text',
     },
     imageUrl: {
       description: 'Custom Image to display instead of the one associated with the project name.',
       default: mockImage,
-      control: 'file',
+      control: 'text',
     },
-
-    priceLabel: {
-      description: 'label to add - likely Price',
+    imageLink: {
+      description: 'External Link to image resource',
+      default: 'mockImage',
+      control: 'text',
+    },
+    actionLabel: {
+      description: 'Action Label to add eg. Price',
       default: 'Price',
       control: 'text',
     },
 
-    priceValue: {
-      description: 'Price value',
-      default: 'Price',
+    actionValue: {
+      description: 'Value of action item eg. Price value',
+      default: '0.02ETH',
       control: 'text',
     },
 
     action: {
-      description: 'txAction',
+      description: 'tx Action ',
       default: undefined,
       control: 'text',
     }
@@ -60,8 +64,8 @@ export const Primary: Story = {
     description: mockText,
     image: mockImage,
     imageTags: mockTags,
-    priceLabel  : 'Price',
-    priceValue  : '0.5 ETH',
+    actionLabel  : 'Price',
+    actionValue  : '0.5 ETH',
   },
 };
 
@@ -72,12 +76,30 @@ Primary.parameters = {
   },
 };
 
+export const NoTags: Story = {
+  args: {
+    title: mockTitle,
+    description: mockText,
+    image: mockImage,
+    imageTags: [],
+  },
+};
+
 export const LotsOfTags: Story = {
   args: {
     title: mockTitle,
     description: mockText,
     image: mockImage,
     imageTags: [...mockTags,...mockTags,...mockTags],
+  },
+};
+
+export const undecorated: Story = {
+  args: {
+    title: undefined,
+    description: undefined,
+    image: mockImage,
+    imageTags: undefined,
   },
 };
 
