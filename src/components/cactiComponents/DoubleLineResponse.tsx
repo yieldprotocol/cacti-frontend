@@ -39,19 +39,19 @@ export const DoubleLineResponse = (props: any) => {
     <ResponseWrap>
       <div>
         {token && (
-          <div className="flex items-center justify-between gap-[8px]">
+          <div className="flex items-center justify-between p-2">
             <div className="text-start">
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
-              <div className="p-1">
+              <div className="p-2">
                 $ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}
               </div>
             </div>
 
             <div className="text-end">
               <div className="text-xl ">{amount ? amount : <Skeleton width={50} />}</div>
-              <div className="p-1">
+              <div className="p-2">
                 $ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}
               </div>
             </div>

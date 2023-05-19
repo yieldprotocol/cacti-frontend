@@ -20,11 +20,14 @@ export const ResponseRow = (props: any) => (
 export const ResponseWrap = (props: any) => (
   <div
     className={`
-    flex-grow 
+    flex
+    flex-col
     rounded-[8px]
-    border-[1px] border-white border-opacity-10 px-[24px]
-    py-[16px] text-sm
-    text-white text-opacity-50 hover:border-opacity-30
+    border-[1px] border-white border-opacity-10 hover:border-opacity-20
+    text-sm text-white text-opacity-50 
+    ${props.classNameExtra}
+    w-max-[400px]
+    p-1
   `}
   >
     {props.children}
@@ -41,7 +44,7 @@ export const ResponseWrap = (props: any) => (
  *
  */
 export const ResponseTitle = (props: any) => (
-  <div className={`flex justify-between rounded-[8px] py-[8px] px-[24px] text-sm text-white text-opacity-70`}>
+  <div className={`flex justify-between rounded-[8px] p-2 text-sm text-white text-opacity-70`}>
     {props.children}
   </div>
 );
