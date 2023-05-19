@@ -19,8 +19,8 @@ export const InlineChip = (props: any) => {
       inline-block 
       rounded-[8px] 
       bg-white bg-opacity-5 
-      px-[8px] py-[2px]
-      text-sm text-white text-opacity-70
+      p-2
+      text-sm text-white text-opacity-75
       hover:shadow-lg focus:shadow-lg focus:outline-none
      `}
     >

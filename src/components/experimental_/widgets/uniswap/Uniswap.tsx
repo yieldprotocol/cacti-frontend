@@ -11,7 +11,7 @@ import {
   ListResponse,
 } from '@/components/cactiComponents';
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
-import { ResponseRow } from '@/components/cactiComponents/helpers/cactiLayout';
+import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
