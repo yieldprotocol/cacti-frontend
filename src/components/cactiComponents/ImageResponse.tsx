@@ -48,7 +48,7 @@ export const ImageResponse = (props: any) => {
             ))}
           </div>
         )}
-        
+
         {props.description && <div> {props.description} </div>}
 
         {(props.actionLabel || props.actionValue) && ( // if has actionLbel or actionValue

@@ -1,12 +1,12 @@
 import React from 'react';
+import { RainbowKitProvider, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
-import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
-  /* Use a fork url cached in the browser localStorage, else use the .env value */
-  const [forkUrl] = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
-  
+/* Use a fork url cached in the browser localStorage, else use the .env value */
+const [forkUrl] = `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`;
+
 const mainnetFork = {
   id: 1,
   name: 'Mainnet Fork',
@@ -44,7 +44,6 @@ const wagmiClient = createClient({
   connectors,
   provider,
 });
-
 
 const ConnectionMock = (props: any) => {
   return (

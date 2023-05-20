@@ -65,9 +65,7 @@ export const ListResponse = (props: any) => {
         </>
       )}
 
-      {!props.title && (
-        <div className="p-2 text-sm text-white text-opacity-70">{rows}</div>
-      )}
+      {!props.title && <div className="p-2 text-sm text-white text-opacity-70">{rows}</div>}
     </ResponseWrap>
   );
 };

@@ -8,7 +8,7 @@ const meta: Meta<typeof ImageResponse> = {
   title: 'cacti/ImageResponse',
   component: ImageResponse,
   tags: ['autodocs'],
-  
+
   argTypes: {
     title: {
       description: 'Token associated with this component.',
@@ -51,7 +51,7 @@ const meta: Meta<typeof ImageResponse> = {
       description: 'tx Action ',
       default: undefined,
       control: 'text',
-    }
+    },
   },
 };
 
@@ -64,8 +64,8 @@ export const Primary: Story = {
     description: mockText,
     image: mockImage,
     imageTags: mockTags,
-    actionLabel  : 'Price',
-    actionValue  : '0.5 ETH',
+    actionLabel: 'Price',
+    actionValue: '0.5 ETH',
   },
 };
 
@@ -90,7 +90,7 @@ export const LotsOfTags: Story = {
     title: mockTitle,
     description: mockText,
     image: mockImage,
-    imageTags: [...mockTags,...mockTags,...mockTags],
+    imageTags: [...mockTags, ...mockTags, ...mockTags],
   },
 };
 

@@ -34,7 +34,9 @@ export const composeFromString = (inputString: string): React.ReactElement => {
         return <ResponseRow>{singleLineOfComponents}</ResponseRow>;
       }
       // Case 3: If not a cactiComponent resort to default: a text response with the item as the input
-      return createElement(cactiComponents[CactiResponse.TextResponse], { text: 'Unknown Response Component' });
+      return createElement(cactiComponents[CactiResponse.TextResponse], {
+        text: 'Unknown Response Component',
+      });
     });
     return <>{components}</>;
   } catch (error) {
@@ -43,5 +45,3 @@ export const composeFromString = (inputString: string): React.ReactElement => {
     return createElement(cactiComponents[CactiResponse.TextResponse], { text: inputString });
   }
 };
-
-
