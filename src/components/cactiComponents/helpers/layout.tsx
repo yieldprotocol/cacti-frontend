@@ -21,11 +21,11 @@ export const ResponseWrap = (props: any) => (
   <div
     className={`
     flex
-    flex-col
     flex-grow
+    flex-col
     rounded-[8px]
-    border-[1px] border-white border-opacity-10 hover:border-opacity-20
-    text-sm text-white text-opacity-75 
+    border-[1px] border-white border-opacity-10 text-sm
+    text-white text-opacity-75 hover:border-opacity-20 
     ${props.classNameExtra}
     w-max-[400px]
     p-1

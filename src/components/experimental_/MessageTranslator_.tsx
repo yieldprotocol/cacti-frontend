@@ -5,8 +5,8 @@ import { CactiResponse } from '@/components/cactiComponents';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
-import Uniswap from './widgets/uniswap/Uniswap';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import Uniswap from './widgets/uniswap/Uniswap';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -44,7 +44,6 @@ const parseArgsStripQuotes = (args: string): any[] => {
  * @returns React.ReactElement
  */
 export const WidgetFromString = (input: string): React.ReactElement => {
-
   // Parse the array of strings describing each component.
   const parsedItems = JSON.parse(input) as {
     componentType: CactiResponse;

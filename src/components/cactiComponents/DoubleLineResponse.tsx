@@ -49,7 +49,9 @@ export const DoubleLineResponse = (props: any) => {
               </div>
             </div>
             <div className="text-end">
-              <div className="text-xl text-white/90 ">{amount ? amount : <Skeleton width={50} />}</div>
+              <div className="text-xl text-white/90 ">
+                {amount ? amount : <Skeleton width={50} />}
+              </div>
               <div className="py-2 px-1">
                 $ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}
               </div>

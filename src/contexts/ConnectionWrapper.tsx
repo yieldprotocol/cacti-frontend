@@ -96,15 +96,29 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
+        {useSiwe && (
+          <RainbowKitSiweNextAuthProvider
+            getCustomNonce={getCustomNonce}
+            getSiweMessageOptions={getSiweMessageOptions}
+            getSigninCallback={getSigninCallback}
+            getSignoutCallback={getSignoutCallback}
+          >
+            <RainbowKitProvider
+              chains={chains}
+              theme={
+                experimentalUi
+                  ? darkTheme({ accentColor: '#1f2937' })
+                  : lightTheme({ accentColor: '#1f2937' })
+              }
+              showRecentTransactions={true}
+            >
+              {children}
+            </RainbowKitProvider>
+          </RainbowKitSiweNextAuthProvider>
+        )}
 
-        {useSiwe && <RainbowKitSiweNextAuthProvider
-          getCustomNonce={getCustomNonce}
-          getSiweMessageOptions={getSiweMessageOptions}
-          getSigninCallback={getSigninCallback}
-          getSignoutCallback={getSignoutCallback}
-        >
+        {!useSiwe && (
           <RainbowKitProvider
             chains={chains}
             theme={
@@ -116,19 +130,7 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
           >
             {children}
           </RainbowKitProvider>
-        </RainbowKitSiweNextAuthProvider>}
-
-        {!useSiwe && <RainbowKitProvider
-            chains={chains}
-            theme={
-              experimentalUi
-                ? darkTheme({ accentColor: '#1f2937' })
-                : lightTheme({ accentColor: '#1f2937' })
-            }
-            showRecentTransactions={true}
-          >
-            {children}
-          </RainbowKitProvider>}
+        )}
       </SessionProvider>
     </WagmiConfig>
   );

@@ -12,7 +12,7 @@ export enum CactiResponse {
   TextResponse = 'TextResponse',
   HeaderResponse = 'HeaderResponse',
   SingleLineResponse = 'SingleLineResponse',
-  IconResponse = 'IconResponse', 
+  IconResponse = 'IconResponse',
   ListResponse = 'ListResponse',
   ActionResponse = 'ActionResponse',
   ImageResponse = 'ImageResponse',
