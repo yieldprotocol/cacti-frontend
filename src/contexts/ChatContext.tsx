@@ -118,6 +118,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   // unused in production, but useful in debugging
   const onClose = () => {
     // toast.info('Websocket closed');
+
+    // once we close (could be due to wallet change), we clear messages,
+    // otherwise, we might try to resume incorrectly from error messages
+    // that we sent to the chat to indicate why you can't see the session
+    setMessages([]);
+    setLastBotMessageId(null);
+    setInsertBeforeMessageId(null);
   };
 
   const onError = () => {
