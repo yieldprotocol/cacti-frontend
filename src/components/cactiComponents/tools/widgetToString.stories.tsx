@@ -180,9 +180,10 @@ const meta: Meta = {
   title: 'cacti/tools/🔧 Widget to string',
   component: WidgetToString,
   tags: ['autodocs'],
-  argTypes: {},
+  // argTypes: {},
 };
 
 export default meta;
+
 type Story = StoryObj<typeof WidgetToString>;
 export const Primary: Story = { args: {} };
