@@ -118,7 +118,7 @@ const WidgetToString = () => {
 
   /* update the output when components change */
   useEffect(() => {
-    setOutput(`[${components.map((comp) => comp.str).join(',')}]`);
+    setOutput(`[${components.map( (comp_) => comp_.str ).join(',')}]`);
   }, [components]);
 
   return (
@@ -136,12 +136,13 @@ const WidgetToString = () => {
         </select>
 
         <button
-          className="rounded-md bg-teal-600/70 p-1"
+          className={`text-xs rounded-md p-1 ${!selectedComponent ? 'bg-teal-600/10': 'bg-teal-600/70' }`}
           onClick={() => {
             setComponents([...components, selectedComponent]);
           }}
+          disabled={!selectedComponent}
         >
-          <div className="text-xs"> ADD </div>
+          <div className={`${!selectedComponent ? 'text-white/10': '' }`}> ADD </div>
         </button>
       </div>
 
