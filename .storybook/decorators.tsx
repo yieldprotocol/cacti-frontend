@@ -1,4 +1,6 @@
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { RainbowKitProvider, darkTheme, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
@@ -62,6 +64,18 @@ const ConnectionMock = (props: any) => {
 export const Decorators = [
   (Story) => (
     <ConnectionMock>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Story />
     </ConnectionMock>
   ),

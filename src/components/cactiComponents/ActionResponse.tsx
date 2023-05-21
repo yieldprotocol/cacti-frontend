@@ -35,12 +35,12 @@ const stylingByState = {
  * Action Response
  * Includes: Label, action, state, preparedContractWrite
  **/
-export const ActionResponse = (props: any) => {
+export const ActionResponse = ({txAction, altAction, label, state}: {txAction?: any, altAction?: ()=> Promise<any> , label?: string, state?: ActionResponseState }) => {
   const { address } = useAccount();
 
-  const styleClassName = stylingByState[props.state as ActionResponseState];
+  const styleClassName = stylingByState[state as ActionResponseState];
 
-  const { config } = usePrepareContractWrite(props.preparedContractWrite);
+  const { config } = usePrepareContractWrite(txAction);
 
   const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
     useSubmitTx(config.request);
@@ -48,8 +48,8 @@ export const ActionResponse = (props: any) => {
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={`bg-teal-900 ${styleClassName}`} onClick={props.action}>
-          {props.label}
+        <StyledButton className={`bg-teal-900 ${styleClassName}`} onClick={txAction || altAction}>
+          {label || 'Submit'}
         </StyledButton>
       ) : (
         <ConnectButton />

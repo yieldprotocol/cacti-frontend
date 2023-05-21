@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Listbox } from '@headlessui/react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionResponse } from '../ActionResponse';
@@ -8,30 +8,45 @@ import { ImageResponse } from '../ImageResponse';
 import { ListResponse } from '../ListResponse';
 import { SingleLineResponse } from '../SingleLineResponse';
 import { TextResponse } from '../TextResponse';
+import { composeFromString } from './compose';
 
 const componentsList = [
   {
+    id: 1000,
+    name: ' --- component Row --- ',
+    str: '',
+    // component: <div />,
+  },
+
+  {
+    id: 1001,
+    name: ' --- component Grid --- ',
+    str: '',
+    // component: <div/>,
+  },
+
+  {
     id: 1,
     name: 'Header Response',
-    str: '',
-    component: <HeaderResponse projectName="Compound" text="Borrow with Compound" />,
+    str: '{"response":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}',
+    // component: <HeaderResponse projectName="Compound" text="Borrow with Compound" />,
   },
   {
     id: 2,
     name: 'Text Response',
-    str: '',
-    component: (
-      <TextResponse
-        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        title="Some Title"
-      />
-    ),
+    str: '{"response":"TextResponse", "props": {"text":"Swapping with Aave"}}',
+    // component: (
+    //   <TextResponse
+    //     text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    //     title="Some Title"
+    //   />
+    // ),
   },
   {
     id: 3,
     name: 'Single Line Response',
-    str: '',
-    component: <SingleLineResponse tokenSymbol="DAI" value={100.67} />,
+    str: '{"response":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}',
+    // component: <SingleLineResponse tokenSymbol="DAI" value={100.67} />,
   },
   {
     id: 4,
@@ -81,14 +96,14 @@ const componentsList = [
     id: 7,
     name: 'Action Response',
     str: '',
-    component: <ActionResponse action={() => {}} label="Submit" state="default" />,
+    component: <ActionResponse label="Submit" />,
   },
   // { id: 8, name: 'Table Response',  str: '', component: <TableResponse /> },
 ];
 
 const WidgetToString = () => {
   const [output, setOutput] = useState<string>('some output');
-  const [selectedComponent, setSelectedComponent] = useState(componentsList[2]);
+  const [selectedComponent, setSelectedComponent] = useState<any>();
   const [components, setComponents] = useState<any[]>([]);
 
   const removeItem = (id: number) => {
@@ -100,6 +115,11 @@ const WidgetToString = () => {
     const component = componentsList.find((c) => c.id == id);
     component && setSelectedComponent(component);
   };
+
+  /* update the output when components change */
+  useEffect(() => {
+    setOutput(`[${components.map((comp) => comp.str).join(',')}]`);
+  }, [components]);
 
   return (
     <div className="h-full space-y-[24px] text-white/70">
@@ -129,7 +149,7 @@ const WidgetToString = () => {
         <div className="w-[80%] space-y-2">
           {components.map((comp_: any) => (
             <div className="flex gap-2">
-              <div className="flex-grow ">{comp_.component}</div>
+              <div className="flex-grow ">{composeFromString(`[${comp_.str}]`)}</div>
               <button className="flex-shrink" onClick={() => removeItem(comp_.id)}>
                 x
               </button>
@@ -138,9 +158,18 @@ const WidgetToString = () => {
         </div>
       </div>
 
-      <div className="p-2 text-sm">
-        <div>Output: </div>
-        <div className="font-mono">{output}</div>
+      <div className="space-y-[12px] p-2 text-sm">
+        <div className="flex items-center gap-4" >
+          Output:
+          <div>
+          <button className="rounded-md bg-teal-600/70 p-1" onClick={() => console.log('copied')}>
+            Copy
+          </button>
+        </div>
+
+        </div>
+        <div className="font-mono"> {output}</div>
+
       </div>
     </div>
   );

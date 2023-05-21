@@ -16,7 +16,8 @@
     "createFork": "yarn dlx ts-node --compilerOptions '{\"esModuleInterop\": true, \"module\": \"commonjs\"}' ./scripts/createFork.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o ./.storybook/build -s ./src/public",
-    "serve-storybook": "serve ./.storybook/build"
+    "serve-storybook": "serve ./.storybook/build",
+    "test-storybook": "test-storybook --url https://cacti-storybook.netlify.com"
   },
   "dependencies": {
     "@center-inc/react": "^1.1.7",
@@ -58,6 +59,7 @@
     "@storybook/blocks": "^7.0.12",
     "@storybook/nextjs": "^7.0.12",
     "@storybook/react": "^7.0.12",
+    "@storybook/test-runner": "^0.10.0",
     "@storybook/testing-library": "^0.1.0",
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "autoprefixer": "^10.4.14",

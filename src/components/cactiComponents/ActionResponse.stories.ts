@@ -2,8 +2,10 @@ import { toast } from 'react-toastify';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionResponse, ActionResponseState } from './ActionResponse';
 
-const defaultAction = () => {
-  toast('Action');
+const defaultAction = async () => {
+  toast('Action started...');
+  await new Promise(r => setTimeout(r, 2000));
+  toast('Action completed!');
 };
 
 const meta: Meta<typeof ActionResponse> = {
@@ -11,10 +13,14 @@ const meta: Meta<typeof ActionResponse> = {
   component: ActionResponse,
   tags: ['autodocs'],
   argTypes: {
-    action: {
-      description: 'The action to take.',
+    txAction: {
+      description: 'Transaction action to take.',
       default: defaultAction,
       control: 'text',
+    },
+    altAction: {
+      description: 'Any async action to take.',
+      default: defaultAction,
     },
     label: {
       description: 'Text to display on button',
@@ -42,7 +48,7 @@ type Story = StoryObj<typeof ActionResponse>;
 
 export const Primary: Story = {
   args: {
-    action: defaultAction,
+    altAction: defaultAction,
     label: 'Submit',
     state: ActionResponseState.DEFAULT,
   },
@@ -57,7 +63,7 @@ Primary.parameters = {
 
 export const Disabled: Story = {
   args: {
-    action: defaultAction,
+    altAction: defaultAction,
     label: 'Submit',
     state: ActionResponseState.DISABLED,
   },
@@ -65,7 +71,7 @@ export const Disabled: Story = {
 
 export const Pending: Story = {
   args: {
-    action: defaultAction,
+    altAction: defaultAction,
     label: 'Submit',
     state: ActionResponseState.PENDING,
   },
@@ -73,7 +79,7 @@ export const Pending: Story = {
 
 export const Error: Story = {
   args: {
-    action: defaultAction,
+    altAction: defaultAction,
     label: 'Submit',
     state: ActionResponseState.ERROR,
   },
@@ -81,7 +87,7 @@ export const Error: Story = {
 
 export const Success: Story = {
   args: {
-    action: defaultAction,
+    altAction: defaultAction,
     label: 'Submit',
     state: ActionResponseState.SUCCESS,
   },
