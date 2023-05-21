@@ -17,7 +17,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o ./.storybook/build -s ./src/public",
     "serve-storybook": "serve ./.storybook/build",
-    "test-storybook": "test-storybook --url https://cacti-storybook.netlify.com"
+    "test-storybook-deployment": "test-storybook --url https://cacti-storybook.netlify.com",
+    "test-storybook": "test-storybook"
   },
   "dependencies": {
     "@center-inc/react": "^1.1.7",
