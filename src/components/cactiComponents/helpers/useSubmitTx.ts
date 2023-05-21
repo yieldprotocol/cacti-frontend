@@ -14,8 +14,8 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-
   const signer = useSigner();
+
   const [hash, setHash] = useState<`0x${string}`>();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isPrepared, setIsPrepared] = useState<boolean>(false);
@@ -25,7 +25,7 @@ const useSubmitTx = (
     let isPrepared = false;
     let gasLimit = request?.gasLimit;
     if (!request) return { isPrepared, gasLimit };
-    
+
     try {
       gasLimit = await signer?.estimateGas(request);
       setIsPrepared(true);

@@ -31,8 +31,8 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ComposeFromString>;
 
+type Story = StoryObj<typeof ComposeFromString>;
 export const Primary: Story = {
   args: {
     inputString: demoStr,

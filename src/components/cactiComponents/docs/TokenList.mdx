@@ -1,4 +1,4 @@
-import tokenList from "../../../utils/TokenList.json";
+import tokenList from "../resources/comprehensiveTokenList.json";
 import Code from "./assets/code-brackets.svg";
 import Colors from "./assets/colors.svg";
 import Comments from "./assets/comments.svg";
@@ -10,9 +10,9 @@ import StackAlt from "./assets/stackalt.svg";
 import { Meta } from "@storybook/blocks";
 import Image from "next/image";
 
-<Meta title="cacti/TokenList" />
+import { ProjectSearch } from "../tools/projectSearch.stories.tsx";
 
-# Token List
+<Meta title="cacti/TokenList" />
 
 <div className="subheading">Tokens</div>
 <div>
@@ -21,4 +21,5 @@ import Image from "next/image";
       <strong>{token.name}</strong> - {token.symbol}
     </div>
   ))}
+  {/* <ProjectSearch /> */}
 </div>
