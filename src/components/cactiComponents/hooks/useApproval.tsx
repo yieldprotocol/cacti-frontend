@@ -10,19 +10,24 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
-import useBalance from '@/hooks/useBalance';
+
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
-const useTokenApproval = (
-  address: `0x${string}` | undefined,
-  amount: BigNumber | undefined,
-  spender: `0x${string}` | undefined
-) => {
+import useBalance from './useBalance';
+
+export type ApprovalBasicParams = {
+  amount: BigNumber;
+  address?: `0x${string}`;
+  spender?: `0x${string}`;
+};
+
+const useApproval = (params: ApprovalBasicParams) => {
+  const { address, amount, spender } = params;
 
   const addressOrAddressZero = address ? address : ethers.constants.AddressZero;
-  const { data: token } = useToken(undefined, addressOrAddressZero);
+  const { data: token, isETH } = useToken(undefined, addressOrAddressZero);
 
   const amountOrZero = amount ? amount : BigNumber.from(0);
   const amountToUse = BigNumber.from(cleanValue(amountOrZero.toString(), token?.decimals));
@@ -32,16 +37,15 @@ const useTokenApproval = (
 
   const signer = useSigner();
   const { address: account } = useAccount();
-  
+
   // Get allowance amount
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-
-    address: spender ? address: undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spender!],
   });
-  
+
   /* Get the useForkSettings the settings context */
   const {
     settings: { isForkedEnv },
@@ -50,7 +54,7 @@ const useTokenApproval = (
   // for using in fork env
   const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: spender ? address: undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
@@ -62,8 +66,8 @@ const useTokenApproval = (
   const approve = async () => {
     setTxPending(true);
     try {
-      if (isForkedEnv && spender) {
-        const tx = await contract?.approve(spender, amountToUse);
+      if (isForkedEnv) {
+        const tx = await contract?.approve(spender!, amountToUse);
         setHash(tx?.hash as `0x${string}`);
       } else {
         const tx = await approvalWriteAsync?.();
@@ -89,15 +93,15 @@ const useTokenApproval = (
   return {
     approve,
     data,
-    txPending: txPending || isLoading,
+    // txPending: txPending || isLoading,
     txError,
     txSuccess,
     hash,
-    allowanceAmount,
-    hasAllowance: allowanceAmount?.gte(amountOrZero),
+    hasAllowance: isETH || allowanceAmount?.gte(amountOrZero), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
     refetchAllowance,
     hasBalance: balance?.gte(amountOrZero),
   };
+
 };
 
-export default useTokenApproval;
+export default useApproval;
