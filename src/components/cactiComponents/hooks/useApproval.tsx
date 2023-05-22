@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
   erc20ABI,
   useAccount,
@@ -19,18 +19,22 @@ import useBalance from './useBalance';
 
 export type ApprovalBasicParams = {
   amount: BigNumber;
-  address?: `0x${string}`;
-  spender?: `0x${string}`;
+  address: `0x${string}`;
+  spender: `0x${string}`;
 };
 
-const useApproval = (params: ApprovalBasicParams) => {
-  const { address, amount, spender } = params;
+const useApproval = (params: ApprovalBasicParams|undefined) => {
 
-  const addressOrAddressZero = address ? address : ethers.constants.AddressZero;
-  const { data: token, isETH } = useToken(undefined, addressOrAddressZero);
+  /* if params are undefined, return empty object */
+  if (params === undefined) return { approve: undefined, hasAllowance:true };
 
-  const amountOrZero = amount ? amount : BigNumber.from(0);
-  const amountToUse = BigNumber.from(cleanValue(amountOrZero.toString(), token?.decimals));
+  const { amount, address, spender } = params;
+
+  // const addressOrAddressZero = address || ethers.constants.AddressZero; // if address is undefined, use addressZero
+  const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
+
+  // const amountOrZero = amount ? amount : BigNumber.from(0);
+  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
 
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
@@ -44,6 +48,9 @@ const useApproval = (params: ApprovalBasicParams) => {
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spender!],
+    scopeKey: `allowance_${address}`,
+    cacheTime: 20_000,
+    enabled: true,
   });
 
   /* Get the useForkSettings the settings context */
@@ -58,10 +65,13 @@ const useApproval = (params: ApprovalBasicParams) => {
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
+    // enabled: true,
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
-  const { data: balance } = useBalance(token?.address);
+  
+  /** Here we are getting the balance of the token, as well as checking if it is greater than a certain amount */
+  // const { data: balance, isGTEcompared  } = useBalance(token?.address);
 
   const approve = async () => {
     setTxPending(true);
@@ -97,9 +107,9 @@ const useApproval = (params: ApprovalBasicParams) => {
     txError,
     txSuccess,
     hash,
-    hasAllowance: isETH || allowanceAmount?.gte(amountOrZero), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
     refetchAllowance,
-    hasBalance: balance?.gte(amountOrZero),
+    // hasBalance: balance?.gte(amountToUse),
   };
 
 };

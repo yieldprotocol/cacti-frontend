@@ -159,8 +159,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       />
       <ActionResponse 
         label={`Swap ${inputCleaned||''} ${tokenInSymbol||''} on Uniswap`}
-        txAction={tx}
-        approveAction={approval}
+        txParams={tx}
+        approvalParams={approval}
         // disabled={true}
        />
     </>
