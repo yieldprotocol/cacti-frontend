@@ -2,11 +2,11 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import tw from 'tailwind-styled-components';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BigNumber, PayableOverrides, Overrides, CallOverrides } from 'ethers';
 
 import useTokenApproval from './helpers/useTokenApproval';
-import useSubmitTx from './helpers/useSubmitTx';
+import useSubmitTx from './hooks/useSubmitTx';
 
 export enum ActionResponseState {
   PENDING = 'pending',
@@ -71,16 +71,28 @@ export const ActionResponse = ({
   const { address } = useAccount();
   const [ label, setLabel ] = useState<string>(defaultLabel || 'Submit');
   const [ state, setState ] = useState(ActionResponseState.DEFAULT);
-  const [ action, setAction ] = useState<Promise<void>>();
+  const [ action, setAction ] = useState<Promise<any>>(async () => console.log('no action set'));
 
-  if ( approveAction ) {
-    const { approve, hasBalance, hasAllowance } = useTokenApproval(approveAction.address, approveAction.amount, approveAction.spender)
-    // setAction(approve)
-  }
+  // if ( approveAction ) {
+  //   const { approve, hasBalance, hasAllowance } = useTokenApproval(approveAction.address, approveAction.amount, approveAction.spender)
+  //   // setAction(approve)
+  // }
+
+  /* ALWAYS pass though useTokenApproval - mainly to catch any balance deficiencies  ie. built in balance check*/
+  const { approve, hasBalance, hasAllowance } = useTokenApproval(approveAction.address, approveAction.amount, approveAction.spender);
 
   const { config } = usePrepareContractWrite(txAction);
-  const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
-    useSubmitTx(config.request);
+  const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } = useSubmitTx(config.request);
+
+
+  /**
+   * Update all the local states on tx/approval status changes 
+   * */
+  
+  /* Set the button to submit tx if all ready */
+  useEffect(()=>{
+    if (hasBalance && hasAllowance && isPrepared ) { setAction(submitTx) }
+  }, [hasBalance, hasAllowance] )
 
   /* Set the button state based on the approval or tx status */
   useEffect(()=>{
@@ -93,7 +105,7 @@ export const ActionResponse = ({
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={`bg-teal-900 ${extraStyle}`}>
+        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={()=>action} >
           {label}
         </StyledButton>
       ) : (
