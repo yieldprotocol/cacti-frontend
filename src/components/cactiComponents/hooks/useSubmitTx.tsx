@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import useSigner from '@/hooks/useSigner';
+import { toast } from 'react-toastify';
 
 export type TxBasicParams = {
   address: `0x${string}`;
@@ -18,37 +19,41 @@ export type TxBasicParams = {
  * @param onError callback to run on error
  */
 const useSubmitTx = (
-  params : TxBasicParams | undefined,
+  params: TxBasicParams | undefined,
   onSuccess?: () => void,
   onError?: () => void
 ) => {
   const signer = useSigner();
 
-  const [hash, setHash] = useState<`0x${string}`>();
-  const [isPending, setIsPending] = useState<boolean>(false);
-
+  // const [hash, setHash] = useState<`0x${string}`>();
+  // const [isPending, setIsPending] = useState<boolean>(false);
   // const [isPrepared, setIsPrepared] = useState<boolean>(false);
-  const [error, setError] = useState<any>();
+  // const [error, setError] = useState<any>();
 
   const { config } = usePrepareContractWrite(params);
+  const { data: writeData, isLoading:isWaitingOnUser, write } = useContractWrite(config);
+  const {
+    data: receipt,
+    error,
+    isError,
+    isLoading,
+    isSuccess,
+    status,
+  } = useWaitForTransaction({
+    hash: writeData?.hash,
+    onSuccess,
+    onError,
+  });
 
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
-
-
-
-  // const prepare = useCallback(async () => {
-  //   let isPrepared = false;
-  //   let gasLimit = request?.gasLimit;
-  //   if (!request) return { isPrepared, gasLimit };
-  //   try {
-  //     gasLimit = await signer?.estimateGas(request);
-  //     setIsPrepared(true);
-  //   } catch (e) {
-  //     console.error('Error preparing', e);
-  //     setError(e);
-  //     setIsPrepared(false);
-  //   }
-  // }, [request, signer]);
+  /* DEVELOPER logging */
+  useEffect(() => {
+    if (receipt?.status === 0) {
+      toast.error(`Transaction Error: ${error?.message}`);
+    }
+    if (receipt?.status === 1) {
+      toast.success(`Transaction Complete: ${receipt.transactionHash}`);
+    }
+  }, [receipt, status]);
 
   // const submitTx = async () => {
   //   if (!signer) throw new Error('No signer found');
@@ -66,12 +71,6 @@ const useSubmitTx = (
   //   }
   // };
 
-  // useEffect(() => {
-  //   (async () => {
-  //     await prepare();
-  //   })();
-  // }, [prepare]);
-
   // const {
   //   isError,
   //   isLoading,
@@ -85,9 +84,9 @@ const useSubmitTx = (
 
   return {
     receipt,
-    hash,
+    // hash,
     isLoading,
-    isPendingConfirm: isPending,
+    isPendingConfirm: isWaitingOnUser,
     isSuccess,
     isError,
     submitTx: write,

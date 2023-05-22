@@ -1,39 +1,57 @@
 import { BigNumber, ethers } from 'ethers';
 import { useAccount, useBalance as useBalanceWagmi, useContractRead } from 'wagmi';
 import erc1155ABI from '@/abi/erc1155ABI.json';
+import { useEffect, useState } from 'react';
 
 /**
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
  * @param address
  */
-const useBalance = (address?: string, compareWith?: BigNumber, erc1155TokenId?: string) => {
+const useBalance = (address?: `0x${string}`, compareAmount?: BigNumber, erc1155TokenId?: string) => {
   const { address: account } = useAccount();
+
+  const isETH = !address || ethers.constants.AddressZero; // if no address is specified, or address is 0x0, then assume it's eth
 
   // erc20 or eth if zero or no address is specified
   const { data, isLoading } = useBalanceWagmi({
     address: account,
-    token:
-      address === ethers.constants.AddressZero || !address ? undefined : (address as `0x${string}`),
+    token: isETH ? undefined : address,
+    enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
   });
 
   // erc1155
-  const { data: erc1155Bal, isLoading: erc1155BBalLoading } = useContractRead({
+  const { data: erc1155_data, isLoading: erc1155_Loading } = useContractRead({
     address: address as `0x${string}`,
     abi: erc1155ABI,
     functionName: 'balanceOf',
     args: [account, erc1155TokenId],
-    enabled: !!erc1155TokenId,
+    enabled: !!erc1155TokenId, // if erc1155TokenId is specified, get erc1155 balance
   });
 
+  const [comparisons, setComparisons] = useState<any>()
+
+  // keep the comparisons in sync with the balance
+  useEffect(()=>{
+    const data_bn = erc1155TokenId ? (erc1155_data as BigNumber) : data?.value
+    if(compareAmount && data_bn){
+      setComparisons({
+        isZero: data_bn.isZero(),
+        isGTEcompared: data_bn.gt(compareAmount),
+        isEQcompared: data_bn.eq(compareAmount),
+        isLTcompared: data_bn.lt(compareAmount),
+      })
+    }
+  },[data, erc1155_data])
+
   return {
-    data: erc1155TokenId ? (erc1155Bal as BigNumber) : data?.value,
-    isLoading: erc1155TokenId ? erc1155BBalLoading : isLoading,
+    data: erc1155TokenId ? (erc1155_data as BigNumber) : data?.value,
+    isLoading: erc1155TokenId ? erc1155_Loading : isLoading,
 
-    isZero: data?.value?.isZero(),
-
-    isGreaterThan: compareWith ? (data?.value as BigNumber).gt(compareWith) : undefined,
-    isEqualto: compareWith ? (data?.value as BigNumber).eq(compareWith) : undefined,
-    isLessThan: compareWith ? (data?.value as BigNumber).lt(compareWith) : undefined,
+    // comparisons
+    isZero: comparisons?.isZero,
+    isGTEcompared: comparisons?.isGTEcompared,
+    isEQcompared: comparisons?.isEQcompared,
+    isLTcompared: comparisons?.isLTcompared,
   };
 };
 

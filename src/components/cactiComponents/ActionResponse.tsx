@@ -3,8 +3,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
-import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
+import useBalance from './hooks/useBalance';
+import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
 
 export enum ActionResponseState {
   PENDING = 'pending',
@@ -42,35 +43,34 @@ const stylingByState = {
 export const ActionResponse = ({
   txParams,
   approvalParams,
-  // assertCallParams
-  altAction,
   label: label_,
   disabled,
+  // assertCallParams
+  // altAction,
 }: {
   txParams?: TxBasicParams;
   approvalParams?: ApprovalBasicParams;
-  // assertCallParams?: AssertCallBasicParams;
-  altAction?: () => Promise<any>;
   label?: string;
   disabled?: boolean;
+  // assertCallParams?: AssertCallBasicParams;
+  // altAction?: () => Promise<any>;
 }) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
   const [label, setLabel] = useState<string>(defaultLabel);
   const [state, setState] = useState(ActionResponseState.DEFAULT);
+  
   const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
 
-  const [action, setAction] = useState<() => Promise<void | undefined>>(async () =>
-    console.log('Action not defined')
-  );
+  const [action, setAction] = useState<() => Promise<void | undefined> | undefined>();
 
-  /* ALWAYS pass though useTokenApproval - mainly to catch any balance deficiencies ie. act as built in balance check */
-  const { approve, hasBalance, hasAllowance } = useApproval({
-    amount: approvalParams?.amount || BigNumber.from(0),
-    address: approvalParams?.address,
-    spender: approvalParams?.spender,
-  });
+  /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
+  const { approve, hasAllowance } = useApproval(approvalParams);
+
+  /** Check if the acount has enough balance from the transaction */
+  const valueFromOverrides = (txParams?.overrides as PayableOverrides)?.value! as BigNumber|undefined; // TODO find a workaround for this
+  const { data: balance, isGTEcompared: hasBalance } = useBalance( approvalParams?.address, approvalParams?.amount || valueFromOverrides );
 
   /**
    * Set the signer address to 'undefined' until hasBalance and hasAllowance are both true.
@@ -79,15 +79,17 @@ export const ActionResponse = ({
     hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
   }, [hasBalance, hasAllowance]);
 
-  const { isSuccess, isError, isLoading, submitTx, error, hash, isPendingConfirm } =
-    useSubmitTx(txToPrepare);
+  const { submitTx, isPendingConfirm } = useSubmitTx(txToPrepare);
 
   /**
+   *
    * Update all the local states on tx/approval status changes
+   *
    **/
 
   /* Set the button styling for APPROVAL/TRANSACTION processes */
   useEffect(() => {
+
     /* case: tx/approval success */
     if (!hasBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
@@ -98,9 +100,12 @@ export const ActionResponse = ({
       setAction(() => approve);
       console.log('READY FOR APPROVAL: Has balance.');
       setLabel(`A token approval is required`);
+      setState(ActionResponseState.DEFAULT);
     }
     if (hasAllowance && hasBalance) {
       console.log('READY FOR TX: Has balance and allowance.');
+      setLabel(defaultLabel);
+      setState(ActionResponseState.DEFAULT);
       // setAction(() => submitTx);
     }
   }, [hasBalance, hasAllowance]);
@@ -126,7 +131,7 @@ export const ActionResponse = ({
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={() => action()}>
+        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={() => action?.() }>
           {label}
         </StyledButton>
       ) : (
