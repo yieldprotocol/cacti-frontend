@@ -1,12 +1,10 @@
+import { useCallback, useEffect, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
-
-import { useEffect, useMemo, useState } from 'react';
-import { BigNumber, PayableOverrides, Overrides, CallOverrides } from 'ethers';
-
-import useTokenApproval from './helpers/useTokenApproval';
-import useSubmitTx from './hooks/useSubmitTx';
+import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 
 export enum ActionResponseState {
   PENDING = 'pending',
@@ -16,20 +14,6 @@ export enum ActionResponseState {
   LOADING = 'loading',
   DEFAULT = 'default',
 }
-
-export type TxActionType = {
-  address: `0x${string}`; 
-  abi: any;
-  functionName: string
-  args: any[];
-  overrides?: PayableOverrides | Overrides | CallOverrides
-}
-
-export type ApproveActionType = {
-  address: `0x${string}`;
-  amount: BigNumber;
-  spender: `0x${string}`;
-};
 
 const StyledButton = tw.button`
   inline-flex items-center justify-center
@@ -46,7 +30,7 @@ const stylingByState = {
   [ActionResponseState.PENDING]: 'cursor-not-allowed',
   [ActionResponseState.SUCCESS]: 'bg-green-800',
   [ActionResponseState.ERROR]: 'text-white/30 bg-red-600/50 cursor-not-allowed',
-  [ActionResponseState.DISABLED]: 'bg-opacity-20 text-white/10 cursor-not-allowed',
+  [ActionResponseState.DISABLED]: 'bg-opacity-20 text-white/20 cursor-not-allowed',
   [ActionResponseState.LOADING]: 'cursor-not-allowed',
   [ActionResponseState.DEFAULT]: '',
 };
@@ -56,48 +40,85 @@ const stylingByState = {
  * Includes: Label, action, state, preparedContractWrite
  **/
 export const ActionResponse = ({
-  txAction,
-  approveAction,
+  txParams,
+  approvalParams,
+  // assertCallParams
   altAction,
-  label: defaultLabel,
+  label: label_,
   disabled,
 }: {
-  txAction?: TxActionType;
-  approveAction?: ApproveActionType;
+  txParams?: TxBasicParams;
+  approvalParams?: ApprovalBasicParams;
+  // assertCallParams?: AssertCallBasicParams;
   altAction?: () => Promise<any>;
   label?: string;
   disabled?: boolean;
 }) => {
+  const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
-  const [ label, setLabel ] = useState<string>(defaultLabel || 'Submit');
-  const [ state, setState ] = useState(ActionResponseState.DEFAULT);
-  const [ action, setAction ] = useState<Promise<any>>(async () => console.log('no action set'));
 
-  // if ( approveAction ) {
-  //   const { approve, hasBalance, hasAllowance } = useTokenApproval(approveAction.address, approveAction.amount, approveAction.spender)
-  //   // setAction(approve)
-  // }
+  const [label, setLabel] = useState<string>(defaultLabel);
+  const [state, setState] = useState(ActionResponseState.DEFAULT);
+  const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
 
-  /* ALWAYS pass though useTokenApproval - mainly to catch any balance deficiencies  ie. built in balance check*/
-  const { approve, hasBalance, hasAllowance } = useTokenApproval(approveAction.address, approveAction.amount, approveAction.spender);
+  const [action, setAction] = useState<() => Promise<void | undefined>>(async () =>
+    console.log('Action not defined')
+  );
 
-  const { config } = usePrepareContractWrite(txAction);
-  const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } = useSubmitTx(config.request);
-
+  /* ALWAYS pass though useTokenApproval - mainly to catch any balance deficiencies ie. act as built in balance check */
+  const { approve, hasBalance, hasAllowance } = useApproval({
+    amount: approvalParams?.amount || BigNumber.from(0),
+    address: approvalParams?.address,
+    spender: approvalParams?.spender,
+  });
 
   /**
-   * Update all the local states on tx/approval status changes 
-   * */
-  
-  /* Set the button to submit tx if all ready */
-  useEffect(()=>{
-    if (hasBalance && hasAllowance && isPrepared ) { setAction(submitTx) }
-  }, [hasBalance, hasAllowance] )
+   * Set the signer address to 'undefined' until hasBalance and hasAllowance are both true.
+   **/
+  useEffect(() => {
+    hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
+  }, [hasBalance, hasAllowance]);
 
-  /* Set the button state based on the approval or tx status */
-  useEffect(()=>{
-    error ? setState(ActionResponseState.ERROR): setState(ActionResponseState.DEFAULT)
-  },[ error ])
+  const { isSuccess, isError, isLoading, submitTx, error, hash, isPendingConfirm } =
+    useSubmitTx(txToPrepare);
+
+  /**
+   * Update all the local states on tx/approval status changes
+   **/
+
+  /* Set the button styling for APPROVAL/TRANSACTION processes */
+  useEffect(() => {
+    /* case: tx/approval success */
+    if (!hasBalance) {
+      console.log('NOT READY: Balance not sufficient for transaction.');
+      setLabel('Insufficient Balance');
+      setState(ActionResponseState.DISABLED);
+    }
+    if (!hasAllowance && hasBalance) {
+      setAction(() => approve);
+      console.log('READY FOR APPROVAL: Has balance.');
+      setLabel(`A token approval is required`);
+    }
+    if (hasAllowance && hasBalance) {
+      console.log('READY FOR TX: Has balance and allowance.');
+      // setAction(() => submitTx);
+    }
+  }, [hasBalance, hasAllowance]);
+
+  /* Set the button styling for TRANSACTION process */
+  useEffect(() => {
+    /* case: approval/balance checks passing*/
+    if (hasBalance && hasAllowance) {
+      /* case: pending user confirmation */
+      if (isPendingConfirm) {
+        setLabel('Waiting for confirmation...');
+        setState(ActionResponseState.DISABLED);
+      } else {
+        setLabel(defaultLabel);
+        setState(ActionResponseState.DEFAULT);
+      }
+    }
+  }, [hasBalance, hasAllowance, isPendingConfirm]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
@@ -105,7 +126,7 @@ export const ActionResponse = ({
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={()=>action} >
+        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={() => action()}>
           {label}
         </StyledButton>
       ) : (
