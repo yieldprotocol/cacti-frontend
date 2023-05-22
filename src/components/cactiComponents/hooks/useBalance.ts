@@ -6,7 +6,7 @@ import erc1155ABI from '@/abi/erc1155ABI.json';
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
  * @param address
  */
-const useBalance = (address?: string, erc1155TokenId?: string) => {
+const useBalance = (address?: string, compareWith?: BigNumber, erc1155TokenId?: string) => {
   const { address: account } = useAccount();
 
   // erc20 or eth if zero or no address is specified
@@ -28,6 +28,12 @@ const useBalance = (address?: string, erc1155TokenId?: string) => {
   return {
     data: erc1155TokenId ? (erc1155Bal as BigNumber) : data?.value,
     isLoading: erc1155TokenId ? erc1155BBalLoading : isLoading,
+
+    isZero: data?.value?.isZero(),
+
+    isGreaterThan: compareWith ? (data?.value as BigNumber).gt(compareWith) : undefined,
+    isEqualto: compareWith ? (data?.value as BigNumber).eq(compareWith) : undefined,
+    isLessThan: compareWith ? (data?.value as BigNumber).lt(compareWith) : undefined,
   };
 };
 
