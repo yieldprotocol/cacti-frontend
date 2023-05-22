@@ -98,6 +98,12 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     sqrtPriceLimitX96: BigNumber.from(0),
   };
 
+  const approval = {
+    address: tokenIn?.address as `0x${string}`,
+    amount: amountIn,
+    spender: SWAP_ROUTER_02_ADDRESSES(chainId),
+  }
+
   const tx = {
     address: SWAP_ROUTER_02_ADDRESSES(chainId),
     abi: SwapRouter02Abi,
@@ -118,20 +124,11 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   //   },
   // });
 
-  const { hasBalance, hasAllowance } = useTokenApproval(
-    tokenIn?.address as `0x${string}`,
-    amountIn,
-    SWAP_ROUTER_02_ADDRESSES(chainId)
-  );
-
-  //   {"componentType":"HeaderResponse", "props": {"text":"Swap with Uniswap", "projectName": "uniswap" }},
-  //   [
-  //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenInSymbol}", "value":"${amountInStrRaw}"}},
-  //     {"componentType":"IconResponse", "props": {"icon":"forward"}},
-  //     {"componentType":"SingleLineResponse", "props": {"tokenSymbol":"${tokenOutSymbol}", "value":"${amountOut}"}}
-  //   ],
-  //   {"componentType":"ListResponse", "props": {"data":[["Slippage","${slippage}" ],["Gas Fees","${gasFees}" ],["Route","${tokenInSymbol}-${tokenOutSymbol}"]], "title":"Breakdown"}},
-  //   {"componentType":"ActionResponse", "props": {"label":"Swap", "state":"disabled"}}
+  // const { hasBalance, hasAllowance } = useTokenApproval(
+  //   tokenIn?.address as `0x${string}`,
+  //   amountIn,
+  //   SWAP_ROUTER_02_ADDRESSES(chainId)
+  // );
 
   return (
     <>
@@ -155,11 +152,17 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         title="Breakdown"
         data={[
           ['Slippage', '0.5%'],
+          ['Minimum swap', amountOutMinimum_],
           ['Gas Fees', '0.32'],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
       />
-      <ActionResponse label="Swap" tx={tx} />
+      <ActionResponse 
+        label={`Swap ${inputCleaned||''} ${tokenInSymbol||''} on Uniswap`}
+        txAction={tx}
+        approveAction={approval}
+        // disabled={true}
+       />
     </>
   );
 };
