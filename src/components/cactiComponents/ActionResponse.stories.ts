@@ -13,32 +13,30 @@ const meta: Meta<typeof ActionResponse> = {
   component: ActionResponse,
   tags: ['autodocs'],
   argTypes: {
+
     txAction: {
       description: 'Transaction action to take.',
-      default: defaultAction,
-      control: 'text',
+      default: {},
+      control: 'object',
+    },
+    approveAction : {
+      description: 'An approval action that needs to happen before the tx',
+      default: {},
+      control: 'object',
     },
     altAction: {
       description: 'Any async action to take.',
       default: defaultAction,
     },
     label: {
-      description: 'Text to display on button',
-      default: undefined,
+      description: 'Default label to display on button',
+      default: {},
       control: 'text',
     },
-    state: {
-      description: 'The state of the button',
-      default: undefined,
-      options: [
-        ActionResponseState.DEFAULT,
-        ActionResponseState.DISABLED,
-        ActionResponseState.SUCCESS,
-        ActionResponseState.ERROR,
-        ActionResponseState.LOADING,
-        ActionResponseState.PENDING,
-      ],
-      control: 'select',
+    disabled : {
+      description: 'A bbutton disabling controled by parent component',
+      default: false,
+      control: 'boolean',
     },
   },
 };
@@ -48,9 +46,9 @@ type Story = StoryObj<typeof ActionResponse>;
 
 export const Primary: Story = {
   args: {
-    altAction: defaultAction,
+    // altAction: defaultAction,
     label: 'Submit',
-    state: ActionResponseState.DEFAULT,
+    disabled: false
   },
 };
 
@@ -63,32 +61,32 @@ Primary.parameters = {
 
 export const Disabled: Story = {
   args: {
-    altAction: defaultAction,
+    // altAction: defaultAction,
     label: 'Submit',
-    state: ActionResponseState.DISABLED,
+    disabled: true,
   },
 };
 
-export const Pending: Story = {
-  args: {
-    altAction: defaultAction,
-    label: 'Submit',
-    state: ActionResponseState.PENDING,
-  },
-};
+// export const Pending: Story = {
+//   args: {
+//     altAction: defaultAction,
+//     label: 'Submit',
+//     state: ActionResponseState.PENDING,
+//   },
+// };
 
-export const Error: Story = {
-  args: {
-    altAction: defaultAction,
-    label: 'Submit',
-    state: ActionResponseState.ERROR,
-  },
-};
+// export const Error: Story = {
+//   args: {
+//     altAction: defaultAction,
+//     label: 'Submit',
+//     state: ActionResponseState.ERROR,
+//   },
+// };
 
-export const Success: Story = {
-  args: {
-    altAction: defaultAction,
-    label: 'Submit',
-    state: ActionResponseState.SUCCESS,
-  },
-};
+// export const Success: Story = {
+//   args: {
+//     altAction: defaultAction,
+//     label: 'Submit',
+//     state: ActionResponseState.SUCCESS,
+//   },
+// };
