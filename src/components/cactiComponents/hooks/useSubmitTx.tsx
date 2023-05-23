@@ -23,12 +23,6 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-  const signer = useSigner();
-
-  // const [hash, setHash] = useState<`0x${string}`>();
-  // const [isPending, setIsPending] = useState<boolean>(false);
-  // const [isPrepared, setIsPrepared] = useState<boolean>(false);
-  // const [error, setError] = useState<any>();
 
   const { config } = usePrepareContractWrite(params);
   const { data: writeData, isLoading:isWaitingOnUser, write } = useContractWrite(config);
@@ -36,7 +30,7 @@ const useSubmitTx = (
     data: receipt,
     error,
     isError,
-    isLoading,
+    isLoading: isTransacting,
     isSuccess,
     status,
   } = useWaitForTransaction({
@@ -55,43 +49,21 @@ const useSubmitTx = (
     }
   }, [receipt, status]);
 
-  // const submitTx = async () => {
-  //   if (!signer) throw new Error('No signer found');
-  //   if (!request) return undefined;
-  //   // if (!isPrepared) return undefined;
-
-  //   setIsPending(true);
-  //   try {
-  //     const tx = await signer.sendTransaction(request);
-  //     setHash(tx.hash as `0x${string}`);
-  //     setIsPending(false);
-  //   } catch (e) {
-  //     setIsPending(false);
-  //     setError(e);
-  //   }
-  // };
-
-  // const {
-  //   isError,
-  //   isLoading,
-  //   isSuccess,
-  //   data: receipt,
-  // } = useWaitForTransaction({
-  //   hash,
-  //   onSuccess,
-  //   onError,
-  // });
-
   return {
+
+    submitTx: write,
+
     receipt,
-    // hash,
-    isLoading,
-    isPendingConfirm: isWaitingOnUser,
+    hash: writeData?.hash,
+
+    isTransacting,
+    isWaitingOnUser,
+
     isSuccess,
     isError,
-    submitTx: write,
-    // isPrepared,
+
     error,
+
   };
 };
 

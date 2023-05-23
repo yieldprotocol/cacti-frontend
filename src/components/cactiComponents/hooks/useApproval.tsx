@@ -16,6 +16,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
 import useBalance from './useBalance';
+import { AddressZero } from '@ethersproject/constants';
 
 export type ApprovalBasicParams = {
   amount: BigNumber;
@@ -25,8 +26,8 @@ export type ApprovalBasicParams = {
 
 const useApproval = (params: ApprovalBasicParams|undefined) => {
 
-  /* if params are undefined, return empty object */
-  if (params === undefined) return { approve: undefined, hasAllowance:true };
+  /* if params are undefined, or address is addressZero (ETH), return empty object */
+  if (params === undefined || params.address === AddressZero ) return { approve: undefined, hasAllowance:true };
 
   const { amount, address, spender } = params;
 
@@ -68,12 +69,9 @@ const useApproval = (params: ApprovalBasicParams|undefined) => {
     // enabled: true,
   });
 
-  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+  const {write: approvalWrite, writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
   
-  /** Here we are getting the balance of the token, as well as checking if it is greater than a certain amount */
-  // const { data: balance, isGTEcompared  } = useBalance(token?.address);
-
-  const approve = async () => {
+  const approveTx = async () => {
     setTxPending(true);
     try {
       if (isForkedEnv) {
@@ -92,24 +90,29 @@ const useApproval = (params: ApprovalBasicParams|undefined) => {
 
   const {
     data,
-    isError: txError,
+    isError,
     isLoading,
-    isSuccess: txSuccess,
+    isSuccess,
   } = useWaitForTransaction({
     hash,
     onSuccess: () => refetchAllowance(),
   });
 
   return {
-    approve,
-    data,
-    // txPending: txPending || isLoading,
-    txError,
-    txSuccess,
-    hash,
-    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    approveTx,
     refetchAllowance,
-    // hasBalance: balance?.gte(amountToUse),
+
+    approvalReceipt: data,
+    approvalHash: hash,
+
+    approvalTransacting: isLoading,
+    approvalWaitingOnUser: txPending,
+
+    approvalError: isError,
+    approvalSuccess: isSuccess,
+
+    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+
   };
 
 };
