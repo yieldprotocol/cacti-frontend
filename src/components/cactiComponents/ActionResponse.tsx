@@ -58,6 +58,7 @@ export const ActionResponse = ({
   approvalParams,
   label: label_,
   disabled,
+  stepper
 }: // assertCallParams
 // altAction,
 {
@@ -65,6 +66,7 @@ export const ActionResponse = ({
   approvalParams?: ApprovalBasicParams;
   label?: string;
   disabled?: boolean;
+  stepper?: boolean;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
 }) => {
@@ -191,19 +193,20 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
+  const returnComponent = () => { 
+    if (address && stepper) return <ActionStepper />
+    if (address && !stepper) return <StyledButton
+        className={`bg-teal-900 ${extraStyle}`}
+        onClick={(e) => action && action.fn?.()}
+        >
+        {label || <Skeleton width={100} />}
+        </StyledButton>
+    return <ConnectButton />
+  }
+
   return (
     <div className="flex w-full justify-center">
-      {address ? (
-        // <StyledButton
-        //   className={`bg-teal-900 ${extraStyle}`}
-        //   onClick={(e) => action && action.fn?.()}
-        // >
-        //   {label || <Skeleton width={100} />}
-        // </StyledButton>
-        <ActionStepper /> 
-      ) : (
-        <ConnectButton />
-      )}
+      {returnComponent()}
     </div>
   );
 };
