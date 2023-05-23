@@ -20,8 +20,10 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
-      <div className="grid min-h-full grid-cols-12 overflow-auto ">
+    <div className="flex justify-center">
+    <div className="flex max-h-full min-h-full flex-col justify-between pt-20 w-[100%] lg:w-[75%]">
+      
+      <div className="grid min-h-full grid-cols-12 overflow-auto  ">
         <div className="col-span-2" />
         <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
       </div>
@@ -35,6 +37,8 @@ const ChatBox = () => {
           <ResetButton styleOption="iconAndText" />
         </div>
       </div>
+
+    </div>
     </div>
   );
 };

@@ -30,11 +30,11 @@ export const HeaderResponse = (props: any) => {
 
   return (
     <ResponseWrap>
-      <div className="flex items-center justify-between p-2 text-lg">
+      <div className="flex items-center justify-between p-2 ">
         <div className="flex items-center space-x-4">
           {project?.logo || props.altImageUrl ? (
             <img
-              className="h-[24px] w-[24px] rounded-full"
+              className="h-[16px] w-[16px] rounded-full"
               src={project.logo || props.altImageUrl}
               alt="projectLogo"
             />

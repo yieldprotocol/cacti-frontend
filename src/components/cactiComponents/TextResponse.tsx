@@ -15,11 +15,11 @@ export const TextResponse = (props: any) => {
       {props.title && !props.collapsible && (
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
-          <div className="p-2 text-sm text-white text-opacity-70">{props.text}</div>
+          <div className="p-2 text-white text-opacity-70">{props.text}</div>
         </>
       )}
 
-      {!props.title && <div className="p-2 text-sm text-white text-opacity-70">{props.text}</div>}
+      {!props.title && <div className="p-2 text-white text-opacity-70">{props.text}</div>}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
@@ -32,7 +32,7 @@ export const TextResponse = (props: any) => {
                 </ResponseTitle>
               </Disclosure.Button>
 
-              <Disclosure.Panel as="div" className="p-2 text-sm text-white text-opacity-70">
+              <Disclosure.Panel as="div" className="p-2 text-white text-opacity-70">
                 {props.text}
               </Disclosure.Panel>
             </>
