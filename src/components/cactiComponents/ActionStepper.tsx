@@ -16,8 +16,8 @@ const StepperItem = ({ step, title, description, active }: any) => {
       </div>
 
       <span>
-        <div className="text-lg font-medium leading-tight ">{title}</div>
-        <div className="text-sm font-thin">{description}</div>
+        <div className="text-sm font-medium leading-tight ">{title}</div>
+        <div className="text-xs font-thin">{description}</div>
       </span>
     </li>
   );
@@ -26,7 +26,7 @@ const StepperItem = ({ step, title, description, active }: any) => {
 export const ActionStepper = () => {
   return (
     <div className="flex w-full">
-      <ol className="w-full  items-center justify-evenly space-y-4 rounded-lg border-[1px] border-white/20 p-2 sm:flex sm:space-x-8 sm:space-y-0 ">
+      <ol className="w-full items-center justify-evenly space-y-4 rounded-lg border-[1px] border-white/20 p-2 sm:flex sm:space-x-8 sm:space-y-0 ">
         <StepperItem
           step={1}
           title="Token Approval"

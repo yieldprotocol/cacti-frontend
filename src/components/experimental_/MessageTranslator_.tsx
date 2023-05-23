@@ -7,6 +7,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/uniswap/Uniswap';
+import { composeFromString } from '../cactiComponents/tools/compose';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -20,7 +21,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
               // otherwise, let's try to translate the widget
               typeof item === 'string'
                 ? item &&
-                  WidgetFromString(`[{"componentType":"TextResponse","props":{"text":"${item}"}}]`)
+                  composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`)
                 : getWidget(item) // Widgetize(item)
             }
           </Fragment>
@@ -36,50 +37,6 @@ const parseArgsStripQuotes = (args: string): any[] => {
         JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
       )
     : [];
-};
-
-/**
- * Create a bundled set of react components from a string describing the components.
- * @param input string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`
- * @returns React.ReactElement
- */
-export const WidgetFromString = (input: string): React.ReactElement => {
-  // Parse the array of strings describing each component.
-  const parsedItems = JSON.parse(input) as {
-    componentType: CactiResponse;
-    props?: any;
-    children?: any;
-  }[];
-
-  // Create a component for each component desciption in the array
-  const components = parsedItems.map((parsedItem) => {
-    // Case 1: If we have a component that matches a cactiComponent type, create a component with it
-    if (cactiComponents[parsedItem.componentType]) {
-      return createElement(cactiComponents[parsedItem.componentType], parsedItem.props);
-    }
-
-    // Case 2: If we have a nested array of components, create single line of components including all those elements
-    if (Array.isArray(parsedItem)) {
-      const singleLineOfComponents = parsedItem.map((item) => {
-        return createElement(cactiComponents[item.componentType as CactiResponse], {
-          ...item.props,
-        });
-      });
-      return (
-        <div className="flex items-center gap-2" key="listKey">
-          {singleLineOfComponents}
-        </div>
-      );
-    }
-
-    // Case 3: If not a cactiComponent resort to default: a text response with the item as the input
-    return createElement(cactiComponents[CactiResponse.TextResponse], { text: input });
-
-    // TODO also can handle an error here
-  });
-
-  // Returns the list of compiled components
-  return <>{components}</>;
 };
 
 const getWidget = (widget: Widget): JSX.Element => {
@@ -106,7 +63,7 @@ const getWidget = (widget: Widget): JSX.Element => {
   ]);
 
   return (
-    widgets.get(fnName)!() || (
+    widgets?.get(fnName)!() || (
       <div className="inline-block bg-slate-500 p-5 text-white">
         Widget not implemented for <code>{inputString}</code>
       </div>
