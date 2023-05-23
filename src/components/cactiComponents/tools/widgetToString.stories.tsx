@@ -118,7 +118,7 @@ const WidgetToString = () => {
 
   /* update the output when components change */
   useEffect(() => {
-    setOutput(`[${components.map( (comp_) => comp_.str ).join(',')}]`);
+    setOutput(`[${components.map((comp_) => comp_.str).join(',')}]`);
   }, [components]);
 
   return (
@@ -136,13 +136,15 @@ const WidgetToString = () => {
         </select>
 
         <button
-          className={`text-xs rounded-md p-1 ${!selectedComponent ? 'bg-teal-600/10': 'bg-teal-600/70' }`}
+          className={`rounded-md p-1 text-xs ${
+            !selectedComponent ? 'bg-teal-600/10' : 'bg-teal-600/70'
+          }`}
           onClick={() => {
             setComponents([...components, selectedComponent]);
           }}
           disabled={!selectedComponent}
         >
-          <div className={`${!selectedComponent ? 'text-white/10': '' }`}> ADD </div>
+          <div className={`${!selectedComponent ? 'text-white/10' : ''}`}> ADD </div>
         </button>
       </div>
 
@@ -160,17 +162,15 @@ const WidgetToString = () => {
       </div>
 
       <div className="space-y-[12px] p-2 text-sm">
-        <div className="flex items-center gap-4" >
+        <div className="flex items-center gap-4">
           Output:
           <div>
-          <button className="rounded-md bg-teal-600/70 p-1" onClick={() => console.log('copied')}>
-            Copy
-          </button>
-        </div>
-
+            <button className="rounded-md bg-teal-600/70 p-1" onClick={() => console.log('copied')}>
+              Copy
+            </button>
+          </div>
         </div>
         <div className="font-mono"> {output}</div>
-
       </div>
     </div>
   );

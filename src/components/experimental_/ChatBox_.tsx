@@ -15,30 +15,29 @@ const ChatBox = () => {
   const showMessageList = messages.length > 0 || threadId;
   const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
   const [ready, setReady] = useState(false);
+
   // This is needed to prevent differences in server side pre-rendering and client side
   // DOM rendering
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className="flex justify-center">
-    <div className="flex max-h-full min-h-full flex-col justify-between pt-20 w-[100%] lg:w-[75%]">
-      
-      <div className="grid min-h-full grid-cols-12 overflow-auto  ">
-        <div className="col-span-2" />
-        <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
-      </div>
-
-      <div className="grid grid-cols-12 items-center py-[48px] ">
-        <div className="col-span-2" />
-        <div className="col-span-8">
-          <MessageInput />
+    <div className="flex h-full justify-center">
+      <div className="flex h-full w-[100%] flex-col justify-between pt-20 lg:w-[75%]">
+        <div className="grid h-full grid-cols-12 overflow-auto  ">
+          <div className="col-span-2" />
+          <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
         </div>
-        <div className="col-span-2">
-          <ResetButton styleOption="iconAndText" />
+
+        <div className="grid grid-cols-12 items-center py-[48px] ">
+          <div className="col-span-2" />
+          <div className="col-span-8">
+            <MessageInput />
+          </div>
+          <div className="col-span-2">
+            <ResetButton styleOption="iconAndText" />
+          </div>
         </div>
       </div>
-
-    </div>
     </div>
   );
 };

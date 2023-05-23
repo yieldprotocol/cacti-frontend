@@ -32,23 +32,25 @@ export const MessageList = () => {
         if (!showDebugMessages && message.actor == 'system') {
           return <React.Fragment key={message.messageId} />;
         }
+
         return (
           <React.Fragment key={message.messageId}>
             {message.messageId == insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
                 {multiStepInProgress}
-                {isBotThinking && <BotThinking />}
+                {isBotThinking ? <BotThinking /> : null}
               </>
             )}
             <MessageItem message={message} />
           </React.Fragment>
         );
       })}
+
       {!insertBeforeMessageId && (
         <>
           {multiStepInProgress}
-          {isBotThinking && <BotThinking />}
+          {isBotThinking ? <BotThinking /> : null}
           {bottomRefDiv}
         </>
       )}

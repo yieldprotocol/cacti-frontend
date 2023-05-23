@@ -9,6 +9,7 @@ import {
   HeaderResponse,
   IconResponse,
   ListResponse,
+  TextResponse,
 } from '@/components/cactiComponents';
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
@@ -36,6 +37,13 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
+  if (inputAmount === '*' || inputAmount === '{amount}')
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
+    );
+  if (!tokenOutSymbol)
+    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
+
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -102,7 +110,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     address: tokenIn?.address as `0x${string}`,
     amount: amountIn,
     spender: SWAP_ROUTER_02_ADDRESSES(chainId),
-  }
+  };
 
   const tx = {
     address: SWAP_ROUTER_02_ADDRESSES(chainId),
@@ -157,12 +165,12 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
       />
-      <ActionResponse 
-        label={`Swap ${inputCleaned||''} ${tokenInSymbol||''} on Uniswap`}
+      <ActionResponse
+        label={`Swap ${inputCleaned || ''} ${tokenInSymbol || ''} on Uniswap`}
         txParams={tx}
         approvalParams={approval}
         // disabled={true}
-       />
+      />
     </>
   );
 };

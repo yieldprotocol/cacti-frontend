@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { AddressZero } from '@ethersproject/constants';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
   erc20ABI,
@@ -10,13 +11,10 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
-
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-
 import useBalance from './useBalance';
-import { AddressZero } from '@ethersproject/constants';
 
 export type ApprovalBasicParams = {
   amount: BigNumber;
@@ -24,10 +22,10 @@ export type ApprovalBasicParams = {
   spender: `0x${string}`;
 };
 
-const useApproval = (params: ApprovalBasicParams|undefined) => {
-
+const useApproval = (params: ApprovalBasicParams | undefined) => {
   /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (params === undefined || params.address === AddressZero ) return { approve: undefined, hasAllowance:true };
+  if (params === undefined || params.address === AddressZero)
+    return { approve: undefined, hasAllowance: true };
 
   const { amount, address, spender } = params;
 
@@ -69,8 +67,8 @@ const useApproval = (params: ApprovalBasicParams|undefined) => {
     // enabled: true,
   });
 
-  const {write: approvalWrite, writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
-  
+  const { write: approvalWrite, writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+
   const approveTx = async () => {
     setTxPending(true);
     try {
@@ -88,12 +86,7 @@ const useApproval = (params: ApprovalBasicParams|undefined) => {
     setTxPending(false);
   };
 
-  const {
-    data,
-    isError,
-    isLoading,
-    isSuccess,
-  } = useWaitForTransaction({
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
     onSuccess: () => refetchAllowance(),
   });
@@ -112,9 +105,7 @@ const useApproval = (params: ApprovalBasicParams|undefined) => {
     approvalSuccess: isSuccess,
 
     hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
-
   };
-
 };
 
 export default useApproval;
