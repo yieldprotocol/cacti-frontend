@@ -64,7 +64,7 @@ export const UserMessage = ({
       ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
       mt-[24px]
       items-center
-      px-[24px]
+      p-3
    `}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -81,8 +81,9 @@ export const UserMessage = ({
         ref={inputRef}
         className={`
         flex h-full w-full flex-col 
-        gap-3 bg-transparent
-        p-3
+        bg-transparent
+        p-2
+        px-4
         text-white/70
         focus:outline-none
       `}

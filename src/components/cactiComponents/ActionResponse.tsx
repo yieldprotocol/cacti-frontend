@@ -7,6 +7,7 @@ import { useAccount, usePrepareContractWrite } from 'wagmi';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import { toast } from 'react-toastify';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -150,7 +151,7 @@ export const ActionResponse = ({
         console.log('READY FOR TX: Has balance and allowance.');
         setLabel(defaultLabel);
         setState(ActionResponseState.READY);
-        // submitTx && setAction(submitTx);
+        setAction(() => toast.info('Mock submiting transaction.') as any);
       }
 
       // ACTION: user clicks submit button
