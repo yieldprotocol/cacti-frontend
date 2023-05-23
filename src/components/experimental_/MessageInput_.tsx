@@ -52,7 +52,7 @@ export const MessageInput = ({}) => {
   // );
 
   return (
-    <div className={`grid w-[90%] grid-cols-12 items-center gap-3 bg-white bg-opacity-5 p-4`}>
+    <div className={`grid w-[90%] grid-cols-12 items-center gap-3 bg-white bg-opacity-5 p-3`}>
       <div className="col-span-1 text-end">
         <button
           className="w-[24px] cursor-pointer select-none align-middle text-white/70 transition ease-in-out hover:text-white"

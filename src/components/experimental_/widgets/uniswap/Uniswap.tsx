@@ -164,6 +164,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
           ['Gas Fees', '0.32'],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
+        collapsible
       />
       <ActionResponse
         label={`Swap ${inputCleaned || ''} ${tokenInSymbol || ''} on Uniswap`}

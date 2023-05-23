@@ -8,6 +8,7 @@ import { useAccount, usePrepareContractWrite } from 'wagmi';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import { ActionStepper } from './ActionStepper';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -97,7 +98,7 @@ export const ActionResponse = ({
     hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
   }, [hasBalance, hasAllowance]);
 
-  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txToPrepare);
+  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txToPrepare);
 
   /**
    * BUTTON FLOW:
@@ -150,7 +151,7 @@ export const ActionResponse = ({
       }
 
       /* case tx/approval success, waiting for tx-building */
-      if (submitTx) {
+      if (!!submitTx) {
         console.log('READY FOR TX: Has balance and allowance.');
         setLabel(defaultLabel);
         setState(ActionResponseState.READY);
@@ -175,7 +176,8 @@ export const ActionResponse = ({
         setState(ActionResponseState.TRANSACTING);
       }
     }
-  }, [
+  }, 
+  [
     hasBalance,
     hasAllowance,
     isWaitingOnUser,
@@ -192,12 +194,13 @@ export const ActionResponse = ({
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton
-          className={`bg-teal-900 ${extraStyle}`}
-          onClick={(e) => action && action.fn?.()}
-        >
-          {label || <Skeleton width={100} />}
-        </StyledButton>
+        // <StyledButton
+        //   className={`bg-teal-900 ${extraStyle}`}
+        //   onClick={(e) => action && action.fn?.()}
+        // >
+        //   {label || <Skeleton width={100} />}
+        // </StyledButton>
+        <ActionStepper /> 
       ) : (
         <ConnectButton />
       )}
