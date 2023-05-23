@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ActionStepper } from './ActionStepper';
+import { ActionResponse, ActionResponseState } from './ActionResponse';
 
 const defaultAction = async () => {
   toast('Action started...');
@@ -8,9 +8,9 @@ const defaultAction = async () => {
   toast('Action completed!');
 };
 
-const meta: Meta<typeof ActionStepper> = {
-  title: 'cacti/ActionStepper',
-  component: ActionStepper,
+const meta: Meta<typeof ActionResponse> = {
+  title: 'cacti/ActionResponse',
+  component: ActionResponse,
   tags: ['autodocs'],
   argTypes: {
     txParams: {
@@ -29,7 +29,12 @@ const meta: Meta<typeof ActionStepper> = {
       control: 'text',
     },
     disabled: {
-      description: 'A bbutton disabling controled by parent component',
+      description: 'A button disabling controled by parent component',
+      default: false,
+      control: 'boolean',
+    },
+    stepper: {
+      description: 'Show a stepper instead of a button',
       default: false,
       control: 'boolean',
     },
@@ -37,13 +42,14 @@ const meta: Meta<typeof ActionStepper> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ActionStepper>;
+type Story = StoryObj<typeof ActionResponse>;
 
 export const Primary: Story = {
   args: {
     // altAction: defaultAction,
     label: 'Submit',
     disabled: false,
+    stepper: false
   },
 };
 
@@ -59,6 +65,7 @@ export const Disabled: Story = {
     // altAction: defaultAction,
     label: 'Submit',
     disabled: true,
+    stepper: false
   },
 };
 
