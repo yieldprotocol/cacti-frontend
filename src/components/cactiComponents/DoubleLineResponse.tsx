@@ -51,7 +51,7 @@ export const DoubleLineResponse = (props: any) => {
             </div>
 
             {/* Calculated values/ exncahnge rates */}
-            <div className="flex justify-between items-center text-lg">
+            <div className="flex justify-between items-center text-sm text-white/70">
               <div className="py-2 px-1">
                 $ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}
               </div>
