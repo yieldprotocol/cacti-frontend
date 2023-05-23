@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ActionResponse, ActionResponseState } from './ActionResponse';
+import { ActionStepper } from './ActionStepper';
 
 const defaultAction = async () => {
   toast('Action started...');
@@ -8,24 +8,20 @@ const defaultAction = async () => {
   toast('Action completed!');
 };
 
-const meta: Meta<typeof ActionResponse> = {
-  title: 'cacti/ActionResponse',
-  component: ActionResponse,
+const meta: Meta<typeof ActionStepper> = {
+  title: 'cacti/ActionStepper',
+  component: ActionStepper,
   tags: ['autodocs'],
   argTypes: {
-    txAction: {
+    txParams: {
       description: 'Transaction action to take.',
       default: {},
       control: 'object',
     },
-    approveAction: {
+    approvalParams: {
       description: 'An approval action that needs to happen before the tx',
       default: {},
       control: 'object',
-    },
-    altAction: {
-      description: 'Any async action to take.',
-      default: defaultAction,
     },
     label: {
       description: 'Default label to display on button',
@@ -41,7 +37,7 @@ const meta: Meta<typeof ActionResponse> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ActionResponse>;
+type Story = StoryObj<typeof ActionStepper>;
 
 export const Primary: Story = {
   args: {

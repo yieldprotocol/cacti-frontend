@@ -6,6 +6,7 @@ import { ImageResponse } from './ImageResponse';
 import { ListResponse } from './ListResponse';
 import { SingleLineResponse } from './SingleLineResponse';
 import { TextResponse } from './TextResponse';
+import { ActionStepper } from './ActionStepper';
 
 export enum CactiResponse {
   // InlineChip = 'InlineChip', // should not be needed - this is more of an internal component
@@ -26,4 +27,5 @@ export {
   ListResponse,
   ActionResponse,
   ImageResponse,
+  ActionStepper,
 };
