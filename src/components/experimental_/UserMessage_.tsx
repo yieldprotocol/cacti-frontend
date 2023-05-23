@@ -56,7 +56,7 @@ export const UserMessage = ({
     <div
       className={`
       flex justify-between ${
-        isCommenter ? 'bg-yellow-300 bg-opacity-5 ' : 'bg-white bg-opacity-5 '
+        isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
       } 
       hover:bg-gray-700/20 hover:ring-1
       hover:ring-gray-500/80 focus:text-gray-50
@@ -102,26 +102,32 @@ export const UserMessage = ({
 
       {isEditing ? (
         <div className="m-auto mr-2 flex gap-2">
-          <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
+          <div
+            className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
+            onClick={submitRegenerate}
+          >
             enter
-          </span>
-          <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100">
+          </div>
+          <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
             esc
           </span>
         </div>
       ) : (
         <>
-          <button className="flex p-2 text-white/70" onClick={() => setIsEditing(true)}>
+          <button
+            className="flex p-2 text-white/70 hover:text-white"
+            onClick={() => setIsEditing(true)}
+          >
             <PencilIcon className="h-4 w-4" />
           </button>
 
-          <button className="flex p-2 text-white/70" onClick={submitDelete}>
+          <button className="flex p-2 text-white/70 hover:text-white" onClick={submitDelete}>
             <TrashIcon className="h-4 w-4" />
           </button>
 
           {!isCommenter && (
             <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
-              <div className=" h-[20px] w-[20px] rounded-sm bg-teal-900 p-1 text-white/70">
+              <div className=" h-[20px] w-[20px] rounded-sm bg-teal-900 p-1 text-white/70 hover:text-white active:bg-transparent">
                 <PlayIcon />
               </div>
             </button>

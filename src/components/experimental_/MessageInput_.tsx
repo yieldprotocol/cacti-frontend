@@ -34,22 +34,22 @@ export const MessageInput = ({}) => {
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
   };
 
-  const sendButtonIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-5 w-5 focus:bg-gray-800"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-      />
-    </svg>
-  );
+  // const sendButtonIcon = (
+  //   <svg
+  //     xmlns="http://www.w3.org/2000/svg"
+  //     fill="none"
+  //     viewBox="0 0 24 24"
+  //     strokeWidth={1.5}
+  //     stroke="currentColor"
+  //     className="h-5 w-5 focus:bg-gray-800"
+  //   >
+  //     <path
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //       d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+  //     />
+  //   </svg>
+  // );
 
   return (
     <div className={`grid w-[90%] grid-cols-12 items-center gap-3 bg-white bg-opacity-5 p-4`}>
@@ -94,7 +94,7 @@ export const MessageInput = ({}) => {
 
       <div className="col-span-2">
         <button
-          className="cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out"
+          className="cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
           onClick={handleSendMessage}
         >
           {/* <div className="flex justify-center">{sendButtonIcon}</div> */}

@@ -1,5 +1,6 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { toast } from 'react-toastify';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -7,7 +8,6 @@ import { useAccount, usePrepareContractWrite } from 'wagmi';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
-import { toast } from 'react-toastify';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -30,7 +30,7 @@ const StyledButton = tw.button`
   border-[1px] border-white border-opacity-10
   bg-[#2E8C87]
   text-sm text-white/90
-  active:bg-[#2E8C8700]
+  active:bg-transparent
 `;
 
 const stylingByState = {
@@ -41,6 +41,11 @@ const stylingByState = {
   [ActionResponseState.TRANSACTING]: 'cursor-not-allowed', // tx submitting and is transacting.
   [ActionResponseState.SUCCESS]: 'bg-green-800', // tx completed successfully.
   [ActionResponseState.ERROR]: 'text-white/30 bg-red-600/50', // tx completed, but failed.
+};
+
+type Action = {
+  name: string;
+  fn: ((overrideConfig?: undefined) => void | Promise<void>) | undefined;
 };
 
 /**
@@ -70,9 +75,7 @@ export const ActionResponse = ({
 
   const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
 
-  const [action, setAction] = useState<
-    ((overrideConfig?: undefined) => void | Promise<void>) | undefined
-  >();
+  const [action, setAction] = useState<Action>();
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
   const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } =
@@ -112,7 +115,7 @@ export const ActionResponse = ({
     if (!hasAllowance && hasBalance) {
       // case: enough balance, but allowance not sufficient */
       if (true) {
-        setAction(() => approveTx);
+        setAction({ name: 'approve', fn: approveTx });
         console.log('READY FOR APPROVAL: Has balance.');
         setLabel(`A token approval is required`);
         setState(ActionResponseState.READY);
@@ -151,7 +154,7 @@ export const ActionResponse = ({
         console.log('READY FOR TX: Has balance and allowance.');
         setLabel(defaultLabel);
         setState(ActionResponseState.READY);
-        setAction(() => toast.info('Mock submiting transaction.') as any);
+        setAction({ name: 'submit', fn: submitTx });
       }
 
       // ACTION: user clicks submit button
@@ -189,7 +192,10 @@ export const ActionResponse = ({
   return (
     <div className="flex w-full justify-center">
       {address ? (
-        <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={(e) => action?.()}>
+        <StyledButton
+          className={`bg-teal-900 ${extraStyle}`}
+          onClick={(e) => action && action.fn?.()}
+        >
           {label || <Skeleton width={100} />}
         </StyledButton>
       ) : (

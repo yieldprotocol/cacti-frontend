@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import useSigner from '@/hooks/useSigner';
-import { toast } from 'react-toastify';
 
 export type TxBasicParams = {
   address: `0x${string}`;
@@ -23,9 +23,8 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-
   const { config } = usePrepareContractWrite(params);
-  const { data: writeData, isLoading:isWaitingOnUser, write } = useContractWrite(config);
+  const { data: writeData, isLoading: isWaitingOnUser, write } = useContractWrite(config);
   const {
     data: receipt,
     error,
@@ -50,7 +49,6 @@ const useSubmitTx = (
   }, [receipt, status]);
 
   return {
-
     submitTx: write,
 
     receipt,
@@ -63,7 +61,6 @@ const useSubmitTx = (
     isError,
 
     error,
-
   };
 };
 

@@ -4,7 +4,7 @@ import { ActionResponse, ActionResponseState } from './ActionResponse';
 
 const defaultAction = async () => {
   toast('Action started...');
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 2000));
   toast('Action completed!');
 };
 
@@ -13,13 +13,12 @@ const meta: Meta<typeof ActionResponse> = {
   component: ActionResponse,
   tags: ['autodocs'],
   argTypes: {
-
     txAction: {
       description: 'Transaction action to take.',
       default: {},
       control: 'object',
     },
-    approveAction : {
+    approveAction: {
       description: 'An approval action that needs to happen before the tx',
       default: {},
       control: 'object',
@@ -33,7 +32,7 @@ const meta: Meta<typeof ActionResponse> = {
       default: {},
       control: 'text',
     },
-    disabled : {
+    disabled: {
       description: 'A bbutton disabling controled by parent component',
       default: false,
       control: 'boolean',
@@ -48,7 +47,7 @@ export const Primary: Story = {
   args: {
     // altAction: defaultAction,
     label: 'Submit',
-    disabled: false
+    disabled: false,
   },
 };
 

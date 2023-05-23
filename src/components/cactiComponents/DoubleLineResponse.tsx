@@ -39,9 +39,9 @@ export const DoubleLineResponse = (props: any) => {
     <ResponseWrap>
       <div>
         {token && (
-          <div  className="p-2">
+          <div className="p-2">
             {/* Main values */}
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
@@ -51,7 +51,7 @@ export const DoubleLineResponse = (props: any) => {
             </div>
 
             {/* Calculated values/ exncahnge rates */}
-            <div className="flex justify-between items-center text-sm text-white/70">
+            <div className="flex items-center justify-between text-sm text-white/70">
               <div className="py-2 px-1">
                 $ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}
               </div>
