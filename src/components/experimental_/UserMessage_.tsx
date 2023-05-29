@@ -62,7 +62,7 @@ export const UserMessage = ({
       hover:ring-gray-500/80 focus:text-gray-50
       focus:ring-gray-500/80
       ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
-      mt-[24px]
+      mt-[32px]
       items-center
       p-3
    `}

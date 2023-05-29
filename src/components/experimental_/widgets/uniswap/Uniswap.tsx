@@ -170,6 +170,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         label={`Swap ${inputCleaned || ''} ${tokenInSymbol || ''} on Uniswap`}
         txParams={tx}
         approvalParams={approval}
+        // stepper
         // disabled={true}
       />
     </>
