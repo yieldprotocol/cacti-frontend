@@ -19,7 +19,7 @@ export const TextResponse = (props: any) => {
         </>
       )}
 
-      {!props.title && <div className="p-2 text-white text-opacity-70">{props.text}</div>}
+      {!props.title && <div className="p-2 text-white text-opacity-70 text-base">{props.text}</div>}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>

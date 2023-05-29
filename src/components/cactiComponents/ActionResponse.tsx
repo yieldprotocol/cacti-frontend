@@ -76,7 +76,7 @@ export const ActionResponse = ({
   const [label, setLabel] = useState<string | undefined>();
   const [state, setState] = useState(ActionResponseState.LOADING);
 
-  const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
+  // const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
 
   const [action, setAction] = useState<Action>();
 
@@ -93,20 +93,21 @@ export const ActionResponse = ({
     approvalParams?.amount || valueFromOverrides
   );
 
-  /**
-   * Set the txParams to 'undefined' until hasBalance and hasAllowance are both true.
-   **/
-  useEffect(() => {
-    hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
-  }, [hasBalance, hasAllowance]);
+  // /**
+  //  * Set the txParams to 'undefined' until hasBalance and hasAllowance are both true.
+  //  **/
+  // useEffect(() => {
+  //   hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
+  // }, [hasBalance, hasAllowance]);
 
-  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txToPrepare);
+  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txParams);
 
   /**
    * BUTTON FLOW:
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
+
     // case:not enough balance */
     if (!hasBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
@@ -116,6 +117,7 @@ export const ActionResponse = ({
 
     /* -------- APPROVAL FLOW --------- */
     if (!hasAllowance && hasBalance) {
+
       // case: enough balance, but allowance not sufficient */
       if (true) {
         setAction({ name: 'approve', fn: approveTx });
@@ -145,6 +147,7 @@ export const ActionResponse = ({
 
     /* -------- TRANSACTION FLOW --------- */
     if (hasAllowance && hasBalance) {
+      
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx) {
         console.log('Building TX: Has balance and allowance.');

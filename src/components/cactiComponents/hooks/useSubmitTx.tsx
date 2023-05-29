@@ -23,10 +23,8 @@ const useSubmitTx = (
   onError?: () => void
 ) => {
 
-
   const { config } = usePrepareContractWrite(params);
 
-  
   const { data: writeData, isLoading: isWaitingOnUser, write, isError } = useContractWrite(config);
   const {
     data: receipt,
