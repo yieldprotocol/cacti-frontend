@@ -137,6 +137,34 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+      case 'deposit-dsr': {
+        const [amount] = parseArgsStripQuotes(args);
+        return (
+          <ActionPanel
+            header={`Deposit DAI in the MakerDAO DSR`}
+            msg={inputString}
+            centerTitle={true}
+          >
+            <div className="flex w-[100%] justify-end">
+              <DepositDSR amount={amount} />
+            </div>
+          </ActionPanel>
+        );
+      }
+      case 'withdraw-dsr': {
+        const [amount] = parseArgsStripQuotes(args);
+        return (
+          <ActionPanel
+            header={`Withdraw DAI from the MakerDAO DSR`}
+            msg={inputString}
+            centerTitle={true}
+          >
+            <div className="flex w-[100%] justify-end">
+              <WithdrawDSR amount={amount} />
+            </div>
+          </ActionPanel>
+        );
+      }
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
