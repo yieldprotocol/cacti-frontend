@@ -71,7 +71,6 @@ const initialContext = {
 const ChatContext = createContext<ChatContextType>(initialContext);
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-
   const [messages, setMessages] = useState<Message[]>(initialContext.messages);
   const [isBotThinking, setIsBotThinking] = useState<boolean>(initialContext.isBotThinking);
   const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
@@ -91,7 +90,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();
-  const { sendJsonMessage: wsSendMessage, lastMessage, readyState } = useWebSocket(
+  const {
+    sendJsonMessage: wsSendMessage,
+    lastMessage,
+    readyState,
+  } = useWebSocket(
     backendUrl,
     {
       onOpen: (evt) => onOpen(),
@@ -129,9 +132,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /* monitor ready state and update connectionStatus accordingly */
-  useEffect(()=>{
-    setConnectionStatus(readyState)
-  },[readyState]);
+  useEffect(() => {
+    setConnectionStatus(readyState);
+  }, [readyState]);
 
   // unused in production, but useful in debugging
   const onClose = () => {
