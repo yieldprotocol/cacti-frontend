@@ -1,7 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import SettingsDropdown from '@/components/SettingsDropdown';
 import { useChatContext } from '@/contexts/ChatContext';
-import { FaceSmileIcon } from '@heroicons/react/20/solid';
 
 const Header = () => {
 
