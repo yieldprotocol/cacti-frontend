@@ -22,75 +22,38 @@ const componentsList = [
     id: 1001,
     name: ' --- component Grid --- ',
     str: '',
-    // component: <div/>,
   },
 
   {
     id: 1,
     name: 'Header Response',
     str: '{"response":"HeaderResponse", "props": {"text":"Swap with Aave", "projectName": "aave-v2" }}',
-    // component: <HeaderResponse projectName="Compound" text="Borrow with Compound" />,
   },
   {
     id: 2,
     name: 'Text Response',
     str: '{"response":"TextResponse", "props": {"text":"Swapping with Aave"}}',
-    // component: (
-    //   <TextResponse
-    //     text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    //     title="Some Title"
-    //   />
-    // ),
   },
   {
     id: 3,
     name: 'Single Line Response',
     str: '{"response":"SingleLineResponse", "props": {"tokenSymbol":"USDC", "value":"10234"}}',
-    // component: <SingleLineResponse tokenSymbol="DAI" value={100.67} />,
   },
   {
     id: 4,
     name: 'Double Line Response',
-    str: '',
-    component: (
-      <DoubleLineResponse
-        amount={100.67}
-        amountValueInUsd={99.03}
-        tokenSymbol="DAI"
-        tokenValueInUsd={1.01}
-      />
-    ),
+    str: '{"response":"DoubleLineResponse", "props": {"amount":"100.67","amountValueInUsd":"99.03","tokenSymbol":"DAI","tokenValueInUsd":"1.01"}}'
   },
   {
     id: 5,
     name: 'Image Response',
-    str: '',
-    component: (
-      <ImageResponse
-        actionLabel="Price"
-        actionValue="0.5 ETH"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        image="https://picsum.photos/200"
-        imageTags={['some tag', 'Another tag']}
-        title="Some Title"
-      />
-    ),
+    str: '{"response":"ImageResponse", "props": { "actionLabel":"Price","actionValue":"0.5 ETH","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "image":"https://picsum.photos/200","imageTags":["some tag", "Another tag"], "title":"Some Title"}}'
+
   },
   {
     id: 6,
     name: 'List Response',
-    str: '',
-    component: (
-      <ListResponse
-        collapsible
-        data={[
-          ['Transaction details', '0.0'],
-          ['Transaction details', '0.0'],
-          ['Transaction details', '0.0'],
-        ]}
-        title="Breakdown"
-      />
-    ),
+    str: '{"response":"ListResponse", "props": {"collapsible": "true", "data": [["Transaction details", "0.0"], ["Transaction details", "0.0"], ["Transaction details", "0.0"]], "title": "Breakdown"}}',
   },
   {
     id: 7,
