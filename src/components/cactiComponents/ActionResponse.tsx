@@ -107,7 +107,7 @@ export const ActionResponse = ({
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
-
+    
     // case:not enough balance */
     if (!hasBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
