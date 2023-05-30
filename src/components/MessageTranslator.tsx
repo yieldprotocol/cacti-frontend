@@ -24,6 +24,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import * as cactiComponents from './cactiComponents';
 import { cactiComponent } from './cactiComponents';
+import Lido from './experimental_/widgets/lido/Lido';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -37,7 +38,7 @@ import { YieldFarm } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import Lido from './experimental_/widgets/lido/Lido';
+import Reth from './experimental_/widgets/rocket/Rocket';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const { chain } = useNetwork();
@@ -98,7 +99,7 @@ const Widgetize = (widget: Widget) => {
       }
       case 'deposit-eth-lido': {
         const [amountInStrRaw] = parseArgsStripQuotes(args);
-        const tokenIn = getToken("ETH");
+        const tokenIn = getToken('ETH');
         const inputAmount = parseUnits(
           cleanValue(amountInStrRaw, tokenIn?.decimals)!,
           tokenIn?.decimals
@@ -108,11 +109,29 @@ const Widgetize = (widget: Widget) => {
           <ConnectFirst>
             <Lido
               {...{
-                inputAmount
+                inputAmount,
               }}
             />
           </ConnectFirst>
-        )
+        );
+      }
+      case 'deposit-eth-reth': {
+        const [amountInStrRaw] = parseArgsStripQuotes(args);
+        const tokenIn = getToken('ETH');
+        const inputAmount = parseUnits(
+          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
+          tokenIn?.decimals
+        );
+
+        return (
+          <ConnectFirst>
+            <Reth
+              {...{
+                inputAmount,
+              }}
+            />
+          </ConnectFirst>
+        );
       }
       // Swap widget
       case 'uniswap': {
