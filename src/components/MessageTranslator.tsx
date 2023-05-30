@@ -22,6 +22,8 @@ import useChainId from '@/hooks/useChainId';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { DepositDSR } from './experimental_/widgets/dsr/DepositDSR';
+import { WithdrawDSR } from './experimental_/widgets/dsr/WithdrawDSR';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -32,8 +34,6 @@ import {
 import { NftSearch } from './widgets/NftSearch';
 import { SendTransactionWithReplayMsg } from './widgets/SendTransactionWithReplayMsg';
 import { YieldFarm } from './widgets/YieldFarm';
-import { DepositDSR } from './experimental_/widgets/dsr/DepositDSR';
-import { WithdrawDSR } from './experimental_/widgets/dsr/WithdrawDSR';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';

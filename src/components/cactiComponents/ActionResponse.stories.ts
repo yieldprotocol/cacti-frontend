@@ -49,7 +49,7 @@ export const Primary: Story = {
     // altAction: defaultAction,
     label: 'Submit',
     disabled: false,
-    stepper: false
+    stepper: false,
   },
 };
 
@@ -65,7 +65,7 @@ export const Disabled: Story = {
     // altAction: defaultAction,
     label: 'Submit',
     disabled: true,
-    stepper: false
+    stepper: false,
   },
 };
 

@@ -5,10 +5,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
-import { ActionStepper } from './ActionStepper';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -58,7 +58,7 @@ export const ActionResponse = ({
   approvalParams,
   label: label_,
   disabled,
-  stepper
+  stepper,
 }: // assertCallParams
 // altAction,
 {
@@ -178,8 +178,7 @@ export const ActionResponse = ({
         setState(ActionResponseState.TRANSACTING);
       }
     }
-  }, 
-  [
+  }, [
     hasBalance,
     hasAllowance,
     isWaitingOnUser,
@@ -193,20 +192,19 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  const returnComponent = () => { 
-    if (address && stepper) return <ActionStepper />
-    if (address && !stepper) return <StyledButton
-        className={`bg-teal-900 ${extraStyle}`}
-        onClick={(e) => action && action.fn?.()}
+  const returnComponent = () => {
+    if (address && stepper) return <ActionStepper />;
+    if (address && !stepper)
+      return (
+        <StyledButton
+          className={`bg-teal-900 ${extraStyle}`}
+          onClick={(e) => action && action.fn?.()}
         >
-        {label || <Skeleton width={100} />}
+          {label || <Skeleton width={100} />}
         </StyledButton>
-    return <ConnectButton />
-  }
+      );
+    return <ConnectButton />;
+  };
 
-  return (
-    <div className="flex w-full justify-center">
-      {returnComponent()}
-    </div>
-  );
+  return <div className="flex w-full justify-center">{returnComponent()}</div>;
 };

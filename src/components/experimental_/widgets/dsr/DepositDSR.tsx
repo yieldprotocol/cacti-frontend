@@ -2,15 +2,9 @@ import { useEffect, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import ERC4626Abi from '@/abi/erc4626ABI.json';
-import {
-  ActionResponse,
-  HeaderResponse,
-  IconResponse,
-  ListResponse,
-  TextResponse,
-} from '@/components/cactiComponents';
+import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useChainId from '@/hooks/useChainId';
@@ -45,49 +39,48 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
   const { data: tokenIn } = useToken(tokenInSymbol);
   const { data: tokenOut } = useToken(tokenOutSymbol);
 
-  console.log(tokenIn)
   const inputCleaned = cleanValue(depositAmount.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
-//  // token out quote for amount in
-//  const { isLoading: quoteIsLoading, data: quote } = useERC4626Quote({
-//    baseTokenSymbol: tokenInSymbol,
-//    quoteTokenSymbol: tokenOutSymbol,
-//    amount: inputCleaned,
-//  });
-//
-//  // formatted amount out quote value
-//  const quoteTokenOut = quote?.value?.toExact();
-//
-//  // usdc quote for amount in
-//  const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
-//    baseTokenSymbol: tokenInSymbol,
-//    quoteTokenSymbol: 'USDC',
-//    amount: inputCleaned,
-//  });
-//
-//  // usdc RATE for token out (1 USDC)
-//  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
-//    baseTokenSymbol: tokenOutSymbol,
-//    quoteTokenSymbol: 'USDC',
-//    amount: undefined,
-//  });
-//
-//  const calcPrice = (quote: string | undefined, amount: string | undefined) =>
-//    !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
-//
-//  const calcUSDValue = (amount: string | undefined) =>
-//    !tokenOutUSDRate?.humanReadableAmount || !amount
-//      ? undefined
-//      : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
-//
-//  const amountOutMinimum = quote?.value
-//    ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut?.decimals).div('1000')
-//    : undefined;
-//
-//  const amountOutMinimum_ = amountOutMinimum
-//    ? cleanValue(formatUnits(amountOutMinimum, tokenOut?.decimals), 2)
-//    : undefined;
+  //  // token out quote for amount in
+  //  const { isLoading: quoteIsLoading, data: quote } = useERC4626Quote({
+  //    baseTokenSymbol: tokenInSymbol,
+  //    quoteTokenSymbol: tokenOutSymbol,
+  //    amount: inputCleaned,
+  //  });
+  //
+  //  // formatted amount out quote value
+  //  const quoteTokenOut = quote?.value?.toExact();
+  //
+  //  // usdc quote for amount in
+  //  const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
+  //    baseTokenSymbol: tokenInSymbol,
+  //    quoteTokenSymbol: 'USDC',
+  //    amount: inputCleaned,
+  //  });
+  //
+  //  // usdc RATE for token out (1 USDC)
+  //  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
+  //    baseTokenSymbol: tokenOutSymbol,
+  //    quoteTokenSymbol: 'USDC',
+  //    amount: undefined,
+  //  });
+  //
+  //  const calcPrice = (quote: string | undefined, amount: string | undefined) =>
+  //    !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
+  //
+  //  const calcUSDValue = (amount: string | undefined) =>
+  //    !tokenOutUSDRate?.humanReadableAmount || !amount
+  //      ? undefined
+  //      : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
+  //
+  //  const amountOutMinimum = quote?.value
+  //    ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut?.decimals).div('1000')
+  //    : undefined;
+  //
+  //  const amountOutMinimum_ = amountOutMinimum
+  //    ? cleanValue(formatUnits(amountOutMinimum, tokenOut?.decimals), 2)
+  //    : undefined;
 
   const params: DepositDSRParams = {
     receiver: receiver!,
@@ -113,7 +106,10 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
 
   return (
     <>
-      <HeaderResponse text="Deposit in the MakerDAO DSR" projectName="dsr" />
+      <HeaderResponse
+        text={`Deposit ${inputCleaned} ${tokenInSymbol} in the MakerDAO DSR`}
+        projectName="dsr"
+      />
 
       <ActionResponse
         label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on MakerDAO DSR`}

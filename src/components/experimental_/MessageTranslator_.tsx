@@ -59,9 +59,7 @@ const getWidget = (widget: Widget): JSX.Element => {
       'dsr-deposit',
       () => (
         <ConnectFirst>
-          <DepositDSR
-            depositAmount={parsedArgs[0]}
-          />
+          <DepositDSR depositAmount={parsedArgs[0]} />
         </ConnectFirst>
       ),
     ],
