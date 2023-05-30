@@ -1,13 +1,9 @@
-import { Fragment, createElement, useMemo, useState } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
-import * as cactiComponents from '@/components/cactiComponents';
-import { CactiResponse } from '@/components/cactiComponents';
+import { Fragment } from 'react';
 import useParseMessage from '@/hooks/useParseMessage';
-import useToken from '@/hooks/useToken';
-import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
+import { composeFromString } from '../cactiComponents/tools/compose';
+import DepositDSR from './widgets/dsr/DepositDSR';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/uniswap/Uniswap';
-import { composeFromString } from '../cactiComponents/tools/compose';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -55,6 +51,16 @@ const getWidget = (widget: Widget): JSX.Element => {
             tokenInSymbol={parsedArgs[0]}
             tokenOutSymbol={parsedArgs[1]}
             inputAmount={parsedArgs[3]}
+          />
+        </ConnectFirst>
+      ),
+    ],
+    [
+      'dsr-deposit',
+      () => (
+        <ConnectFirst>
+          <DepositDSR
+            depositAmount={parsedArgs[0]}
           />
         </ConnectFirst>
       ),
