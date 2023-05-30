@@ -1,6 +1,4 @@
 import { Fragment } from 'react';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -10,8 +8,6 @@ import {
 import {
   NftCollectionAssetsContainer,
   NftCollectionContainer,
-  NftCollectionTraitContainer,
-  NftCollectionTraitValueContainer,
   NftCollectionTraitValuesContainer,
   NftCollectionTraitsContainer,
 } from '@/components/widgets/NftCollectionContainer';
