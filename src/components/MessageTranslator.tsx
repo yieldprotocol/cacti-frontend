@@ -34,6 +34,8 @@ import {
 import { NftSearch } from './widgets/NftSearch';
 import { SendTransactionWithReplayMsg } from './widgets/SendTransactionWithReplayMsg';
 import { YieldFarm } from './widgets/YieldFarm';
+import { DepositDSR } from './experimental_/widgets/dsr/DepositDSR';
+import { WithdrawDSR } from './experimental_/widgets/dsr/WithdrawDSR';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
@@ -137,7 +139,7 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      case 'deposit-dsr': {
+      case 'dsr-deposit': {
         const [amount] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
@@ -146,12 +148,12 @@ const Widgetize = (widget: Widget) => {
             centerTitle={true}
           >
             <div className="flex w-[100%] justify-end">
-              <DepositDSR amount={amount} />
+              <DepositDSR depositAmount={amount} />
             </div>
           </ActionPanel>
         );
       }
-      case 'withdraw-dsr': {
+      case 'dsr-withdraw': {
         const [amount] = parseArgsStripQuotes(args);
         return (
           <ActionPanel
@@ -160,7 +162,7 @@ const Widgetize = (widget: Widget) => {
             centerTitle={true}
           >
             <div className="flex w-[100%] justify-end">
-              <WithdrawDSR amount={amount} />
+              <WithdrawDSR withdrawAmount={amount} />
             </div>
           </ActionPanel>
         );

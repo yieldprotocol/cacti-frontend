@@ -28,7 +28,8 @@ interface WithdrawDSRParams {
 }
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
-const WithdrawDSR = ({ withdrawAmount }: WithdrawDSRProps) => {
+// TODO: Should I export the WithdrawDSR function?
+export const WithdrawDSR = ({ withdrawAmount }: WithdrawDSRProps) => {
   if (withdrawAmount === '*' || withdrawAmount === '{amount}')
     return (
       <TextResponse text="Please edit your query with an amount you wish to withdraw in the DSR." />

@@ -3,7 +3,7 @@ import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
-import SwapRouter02Abi from '@/abi/SwapRouter02.json';
+import ERC4626Abi from '@/abi/erc4626ABI.json';
 import {
   ActionResponse,
   HeaderResponse,
@@ -24,11 +24,12 @@ interface DepositDSRProps {
 }
 
 interface DepositDSRParams {
+  receiver: string;
   amountIn: BigNumber;
 }
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
-const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
+export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
   if (depositAmount === '*' || depositAmount === '{amount}')
     return (
       <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
@@ -39,104 +40,83 @@ const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
   const { address: receiver } = useAccount();
 
   // Here we use DAI as the tokenIn and SavingsDAI as tokenOut
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
-  const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
-  const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
+  const tokenInSymbol = 'DAI';
+  const tokenOutSymbol = 'sDAI';
+  const { data: tokenIn } = useToken(tokenInSymbol);
+  const { data: tokenOut } = useToken(tokenOutSymbol);
 
-  const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
+  console.log(tokenIn)
+  const inputCleaned = cleanValue(depositAmount.toString(), tokenIn?.decimals);
+  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
-  // token out quote for amount in
-  const { isLoading: quoteIsLoading, data: quote } = useUniswapQuote({
-    baseTokenSymbol: tokenInSymbol,
-    quoteTokenSymbol: tokenOutSymbol,
-    amount: inputCleaned,
-  });
-
-  // formatted amount out quote value
-  const quoteTokenOut = quote?.value?.toExact();
-
-  // usdc quote for amount in
-  const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
-    baseTokenSymbol: tokenInSymbol,
-    quoteTokenSymbol: 'USDC',
-    amount: inputCleaned,
-  });
-
-  // usdc RATE for token out (1 USDC)
-  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
-    baseTokenSymbol: tokenOutSymbol,
-    quoteTokenSymbol: 'USDC',
-    amount: undefined,
-  });
-
-  const calcPrice = (quote: string | undefined, amount: string | undefined) =>
-    !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
-
-  const calcUSDValue = (amount: string | undefined) =>
-    !tokenOutUSDRate?.humanReadableAmount || !amount
-      ? undefined
-      : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
-
-  const amountOutMinimum = quote?.value
-    ? ethers.utils.parseUnits(quote.value.toExact(), tokenOutChecked?.decimals).div('1000')
-    : undefined;
-
-  const amountOutMinimum_ = amountOutMinimum
-    ? cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2)
-    : undefined;
+//  // token out quote for amount in
+//  const { isLoading: quoteIsLoading, data: quote } = useERC4626Quote({
+//    baseTokenSymbol: tokenInSymbol,
+//    quoteTokenSymbol: tokenOutSymbol,
+//    amount: inputCleaned,
+//  });
+//
+//  // formatted amount out quote value
+//  const quoteTokenOut = quote?.value?.toExact();
+//
+//  // usdc quote for amount in
+//  const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
+//    baseTokenSymbol: tokenInSymbol,
+//    quoteTokenSymbol: 'USDC',
+//    amount: inputCleaned,
+//  });
+//
+//  // usdc RATE for token out (1 USDC)
+//  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
+//    baseTokenSymbol: tokenOutSymbol,
+//    quoteTokenSymbol: 'USDC',
+//    amount: undefined,
+//  });
+//
+//  const calcPrice = (quote: string | undefined, amount: string | undefined) =>
+//    !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
+//
+//  const calcUSDValue = (amount: string | undefined) =>
+//    !tokenOutUSDRate?.humanReadableAmount || !amount
+//      ? undefined
+//      : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
+//
+//  const amountOutMinimum = quote?.value
+//    ? ethers.utils.parseUnits(quote.value.toExact(), tokenOut?.decimals).div('1000')
+//    : undefined;
+//
+//  const amountOutMinimum_ = amountOutMinimum
+//    ? cleanValue(formatUnits(amountOutMinimum, tokenOut?.decimals), 2)
+//    : undefined;
 
   const params: DepositDSRParams = {
-    recipient: receiver!, // This should be just the active account
-    deadline: BigNumber.from(0),
+    receiver: receiver!,
     amountIn: amountIn,
   };
 
-  // The SavingsDAI contract accepts 2612 signatures
+  // Use DAI signatures for approval
   const approval = {
     address: tokenIn?.address as `0x${string}`,
     amount: amountIn,
-    spender: SWAP_ROUTER_02_ADDRESSES(chainId),
+    spender: tokenOut?.address as `0x${string}`, // This is the SavingsDAI contract address
   };
 
   const tx = {
-    address: SWAP_ROUTER_02_ADDRESSES(chainId),
-    abi: SavingsDAIAbi,
+    address: tokenOut?.address as `0x${string}`,
+    abi: ERC4626Abi,
     functionName: 'mint',
     args: [params],
+    overrides: {
+      value: 0,
+    },
   };
 
   return (
     <>
       <HeaderResponse text="Deposit in the MakerDAO DSR" projectName="dsr" />
-      <ResponseRow>
-        <DoubleLineResponse
-          tokenSymbol={tokenInSymbol}
-          tokenValueInUsd={cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2)}
-          amount={inputCleaned}
-          amountValueInUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
-        />
-        <IconResponse icon="forward" />
-        <DoubleLineResponse
-          tokenSymbol={tokenOutSymbol}
-          tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount, 2)}
-          amount={cleanValue(quoteTokenOut, 2)}
-          amountValueInUsd={cleanValue(calcUSDValue(quoteTokenOut), 2)}
-        />
-      </ResponseRow>
-      <ListResponse
-        title="Breakdown"
-        data={[
-          ['Slippage', '0.5%'],
-          ['Minimum swap', amountOutMinimum_],
-          ['Gas Fees', '0.32'],
-          ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
-        ]}
-        collapsible
-      />
+
       <ActionResponse
-        label={`Swap ${inputCleaned || ''} ${tokenInSymbol || ''} on Uniswap`}
+        label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on MakerDAO DSR`}
         txParams={tx}
         approvalParams={approval}
         // disabled={true}
