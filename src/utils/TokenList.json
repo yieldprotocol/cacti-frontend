@@ -57,6 +57,14 @@
     },
     {
       "chainId": 1,
+      "address": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+      "name": "stETH (stETH)",
+      "symbol": "stETH",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13442/thumb/steth_logo.png?1608607546"
+    },
+    {
+      "chainId": 1,
       "address": "0xB98d4C97425d9908E66E53A6fDf673ACcA0BE986",
       "name": "Arcblock",
       "symbol": "ABT",

@@ -96,9 +96,10 @@ const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      case 'lido': {
-        const [tokenInSymbol, tokenOutSymbol, amountInStrRaw] = parseArgsStripQuotes(args);
-        const tokenIn = getToken(tokenInSymbol);
+      case 'deposit-eth-lido': {
+        const [amountInStrRaw] = parseArgsStripQuotes(args);
+        console.log(args)
+        const tokenIn = getToken("ETH");
         const inputAmount = parseUnits(
           cleanValue(amountInStrRaw, tokenIn?.decimals)!,
           tokenIn?.decimals
@@ -108,9 +109,7 @@ const Widgetize = (widget: Widget) => {
           <ConnectFirst>
             <Lido
               {...{
-                inputAmount,
-                tokenInSymbol,
-                tokenOutSymbol,
+                inputAmount
               }}
             />
           </ConnectFirst>

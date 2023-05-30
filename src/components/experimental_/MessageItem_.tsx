@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Message, useChatContext } from '@/contexts/ChatContext';
 import { FeedbackButton } from './FeedbackButton_';
-import { MessageTranslator } from './MessageTranslator_';
+import { MessageTranslator } from '../MessageTranslator';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
 
