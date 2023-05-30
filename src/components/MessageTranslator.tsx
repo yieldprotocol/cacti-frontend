@@ -37,6 +37,7 @@ import { YieldFarm } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import Lido from './experimental_/widgets/lido/Lido';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const { chain } = useNetwork();
@@ -94,6 +95,26 @@ const Widgetize = (widget: Widget) => {
             </div>
           </ActionPanel>
         );
+      }
+      case 'lido': {
+        const [tokenInSymbol, tokenOutSymbol, amountInStrRaw] = parseArgsStripQuotes(args);
+        const tokenIn = getToken(tokenInSymbol);
+        const inputAmount = parseUnits(
+          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
+          tokenIn?.decimals
+        );
+
+        return (
+          <ConnectFirst>
+            <Lido
+              {...{
+                inputAmount,
+                tokenInSymbol,
+                tokenOutSymbol,
+              }}
+            />
+          </ConnectFirst>
+        )
       }
       // Swap widget
       case 'uniswap': {
