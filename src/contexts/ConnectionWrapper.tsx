@@ -20,7 +20,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   const mainnetFork = {
     id: 1,
     name: 'Mainnet Fork',
-    network: 'mainnetFork',
+    network: 'mainnet',
     nativeCurrency: {
       decimals: 18,
       name: 'Ether',
@@ -84,6 +84,24 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
   };
 
+  const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+    const color = '#1f2937';
+    return ensImage ? (
+      <img src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
+    ) : (
+      <div
+        style={{
+          backgroundColor: color,
+          borderRadius: 999,
+          height: size,
+          width: size,
+        }}
+      >
+        :^
+      </div>
+    );
+  };
+
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
@@ -97,6 +115,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
             chains={chains}
             theme={lightTheme({ accentColor: '#1f2937' })}
             showRecentTransactions={true}
+            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
