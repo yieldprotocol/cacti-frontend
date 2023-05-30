@@ -1,23 +1,15 @@
-import { useEffect, useState } from 'react';
-import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
-import { BigNumber, ethers } from 'ethers';
-import { formatUnits, getAddress, parseUnits } from 'ethers/lib/utils.js';
-import { getToken } from 'next-auth/jwt';
-import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 import stethAbi from '@/abi/steth.json';
 import {
   ActionResponse,
   HeaderResponse,
   IconResponse,
-  ListResponse,
-  TextResponse,
+  SingleLineResponse,
 } from '@/components/cactiComponents';
-import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
-import useTokenApproval from '@/hooks/useTokenApproval';
-import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 
 interface LidoProps {
@@ -25,32 +17,16 @@ interface LidoProps {
   
 }
 
-interface ExactInputSingleParams {
-  tokenIn: string;
-  tokenOut: string;
-  fee: BigNumber;
-  recipient: string;
-  deadline: BigNumber;
-  amountIn: BigNumber;
-  amountOutMinimum: BigNumber;
-  sqrtPriceLimitX96: BigNumber;
-}
-
 const Lido = ({ inputAmount }: LidoProps) => {
   const tokenInSymbol = 'ETH';
   const tokenOutSymbol = 'stETH';
 
-  const chainId = useChainId();
-
-  const { address: receiver } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
-  const { data: tokenInChecked } = useToken(tokenInIsETH ? 'ETH' : tokenInSymbol);
-  const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
+  const { data: tokenInChecked } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
-console.log()
+  console.log("amountIn: ", amountIn)
   const tx = {
     address: useToken(tokenOutSymbol).data?.address as `0x${string}`,
     abi: stethAbi,
@@ -65,9 +41,9 @@ console.log()
     <>
       <HeaderResponse text="Deposit ETH in Lido" />
       <ResponseRow>
-        <DoubleLineResponse tokenSymbol="ETH" amount={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" amount={inputCleaned} />
         <IconResponse icon="forward" />
-        <DoubleLineResponse tokenSymbol="stETH" amount={cleanValue(inputCleaned)} />
+        <SingleLineResponse tokenSymbol="stETH" amount={inputCleaned} />
       </ResponseRow>
       <ActionResponse
         label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on Lido`}
