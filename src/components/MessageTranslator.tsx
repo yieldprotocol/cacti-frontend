@@ -16,12 +16,9 @@ import {
   NftCollectionTraitsContainer,
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
-import { TransferButton } from '@/components/widgets/Transfer';
-import Swap from '@/components/widgets/swap/Swap';
-import useChainId from '@/hooks/useChainId';
+import { TransferWidget } from '@/components/widgets/Transfer';
 import useParseMessage from '@/hooks/useParseMessage';
-import useToken from '@/hooks/useToken';
-import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -31,13 +28,13 @@ import {
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
 import { SendTransactionWithReplayMsg } from './widgets/SendTransactionWithReplayMsg';
-import { YieldFarm } from './widgets/YieldFarm';
+import { YieldFarmWidget } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import { SwapWidget } from './widgets/swap/SwapWidget';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
-  const { chain } = useNetwork();
   const stringsAndWidgets = useParseMessage(message);
   return (
     <div className="flex flex-col gap-3">
@@ -68,72 +65,28 @@ const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = useChainId();
-  const { getToken } = useToken();
+  // The Widgetize function is called recursively. Do not put any hooks here,
+  // as it will cause problems with React rendering when there are multiple
+  // widgets in a line or nested widgets. Instead, create a component for
+  // the widget and put the hook inside that component.
 
   try {
     switch (fnName) {
       // Transfer widget
       case 'transfer': {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        const token = getToken(tokenSymbol);
-        const amount = parseUnits(amtString, token?.decimals);
-        return (
-          <ActionPanel
-            header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
-            msg={`transfer(${tokenSymbol},${amtString},${shortenAddress(receiver)})`}
-            key={inputString}
-            centerTitle={true}
-          >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <TransferButton {...{ amount, receiver, token: token! }} />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
+        return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
       }
       // Swap widget
       case 'uniswap': {
         const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
-
-        const tokenIn = getToken(tokenInSymbol);
-        const amountIn = parseUnits(
-          cleanValue(amountInStrRaw, tokenIn?.decimals)!,
-          tokenIn?.decimals
-        );
-
-        return (
-          <ConnectFirst>
-            <Swap
-              {...{
-                tokenInSymbol,
-                tokenOutSymbol,
-                amountIn,
-              }}
-            />
-          </ConnectFirst>
-        );
+        return <SwapWidget {...{ tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw }} />;
       }
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const token = getToken(tokenSymbol);
-        const amount = parseUnits(amtString, token?.decimals);
-
-        const project = findProjectByName(projectName);
         return (
-          <ActionPanel
-            header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
-            msg={inputString}
-            key={inputString}
-            gap="gap-3"
-            centerTitle={true}
-          >
-            <ConnectFirst>
-              <YieldFarm {...{ project, network, token: token!, amount }} />
-            </ConnectFirst>
-          </ActionPanel>
+          <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
       }
       case 'price': {
