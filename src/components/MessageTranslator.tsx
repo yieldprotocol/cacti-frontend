@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -13,6 +13,11 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
+import {
+  ListItem,
+  SharedStateContextProvider,
+  useSharedStateContext,
+} from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
@@ -33,19 +38,21 @@ import { SwapWidget } from './widgets/swap/SwapWidget';
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
   return (
-    <div className="flex flex-col gap-3">
-      {stringsAndWidgets.map((item, i) => {
-        return (
-          <Fragment key={`i${i}`}>
-            {
-              // if it's a string, just return the string
-              // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item)
-            }
-          </Fragment>
-        );
-      })}
-    </div>
+    <SharedStateContextProvider>
+      <div className="flex flex-col gap-3">
+        {stringsAndWidgets.map((item, i) => {
+          return (
+            <Fragment key={`i${i}`}>
+              {
+                // if it's a string, just return the string
+                // otherwise, let's try to translate the widget
+                typeof item === 'string' ? item : Widgetize(item)
+              }
+            </Fragment>
+          );
+        })}
+      </div>
+    </SharedStateContextProvider>
   );
 };
 
@@ -227,19 +234,11 @@ const Widgetize = (widget: Widget) => {
       }
       case 'list-container': {
         const params = JSON.parse(args);
-        return (
-          <div className="text-black">
-            <Grid>
-              {params.items?.map(
-                ({ name, params }: { name: string; params: string }, i: number) => (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
-                  </Fragment>
-                )
-              ) || ''}
-            </Grid>
-          </div>
-        );
+        return <ListContainer {...params} />;
+      }
+      case 'streaming-list-container': {
+        const params = JSON.parse(args);
+        return <StreamingListContainer {...params} />;
       }
       case 'table-container': {
         const params = JSON.parse(args);
@@ -354,4 +353,73 @@ const Widgetize = (widget: Widget) => {
       </div>
     );
   }
+};
+
+interface ListContainerProps {
+  items: ListItem[];
+}
+interface ListItemContainerProps {
+  item: ListItem;
+}
+
+const ListContainer = ({ items }: ListContainerProps) => {
+  return (
+    <div className="text-black">
+      <Grid>
+        {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
+          <Fragment key={`i${i}`}>
+            {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+          </Fragment>
+        )) || ''}
+      </Grid>
+    </div>
+  );
+};
+
+interface StreamingListContainerProps {
+  operation: string;
+  item: ListItem | null;
+  prefix: string | null;
+  suffix: string | null;
+}
+
+const StreamingListContainer = ({
+  operation,
+  item,
+  prefix: newPrefix,
+  suffix: newSuffix,
+}: StreamingListContainerProps) => {
+  const { items, setItems, prefix, setPrefix, suffix, setSuffix } = useSharedStateContext();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // handle list items
+      if (operation === 'create') {
+        setItems([]);
+      } else if (operation === 'append' && item) {
+        setItems((items) => {
+          return [...items, item];
+        });
+      }
+      // handle prefix/suffix
+      if (operation === 'create' || operation === 'update') {
+        if (newPrefix != null) {
+          setPrefix(newPrefix);
+        }
+        if (newSuffix != null) {
+          setSuffix(newSuffix);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+  if (operation === 'create') {
+    return (
+      <div className="text-white">
+        {prefix}
+        <ListContainer items={items} />
+        {suffix}
+      </div>
+    );
+  }
+  return null;
 };
