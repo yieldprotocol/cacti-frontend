@@ -21,12 +21,14 @@ const Lido = ({ inputAmount }: LidoProps) => {
   const tokenInSymbol = 'ETH';
   const tokenOutSymbol = 'stETH';
 
+  const chainId = useChainId();
+
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { data: tokenInChecked } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
-  console.log("amountIn: ", amountIn)
+  
   const tx = {
     address: useToken(tokenOutSymbol).data?.address as `0x${string}`,
     abi: stethAbi,
@@ -41,9 +43,9 @@ const Lido = ({ inputAmount }: LidoProps) => {
     <>
       <HeaderResponse text="Deposit ETH in Lido" />
       <ResponseRow>
-        <SingleLineResponse tokenSymbol="ETH" amount={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="stETH" amount={inputCleaned} />
+        <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
       </ResponseRow>
       <ActionResponse
         label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on Lido`}

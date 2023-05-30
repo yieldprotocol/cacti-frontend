@@ -98,7 +98,6 @@ const Widgetize = (widget: Widget) => {
       }
       case 'deposit-eth-lido': {
         const [amountInStrRaw] = parseArgsStripQuotes(args);
-        console.log(args)
         const tokenIn = getToken("ETH");
         const inputAmount = parseUnits(
           cleanValue(amountInStrRaw, tokenIn?.decimals)!,
