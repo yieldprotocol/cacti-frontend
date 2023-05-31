@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from 'wagmi';
+import {
+  useAccount,
+  useEnsAvatar,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from 'wagmi';
 import { Spinner } from '../../utils';
 import { Button } from '../Button';
 import { TxStatus } from '../TxStatus';
@@ -18,6 +24,9 @@ interface SendTransactionProps {
 }
 
 export const SendTransaction = ({ tx, description, onResult }: SendTransactionProps) => {
+  const { address } = useAccount();
+  const { refetch: refetchEnsAvatar } = useEnsAvatar({ address: address as `0x${string}` });
+
   const { to, from, value, data, gas } = tx || { to: '', from: '', value: '', data: '', gas: '' };
   const { config } = usePrepareSendTransaction({
     request: { to, from, value, data, gasLimit: gas },
@@ -45,7 +54,11 @@ export const SendTransaction = ({ tx, description, onResult }: SendTransactionPr
     if (sendTxData) {
       addRecentTransaction({ hash: sendTxData.hash!, description });
     }
-  }, [addRecentTransaction, description, sendTxData]);
+
+    if (isTxSuccess) {
+      refetchEnsAvatar();
+    }
+  }, [addRecentTransaction, description, isTxSuccess, refetchEnsAvatar, sendTxData]);
 
   return (
     <div className="flex justify-end">
