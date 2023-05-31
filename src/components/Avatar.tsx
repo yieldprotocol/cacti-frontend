@@ -30,7 +30,9 @@ const Avatar = ({ actor }: Props) => {
   return (
     <div>
       {actor === 'user' ? (
-        <UserAvatar address={address!} size={avatarSize} />
+        <div className={avatarSizeStyle}>
+          <UserAvatar address={address!} size={avatarSize} />
+        </div>
       ) : actor === 'system' ? (
         <CommandLineIcon
           className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
@@ -40,11 +42,13 @@ const Avatar = ({ actor }: Props) => {
           className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
         />
       ) : (
-        <img
-          className={`${avatarSizeStyle} max-w-none rounded-full`}
-          src={botAvatar}
-          alt="bot avatar"
-        />
+        <div className={avatarSizeStyle}>
+          <img
+            className={`${avatarSizeStyle} max-w-none rounded-full`}
+            src={botAvatar}
+            alt="bot avatar"
+          />
+        </div>
       )}
     </div>
   );
