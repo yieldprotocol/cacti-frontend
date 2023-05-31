@@ -1,6 +1,13 @@
 import { ReactNode } from 'react';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { AppProps } from 'next/app';
-import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
+import {
+  AvatarComponent,
+  RainbowKitProvider,
+  getDefaultWallets,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { SessionProvider, getCsrfToken } from 'next-auth/react';
 import { generateNonce } from 'siwe';
@@ -84,6 +91,14 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
   };
 
+  const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+    return ensImage ? (
+      <Image alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
+    ) : (
+      <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
+    );
+  };
+
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
@@ -97,6 +112,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
             chains={chains}
             theme={lightTheme({ accentColor: '#1f2937' })}
             showRecentTransactions={true}
+            avatar={CustomAvatar || undefined}
           >
             {children}
           </RainbowKitProvider>
