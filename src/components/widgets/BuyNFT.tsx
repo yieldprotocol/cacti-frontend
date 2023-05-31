@@ -14,6 +14,7 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
+import useForkTools from '@/hooks/useForkTools';
 import { Order } from '@/types';
 import { Spinner } from '@/utils';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
@@ -33,7 +34,10 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
         },
       }
     )
-    .then((res) => res.data);
+    .then((res) => {
+      console.log('res', res.data);
+      return res.data;
+    });
 };
 
 const fetchFulfillParams = async (
@@ -120,16 +124,13 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     error: queryError,
     data: listingData,
   } = useQuery(['listing', nftAddress, tokenId], async () => fetchListing(nftAddress, tokenId));
+  console.log('🦄 ~ file: BuyNFT.tsx:123 ~ BuyNFT ~ listingData:', listingData);
 
   const orderHash = listingData?.orders[0]?.order_hash;
-  const orderListingDate = listingData?.orders[0]?.listing_time;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
   const protocol_address = listingData?.orders[0]?.protocol_address;
 
-  const isNewerListing =
-    orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP!;
   const isExpired = orderExpirationDate < Date.now() / 1000;
-  const isValidListing = !isNewerListing && !isExpired;
 
   // fetchFulfillParams possible states:
   // If listing Query failed, error is already shown, no concern to fetchFulfillParams
@@ -216,7 +217,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       {!isQueryLoading && !isQueryError && !orderHash && (
         <WidgetError>NFT is not currently for sale</WidgetError>
       )}
-      {!isValidListing && <WidgetError>Listing expired or too new for forked Mainnet</WidgetError>}
+      {isExpired && <WidgetError>Listing expired</WidgetError>}
       {!isSuccess && isFulfillError && (
         <WidgetError>
           Could not fetch fulfillment data from Opensea. Error: {(fulfillError as Error).message}
