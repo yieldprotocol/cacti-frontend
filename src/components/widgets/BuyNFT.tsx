@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
@@ -182,11 +184,23 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   // If txErrorData, show error
   // If txErrorData is not set, proceed
   const {
+    data: txData,
     isLoading: isTxPending,
     isSuccess,
     isError: isTxError,
     error: txErrorData,
   } = useWaitForTransaction({ hash: contractWriteData?.hash });
+
+  const addRecentTransaction = useAddRecentTransaction();
+
+  useEffect(() => {
+    if (txData) {
+      addRecentTransaction({
+        hash: txData.transactionHash,
+        description: `Buy NFT with token address ${nftAddress} and id ${tokenId}`,
+      });
+    }
+  }, [addRecentTransaction, nftAddress, tokenId, txData]);
 
   return (
     <div className="mt-4 flex w-[100%] flex-col items-center justify-center gap-2">
