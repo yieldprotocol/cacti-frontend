@@ -112,7 +112,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
             chains={chains}
             theme={lightTheme({ accentColor: '#1f2937' })}
             showRecentTransactions={true}
-            avatar={CustomAvatar || undefined}
+            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
