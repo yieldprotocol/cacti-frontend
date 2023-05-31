@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
+import reactElementToJSXString from 'react-element-to-jsx-string';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionResponse } from '../ActionResponse';
 import { composeFromString } from './compose';
-
-import reactElementToJSXString from 'react-element-to-jsx-string';
 
 const componentsList = [
   {
@@ -38,13 +37,12 @@ const componentsList = [
   {
     id: 4,
     name: 'Double Line Response',
-    str: '{"response":"DoubleLineResponse", "props": {"amount":"100.67","amountValueInUsd":"99.03","tokenSymbol":"DAI","tokenValueInUsd":"1.01"}}'
+    str: '{"response":"DoubleLineResponse", "props": {"amount":"100.67","amountValueInUsd":"99.03","tokenSymbol":"DAI","tokenValueInUsd":"1.01"}}',
   },
   {
     id: 5,
     name: 'Image Response',
-    str: '{"response":"ImageResponse", "props": { "actionLabel":"Price","actionValue":"0.5 ETH","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "image":"https://picsum.photos/200","imageTags":["some tag", "Another tag"], "title":"Some Title"}}'
-
+    str: '{"response":"ImageResponse", "props": { "actionLabel":"Price","actionValue":"0.5 ETH","description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "image":"https://picsum.photos/200","imageTags":["some tag", "Another tag"], "title":"Some Title"}}',
   },
   {
     id: 6,
@@ -61,7 +59,6 @@ const componentsList = [
 ];
 
 const WidgetToString = () => {
-
   const [output, setOutput] = useState<string>('some output');
   const [selectedComponent, setSelectedComponent] = useState<any>();
   const [components, setComponents] = useState<any[]>([]);
@@ -76,25 +73,24 @@ const WidgetToString = () => {
     setComponents(filtered);
   };
 
-  const addComponent= () => {
-    
+  const addComponent = () => {
     if (!selectedComponent) return;
-    
-    if (cols > 0 && rowComponents.length <= cols ) {
-      setRowComponents([...rowComponents, selectedComponent.str]) // add the component to the row
-      setComponents([...components, `[${rowComponents}]` ])
-      if (rowComponents.length === cols) { // then if we have reached the end of the row
+
+    if (cols > 0 && rowComponents.length <= cols) {
+      setRowComponents([...rowComponents, selectedComponent.str]); // add the component to the row
+      setComponents([...components, `[${rowComponents}]`]);
+      if (rowComponents.length === cols) {
+        // then if we have reached the end of the row
         setRowComponents([]);
       }
     } else {
       setComponents([...components, selectedComponent]);
     }
-
   };
 
   const selectComponent = (id: number) => {
-
-    if (id === 1000) { // if we are adding a row of components
+    if (id === 1000) {
+      // if we are adding a row of components
       setRowComponents([]); // start a new row of components
       setCols(3); // set the cols value to 3 as default
       return;
@@ -107,7 +103,6 @@ const WidgetToString = () => {
   useEffect(() => {
     setOutput(`[${components.map((comp_) => comp_.str).join(',')}]`);
   }, [components]);
-
 
   return (
     <div className="h-full space-y-[24px] text-white/70">
@@ -133,17 +128,16 @@ const WidgetToString = () => {
           <div className={`${!selectedComponent ? 'text-white/10' : ''}`}> ADD </div>
         </button>
 
-        { selectedComponent?.id === 1000 && <input
-          type="number"
-          onChange={(e) => setRows(+e.target.value)}
-          disabled={!selectedComponent}
-        >
-          <div className={`${!selectedComponent ? 'text-white/10' : ''}`}> Rows</div>
-        </input>}
-
-
+        {selectedComponent?.id === 1000 && (
+          <input
+            type="number"
+            onChange={(e) => setRows(+e.target.value)}
+            disabled={!selectedComponent}
+          >
+            <div className={`${!selectedComponent ? 'text-white/10' : ''}`}> Rows</div>
+          </input>
+        )}
       </div>
-
       <div className="flex w-full justify-center space-y-2 border border-dotted border-white/20 p-4 ">
         <div className="w-[80%] space-y-2">
           {components.map((comp_: any) => (
@@ -156,7 +150,6 @@ const WidgetToString = () => {
           ))}
         </div>
       </div>
-
       <div className="space-y-[12px] p-2 text-sm">
         <div className="flex items-center gap-4">
           Output:
@@ -168,10 +161,11 @@ const WidgetToString = () => {
         </div>
         <div className="font-mono"> {output}</div>
       </div>
-
-      Experimental React code: 
-      <div className="font-mono"> { reactElementToJSXString( <>{components.map(c =>  composeFromString(`[${c.str}]`))}</> ) }</div>
-
+      Experimental React code:
+      <div className="font-mono">
+        {' '}
+        {reactElementToJSXString(<>{components.map((c) => composeFromString(`[${c.str}]`))}</>)}
+      </div>
     </div>
   );
 };

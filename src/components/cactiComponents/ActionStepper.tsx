@@ -9,7 +9,7 @@ const StepperItem = ({ step, title, description, active }: any) => {
     >
       <div
         className={`flex h-8 w-8 ${
-          active ? 'text-teal-600 dark:text-teal-500 border-teal-500 ' : ''
+          active ? 'border-teal-500 text-teal-600 dark:text-teal-500 ' : ''
         } shrink-0 items-center justify-center rounded-full border `}
       >
         {step}
