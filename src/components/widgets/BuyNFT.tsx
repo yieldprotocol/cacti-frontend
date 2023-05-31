@@ -110,7 +110,7 @@ const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: str
 
 export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
   // The new owner will be the receiver
-  const { address: receiver } = useAccount();
+  const { address: account } = useAccount();
 
   // fetchListing possible states:
   // If order array is empty, show the NFT is not currently for sale
@@ -143,7 +143,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: fulfillmentData,
   } = useQuery(
     ['fulfillment', orderHash],
-    async () => orderHash && fetchFulfillParams(orderHash, receiver!, protocol_address)
+    async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address)
   );
 
   const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
