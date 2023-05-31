@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 import {
   erc20ABI,
   useContractWrite,
@@ -10,7 +11,11 @@ import {
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useToken from '@/hooks/useToken';
 import { Token } from '@/types';
+import { shortenAddress } from '@/utils';
+import { ActionPanel } from './helpers/ActionPanel';
+import { ConnectFirst } from './helpers/ConnectFirst';
 
 interface TransferButtonProps {
   token: Token;
@@ -72,5 +77,37 @@ const TransferToken = ({ token, amount, receiver }: TransferButtonProps) => {
       {isSuccess && <TxStatus hash={data?.hash!} />}
       {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}
     </div>
+  );
+};
+
+interface TransferWidgetProps {
+  inputString: string;
+  tokenSymbol: string;
+  amtString: string;
+  receiver: string;
+}
+
+export const TransferWidget = ({
+  inputString,
+  tokenSymbol,
+  amtString,
+  receiver,
+}: TransferWidgetProps) => {
+  const { getToken } = useToken();
+  const token = getToken(tokenSymbol);
+  const amount = parseUnits(amtString, token?.decimals);
+  return (
+    <ActionPanel
+      header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
+      msg={`transfer(${tokenSymbol},${amtString},${shortenAddress(receiver)})`}
+      key={inputString}
+      centerTitle={true}
+    >
+      <div className="flex w-[100%] justify-end">
+        <ConnectFirst>
+          <TransferButton {...{ amount, receiver, token: token! }} />
+        </ConnectFirst>
+      </div>
+    </ActionPanel>
   );
 };
