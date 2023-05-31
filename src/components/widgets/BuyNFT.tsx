@@ -124,7 +124,6 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     error: queryError,
     data: listingData,
   } = useQuery(['listing', nftAddress, tokenId], async () => fetchListing(nftAddress, tokenId));
-  console.log('🦄 ~ file: BuyNFT.tsx:123 ~ BuyNFT ~ listingData:', listingData);
 
   const orderHash = listingData?.orders[0]?.order_hash;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
