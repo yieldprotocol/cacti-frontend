@@ -381,6 +381,7 @@ interface StreamingListContainerProps {
   item: ListItem | null;
   prefix: string | null;
   suffix: string | null;
+  isThinking: boolean | null;
 }
 
 const StreamingListContainer = ({
@@ -388,8 +389,10 @@ const StreamingListContainer = ({
   item,
   prefix: newPrefix,
   suffix: newSuffix,
+  isThinking: newIsThinking,
 }: StreamingListContainerProps) => {
-  const { items, setItems, prefix, setPrefix, suffix, setSuffix } = useSharedStateContext();
+  const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
+    useSharedStateContext();
   useEffect(() => {
     const timer = setTimeout(() => {
       // handle list items
@@ -400,13 +403,16 @@ const StreamingListContainer = ({
           return [...items, item];
         });
       }
-      // handle prefix/suffix
+      // handle prefix/suffix/isThinking
       if (operation === 'create' || operation === 'update') {
         if (newPrefix != null) {
           setPrefix(newPrefix);
         }
         if (newSuffix != null) {
           setSuffix(newSuffix);
+        }
+        if (newIsThinking != null) {
+          setIsThinking(newIsThinking);
         }
       }
     }, 0);
@@ -415,9 +421,9 @@ const StreamingListContainer = ({
   if (operation === 'create') {
     return (
       <div className="text-white">
-        {prefix}
+        <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
         <ListContainer items={items} />
-        {suffix}
+        <span>{suffix}</span>
       </div>
     );
   }
