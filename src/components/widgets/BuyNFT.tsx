@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
@@ -14,6 +16,7 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
+import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { Spinner } from '@/utils';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
@@ -33,7 +36,10 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
         },
       }
     )
-    .then((res) => res.data);
+    .then((res) => {
+      console.log('res', res.data);
+      return res.data;
+    });
 };
 
 const fetchFulfillParams = async (
@@ -106,7 +112,7 @@ const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: str
 
 export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
   // The new owner will be the receiver
-  const { address: receiver } = useAccount();
+  const { address: account } = useAccount();
 
   // fetchListing possible states:
   // If order array is empty, show the NFT is not currently for sale
@@ -122,14 +128,10 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   } = useQuery(['listing', nftAddress, tokenId], async () => fetchListing(nftAddress, tokenId));
 
   const orderHash = listingData?.orders[0]?.order_hash;
-  const orderListingDate = listingData?.orders[0]?.listing_time;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
   const protocol_address = listingData?.orders[0]?.protocol_address;
 
-  const isNewerListing =
-    orderListingDate > process.env.NEXT_PUBLIC_FORK_ORIGINATING_BLOCK_TIMESTAMP!;
   const isExpired = orderExpirationDate < Date.now() / 1000;
-  const isValidListing = !isNewerListing && !isExpired;
 
   // fetchFulfillParams possible states:
   // If listing Query failed, error is already shown, no concern to fetchFulfillParams
@@ -142,7 +144,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: fulfillmentData,
   } = useQuery(
     ['fulfillment', orderHash],
-    async () => orderHash && fetchFulfillParams(orderHash, receiver!, protocol_address)
+    async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address)
   );
 
   const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
@@ -182,11 +184,26 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   // If txErrorData, show error
   // If txErrorData is not set, proceed
   const {
+    data: txData,
     isLoading: isTxPending,
     isSuccess,
     isError: isTxError,
     error: txErrorData,
   } = useWaitForTransaction({ hash: contractWriteData?.hash });
+
+  const addRecentTransaction = useAddRecentTransaction();
+  const { refetch: refetchBal } = useBalance();
+
+  useEffect(() => {
+    if (txData) {
+      addRecentTransaction({
+        hash: txData.transactionHash,
+        description: `Buy NFT with token address ${nftAddress} and id ${tokenId}`,
+      });
+    }
+
+    if (isSuccess) refetchBal();
+  }, [addRecentTransaction, isSuccess, nftAddress, refetchBal, tokenId, txData]);
 
   return (
     <div className="mt-4 flex w-[100%] flex-col items-center justify-center gap-2">
@@ -216,7 +233,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       {!isQueryLoading && !isQueryError && !orderHash && (
         <WidgetError>NFT is not currently for sale</WidgetError>
       )}
-      {!isValidListing && <WidgetError>Listing expired or too new for forked Mainnet</WidgetError>}
+      {isExpired && <WidgetError>Listing expired</WidgetError>}
       {!isSuccess && isFulfillError && (
         <WidgetError>
           Could not fetch fulfillment data from Opensea. Error: {(fulfillError as Error).message}
