@@ -3,6 +3,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import {
   useAccount,
   useEnsAvatar,
+  useEnsName,
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
@@ -26,6 +27,7 @@ interface SendTransactionProps {
 export const SendTransaction = ({ tx, description, onResult }: SendTransactionProps) => {
   const { address } = useAccount();
   const { refetch: refetchEnsAvatar } = useEnsAvatar({ address: address as `0x${string}` });
+  const { refetch: refetchEnsName } = useEnsName({ address: address as `0x${string}` });
 
   const { to, from, value, data, gas } = tx || { to: '', from: '', value: '', data: '', gas: '' };
   const { config } = usePrepareSendTransaction({
@@ -57,8 +59,16 @@ export const SendTransaction = ({ tx, description, onResult }: SendTransactionPr
 
     if (isTxSuccess) {
       refetchEnsAvatar();
+      refetchEnsName();
     }
-  }, [addRecentTransaction, description, isTxSuccess, refetchEnsAvatar, sendTxData]);
+  }, [
+    addRecentTransaction,
+    description,
+    isTxSuccess,
+    refetchEnsAvatar,
+    refetchEnsName,
+    sendTxData,
+  ]);
 
   return (
     <div className="flex justify-end">
