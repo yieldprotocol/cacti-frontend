@@ -16,7 +16,7 @@ import SeaportAbi from '@/abi/SeaportAbi.json';
 import { Button } from '@/components/Button';
 import { NftAttributes } from '@/components/widgets/NftAttributes';
 import { WidgetError } from '@/components/widgets/helpers';
-import useForkTools from '@/hooks/useForkTools';
+import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { Spinner } from '@/utils';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
@@ -192,6 +192,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   } = useWaitForTransaction({ hash: contractWriteData?.hash });
 
   const addRecentTransaction = useAddRecentTransaction();
+  const { refetch: refetchBal } = useBalance();
 
   useEffect(() => {
     if (txData) {
@@ -200,7 +201,9 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         description: `Buy NFT with token address ${nftAddress} and id ${tokenId}`,
       });
     }
-  }, [addRecentTransaction, nftAddress, tokenId, txData]);
+
+    if (isSuccess) refetchBal();
+  }, [addRecentTransaction, isSuccess, nftAddress, refetchBal, tokenId, txData]);
 
   return (
     <div className="mt-4 flex w-[100%] flex-col items-center justify-center gap-2">
