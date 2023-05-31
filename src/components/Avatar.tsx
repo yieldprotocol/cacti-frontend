@@ -23,7 +23,7 @@ export const UserAvatar = ({ address, size }: { address: `0x${string}`; size: nu
 const Avatar = ({ actor }: Props) => {
   const { address } = useAccount();
   const avatarSize = 40;
-  const avatarSizeStyle = `h-[${avatarSize}px] w-[${avatarSize}px] max-w-none`;
+  const avatarSizeStyle = `h-[${avatarSize}px] w-[${avatarSize}px]`;
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 
@@ -32,13 +32,19 @@ const Avatar = ({ actor }: Props) => {
       {actor === 'user' ? (
         <UserAvatar address={address!} size={avatarSize} />
       ) : actor === 'system' ? (
-        <CommandLineIcon className={`${avatarSizeStyle} rounded-md bg-gray-300 text-black`} />
+        <CommandLineIcon
+          className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
+        />
       ) : actor === 'commenter' ? (
         <ClipboardDocumentListIcon
-          className={`${avatarSizeStyle} rounded-md bg-gray-300 text-black`}
+          className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
         />
       ) : (
-        <img className={`${avatarSizeStyle} rounded-full`} src={botAvatar} alt="bot avatar" />
+        <img
+          className={`${avatarSizeStyle} max-w-none rounded-full`}
+          src={botAvatar}
+          alt="bot avatar"
+        />
       )}
     </div>
   );
