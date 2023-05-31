@@ -14,6 +14,8 @@ export const UserAvatar = ({ address, size }: { address: `0x${string}`; size: nu
       alt="avatar"
       src={ensImage}
       className={`h-[${size}px] w-[${size}px] max-w-none rounded-full`}
+      width={size}
+      height={size}
     />
   ) : (
     <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
@@ -47,6 +49,8 @@ const Avatar = ({ actor }: Props) => {
             className={`${avatarSizeStyle} max-w-none rounded-full`}
             src={botAvatar}
             alt="bot avatar"
+            width={avatarSize}
+            height={avatarSize}
           />
         </div>
       )}
