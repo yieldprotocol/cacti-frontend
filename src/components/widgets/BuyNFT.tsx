@@ -13,7 +13,7 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
-import SubmitButton from '@/components/widgets/swap/SubmitButton';
+import SubmitButton from '@/components/widgets/common/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
