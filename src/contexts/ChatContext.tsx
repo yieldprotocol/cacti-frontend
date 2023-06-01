@@ -66,7 +66,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
     initialContext.isMultiStepInProgress
   );
-  const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
+  const [resumeFromMessageId, setResumeFromMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
@@ -101,7 +101,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         // load the historical session stored within the backend
         const payload = {
           sessionId: params.get('s'),
-          resumeFromMessageId: lastBotMessageId,
+          resumeFromMessageId: resumeFromMessageId,
           insertBeforeMessageId: insertBeforeMessageId,
         };
         wsSendMessage({ actor: 'system', type: 'init', payload: payload });
@@ -137,7 +137,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setIsBotThinking(obj.stillThinking);
-    setLastBotMessageId(obj.messageId);
+    setResumeFromMessageId(obj.messageId);
     const payload = obj.payload;
     const actor = obj.actor;
     const beforeMessageId = obj.beforeMessageId || null;
@@ -232,17 +232,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
     const nextUserMessageId = remainingMessages.length > 0 ? remainingMessages[0].messageId : null;
 
-    // check if we need to update lastBotMessageId, if it is one of the removed messages
-    if (lastBotMessageId !== null) {
-      const lastBotMessageIdx = afterMessages.findIndex(
-        (message) => message.messageId === lastBotMessageId
+    // check if we need to update resumeFromMessageId, if it is one of the removed messages
+    if (resumeFromMessageId !== null) {
+      const resumeFromMessageIdx = afterMessages.findIndex(
+        (message) => message.messageId === resumeFromMessageId
       );
-      if (lastBotMessageIdx >= 0) {
+      if (resumeFromMessageIdx >= 0) {
         // if it is removed, we set it to the current human message, so if there
         // is any error and we reconnect, we only try to resume messages from
-        // there, instead of the true lastBotMessageId (since that will include
-        // a duplicated user message).
-        setLastBotMessageId(messageId);
+        // there, instead of what it was before it got deleted.
+        setResumeFromMessageId(messageId);
       }
     }
 
