@@ -163,6 +163,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
         />
       ) : (
         <SubmitButton
+          styleProps="flex rounded-sm border-gray-200/25 bg-gray-900/80 p-3.5 hover:bg-gray-900"
           label={
             !hasBalance
               ? 'Insufficient balance'
