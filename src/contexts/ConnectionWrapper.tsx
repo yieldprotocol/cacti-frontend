@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { AppProps } from 'next/app';
-import Image from 'next/image';
 import {
   AvatarComponent,
   RainbowKitProvider,
@@ -10,8 +8,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { Session } from 'next-auth';
-import { SessionProvider, getCsrfToken } from 'next-auth/react';
-import { generateNonce } from 'siwe';
+import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
@@ -87,6 +84,7 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
     );
     return !!result.data;
   };
+
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });

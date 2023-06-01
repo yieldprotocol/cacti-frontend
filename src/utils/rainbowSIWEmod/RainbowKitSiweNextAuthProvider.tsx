@@ -36,15 +36,12 @@ export function RainbowKitSiweNextAuthProvider({
   getSigninCallback,
   getSignoutCallback,
 }: RainbowKitSiweNextAuthProviderProps) {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const { address: account } = useAccount();
 
   /* force logout if account changes */
   useEffect(() => {
-    if (session && session?.user?.name !== account) {
-      signOut({ redirect: false });
-      //console.log( 'loggin out here')
-    }
+    if (session && session.user?.name !== account) signOut({ redirect: false });
   }, [account, session]);
 
   const adapter = useMemo(
