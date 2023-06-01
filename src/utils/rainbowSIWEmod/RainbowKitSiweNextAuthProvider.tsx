@@ -111,7 +111,7 @@ export function RainbowKitSiweNextAuthProvider({
           return response?.ok ?? false;
         },
       }),
-    [getSiweMessageOptions]
+    [getCustomNonce, getSigninCallback, getSignoutCallback, getSiweMessageOptions]
   );
 
   return (
