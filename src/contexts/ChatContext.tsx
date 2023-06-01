@@ -102,6 +102,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         const payload = {
           sessionId: params.get('s'),
           resumeFromMessageId: lastBotMessageId,
+          insertBeforeMessageId: insertBeforeMessageId,
         };
         wsSendMessage({ actor: 'system', type: 'init', payload: payload });
       }
@@ -118,6 +119,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   // unused in production, but useful in debugging
   const onClose = () => {
     // toast.info('Websocket closed');
+    setIsBotThinking(false);
   };
 
   const onError = () => {
@@ -213,6 +215,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     messageId: string,
     options?: TruncateOptions
   ): string | null => {
+    // we truncate our message list from messageId (exclusive by default
+    // unless options.inclusive is set) until next human message (exclusive)
     if (options?.setBotThinking) {
       setIsBotThinking(true);
     }
@@ -226,7 +230,22 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       (message) => message.actor === 'user' || message.actor === 'commenter'
     );
     const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
-    const nextUserMessageId = afterMessages.length > 0 ? afterMessages[0].messageId : null;
+    const nextUserMessageId = remainingMessages.length > 0 ? remainingMessages[0].messageId : null;
+
+    // check if we need to update lastBotMessageId, if it is one of the removed messages
+    if (lastBotMessageId !== null) {
+      const lastBotMessageIdx = afterMessages.findIndex(
+        (message) => message.messageId === lastBotMessageId
+      );
+      if (lastBotMessageIdx >= 0) {
+        // if it is removed, we set it to the current human message, so if there
+        // is any error and we reconnect, we only try to resume messages from
+        // there, instead of the true lastBotMessageId (since that will include
+        // a duplicated user message).
+        setLastBotMessageId(messageId);
+      }
+    }
+
     setMessages([...beforeMessages, ...remainingMessages]);
     return nextUserMessageId;
   };
