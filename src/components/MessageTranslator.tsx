@@ -420,7 +420,7 @@ const StreamingListContainer = ({
   }, []);
   if (operation === 'create') {
     return (
-      <div className="text-white">
+      <div className="p-3 text-white">
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
         <ListContainer items={items} />
         <span>{suffix}</span>
