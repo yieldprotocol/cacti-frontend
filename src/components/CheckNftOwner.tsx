@@ -29,6 +29,8 @@ export const NftOwner = ({ nftAddress, tokenId }: Props) => {
     watch: true,
   });
 
+  const isOwner = owner === account;
+
   useEffect(() => {
     if (is721ReadSuccess) setOwner(`${erc721Data?.toString()}` || '');
     if (is1155ReadSuccess) setOwner(`Your balance: ` + erc1155Data?.toString() || '0');
@@ -36,7 +38,7 @@ export const NftOwner = ({ nftAddress, tokenId }: Props) => {
 
   return (
     <div>
-      <b>Owned by</b>: {shortenAddress(owner)}
+      <b>Owned by</b>: {isOwner ? 'You' : shortenAddress(owner)}
     </div>
   );
 };

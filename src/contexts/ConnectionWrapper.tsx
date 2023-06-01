@@ -1,10 +1,17 @@
 import { ReactNode } from 'react';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { AppProps } from 'next/app';
-import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
+import {
+  AvatarComponent,
+  RainbowKitProvider,
+  getDefaultWallets,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { SessionProvider, getCsrfToken } from 'next-auth/react';
 import { generateNonce } from 'siwe';
-import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
@@ -20,7 +27,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
   const mainnetFork = {
     id: 1,
     name: 'Mainnet Fork',
-    network: 'mainnetFork',
+    network: 'mainnet',
     nativeCurrency: {
       decimals: 18,
       name: 'Ether',
@@ -84,6 +91,15 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
   };
 
+  const CustomAvatar: AvatarComponent = ({ address, size }) => {
+    const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+    return ensImage ? (
+      <img alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
+    ) : (
+      <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
+    );
+  };
+
   return (
     <WagmiConfig client={wagmiClient}>
       <SessionProvider refetchInterval={0} session={pageProps?.session}>
@@ -97,6 +113,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
             chains={chains}
             theme={lightTheme({ accentColor: '#1f2937' })}
             showRecentTransactions={true}
+            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
