@@ -39,7 +39,7 @@ export default function App({
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <ConnectionWrapperDynamic {...pageProps}>
+        <ConnectionWrapperDynamic session={session}>
           <CenterProvider>
             <ChatContextDynamic>
               <Component {...pageProps} />
