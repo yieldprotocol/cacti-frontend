@@ -13,12 +13,9 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
-import { Button } from '@/components/Button';
-import { NftAttributes } from '@/components/widgets/NftAttributes';
-import { WidgetError } from '@/components/widgets/helpers';
+import SubmitButton from '@/components/widgets/swap/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
-import { Spinner } from '@/utils';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { NftOwner } from '../CheckNftOwner';
 
@@ -160,6 +157,7 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     overrides: {
       value: BigNumber.from(valueAmount || 0),
     },
+    enabled: !!params && !!signature,
   });
 
   // opensea buy nft function
@@ -194,21 +192,10 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
       </div>
 
-      <div className="max-w-18rem">
-        <Button
-          disabled={
-            isQueryLoading ||
-            isExpired ||
-            isQueryError ||
-            isFulfillError ||
-            isWriteError ||
-            isPrepareError ||
-            isTxPending ||
-            isSuccess
-          }
-          onClick={() => seaportWrite?.()}
-        >
-          {isSuccess
+      <SubmitButton
+        styleProps="flex rounded-sm border border-gray-200/25 bg-gray-700/80 p-3.5 hover:bg-gray-700"
+        label={
+          isSuccess
             ? 'Success! You now own the NFT.'
             : isTxPending
             ? 'Buying NFT...'
@@ -224,9 +211,22 @@ export const BuyNFT = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
             ? 'Fetching NFT listing...'
             : isExpired
             ? 'Listing expired'
-            : `Buy NFT ${valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}`}
-        </Button>
-      </div>
+            : `Buy NFT ${valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}`
+        }
+        onClick={() => seaportWrite?.()}
+        isLoading={isQueryLoading || isTxPending}
+        isError={isQueryError || isFulfillError || isWriteError || isPrepareError}
+        disabled={
+          isQueryLoading ||
+          isExpired ||
+          isQueryError ||
+          isFulfillError ||
+          isWriteError ||
+          isPrepareError ||
+          isTxPending ||
+          isSuccess
+        }
+      />
     </div>
   );
 };
