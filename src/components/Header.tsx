@@ -16,7 +16,7 @@ const Header = () => {
       <ConnectButton />
       <SettingsDropdown />
       <div
-        className={`group fixed left-0 bottom-0 ml-1 mb-3 rounded-full text-xs ${getStatusColor(
+        className={`group fixed left-0 bottom-0 ml-2 mb-2 rounded-full text-xs ${getStatusColor(
           connectionStatus
         )}`}
       >
