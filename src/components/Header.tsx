@@ -1,12 +1,13 @@
+import { ReadyState } from 'react-use-websocket';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import SettingsDropdown from '@/components/SettingsDropdown';
 import { useChatContext } from '@/contexts/ChatContext';
 
 const Header = () => {
   const { connectionStatus } = useChatContext();
-  const getStatusColor = (status: number): string => {
-    if (status == 1) return 'text-green-500';
-    if (status == 3) return 'text-red-500';
+  const getStatusColor = (status: ReadyState): string => {
+    if (status === ReadyState.OPEN) return 'text-green-500';
+    if (status === ReadyState.CLOSED) return 'text-red-500';
     return 'text-orange-500';
   };
 
