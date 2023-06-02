@@ -11,13 +11,28 @@ const Header = () => {
     return 'text-orange-500';
   };
 
-  // TODO: add in a connection status tooltip when hovering over the dot
   return (
     <div className="fixed right-0 top-0 z-10 mr-4 mt-4 inline-flex gap-3">
       <ConnectButton />
       <SettingsDropdown />
-      <div className={`fixed right-0 top-0 mr-1 mt-1 text-xs ${getStatusColor(connectionStatus)}`}>
-        ●
+      <div
+        className={`group fixed left-0 bottom-0 ml-1 mb-3 rounded-full text-xs ${getStatusColor(
+          connectionStatus
+        )}`}
+      >
+        <div className="flex gap-1">
+          <span className="pointer-events-none absolute -top-7 left-0 w-max rounded-md bg-gray-400/50 p-1 text-xs text-gray-100 opacity-0 transition-opacity group-hover:opacity-100">
+            Server connection status
+          </span>
+          <span className="animate-pulse">●</span>
+          <span>
+            {connectionStatus === ReadyState.OPEN
+              ? 'Connected'
+              : connectionStatus === ReadyState.CLOSED
+              ? 'Disconnected'
+              : 'Not Connected'}
+          </span>
+        </div>
       </div>
     </div>
   );
