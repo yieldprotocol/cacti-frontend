@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
@@ -17,14 +16,6 @@ export type TruncateOptions = {
   inclusive?: boolean;
   setBotThinking?: boolean;
 };
-
-enum ReadyState {
-  UNINSTANTIATED = -1,
-  CONNECTING = 0,
-  OPEN = 1,
-  CLOSING = 2,
-  CLOSED = 3,
-}
 
 export type ChatContextType = {
   messages: Message[];
