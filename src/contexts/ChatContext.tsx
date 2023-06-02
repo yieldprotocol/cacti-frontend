@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
@@ -35,6 +34,7 @@ export type ChatContextType = {
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
   setInteractor: (arg0: string) => void;
+  connectionStatus: ReadyState;
 };
 
 const initialContext = {
@@ -56,6 +56,7 @@ const initialContext = {
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
   setInteractor: (arg0: string) => {},
+  connectionStatus: ReadyState.UNINSTANTIATED,
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -71,6 +72,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
+  const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
+
   const { data: session, status } = useSession();
   //useEffect(() => {
   //  console.log(session, status);
@@ -78,7 +81,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();
-  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
+  const {
+    sendJsonMessage: wsSendMessage,
+    lastMessage,
+    readyState,
+  } = useWebSocket(
     backendUrl,
     {
       onOpen: (evt) => onOpen(),
@@ -116,14 +123,20 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /* monitor ready state and update connectionStatus accordingly */
+  useEffect(() => {
+    setConnectionStatus(readyState);
+  }, [readyState]);
+
   // unused in production, but useful in debugging
   const onClose = () => {
+    console.log('Websocket closed');
     // toast.info('Websocket closed');
     setIsBotThinking(false);
   };
 
   const onError = () => {
-    toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
+    // toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
@@ -284,6 +297,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setShowDebugMessages,
         interactor,
         setInteractor,
+        connectionStatus,
       }}
     >
       {children}
