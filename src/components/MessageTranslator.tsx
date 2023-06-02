@@ -1,6 +1,4 @@
-import { Fragment } from 'react';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { Chain, useNetwork } from 'wagmi';
+import { Fragment, useEffect } from 'react';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -10,46 +8,51 @@ import {
 import {
   NftCollectionAssetsContainer,
   NftCollectionContainer,
-  NftCollectionTraitContainer,
-  NftCollectionTraitValueContainer,
   NftCollectionTraitValuesContainer,
   NftCollectionTraitsContainer,
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
-import { TransferButton } from '@/components/widgets/Transfer';
-import { UniswapButton } from '@/components/widgets/Uniswap';
+import { TransferWidget } from '@/components/widgets/Transfer';
+import {
+  ListItem,
+  SharedStateContextProvider,
+  useSharedStateContext,
+} from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import { findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
+import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from './widgets/NftAttributes';
 import { NftSearch } from './widgets/NftSearch';
-import { SendTransaction } from './widgets/SendTransaction';
-import { YieldFarm } from './widgets/YieldFarm';
+import { SendTransactionWithReplayMsg } from './widgets/SendTransactionWithReplayMsg';
+import { YieldFarmWidget } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import { SwapWidget } from './widgets/swap/SwapWidget';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
-  const { chain } = useNetwork();
   const stringsAndWidgets = useParseMessage(message);
   return (
-    <div className="flex flex-col gap-3">
-      {stringsAndWidgets.map((item, i) => {
-        return (
-          <Fragment key={`i${i}`}>
-            {
-              // if it's a string, just return the string
-              // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item, chain!)
-            }
-          </Fragment>
-        );
-      })}
-    </div>
+    <SharedStateContextProvider>
+      <div className="flex flex-col gap-3">
+        {stringsAndWidgets.map((item, i) => {
+          return (
+            <Fragment key={`i${i}`}>
+              {
+                // if it's a string, just return the string
+                // otherwise, let's try to translate the widget
+                typeof item === 'string' ? item : Widgetize(item)
+              }
+            </Fragment>
+          );
+        })}
+      </div>
+    </SharedStateContextProvider>
   );
 };
 
@@ -61,99 +64,32 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const Widgetize = (widget: Widget, chain: Chain) => {
+const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
-  const chainId = chain?.id || 1;
+  // The Widgetize function is called recursively. Do not put any hooks here,
+  // as it will cause problems with React rendering when there are multiple
+  // widgets in a line or nested widgets. Instead, create a component for
+  // the widget and put the hook inside that component.
 
   try {
     switch (fnName) {
       // Transfer widget
       case 'transfer': {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-        const amount = parseUnits(amtString, token.decimals);
-        return (
-          <ActionPanel
-            header={`Transfer ${amtString} ${tokenSymbol} to ${shortenAddress(receiver)}`}
-            msg={`transfer(${tokenSymbol},${amtString},${shortenAddress(receiver)})`}
-            key={inputString}
-            centerTitle={true}
-          >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <TransferButton {...{ amount, receiver, token }} />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
+        return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
       }
       // Swap widget
       case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInString] =
+        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
           parseArgsStripQuotes(args);
-
-        const tokenIn =
-          tokenInSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenInSymbol, chainId);
-        const tokenOut =
-          tokenOutSymbol === 'ETH'
-            ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-            : findTokenBySymbol(tokenOutSymbol, chainId);
-
-        const amountIn = parseUnits(amountInString, tokenIn.decimals);
-
-        return (
-          <ActionPanel
-            header={`Swap ${formatUnits(
-              amountIn.toString(),
-              tokenIn.decimals
-            )} of ${tokenInSymbol} to ${tokenOutSymbol}`}
-            msg={inputString}
-            key={inputString}
-            centerTitle={true}
-          >
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <UniswapButton
-                  {...{
-                    tokenIn,
-                    tokenOut,
-                    amountIn,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
+        return <SwapWidget {...{ tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw }} />;
       }
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const isEth = tokenSymbol === 'ETH';
-        const token = isEth
-          ? { address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', symbol: 'ETH', decimals: 18 }
-          : findTokenBySymbol(tokenSymbol, chainId);
-
-        const amount = parseUnits(amtString, token.decimals);
-
-        const project = findProjectByName(projectName);
         return (
-          <ActionPanel
-            header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
-            msg={inputString}
-            key={inputString}
-            gap="gap-3"
-            centerTitle={true}
-          >
-            <ConnectFirst>
-              <YieldFarm {...{ project, network, token, amount }} />
-            </ConnectFirst>
-          </ActionPanel>
+          <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
       }
       case 'price': {
@@ -248,11 +184,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) }, chain)}
+            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -266,16 +202,16 @@ const Widgetize = (widget: Widget, chain: Chain) => {
         const { collection, assets } = JSON.parse(args);
         return (
           <NftCollectionAssetsContainer
-            collection={Widgetize(
-              { fnName: collection.name, args: JSON.stringify(collection.params) },
-              chain
-            )}
+            collection={Widgetize({
+              fnName: collection.name,
+              args: JSON.stringify(collection.params),
+            })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -298,19 +234,11 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       }
       case 'list-container': {
         const params = JSON.parse(args);
-        return (
-          <div className="text-black">
-            <Grid>
-              {params.items?.map(
-                ({ name, params }: { name: string; params: string }, i: number) => (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) }, chain)}
-                  </Fragment>
-                )
-              ) || ''}
-            </Grid>
-          </div>
-        );
+        return <ListContainer {...params} />;
+      }
+      case 'streaming-list-container': {
+        const params = JSON.parse(args);
+        return <StreamingListContainer {...params} />;
       }
       case 'table-container': {
         const params = JSON.parse(args);
@@ -335,7 +263,7 @@ const Widgetize = (widget: Widget, chain: Chain) => {
                 };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) }, chain)}
+                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
                   </Fragment>
                 );
               })}
@@ -343,19 +271,63 @@ const Widgetize = (widget: Widget, chain: Chain) => {
           </table>
         );
       }
-      case 'transaction-for-signing-container': {
-        const { fromAddress, toAddress, data, gas, value, description } = JSON.parse(args);
+      case 'tx-payload-for-sending-container': {
+        const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
+          JSON.parse(args);
+
         return (
           <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
             <div className="flex w-[100%] justify-end">
               <ConnectFirst>
-                <SendTransaction
+                <SendTransactionWithReplayMsg
                   {...{
-                    fromAddress,
-                    toAddress,
-                    data,
-                    gas,
-                    value,
+                    userRequestStatus,
+                    tx,
+                    isApprovalTx,
+                    errorMsg,
+                    parsedUserRequest,
+                    description,
+                  }}
+                />
+              </ConnectFirst>
+            </div>
+          </ActionPanel>
+        );
+      }
+      case 'multistep-payload-container': {
+        const {
+          status,
+          workflowId,
+          workflowType,
+          stepId,
+          stepType,
+          stepNumber,
+          isFinalStep,
+          userActionType,
+          tx,
+          errorMsg,
+          description,
+        } = JSON.parse(args);
+
+        const headerText =
+          stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
+
+        return (
+          <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
+            <div className="flex w-[100%] justify-end">
+              <ConnectFirst>
+                <MultiStepContainer
+                  {...{
+                    status,
+                    workflowId,
+                    workflowType,
+                    stepId,
+                    stepType,
+                    userActionType,
+                    stepNumber,
+                    isFinalStep,
+                    tx,
+                    errorMsg,
                     description,
                   }}
                 />
@@ -381,4 +353,79 @@ const Widgetize = (widget: Widget, chain: Chain) => {
       </div>
     );
   }
+};
+
+interface ListContainerProps {
+  items: ListItem[];
+}
+interface ListItemContainerProps {
+  item: ListItem;
+}
+
+const ListContainer = ({ items }: ListContainerProps) => {
+  return (
+    <div className="text-black">
+      <Grid>
+        {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
+          <Fragment key={`i${i}`}>
+            {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+          </Fragment>
+        )) || ''}
+      </Grid>
+    </div>
+  );
+};
+
+interface StreamingListContainerProps {
+  operation: string;
+  item: ListItem | null;
+  prefix: string | null;
+  suffix: string | null;
+  isThinking: boolean | null;
+}
+
+const StreamingListContainer = ({
+  operation,
+  item,
+  prefix: newPrefix,
+  suffix: newSuffix,
+  isThinking: newIsThinking,
+}: StreamingListContainerProps) => {
+  const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
+    useSharedStateContext();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // handle list items
+      if (operation === 'create') {
+        setItems([]);
+      } else if (operation === 'append' && item) {
+        setItems((items) => {
+          return [...items, item];
+        });
+      }
+      // handle prefix/suffix/isThinking
+      if (operation === 'create' || operation === 'update') {
+        if (newPrefix != null) {
+          setPrefix(newPrefix);
+        }
+        if (newSuffix != null) {
+          setSuffix(newSuffix);
+        }
+        if (newIsThinking != null) {
+          setIsThinking(newIsThinking);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+  if (operation === 'create') {
+    return (
+      <div className="p-3 text-white">
+        <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
+        <ListContainer items={items} />
+        <span>{suffix}</span>
+      </div>
+    );
+  }
+  return null;
 };

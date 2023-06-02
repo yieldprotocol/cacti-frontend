@@ -1,26 +1,52 @@
+import 'react-loading-skeleton/dist/skeleton.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import type { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
-import { ChatContextProvider } from '@/contexts/ChatContext';
-import ConnectionWrapper from '@/contexts/ConnectionWrapper';
-import { ModalContextProvider } from '@/contexts/ModalContext';
+import { Session } from 'next-auth';
+import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
+const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
+  ssr: false,
+});
+const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
+  ssr: false,
+});
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<{
+  session: Session;
+}>) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ConnectionWrapper>
-        <CenterProvider>
-          <ModalContextProvider>
-            <ChatContextProvider>
+    <SettingsProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <QueryClientProvider client={queryClient}>
+        <ConnectionWrapperDynamic session={session}>
+          <CenterProvider>
+            <ChatContextDynamic>
               <Component {...pageProps} />
-            </ChatContextProvider>
-          </ModalContextProvider>
-        </CenterProvider>
-      </ConnectionWrapper>
-    </QueryClientProvider>
+            </ChatContextDynamic>
+          </CenterProvider>
+        </ConnectionWrapperDynamic>
+      </QueryClientProvider>
+    </SettingsProvider>
   );
 }

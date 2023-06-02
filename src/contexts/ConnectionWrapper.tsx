@@ -1,10 +1,21 @@
 import { ReactNode } from 'react';
-import { RainbowKitProvider, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit';
-import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import {
+  AvatarComponent,
+  RainbowKitProvider,
+  getDefaultWallets,
+  lightTheme,
+} from '@rainbow-me/rainbowkit';
+import axios from 'axios';
+import { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
+import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
+import { getBackendApiUrl } from '@/utils/backend';
+import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 
-const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
+const ConnectionWrapper = ({ children, session }: { children: ReactNode; session: Session }) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -14,7 +25,7 @@ const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
   const mainnetFork = {
     id: 1,
     name: 'Mainnet Fork',
-    network: 'mainnetFork',
+    network: 'mainnet',
     nativeCurrency: {
       decimals: 18,
       name: 'Ether',
@@ -49,11 +60,64 @@ const ConnectionWrapper = ({ children }: { children: ReactNode }) => {
     provider,
   });
 
+  const getSiweMessageOptions: GetSiweMessageOptions = () => ({
+    statement: 'Sign me in to wc3 app',
+  });
+
+  const getCustomNonce = async () => {
+    /* add in any async call here to add a custom nonce eg. server call */
+    const backendUrl = getBackendApiUrl();
+    const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
+    const nonce = resp.data as string;
+    return nonce;
+  };
+
+  const getSigninCallback = async (message: string, signature: string) => {
+    const backendUrl = getBackendApiUrl();
+    const result = await axios.post(
+      `${backendUrl}/login`,
+      {
+        eip4361: message,
+        signature,
+      },
+      { withCredentials: true }
+    );
+    return !!result.data;
+  };
+
+  const getSignoutCallback = async () => {
+    const backendUrl = getBackendApiUrl();
+    await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
+  };
+
+  const CustomAvatar: AvatarComponent = ({ address, size }) => {
+    const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+    return ensImage ? (
+      <img alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
+    ) : (
+      <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
+    );
+  };
+
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={lightTheme({ accentColor: '#1f2937' })}>
-        {children}
-      </RainbowKitProvider>
+      <SessionProvider refetchInterval={0} session={session}>
+        <RainbowKitSiweNextAuthProvider
+          getCustomNonce={getCustomNonce}
+          getSiweMessageOptions={getSiweMessageOptions}
+          getSigninCallback={getSigninCallback}
+          getSignoutCallback={getSignoutCallback}
+        >
+          <RainbowKitProvider
+            chains={chains}
+            theme={lightTheme({ accentColor: '#1f2937' })}
+            showRecentTransactions={true}
+            avatar={CustomAvatar}
+          >
+            {children}
+          </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
+      </SessionProvider>
     </WagmiConfig>
   );
 };

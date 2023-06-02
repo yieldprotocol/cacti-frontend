@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
-import { Button } from '@/components/Button';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import { Token } from '@/types';
+import SubmitButton from './widgets/common/SubmitButton';
 
 const ApproveTokens = ({
   token,
@@ -22,23 +22,21 @@ const ApproveTokens = ({
   if (hasAllowance) return null;
 
   return (
-    <div className="w-[100%]">
-      <div className="flex justify-end">
-        <Button
-          disabled={!approve || txPending || !hasBalance || txError}
-          onClick={approve}
-          className={hasBalance ? '' : 'border border-red-500'}
-        >
-          {!hasBalance
-            ? 'Insufficient balance'
-            : txPending
-            ? 'Approval pending...'
-            : txError
-            ? 'Approval error'
-            : 'Approve'}
-        </Button>
-      </div>
-    </div>
+    <SubmitButton
+      isError={txError || !hasBalance}
+      isLoading={txPending}
+      disabled={!approve || txPending || !hasBalance || txError}
+      onClick={approve}
+      label={
+        !hasBalance
+          ? 'Insufficient balance'
+          : txPending
+          ? 'Approval pending...'
+          : txError
+          ? 'Approval error'
+          : `Approve ${token.symbol}`
+      }
+    />
   );
 };
 

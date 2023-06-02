@@ -15,7 +15,7 @@ const Button = ({
     <div className="mt-2 flex justify-center gap-3 self-end text-gray-400 md:gap-4 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
       <button
         onClick={onClick}
-        className="rounded-md bg-gray-600 p-1 text-gray-100 hover:bg-gray-700 hover:text-gray-200 enabled:hover:cursor-pointer disabled:bg-gray-600 disabled:hover:text-gray-400"
+        className="rounded-md p-1 text-gray-100 hover:bg-gray-700 hover:text-gray-200 enabled:hover:cursor-pointer disabled:bg-gray-600 disabled:hover:text-gray-400"
       >
         {label === 'good' ? (
           <HandThumbUpIcon className="h-4 w-4" />
@@ -38,7 +38,7 @@ export const FeedbackButton = ({ message }: { message: Message }) => {
     sendAction({ actionType: 'feedback', messageId, choice });
   };
 
-  return feedback === 'n/a' || actor !== 'bot' ? (
+  return feedback === 'n/a' ? (
     <></>
   ) : (
     <div className="flex justify-between">

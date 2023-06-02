@@ -1,15 +1,34 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { ChatBubbleLeftEllipsisIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { sendMessage } = useChatContext();
+  const { sendMessage, interactor, setInteractor } = useChatContext();
+
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'I') {
+      e.preventDefault();
+      focusInput();
+    }
+  }, []);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
 
   useEffect(() => {
-    inputRef.current?.focus();
+    focusInput();
   }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
@@ -17,6 +36,10 @@ export const MessageInput = ({}) => {
       sendMessage(messageInput);
       setMessageInput('');
     }
+  };
+  const toggleInteractionMode = (e: FormEvent) => {
+    e.preventDefault();
+    setInteractor(interactor === 'user' ? 'commenter' : 'user');
   };
 
   const sendButtonIcon = (
@@ -42,8 +65,8 @@ export const MessageInput = ({}) => {
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
-          className="form-control mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
-          placeholder="Enter your message..."
+          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
+          placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
           tabIndex={0}
           value={messageInput}
           ref={inputRef}
@@ -53,6 +76,12 @@ export const MessageInput = ({}) => {
           onClick={handleSendMessage}
         >
           <div className="flex justify-center">{sendButtonIcon}</div>
+        </button>
+        <button
+          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out"
+          onClick={toggleInteractionMode}
+        >
+          {interactor === 'user' ? <ChatBubbleLeftEllipsisIcon /> : <ClipboardDocumentListIcon />}
         </button>
       </div>
     </form>

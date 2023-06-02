@@ -1,18 +1,19 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ChatBox } from '@/components/ChatBox';
-import SettingsDropdown from '@/components/SettingsDropdown';
-import { DevToolsButton } from '@/components/devTools/DevToolsButton';
+import dynamic from 'next/dynamic';
+
+const HeaderDynamic = dynamic(() => import('@/components/Header'), {
+  ssr: false,
+});
+const ChatBoxDynamic = dynamic(() => import('@/components/ChatBox'), {
+  ssr: false,
+});
 
 export const Home = () => {
   return (
     <>
       <div className="flex h-screen bg-gray-700">
-        <div className="fixed top-0 right-0 mr-4 mt-4 inline-flex gap-3">
-          <ConnectButton />
-          <SettingsDropdown />
-        </div>
+        <HeaderDynamic />
         <div className="w-full">
-          <ChatBox />
+          <ChatBoxDynamic />
         </div>
       </div>
     </>

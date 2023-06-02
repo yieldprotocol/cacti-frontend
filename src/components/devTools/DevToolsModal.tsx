@@ -6,7 +6,9 @@ import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
+import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
+import { SessionInfo } from './SessionInfo';
 
 interface Props {
   openState: boolean;
@@ -71,18 +73,24 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                       </div>
 
                       <div className="mt-4 space-y-8 p-4">
+                        <SessionInfo />
+                      </div>
+
+                      <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
+
                         <ResetButton />
                       </div>
 
-                      <div className="mt-8 px-4 text-left text-sm font-bold leading-6 text-gray-900">
+                      <div className="mt-8 flex px-4 text-left text-sm font-bold leading-6 text-gray-900">
                         Forked Environment
                       </div>
 
-                      <div className="space-y-8 p-4 ">
+                      <div className="space-y-4 p-4 ">
+                        <ForkButton />
                         <CurrentForkInfo />
-                        <ChangeForkId />
                         <MintButton />
+                        <ChangeForkId />
                       </div>
                     </div>
 

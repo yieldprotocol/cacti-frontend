@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
-
   theme: {
     extend: {
       animation: {
@@ -15,6 +14,12 @@ module.exports = {
           '75%': { content: "'...'" },
           '100%': { content: "''" },
         },
+      },
+      borderRadius: {
+        sm: '5px',
+      },
+      width: {
+        '40px': '40px',
       },
     },
   },

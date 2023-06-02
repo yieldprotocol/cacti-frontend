@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { Button } from '@/components/Button';
-import useCachedState from '@/hooks/useCachedState';
+import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import useForkTools from '@/hooks/useForkTools';
 
 export const ChangeForkId = () => {
@@ -10,7 +10,7 @@ export const ChangeForkId = () => {
   const [validUrl, setValidUrl] = useState<boolean>();
 
   const { createNewFork } = useForkTools();
-  const [, setForkUrl] = useCachedState('forkUrl');
+  const { changeSetting } = useContext(SettingsContext);
 
   /* Get the project id from a valid RPC URL. TODO make this more robust*/
   const parseIdfromUrl = (url: string): string => url.split('/')[4];
@@ -44,7 +44,7 @@ export const ChangeForkId = () => {
     /* if valid, set the state to true and reload the page */
     if (isValid) {
       setValidUrl(true);
-      setForkUrl(parsedUrl);
+      changeSetting(Setting.FORK_ENV_URL, parsedUrl);
       // eslint-disable-next-line no-restricted-globals
       window.location.reload();
     }
@@ -54,7 +54,7 @@ export const ChangeForkId = () => {
 
   const handleCreateFork = async () => {
     const newForkUrl = await createNewFork();
-    setForkUrl(parseRpcUrl(newForkUrl));
+    changeSetting(Setting.FORK_ENV_URL, parseRpcUrl(newForkUrl));
     // eslint-disable-next-line no-restricted-globals
     window.location.reload();
   };
@@ -70,7 +70,7 @@ export const ChangeForkId = () => {
 
   return (
     <div>
-      <div className="border">
+      <div className="space-y-2 border">
         <div className="flex gap-1 p-2 text-xs">
           <input
             value={newUrl}
