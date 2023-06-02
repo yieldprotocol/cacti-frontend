@@ -20,7 +20,7 @@ export const MessageList = () => {
   const botThinking = isBotThinking && (
     <MessageItemWrap actor={'Bot'}>
       <Avatar actor={'Bot'} />
-      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+      <div className={`relative flex w-[100%] flex-col gap-1 p-3 md:gap-3 lg:w-[100%]`}>
         <span className="after:animate-ellipse">Bot is thinking</span>
       </div>
     </MessageItemWrap>
@@ -29,7 +29,7 @@ export const MessageList = () => {
   const multiStepInProgress = isMultiStepInProgress && (
     <MessageItemWrap actor={'Bot'}>
       <Avatar actor={'Bot'} />
-      <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
+      <div className={`relative flex w-[100%] flex-col gap-1 p-3 md:gap-3 lg:w-[100%]`}>
         <span className="after:animate-ellipse">Multi-step workflow in progress</span>
       </div>
     </MessageItemWrap>

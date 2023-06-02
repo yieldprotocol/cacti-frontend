@@ -25,7 +25,7 @@ export const UserAvatar = ({ address, size }: { address: `0x${string}`; size: nu
 const Avatar = ({ actor }: Props) => {
   const { address } = useAccount();
   const avatarSize = 40;
-  const avatarSizeStyle = `h-[${avatarSize}px] w-[${avatarSize}px]`;
+  const avatarSizeStyle = `h-40px w-40px`;
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 

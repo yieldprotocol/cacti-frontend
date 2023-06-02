@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import { Token } from '@/types';
-import SubmitButton from './widgets/swap/SubmitButton';
+import SubmitButton from './widgets/common/SubmitButton';
 
 const ApproveTokens = ({
   token,

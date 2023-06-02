@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
@@ -35,6 +34,7 @@ export type ChatContextType = {
   setShowDebugMessages: (arg0: boolean) => void;
   interactor: string;
   setInteractor: (arg0: string) => void;
+  connectionStatus: ReadyState;
 };
 
 const initialContext = {
@@ -56,6 +56,7 @@ const initialContext = {
   setShowDebugMessages: (arg0: boolean) => {},
   interactor: 'user',
   setInteractor: (arg0: string) => {},
+  connectionStatus: ReadyState.UNINSTANTIATED,
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -66,21 +67,26 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [isMultiStepInProgress, setIsMultiStepInProgress] = useState<boolean>(
     initialContext.isMultiStepInProgress
   );
-  const [lastBotMessageId, setLastBotMessageId] = useState<string | null>(null);
+  const [resumeFromMessageId, setResumeFromMessageId] = useState<string | null>(null);
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
+
+  const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
 
   const { status } = useSession();
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();
-  const { sendJsonMessage: wsSendMessage, lastMessage } = useWebSocket(
+  const {
+    sendJsonMessage: wsSendMessage,
+    lastMessage,
+    readyState,
+  } = useWebSocket(
     backendUrl,
     {
       onOpen: (evt) => onOpen(),
       onClose: (evt) => onClose(),
-      onError: (evt) => onError(),
       shouldReconnect: (closeEvent) => true,
       reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
     },
@@ -98,7 +104,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         // load the historical session stored within the backend
         const payload = {
           sessionId: params.get('s'),
-          resumeFromMessageId: lastBotMessageId,
+          resumeFromMessageId: resumeFromMessageId,
+          insertBeforeMessageId: insertBeforeMessageId,
         };
         wsSendMessage({ actor: 'system', type: 'init', payload: payload });
       }
@@ -112,20 +119,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  /* monitor ready state and update connectionStatus accordingly */
+  useEffect(() => {
+    setConnectionStatus(readyState);
+  }, [readyState]);
+
   // unused in production, but useful in debugging
   const onClose = () => {
-    // toast.info('Websocket closed');
-
-    // once we close (could be due to wallet change), we clear messages,
-    // otherwise, we might try to resume incorrectly from error messages
-    // that we sent to the chat to indicate why you can't see the session
-    setMessages([]);
-    setLastBotMessageId(null);
-    setInsertBeforeMessageId(null);
-  };
-
-  const onError = () => {
-    toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
+    console.log('Websocket closed');
+    setIsBotThinking(false);
   };
 
   useEffect(() => {
@@ -139,7 +141,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setIsBotThinking(obj.stillThinking);
-    setLastBotMessageId(obj.messageId);
+    setResumeFromMessageId(obj.messageId);
     const payload = obj.payload;
     const actor = obj.actor;
     const beforeMessageId = obj.beforeMessageId || null;
@@ -217,6 +219,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     messageId: string,
     options?: TruncateOptions
   ): string | null => {
+    // we truncate our message list from messageId (exclusive by default
+    // unless options.inclusive is set) until next human message (exclusive)
     if (options?.setBotThinking) {
       setIsBotThinking(true);
     }
@@ -230,7 +234,21 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       (message) => message.actor === 'user' || message.actor === 'commenter'
     );
     const remainingMessages = afterIdx >= 0 ? afterMessages.slice(afterIdx) : [];
-    const nextUserMessageId = afterMessages.length > 0 ? afterMessages[0].messageId : null;
+    const nextUserMessageId = remainingMessages.length > 0 ? remainingMessages[0].messageId : null;
+
+    // check if we need to update resumeFromMessageId, if it is one of the removed messages
+    if (resumeFromMessageId !== null) {
+      const resumeFromMessageIdx = afterMessages.findIndex(
+        (message) => message.messageId === resumeFromMessageId
+      );
+      if (resumeFromMessageIdx >= 0) {
+        // if it is removed, we set it to the current human message, so if there
+        // is any error and we reconnect, we only try to resume messages from
+        // there, instead of what it was before it got deleted.
+        setResumeFromMessageId(messageId);
+      }
+    }
+
     setMessages([...beforeMessages, ...remainingMessages]);
     return nextUserMessageId;
   };
@@ -270,6 +288,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         setShowDebugMessages,
         interactor,
         setInteractor,
+        connectionStatus,
       }}
     >
       {children}
