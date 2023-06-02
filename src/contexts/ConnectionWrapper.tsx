@@ -90,12 +90,18 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
   };
 
-  const CustomAvatar: AvatarComponent = ({ address, size }) => {
+  const CustomAvatar: AvatarComponent = ({
+    address,
+    size,
+  }: {
+    address: string | `0x${string}` | undefined;
+    size: number;
+  }) => {
     const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
     return ensImage ? (
       <img alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
     ) : (
-      <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
+      <Jazzicon diameter={size} seed={address ? jsNumberForAddress(address) : 0} />
     );
   };
 
