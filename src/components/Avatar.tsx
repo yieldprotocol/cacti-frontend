@@ -7,7 +7,13 @@ interface Props {
   actor: string;
 }
 
-export const UserAvatar = ({ address, size }: { address: `0x${string}`; size: number }) => {
+export const UserAvatar = ({
+  address,
+  size,
+}: {
+  address: `0x${string}` | undefined;
+  size: number;
+}) => {
   const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
   return ensImage ? (
     <img
@@ -18,7 +24,7 @@ export const UserAvatar = ({ address, size }: { address: `0x${string}`; size: nu
       height={size}
     />
   ) : (
-    <Jazzicon diameter={size} seed={jsNumberForAddress(address)} />
+    <Jazzicon diameter={size} seed={address ? jsNumberForAddress(address) : 0} />
   );
 };
 
