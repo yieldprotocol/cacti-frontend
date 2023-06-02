@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { AppProps } from 'next/app';
-import Image from 'next/image';
 import {
   AvatarComponent,
   RainbowKitProvider,
@@ -9,15 +7,15 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { SessionProvider, getCsrfToken } from 'next-auth/react';
-import { generateNonce } from 'siwe';
+import { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 
-const ConnectionWrapper = ({ children, pageProps }: any) => {
+const ConnectionWrapper = ({ children, session }: { children: ReactNode; session: Session }) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -86,6 +84,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
     );
     return !!result.data;
   };
+
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
@@ -102,7 +101,7 @@ const ConnectionWrapper = ({ children, pageProps }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <SessionProvider refetchInterval={0} session={pageProps?.session}>
+      <SessionProvider refetchInterval={0} session={session}>
         <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}
           getSiweMessageOptions={getSiweMessageOptions}

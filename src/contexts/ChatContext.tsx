@@ -74,10 +74,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
 
-  const { data: session, status } = useSession();
-  //useEffect(() => {
-  //  console.log(session, status);
-  //}, [session, status]);
+  const { status } = useSession();
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();
@@ -90,7 +87,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     {
       onOpen: (evt) => onOpen(),
       onClose: (evt) => onClose(),
-      onError: (evt) => onError(),
       shouldReconnect: (closeEvent) => true,
       reconnectInterval: (attemptNumber) => Math.min(Math.pow(2, attemptNumber) * 1000, 10000),
     },
@@ -131,12 +127,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   // unused in production, but useful in debugging
   const onClose = () => {
     console.log('Websocket closed');
-    // toast.info('Websocket closed');
     setIsBotThinking(false);
-  };
-
-  const onError = () => {
-    // toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
