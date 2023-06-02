@@ -4,7 +4,7 @@ import { formatUnits } from 'ethers/lib/utils.js';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import ApproveTokens from '@/components/ApproveTokens';
-import SubmitButton from '@/components/widgets/swap/SubmitButton';
+import SubmitButton from '@/components/widgets/common/SubmitButton';
 import SwapItem from '@/components/widgets/swap/SwapItem';
 import TransactionBreakdown from '@/components/widgets/swap/TransactionBreakdown';
 import useChainId from '@/hooks/useChainId';
@@ -163,6 +163,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
         />
       ) : (
         <SubmitButton
+          styleProps="flex rounded-sm border-gray-200/25 bg-gray-900/80 p-3.5 hover:bg-gray-900"
           label={
             !hasBalance
               ? 'Insufficient balance'
