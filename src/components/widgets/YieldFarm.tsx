@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
+import { parseUnits } from 'ethers/lib/utils.js';
 import {
   UsePrepareContractWriteConfig,
   erc20ABI,
@@ -16,7 +17,11 @@ import ApproveTokens from '@/components/ApproveTokens';
 import { Button } from '@/components/Button';
 import { TxStatus } from '@/components/TxStatus';
 import { WidgetError } from '@/components/widgets/helpers';
+import useToken from '@/hooks/useToken';
 import { Project, Token } from '@/types';
+import { findProjectByName } from '@/utils';
+import { ActionPanel } from './helpers/ActionPanel';
+import { ConnectFirst } from './helpers/ConnectFirst';
 
 // NOTE: For Demo, only support depositing USDC into Compound
 // Compound-V2 USDC cToken address
@@ -40,7 +45,7 @@ interface YieldFarmProps {
   amount: BigNumber;
 }
 
-export const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
+const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
   const { address: walletAddress } = useAccount();
   const [hasBalance, setHasBalance] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
@@ -131,5 +136,40 @@ const DepositTokens = ({
         {err && <WidgetError>Error simulating transaction: {err.message}</WidgetError>}
       </div>
     </>
+  );
+};
+
+interface YieldFarmWidgetProps {
+  inputString: string;
+  projectName: string;
+  network: string;
+  tokenSymbol: string;
+  amtString: string;
+}
+
+export const YieldFarmWidget = ({
+  inputString,
+  projectName,
+  network,
+  tokenSymbol,
+  amtString,
+}: YieldFarmWidgetProps) => {
+  const { getToken } = useToken();
+  const token = getToken(tokenSymbol);
+  const amount = parseUnits(amtString, token?.decimals);
+
+  const project = findProjectByName(projectName);
+  return (
+    <ActionPanel
+      header={`You are depositing ${amtString} ${tokenSymbol} into ${projectName}`}
+      msg={inputString}
+      key={inputString}
+      gap="gap-3"
+      centerTitle={true}
+    >
+      <ConnectFirst>
+        <YieldFarm {...{ project, network, token: token!, amount }} />
+      </ConnectFirst>
+    </ActionPanel>
   );
 };

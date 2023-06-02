@@ -12,7 +12,7 @@ const Header = () => {
 
   // TODO: add in a connection status tooltip when hovering over the dot
   return (
-    <div className="fixed right-0 top-0 mr-4 mt-4 inline-flex gap-3">
+    <div className="fixed right-0 top-0 z-10 mr-4 mt-4 inline-flex gap-3">
       <ConnectButton />
       <SettingsDropdown />
       <div className={`fixed right-0 top-0 mr-1 mt-1 text-xs ${getStatusColor(connectionStatus)}`}>

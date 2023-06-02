@@ -30,6 +30,12 @@ const nextConfig = {
         port: '',
         pathname: 'trustwallet/assets/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'dashboard.mypinata.cloud',
+        port: '',
+        pathname: '/ipfs/**',
+      },
     ],
   },
 };
