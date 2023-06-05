@@ -17,11 +17,8 @@ const Sidebar = () => {
       w-full transform 
       flex-col 
       items-start
-
       p-4
-
       justify-between
-      
       border-[1px] 
        border-white  
        border-opacity-10 
@@ -30,9 +27,12 @@ const Sidebar = () => {
         transition
        duration-500 ease-in-out sm:w-64
        xl:translate-x-0"
-
     >
       <div>New Chat</div>
+
+      <div> My Chats</div>
+
+
 
       <div> Account Button</div>
     </div>
