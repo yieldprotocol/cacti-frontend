@@ -1,13 +1,12 @@
-
-import { ReactNode,useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   RainbowKitProvider,
+  darkTheme,
   getDefaultWallets,
   lightTheme,
-  darkTheme
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { Session } from 'next-auth';
@@ -19,12 +18,7 @@ import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
 
-
-
-//const ConnectionWrapper = ({ children, session }: { children: ReactNode; session: Session }) => {
-
 const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
-
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -145,7 +139,11 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
         {!useSiwe && (
           <RainbowKitProvider
             chains={chains}
-            theme={experimentalUi ? darkTheme({ accentColor: '#1f2937' }) : lightTheme({ accentColor: '#1f2937' })}
+            theme={
+              experimentalUi
+                ? darkTheme({ accentColor: '#1f2937' })
+                : lightTheme({ accentColor: '#1f2937' })
+            }
             showRecentTransactions={true}
             avatar={CustomAvatar}
           >

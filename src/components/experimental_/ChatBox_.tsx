@@ -7,6 +7,7 @@ import { Spinner } from '@/utils';
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
+import SideBar from '../SideBar';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
@@ -27,6 +28,7 @@ const ChatBox = () => {
           <div className="col-span-2" />
           <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
         </div>
+
 
         <div className="grid grid-cols-12 items-center py-[48px] ">
           <div className="col-span-2" />

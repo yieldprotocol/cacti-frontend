@@ -1,5 +1,10 @@
-import { Fragment } from 'react';
+import { Fragment, createElement, useMemo, useState } from 'react';
+import { parseUnits } from 'ethers/lib/utils.js';
+import * as cactiComponents from '@/components/cactiComponents';
+import { CactiResponse } from '@/components/cactiComponents';
 import useParseMessage from '@/hooks/useParseMessage';
+import useToken from '@/hooks/useToken';
+import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/uniswap/Uniswap';
@@ -53,11 +58,11 @@ const getWidget = (widget: Widget): JSX.Element => {
     </ConnectFirst>
   ));
 
-  return (
-    widgets.has(fnName) ? widgets.get(fnName)!() : (
-      <div className="inline-block bg-slate-500 p-5 text-white">
-        Widget not implemented for <code>{inputString}</code>
-      </div>
-    )
+  return widgets.has(fnName) ? (
+    widgets.get(fnName)!()
+  ) : (
+    <div className="inline-block bg-slate-500 p-5 text-white">
+      Widget not implemented for <code>{inputString}</code>
+    </div>
   );
 };
