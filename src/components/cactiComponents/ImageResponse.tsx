@@ -42,7 +42,7 @@ export const ImageResponse = (props: any) => {
       <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded p-2">
         <img className="w-full" src={props.image} alt={props.title} />
         {tagList.length > 1 && ( // if has tags
-          <div className="space-y-1 space-x-2 py-2 ">
+          <div className="space-x-2 space-y-1 py-2 ">
             {tagList.map((tag: string) => (
               <TagItem tag={tag} key={tag} />
             ))}

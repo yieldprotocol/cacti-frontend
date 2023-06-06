@@ -10,7 +10,11 @@ export type ChatItem = {
 
 const ChatItem = ({ id, selected }: ChatItem) => {
   return (
-    <div className={`flex cursor-pointer flex-row items-center gap-2 py-2 rounded-sm ${selected ? 'bg-white/5': ''} `}>
+    <div
+      className={`flex cursor-pointer flex-row items-center gap-2 rounded-sm py-2 ${
+        selected ? 'bg-white/5' : ''
+      } `}
+    >
       <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
       <div className="text-xs text-white/70 hover:text-white"> {abbreviateHash(id, 4)}</div>
     </div>

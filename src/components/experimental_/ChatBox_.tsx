@@ -4,10 +4,10 @@ import { ResetButton } from '@/components/ResetButton';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import SideBar from './SideBar';
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
+import SideBar from './SideBar';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
@@ -23,14 +23,15 @@ const ChatBox = () => {
 
   return (
     <div className="flex h-full justify-center">
-      
       <div className="flex h-full w-[100%] flex-col justify-between pt-20">
-        <div className="grid h-full grid-cols-12 overflow-auto "> {/* lg:w-[75%] */}
+        <div className="grid h-full grid-cols-12 overflow-auto ">
+          {' '}
+          {/* lg:w-[75%] */}
           <div className="col-span-2" />
           <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
         </div>
 
-        <div className="p-2 grid grid-cols-12 items-center py-[24px] bg-white bg-opacity-5">
+        <div className="grid grid-cols-12 items-center bg-white bg-opacity-5 p-2 py-[24px]">
           <div className="col-span-2" />
           <div className="col-span-8">
             <MessageInput />
@@ -39,7 +40,6 @@ const ChatBox = () => {
             <ResetButton styleOption="iconAndText" />
           </div>
         </div>
-
       </div>
     </div>
   );

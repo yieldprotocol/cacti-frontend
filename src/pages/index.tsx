@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import dynamic from 'next/dynamic';
-import SettingsContext from '@/contexts/SettingsContext';
 import Sidebar from '@/components/experimental_/SideBar';
+import SettingsContext from '@/contexts/SettingsContext';
 
 const HeaderDynamic = dynamic(() => import('@/components/Header'), {
   ssr: false,

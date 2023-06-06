@@ -86,13 +86,12 @@ const Sidebar = () => {
        border-white  
        border-opacity-10 
        bg-[#031016] 
-       text-white/70
-        transition duration-500 ease-in-out sm:w-64 xl:translate-x-0
-        p-2
+       p-2
+        text-white/70 transition duration-500 ease-in-out sm:w-64
+        xl:translate-x-0
         "
         >
           <div className="w-full p-4">
-
             <div className="flex w-full items-center gap-2">
               <MenuButton />
 
@@ -106,9 +105,8 @@ const Sidebar = () => {
               </div>
             </div>
 
-            
             <ChatList />
-    
+
             <div className="mt-8 text-xs ">More</div>
             <div className="py-4">
               <MoreItem icon={<HomeIcon />} label="Home" link="/" />
@@ -149,7 +147,7 @@ const Sidebar = () => {
                 connectionStatus
               )}`}
             >
-                <div className="animate-pulse">●</div>
+              <div className="animate-pulse">●</div>
             </div>
           )}
         </div>

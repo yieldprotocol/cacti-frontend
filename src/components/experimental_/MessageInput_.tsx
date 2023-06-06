@@ -1,8 +1,5 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ChatBubbleLeftRightIcon,
-  PaperClipIcon,
-} from '@heroicons/react/24/outline';
+import { ChatBubbleLeftRightIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
 export const MessageInput = ({}) => {
@@ -74,10 +71,10 @@ export const MessageInput = ({}) => {
             bg-transparent
             p-2
             text-white/70
-            hover:bg-gray-700/20
-
             ring-1
+
             ring-white/20
+            hover:bg-gray-700/20
             hover:ring-1
             hover:ring-white/80
             
@@ -91,7 +88,6 @@ export const MessageInput = ({}) => {
       </div>
 
       <div className="col-span-2">
-
         <button
           className="cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
           onClick={handleSendMessage}

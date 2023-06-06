@@ -130,12 +130,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       }`
     );
   });
-
   useHotkeys('alt+d', () => {
-    const currentSetting = settings.developerTools;
-    changeSetting(Setting.DEVELOPER_TOOLS, !settings.developerTools);
+    const currentDevSetting = settings.developerTools;
+    changeSetting(Setting.DEVELOPER_TOOLS, !currentDevSetting);
   });
-
 
   /* Pre - Update all settings in state based on localStorage */
   useEffect(() => {
