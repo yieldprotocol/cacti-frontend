@@ -17,7 +17,7 @@ export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
 
         onClick={()=> console.log('share')}
       >
-       Share
+       <div className="text-xs text-white/70 ">Share</div>
       </div>
     );
   };
