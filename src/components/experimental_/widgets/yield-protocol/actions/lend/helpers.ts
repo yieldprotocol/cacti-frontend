@@ -19,7 +19,7 @@ const lend = (
   }
 
   return [
-    ...getWrapEthCallData(poolAddress, isEthBase ? ethers.constants.Zero : input), // wrap eth to the pool if required
+    ...getWrapEthCallData(poolAddress, isEthBase ? input : ethers.constants.Zero), // wrap eth to the pool if required
     {
       operation: LadleActions.Fn.TRANSFER,
       args: [baseAddress, poolAddress, input] as LadleActions.Args.TRANSFER,

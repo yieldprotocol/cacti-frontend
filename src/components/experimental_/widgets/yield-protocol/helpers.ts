@@ -55,7 +55,7 @@ export const getTxParams = async (
             encodedFn,
           ]);
       }
-      throw new Error('Function name and contract target required for routing/ module interaction');
+      throw new Error('Function name and contract target required for routing/module interaction');
     }
 
     return ladle.interface.encodeFunctionData(call.operation, call.args);
