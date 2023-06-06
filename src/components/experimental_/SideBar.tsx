@@ -86,9 +86,12 @@ const Sidebar = () => {
        border-opacity-10 
        bg-[#031016] 
        text-white/70
-        transition duration-500 ease-in-out sm:w-64 xl:translate-x-0"
+        transition duration-500 ease-in-out sm:w-64 xl:translate-x-0
+        p-2
+        "
         >
           <div className="w-full p-4">
+
             <div className="flex w-full items-center gap-2">
               <MenuButton />
 
@@ -102,11 +105,10 @@ const Sidebar = () => {
               </div>
             </div>
 
-            <div className=" p-2 ">
-              <ChatList />
-            </div>
-
-            <div className="pt-8 text-xs ">More</div>
+            
+            <ChatList />
+    
+            <div className="mt-8 text-xs ">More</div>
             <div className="py-4">
               <MoreItem icon={<HomeIcon />} label="Home" link="/" />
               <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
@@ -127,10 +129,10 @@ const Sidebar = () => {
               <span className="animate-pulse">●</span>
               <span>
                 {connectionStatus === ReadyState.OPEN
-                  ? 'Connected'
+                  ? 'Ready'
                   : connectionStatus === ReadyState.CLOSED
                   ? 'Disconnected'
-                  : 'Not Connected'}
+                  : 'Wallet Not Connected'}
               </span>
             </div>
           </div>
@@ -138,7 +140,7 @@ const Sidebar = () => {
       )}
 
       {!sidebarOpen && (
-        <div className="absolute left-4 top-4 ">
+        <div className="absolute left-4 top-4 p-2">
           <MenuButton />
           {connectionStatus === ReadyState.OPEN ? null : (
             <div
