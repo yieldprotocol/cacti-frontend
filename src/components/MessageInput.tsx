@@ -66,21 +66,27 @@ export const MessageInput = ({}) => {
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
           className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-600"
-          placeholder={isBotThinking ? "Please wait while your message is processing..." : interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
+          placeholder={
+            isBotThinking
+              ? 'Please wait while your message is processing...'
+              : interactor === 'user'
+              ? 'Enter your message...'
+              : 'Enter your comment...'
+          }
           tabIndex={0}
           value={messageInput}
           ref={inputRef}
           disabled={isBotThinking}
         />
         <button
-          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out disabled:text-gray-500 disabled:cursor-not-allowed"
+          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out disabled:cursor-not-allowed disabled:text-gray-500"
           onClick={handleSendMessage}
           disabled={isBotThinking || !messageInput}
         >
           <div className="flex justify-center">{sendButtonIcon}</div>
         </button>
         <button
-          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out disabled:text-gray-600 disabled:cursor-not-allowed"
+          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out disabled:cursor-not-allowed disabled:text-gray-600"
           onClick={toggleInteractionMode}
           disabled={isBotThinking}
         >
