@@ -17,6 +17,10 @@ const MoreItem = ({ icon, link, label }: { icon: any; link: string; label: strin
   );
 };
 
+const MenuButton = ({ icon, label }: { icon: any; label: string }) => {
+  return;
+};
+
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -30,6 +34,28 @@ const Sidebar = () => {
     params.delete('s');
     const paramString = params.toString();
     window.location.assign(paramString ? `/?${paramString}` : '/');
+  };
+
+  const MenuButton = () => {
+    return (
+      <div
+        className="
+        flex
+        cursor-pointer 
+        select-none 
+        justify-center 
+        rounded-[8px] text-xs
+         text-white/70 
+         hover:bg-white
+         hover:bg-opacity-20
+         p-2"
+        onClick={toggleSidebar}
+      >
+        <div className='w-4 h-4'>
+        <QueueListIcon />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -54,12 +80,7 @@ const Sidebar = () => {
         >
           <div className="w-full p-4">
             <div className="flex w-full items-center gap-2">
-              <div
-                className=" flex h-4 w-4 cursor-pointer select-none justify-center rounded-[8px] text-xs text-white/70 "
-                onClick={toggleSidebar}
-              >
-                <QueueListIcon />
-              </div>
+              <MenuButton />
 
               <div
                 className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
@@ -95,18 +116,8 @@ const Sidebar = () => {
 
       {!sidebarOpen && (
         <div
-          className="
-          absolute
-          top-6 left-4
-          h-5 w-5 
-          cursor-pointer 
-          select-none 
-          justify-center 
-          text-xs text-white/70
-          "
-          onClick={toggleSidebar}
-        >
-          <QueueListIcon />
+          className=" absolute left-4 top-4 ">
+          <MenuButton />
         </div>
       )}
     </>
