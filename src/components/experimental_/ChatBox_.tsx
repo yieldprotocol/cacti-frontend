@@ -4,7 +4,7 @@ import { ResetButton } from '@/components/ResetButton';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import SideBar from '../SideBar';
+import SideBar from './SideBar';
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
