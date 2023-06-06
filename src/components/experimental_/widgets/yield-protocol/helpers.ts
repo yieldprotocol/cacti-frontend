@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'ethers';
-import { useContract } from 'wagmi';
+import { Address, useContract } from 'wagmi';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import ladleAbi from './abis/ladle.json';
 import { LadleActions } from './operations';
@@ -85,7 +85,7 @@ const getCallValue = async (calls: ICallData[]) =>
  * @dev any non-zero value can be supplied to wrap; all eth available will be wrapped (value specified does not matter)
  * @returns
  */
-export const getWrapEthCallData = (to: `0x${string}`, value: BigNumber): ICallData[] => [
+export const getWrapEthCallData = (to: Address, value: BigNumber): ICallData[] => [
   {
     operation: LadleActions.Fn.EXIT_ETHER,
     args: [to] as LadleActions.Args.EXIT_ETHER,

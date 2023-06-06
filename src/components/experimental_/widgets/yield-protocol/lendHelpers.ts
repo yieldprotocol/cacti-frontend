@@ -1,14 +1,14 @@
 import { BigNumber, ethers } from 'ethers';
-import { useContract } from 'wagmi';
+import { Address, useContract } from 'wagmi';
 import poolAbi from './abis/pool.json';
 import { ICallData, getWrapEthCallData } from './helpers';
 import { LadleActions, RoutedActions } from './operations';
 
 const lend = (
-  account: `0x${string}` | undefined,
+  account: Address | undefined,
   input: BigNumber,
-  baseAddress: `0x${string}`,
-  poolAddress: `0x${string}`,
+  baseAddress: Address,
+  poolAddress: Address,
   isEthBase: boolean
 ): ICallData[] | undefined => {
   const targetContract = useContract({ address: poolAddress, abi: poolAbi });

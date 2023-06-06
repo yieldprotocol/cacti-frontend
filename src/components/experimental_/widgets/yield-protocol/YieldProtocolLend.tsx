@@ -1,6 +1,6 @@
 ////////////////DON'T TOUCH//////////////////////////////////////
 import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { Address, useAccount } from 'wagmi';
 import {
   ActionResponse,
   DoubleLineResponse,
@@ -23,7 +23,7 @@ import { getTxParams } from './helpers';
 import lend from './lendHelpers';
 
 // Yield Protocol specific ladle addresses based on chain id
-const YIELD_PROTOCOL_LADLES: { [chainId: number]: `0x${string}` } = {
+const YIELD_PROTOCOL_LADLES: { [chainId: number]: Address } = {
   1: '0x6cb18ff2a33e981d1e38a663ca056c0a5265066a',
   42161: '0x16e25cf364cecc305590128335b8f327975d0560',
 };
@@ -81,15 +81,16 @@ const YieldProtocolLend = ({
   // set tx params
   useEffect(() => {
     (async () => {
-      const baseAddress = tokenIn?.address as `0x${string}`;
+      const baseAddress = tokenIn?.address as Address | undefined;
       if (!baseAddress) return;
       const seriesEntities = SERIES_ENTITIES.get(chainId);
       if (!seriesEntities) return;
 
       const relevantSeriesEntities = Array.from(seriesEntities.values());
 
-      const poolAddress = relevantSeriesEntities.find((s) => s.baseAddress === baseAddress)
-        ?.poolAddress as `0x${string}` | undefined; // Find the first relevant series using base address (TODO not kosher)
+      const poolAddress = relevantSeriesEntities.find(
+        (s) => s.baseAddress === baseAddress
+      )?.poolAddress; // Find the first relevant series using base address (TODO not kosher)
       if (!poolAddress) return;
 
       const lendCallData = lend(address, amount, baseAddress, poolAddress, tokenInIsETH);
