@@ -14,7 +14,7 @@ const useBalance = (
 ) => {
   const { address: account } = useAccount();
 
-  const isETH = !address || ethers.constants.AddressZero; // if no address is specified, or address is 0x0, then assume it's eth
+  const isETH = address === ethers.constants.AddressZero || !address; // if no address is specified, or address is 0x0, then assume it's eth
 
   // erc20 or eth if zero or no address is specified
   const { data, isLoading } = useBalanceWagmi({
@@ -25,7 +25,7 @@ const useBalance = (
 
   // erc1155
   const { data: erc1155_data, isLoading: erc1155_Loading } = useContractRead({
-    address: address as `0x${string}`,
+    address,
     abi: erc1155ABI,
     functionName: 'balanceOf',
     args: [account, erc1155TokenId],
@@ -45,7 +45,7 @@ const useBalance = (
         isLTcompared: data_bn.lt(compareAmount),
       });
     }
-  }, [data, erc1155_data]);
+  }, [compareAmount, data, erc1155TokenId, erc1155_data]);
 
   return {
     data: erc1155TokenId ? (erc1155_data as BigNumber) : data?.value,
