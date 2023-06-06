@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Cog8ToothIcon, DocumentIcon, HomeIcon } from '@heroicons/react/24/outline';
+import {
+  Bars3Icon,
+  Cog8ToothIcon,
+  DocumentIcon,
+  HomeIcon,
+  QueueListIcon,
+} from '@heroicons/react/24/outline';
 import ChatList from './ChatList';
 
 const MoreItem = ({ icon, link, label }: { icon: any; link: string; label: string }) => {
@@ -27,8 +33,10 @@ const Sidebar = () => {
   };
 
   return (
-    <div
-      className="
+    <>
+      {sidebarOpen && (
+        <div
+          className="
       border-r-1 
       flex  
       h-full  
@@ -43,40 +51,65 @@ const Sidebar = () => {
        bg-[#031016] 
        text-white/70
         transition duration-500 ease-in-out sm:w-64 xl:translate-x-0"
-    >
-      <div className="w-full p-4">
-
-        <div
-          className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-          onClick={() => reset()}
         >
+          <div className="w-full p-4">
+            <div className="flex w-full items-center gap-2">
+              <div
+                className=" flex h-4 w-4 cursor-pointer select-none justify-center rounded-[8px] text-xs text-white/70 "
+                onClick={toggleSidebar}
+              >
+                <QueueListIcon />
+              </div>
 
-          <div className="flex w-full justify-center text-xs text-white/70 ">
-            <div>New Chat</div>
+              <div
+                className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
+                onClick={() => reset()}
+              >
+                <div className="flex w-full justify-center text-xs text-white/70 ">
+                  <div>New Chat</div>
+                </div>
+              </div>
+            </div>
+
+            <div className=" p-2 ">
+              <ChatList />
+            </div>
+
+            <div className="pt-8 text-xs ">More</div>
+            <div className="py-4">
+              <MoreItem icon={<HomeIcon />} label="Home" link="/" />
+              <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
+              <MoreItem icon={<Cog8ToothIcon />} label="Status" link="/" />
+              <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
+              <MoreItem icon={<GithubIcon />} label="Github" link="/" />
+              <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
+              <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
+            </div>
+          </div>
+
+          <div className="w-full bg-purple-300 p-2 py-8">
+            <div className="p-3"> Account Button </div>
           </div>
         </div>
+      )}
 
-        
-        <div className=" p-2 ">
-          <ChatList />
+      {!sidebarOpen && (
+        <div
+          className="
+          absolute
+          top-6 left-4
+          h-5 w-5 
+          cursor-pointer 
+          select-none 
+          justify-center 
+          text-xs text-white/70
+          "
+          onClick={toggleSidebar}
+        >
+          <QueueListIcon />
         </div>
-
-        <div className="pt-8 text-xs ">More</div>
-        <div className="py-4">
-          <MoreItem icon={<HomeIcon />} label="Home" link="/" />
-          <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
-          <MoreItem icon={<Cog8ToothIcon />} label="Status" link="/" />
-          <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
-          <MoreItem icon={<GithubIcon />} label="Github" link="/" />
-          <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
-          <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
-        </div>
-      </div>
-
-      <div className="w-full bg-purple-300 p-2 py-8">
-        <div className="p-3"> Account Button </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
