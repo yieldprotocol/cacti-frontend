@@ -4,9 +4,9 @@ import ChatList from './ChatList';
 
 const MoreItem = ({ icon, link, label }: { icon: any; link: string; label: string }) => {
   return (
-    <div className="flex cursor-pointer flex-row items-center gap-2 py-1 ">
+    <div className="flex cursor-pointer flex-row items-center gap-2 py-1 text-xs">
       <div className="h-4 w-4 text-white/50">{icon}</div>
-      <div className="text-sm text-white/50 hover:text-white"> {label}</div>
+      <div className="text-xs text-white/50 hover:text-white"> {label}</div>
     </div>
   );
 };
@@ -45,35 +45,36 @@ const Sidebar = () => {
         transition duration-500 ease-in-out sm:w-64 xl:translate-x-0"
     >
       <div className="w-full p-4">
+
         <div
           className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
           onClick={() => reset()}
         >
-          <div className="flex w-full justify-center text-sm text-white/70 ">
+
+          <div className="flex w-full justify-center text-xs text-white/70 ">
             <div>New Chat</div>
           </div>
         </div>
 
-        <ChatList />
+        
+        <div className=" p-2 ">
+          <ChatList />
+        </div>
+
+        <div className="pt-8 text-xs ">More</div>
+        <div className="py-4">
+          <MoreItem icon={<HomeIcon />} label="Home" link="/" />
+          <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
+          <MoreItem icon={<Cog8ToothIcon />} label="Status" link="/" />
+          <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
+          <MoreItem icon={<GithubIcon />} label="Github" link="/" />
+          <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
+          <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
+        </div>
       </div>
 
-      <div className="w-full p-4">
-        <div className=" py-8 ">
-          <div className=" p-2 text-sm ">More</div>
-          <div className=" p-2 ">
-            <MoreItem icon={<HomeIcon />} label="Home" link="/" />
-            <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
-            <MoreItem icon={<Cog8ToothIcon />} label="Status" link="/" />
-            <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
-            <MoreItem icon={<GithubIcon />} label="Github" link="/" />
-            <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
-            <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
-          </div>
-        </div>
-
-        <div className="w-full bg-purple-300 p-2 py-8">
-          <div className="p-3"> Account Button </div>
-        </div>
+      <div className="w-full bg-purple-300 p-2 py-8">
+        <div className="p-3"> Account Button </div>
       </div>
     </div>
   );
