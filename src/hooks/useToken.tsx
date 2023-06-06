@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { PayableOverrides, ethers } from 'ethers';
 import { useChainId } from 'wagmi';
 import { Token } from '@/types';
 import { findTokenByAddress, findTokenBySymbol } from '@/utils';
