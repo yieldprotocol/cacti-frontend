@@ -1,14 +1,15 @@
 import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'ethers';
-import { Address, useContract } from 'wagmi';
+import { Address } from 'wagmi';
+import { getContract } from 'wagmi/actions';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-import ladleAbi from './abis/ladle.json';
-import { LadleActions } from './operations';
+import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule.json';
+import ladleAbi from './contracts/abis/ladle.json';
+import contractAddresses, { ContractNames } from './contracts/config';
+import { LadleActions, ModuleActions } from './operations';
 
 export interface ICallData {
   args: (string | BigNumberish | boolean)[];
   operation: string;
-
-  /* optionals */
   targetContract?: Contract;
   fnName?: string;
   ignoreIf?: boolean;
@@ -25,7 +26,7 @@ export const getTxParams = async (
   calls: ICallData[],
   ladleAddress: string
 ): Promise<TxBasicParams | undefined> => {
-  const ladle = useContract({ address: ladleAddress, abi: ladleAbi });
+  const ladle = getContract({ address: ladleAddress, abi: ladleAbi });
   if (!ladle) {
     console.error('Ladle contract not found');
     return undefined;
@@ -83,12 +84,30 @@ const getCallValue = async (calls: ICallData[]) =>
 /**
  * Handles wrapping eth specific to Yield Protocol
  * @dev any non-zero value can be supplied to wrap; all eth available will be wrapped (value specified does not matter)
+ * @param to address to send wrapped eth to
+ * @param value amount of eth to wrap
+ * @param chainId chainId to use (defaults to mainnet for now)
  * @returns
  */
-export const getWrapEthCallData = (to: Address, value: BigNumber): ICallData[] => [
-  {
-    operation: LadleActions.Fn.EXIT_ETHER,
-    args: [to] as LadleActions.Args.EXIT_ETHER,
-    ignoreIf: value.eq(ethers.constants.Zero),
-  },
-];
+export const getWrapEthCallData = (to: Address, value: BigNumber, chainId = 1): ICallData[] => {
+  const targetContract = getContract({
+    address: contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE)!,
+    abi: wrapEtherModuleAbi,
+  });
+
+  if (!targetContract) {
+    console.error('WrapEtherModule contract not found');
+    return [];
+  }
+
+  return [
+    {
+      operation: LadleActions.Fn.MODULE,
+      fnName: ModuleActions.Fn.WRAP_ETHER_MODULE,
+      args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
+      targetContract,
+      ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
+      overrides: { value },
+    },
+  ];
+};

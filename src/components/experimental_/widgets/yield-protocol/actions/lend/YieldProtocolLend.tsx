@@ -1,26 +1,24 @@
-////////////////DON'T TOUCH//////////////////////////////////////
 import { useEffect, useState } from 'react';
 import { Address, useAccount } from 'wagmi';
 import {
   ActionResponse,
-  DoubleLineResponse,
   HeaderResponse,
-  IconResponse,
   ListResponse,
+  SingleLineResponse,
   TextResponse,
 } from '@/components/cactiComponents';
-import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-////////////////DON'T TOUCH//////////////////////////////////////
-// Custom imports
+// CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import { toTitleCase } from '@/utils';
-import { SERIES_ENTITIES } from './config/seriesEntities';
-import { getTxParams } from './helpers';
-import lend from './lendHelpers';
+import { SERIES_ENTITIES } from '../../config/seriesEntities';
+import contractAddresses, { ContractNames } from '../../contracts/config';
+import { getTxParams } from '../../helpers';
+import { nameFromMaturity } from '../../utils';
+import lend from './helpers';
 
 // Yield Protocol specific ladle addresses based on chain id
 const YIELD_PROTOCOL_LADLES: { [chainId: number]: Address } = {
@@ -31,7 +29,7 @@ const YIELD_PROTOCOL_LADLES: { [chainId: number]: Address } = {
 // should be generalized and only needed as reference once for all components
 interface InputProps {
   tokenInSymbol: string;
-  tokenOutSymbol: string;
+  tokenOutSymbol?: string;
   inputAmount: string;
   action: string;
   projectName: string;
@@ -54,8 +52,6 @@ const YieldProtocolLend = ({
         )}.`}
       />
     );
-  if (!tokenOutSymbol)
-    return <TextResponse text={`Please enter a valid token to trade on ${toTitleCase}`} />;
 
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
@@ -73,12 +69,22 @@ const YieldProtocolLend = ({
 
   /***************INPUTS******************************************/
   // Yield Protocol specific spender handling
-  const ladle = YIELD_PROTOCOL_LADLES[chainId];
-  const approvalParams: ApprovalBasicParams = { address: address!, spender: ladle, amount }; // TODO handle no account address more gracefully
+  const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+  const approvalParams: ApprovalBasicParams = {
+    address: tokenIn?.address!,
+    spender: ladle!,
+    amount,
+  }; // TODO handle no token or ladle addresses more gracefully
 
   const [txParams, setTxParams] = useState<TxBasicParams>();
 
-  // set tx params
+  // arbitrary protocol operation data
+  interface YieldLendRes {
+    maturity_: string; // formatted maturity date
+  }
+  const [data, setData] = useState<YieldLendRes>();
+
+  // set tx params (specific to yield protocol)
   useEffect(() => {
     (async () => {
       const baseAddress = tokenIn?.address as Address | undefined;
@@ -88,40 +94,34 @@ const YieldProtocolLend = ({
 
       const relevantSeriesEntities = Array.from(seriesEntities.values());
 
-      const poolAddress = relevantSeriesEntities.find(
-        (s) => s.baseAddress === baseAddress
-      )?.poolAddress; // Find the first relevant series using base address (TODO not kosher)
+      const seriesEntity = relevantSeriesEntities.find(
+        (s) => s.baseAddress.toLowerCase() === baseAddress.toLowerCase()
+      ); // Find the first relevant series using base address (TODO not kosher)
+
+      const poolAddress = seriesEntity?.poolAddress;
       if (!poolAddress) return;
 
       const lendCallData = lend(address, amount, baseAddress, poolAddress, tokenInIsETH);
+
       setTxParams(lendCallData ? await getTxParams(lendCallData, ladle) : undefined);
+      setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
     })();
   }, []);
-
   /***************INPUTS******************************************/
 
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <ResponseRow>
-        <DoubleLineResponse
-          tokenSymbol={tokenInSymbol}
-          tokenValueInUsd={100}
-          amount={amount}
-          amountValueInUsd={100}
-        />
-        <IconResponse icon="forward" />
-        <DoubleLineResponse
-          tokenSymbol={tokenOutSymbol}
-          tokenValueInUsd={100}
-          amount={100}
-          amountValueInUsd={100}
-        />
-      </ResponseRow>
+      <SingleLineResponse
+        tokenSymbol={tokenInSymbol}
+        tokenValueInUsd={100}
+        amount={amount}
+        amountValueInUsd={100}
+      />
       <ListResponse
         title="Breakdown"
         data={[
-          ['Maturity', 'Some maturity'],
+          ['Maturity', data?.maturity_],
           ['Slippage', 'Some slippage %'],
         ]}
         collapsible

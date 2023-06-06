@@ -8,6 +8,7 @@ import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/uniswap/Uniswap';
+import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -54,6 +55,17 @@ const getWidget = (widget: Widget): JSX.Element => {
         tokenInSymbol={parsedArgs[0]}
         tokenOutSymbol={parsedArgs[1]}
         inputAmount={parsedArgs[3]}
+      />
+    </ConnectFirst>
+  ));
+
+  widgets.set('yield-protocol-lend', () => (
+    <ConnectFirst>
+      <YieldProtocolLend
+        tokenInSymbol={parsedArgs[0]}
+        inputAmount={parsedArgs[1]}
+        action="lend"
+        projectName="yield-protocol"
       />
     </ConnectFirst>
   ));

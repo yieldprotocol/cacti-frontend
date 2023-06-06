@@ -18,7 +18,7 @@ import useBalance from './useBalance';
 
 export type ApprovalBasicParams = {
   amount: BigNumber;
-  address: `0x${string}`;
+  address: `0x${string}`; // token address
   spender: `0x${string}`;
 };
 

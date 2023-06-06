@@ -1,8 +1,9 @@
 import { BigNumber, ethers } from 'ethers';
-import { Address, useContract } from 'wagmi';
-import poolAbi from './abis/pool.json';
-import { ICallData, getWrapEthCallData } from './helpers';
-import { LadleActions, RoutedActions } from './operations';
+import { Address } from 'wagmi';
+import { getContract } from 'wagmi/actions';
+import poolAbi from '../../contracts/abis/pool.json';
+import { ICallData, getWrapEthCallData } from '../../helpers';
+import { LadleActions, RoutedActions } from '../../operations';
 
 const lend = (
   account: Address | undefined,
@@ -11,14 +12,14 @@ const lend = (
   poolAddress: Address,
   isEthBase: boolean
 ): ICallData[] | undefined => {
-  const targetContract = useContract({ address: poolAddress, abi: poolAbi });
+  const targetContract = getContract({ address: poolAddress, abi: poolAbi });
   if (!targetContract) {
     console.error('Pool contract not found');
     return undefined;
   }
 
   return [
-    ...getWrapEthCallData(poolAddress, input), // wrap eth to the pool
+    ...getWrapEthCallData(poolAddress, isEthBase ? ethers.constants.Zero : input), // wrap eth to the pool if required
     {
       operation: LadleActions.Fn.TRANSFER,
       args: [baseAddress, poolAddress, input] as LadleActions.Args.TRANSFER,
