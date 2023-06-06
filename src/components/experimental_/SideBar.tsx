@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ReadyState } from 'react-use-websocket';
 import {
   Bars3Icon,
   Cog8ToothIcon,
@@ -6,6 +7,7 @@ import {
   HomeIcon,
   QueueListIcon,
 } from '@heroicons/react/24/outline';
+import { useChatContext } from '@/contexts/ChatContext';
 import ChatList from './ChatList';
 
 const MoreItem = ({ icon, link, label }: { icon: any; link: string; label: string }) => {
@@ -23,6 +25,14 @@ const MenuButton = ({ icon, label }: { icon: any; label: string }) => {
 
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const { connectionStatus } = useChatContext();
+
+  const getStatusColor = (status: ReadyState): string => {
+    if (status === ReadyState.OPEN) return 'text-green-500';
+    if (status === ReadyState.CLOSED) return 'text-red-500';
+    return 'text-orange-500';
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -44,15 +54,15 @@ const Sidebar = () => {
         cursor-pointer 
         select-none 
         justify-center 
-        rounded-[8px] text-xs
-         text-white/70 
+        rounded-[8px] p-2
+         text-xs 
+         text-white/70
          hover:bg-white
-         hover:bg-opacity-20
-         p-2"
+         hover:bg-opacity-20"
         onClick={toggleSidebar}
       >
-        <div className='w-4 h-4'>
-        <QueueListIcon />
+        <div className="h-4 w-4">
+          <QueueListIcon />
         </div>
       </div>
     );
@@ -108,16 +118,37 @@ const Sidebar = () => {
             </div>
           </div>
 
-          <div className="w-full bg-purple-300 p-2 py-8">
-            <div className="p-3"> Account Button </div>
+          <div
+            className={`group fixed bottom-4 left-4 mb-2 ml-2 rounded-full text-xs ${getStatusColor(
+              connectionStatus
+            )}`}
+          >
+            <div className="flex gap-1">
+              <span className="animate-pulse">●</span>
+              <span>
+                {connectionStatus === ReadyState.OPEN
+                  ? 'Connected'
+                  : connectionStatus === ReadyState.CLOSED
+                  ? 'Disconnected'
+                  : 'Not Connected'}
+              </span>
+            </div>
           </div>
         </div>
       )}
 
       {!sidebarOpen && (
-        <div
-          className=" absolute left-4 top-4 ">
+        <div className="absolute left-4 top-4 ">
           <MenuButton />
+          {connectionStatus === ReadyState.OPEN ? null : (
+            <div
+              className={`fixed left-2 top-2 rounded-full text-xs ${getStatusColor(
+                connectionStatus
+              )}`}
+            >
+                <div className="animate-pulse">●</div>
+            </div>
+          )}
         </div>
       )}
     </>
