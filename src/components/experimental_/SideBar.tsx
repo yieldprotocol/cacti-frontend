@@ -4,6 +4,7 @@ import {
   Bars3Icon,
   Cog8ToothIcon,
   DocumentIcon,
+  ExclamationCircleIcon,
   HomeIcon,
   QueueListIcon,
 } from '@heroicons/react/24/outline';
@@ -112,7 +113,7 @@ const Sidebar = () => {
             <div className="py-4">
               <MoreItem icon={<HomeIcon />} label="Home" link="/" />
               <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
-              <MoreItem icon={<Cog8ToothIcon />} label="Status" link="/" />
+              <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" />
               <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
               <MoreItem icon={<GithubIcon />} label="Github" link="/" />
               <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />

@@ -1,19 +1,15 @@
 import { Fragment, useContext, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { Menu, Transition } from '@headlessui/react';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 import { Cog8ToothIcon, WrenchIcon } from '@heroicons/react/24/outline';
 import { DevToolsModal } from '@/components/devTools/DevToolsModal';
-import SettingsContext from '@/contexts/SettingsContext';
+import SettingsContext, {Setting} from '@/contexts/SettingsContext';
 
 const SettingsDropdown = () => {
   const {
-    settings: { isForkedEnv },
+    settings: { isForkedEnv, developerTools },
+    changeSetting,
   } = useContext(SettingsContext);
-
-  const [openModal, setOpenModal] = useState(false);
-  /* shortcut open/close dev modal */
-  useHotkeys('alt+d', () => setOpenModal(!openModal));
 
   return (
     <Menu as="div" className="relative">
@@ -39,7 +35,7 @@ const SettingsDropdown = () => {
           <Menu.Item>
             <button
               className="text-md flex w-full items-center gap-2 rounded-md p-2 px-2 py-2 text-white hover:bg-gray-700"
-              onClick={() => setOpenModal(true)}
+              onClick={() => changeSetting( Setting.DEVELOPER_TOOLS, !developerTools) }
             >
               <WrenchIcon className="ml-1 h-5 w-5 text-white" />
               <div>Developer Tools </div>
@@ -48,7 +44,7 @@ const SettingsDropdown = () => {
           </Menu.Item>
         </Menu.Items>
       </Transition>
-      <DevToolsModal openState={openModal} handleClose={() => setOpenModal(false)} />
+      <DevToolsModal openState={developerTools} handleClose={() => changeSetting( Setting.DEVELOPER_TOOLS, false)} />
     </Menu>
   );
 };

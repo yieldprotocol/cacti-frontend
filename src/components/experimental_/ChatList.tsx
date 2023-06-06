@@ -21,7 +21,7 @@ const ChatList = () => {
   const chatList = [
     { id: '9e6bd877-d76f-4379-95b3-7df36c9cc8d0' },
     { id: 'e0cfadee-4baf-43e2-a589-f2f70ca87201' },
-    { id: 'd76f-4379-95b3-7df36' },
+    { id: '0892b8fb-81e2-44e4-92f4-11cb5b63e51d' },
   ];
   const [selectedId, setSelectedId] = useState<string>();
 
