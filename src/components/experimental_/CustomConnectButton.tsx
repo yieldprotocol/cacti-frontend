@@ -1,6 +1,6 @@
+import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Avatar from '../Avatar';
-import { PowerIcon } from '@heroicons/react/24/outline';
 
 export const CustomConnectButton = () => {
   return (
@@ -52,12 +52,15 @@ export const CustomConnectButton = () => {
               }
 
               return (
-                <div className="flex gap-4 items-center cursor-pointer " onClick={openAccountModal}>
+                <div className="flex cursor-pointer items-center gap-4 " onClick={openAccountModal}>
                   <Avatar actor="user" size={24} />
 
                   <div>
-                    <div className="text-sm font-semibold text-white/70"> {account.displayName} </div>
-                    <div className="font-mono text-xs text-white/70 font-thin">
+                    <div className="text-sm font-semibold text-white/70">
+                      {' '}
+                      {account.displayName}{' '}
+                    </div>
+                    <div className="font-mono text-xs font-thin text-white/70">
                       {account.displayBalance ? `${account.displayBalance}` : ''}
                     </div>
                   </div>
@@ -89,10 +92,9 @@ export const CustomConnectButton = () => {
                     {chain.name}
                   </button> */}
 
-                  <div className='ml-8 w-4 h-4 text-white/30 hover:text-white/80'>
-                     <PowerIcon/>
-                    </div>
-
+                  <div className="ml-8 h-4 w-4 text-white/30 hover:text-white/80">
+                    <PowerIcon />
+                  </div>
                 </div>
               );
             })()}

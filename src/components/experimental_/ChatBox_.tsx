@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { ShareIcon } from '@heroicons/react/24/outline';
 import { ResetButton } from '@/components/ResetButton';
 import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
@@ -8,9 +9,6 @@ import { ChatHeader } from './ChatHeader';
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
-import { ShareIcon } from '@heroicons/react/24/outline';
-
-
 
 const ChatBox = () => {
   const { messages } = useChatContext();
@@ -27,7 +25,6 @@ const ChatBox = () => {
   return (
     <div className=" flex h-full justify-center">
       <div className="flex h-full w-[100%] flex-col justify-between pt-20">
-
         {/* chat area */}
         <div className="grid h-full grid-cols-12 overflow-auto ">
           <div className="col-span-2" />

@@ -38,9 +38,9 @@ const WelcomeBoxSubtitle = ({ children }: { children: ReactNode }) => {
 const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
-    <div className="mt-4 md:mt-2 md:px-6 w-[90%] text-center">
+    <div className="mt-4 w-[90%] text-center md:mt-2 md:px-6">
       <h1 className=" md:pd-0 mb-8 text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
-      🌵 Cacti Chat
+        🌵 Cacti Chat
       </h1>
       <div className="flex h-full  justify-center gap-x-8 ">
         <WelcomeColumn>

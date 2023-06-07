@@ -4,7 +4,6 @@ import SettingsDropdown from '@/components/SettingsDropdown';
 import { CustomConnectButton } from './CustomConnectButton';
 
 const Header = () => {
-
   const router = useRouter();
   const { s: threadId } = router.query;
 

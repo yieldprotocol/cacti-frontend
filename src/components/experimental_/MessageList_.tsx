@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
-import { MessageItem } from './MessageItem_';
 import { ChatHeader } from './ChatHeader';
+import { MessageItem } from './MessageItem_';
 
 export const MessageList = () => {
   const {
@@ -29,7 +29,6 @@ export const MessageList = () => {
 
   return (
     <div className="h-full">
-
       {messages.map((message, i) => {
         if (!showDebugMessages && message.actor == 'system') {
           return <React.Fragment key={message.messageId} />;

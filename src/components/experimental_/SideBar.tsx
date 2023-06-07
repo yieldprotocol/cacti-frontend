@@ -112,7 +112,11 @@ const Sidebar = () => {
             <div className="mt-8 text-xs ">More</div>
             <div className="py-4">
               <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
-              <MoreItem icon={<Cog8ToothIcon />} label="Settings" action={() => console.log('settings')} />
+              <MoreItem
+                icon={<Cog8ToothIcon />}
+                label="Settings"
+                action={() => console.log('settings')}
+              />
               {/* <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" /> */}
               <MoreItem
                 icon={<DocumentIcon />}
@@ -157,9 +161,7 @@ const Sidebar = () => {
               <MoreItem
                 icon={<ArrowTopRightOnSquareIcon />}
                 label="StoryBook"
-                action={() =>
-                  toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))
-                }
+                action={() => toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))}
               />
             </div>
           </div>

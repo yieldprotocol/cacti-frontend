@@ -70,11 +70,11 @@ export const UserMessage = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div >
+      <div>
         {!isCommenter ? (
-          <Avatar actor='user' size={16} />
-          // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
+          <Avatar actor="user" size={16} />
         ) : (
+          // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
           <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
         )}
       </div>

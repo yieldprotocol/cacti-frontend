@@ -7,7 +7,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
-  
   const ShareButton = () => {
     return (
       <div
@@ -21,7 +20,7 @@ export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
 
   const PrimaryActions = () => {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <div className="h-4 w-4">
           <PencilIcon />
         </div>
@@ -33,14 +32,18 @@ export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
   };
 
   const SecondaryActions = () => {
-    return <div className="h-4 w-4"><EllipsisVerticalIcon /></div>;
+    return (
+      <div className="h-4 w-4">
+        <EllipsisVerticalIcon />
+      </div>
+    );
   };
 
   return (
     <div className="w-full items-center bg-white bg-opacity-5 p-2 ">
       <div className={`mb-4 flex justify-between px-4 py-2 text-white/70 `}>
         <div className="space-y-2">
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             {threadId}
             <PrimaryActions />
             <SecondaryActions />
