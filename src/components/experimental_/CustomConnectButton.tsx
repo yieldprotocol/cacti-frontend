@@ -24,7 +24,7 @@ export const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className=" rounded-lg  bg-white bg-opacity-5 p-2 text-sm"
+            className="rounded-lg bg-white bg-opacity-5 p-2 px-4 text-sm"
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -52,8 +52,8 @@ export const CustomConnectButton = () => {
               }
 
               return (
-                <div className="flex gap-4 items-center" onClick={openAccountModal}>
-                  <Avatar actor="user" size={32} />
+                <div className="flex gap-4 items-center cursor-pointer " onClick={openAccountModal}>
+                  <Avatar actor="user" size={24} />
 
                   <div>
                     <div className="text-sm font-semibold text-white/70"> {account.displayName} </div>
@@ -89,7 +89,7 @@ export const CustomConnectButton = () => {
                     {chain.name}
                   </button> */}
 
-                  <div className='w-4 h-4 text-white/30 hover:text-white/80'>
+                  <div className='ml-8 w-4 h-4 text-white/30 hover:text-white/80'>
                      <PowerIcon/>
                     </div>
 

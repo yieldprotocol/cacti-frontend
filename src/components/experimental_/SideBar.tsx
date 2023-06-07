@@ -1,27 +1,25 @@
 import { useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
 import {
-  Bars3Icon,
+  ArrowTopRightOnSquareIcon,
   Cog8ToothIcon,
   DocumentIcon,
-  ExclamationCircleIcon,
   HomeIcon,
+  LinkIcon,
   QueueListIcon,
+  WrenchIcon,
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import ChatList from './ChatList';
 
-const MoreItem = ({ icon, link, label }: { icon: any; link: string; label: string }) => {
+type MoreItem = { icon: any; action: () => void; label: string };
+const MoreItem = ({ icon, action, label }: MoreItem) => {
   return (
-    <div className="flex cursor-pointer flex-row items-center gap-2 py-1 text-xs">
+    <div className="flex cursor-pointer flex-row items-center gap-2 py-1 text-xs" onClick={action}>
       <div className="h-4 w-4 text-white/50">{icon}</div>
       <div className="text-xs text-white/50 hover:text-white"> {label}</div>
     </div>
   );
-};
-
-const MenuButton = ({ icon, label }: { icon: any; label: string }) => {
-  return;
 };
 
 const Sidebar = () => {
@@ -35,12 +33,6 @@ const Sidebar = () => {
     return 'text-orange-500';
   };
 
-  const getStatusText = (status: ReadyState): string => {
-    if (status === ReadyState.OPEN) return 'Ready';
-    if (status === ReadyState.CLOSED) return 'Disconnected';
-    return 'Not Ready - Check Wallet';
-  };
-
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -51,6 +43,10 @@ const Sidebar = () => {
     params.delete('s');
     const paramString = params.toString();
     window.location.assign(paramString ? `/?${paramString}` : '/');
+  };
+
+  const toExternalUrl = (url: URL) => {
+    window.open(url, '_blank');
   };
 
   const MenuButton = () => {
@@ -115,43 +111,71 @@ const Sidebar = () => {
 
             <div className="mt-8 text-xs ">More</div>
             <div className="py-4">
-              <MoreItem icon={<HomeIcon />} label="Home" link="/" />
-              <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
-              <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" />
-              <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
-              <MoreItem icon={<GithubIcon />} label="Github" link="/" />
-              <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
-              <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
+              <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
+              <MoreItem icon={<Cog8ToothIcon />} label="Settings" action={() => console.log('settings')} />
+              {/* <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" /> */}
+              <MoreItem
+                icon={<DocumentIcon />}
+                label="Documentation"
+                action={() =>
+                  toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+                }
+              />
+              <MoreItem
+                icon={<GithubIcon />}
+                label="Github"
+                action={() =>
+                  toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+                }
+              />
+              <MoreItem
+                icon={<DiscordIcon />}
+                label="Discord"
+                action={() =>
+                  toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+                }
+              />
+              <MoreItem
+                icon={<TwitterIcon />}
+                label="Twitter"
+                action={() =>
+                  toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+                }
+              />
             </div>
 
-            <div className="mt-8 text-xs ">Status</div>
+            <div className="mt-8 flex items-center justify-between">
+              <div className="text-xs ">Developer </div>
+              {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
+            </div>
             <div className="py-4">
-              <MoreItem icon={<HomeIcon />} label="Home" link="/" />
-              <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
-              <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" />
-              <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
-              <MoreItem icon={<GithubIcon />} label="Github" link="/" />
-              <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
-              <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
+              <MoreItem
+                icon={<WrenchIcon />}
+                label="Open DevTools (alt-D) "
+                action={() => console.log('s')}
+              />
+              <MoreItem
+                icon={<ArrowTopRightOnSquareIcon />}
+                label="StoryBook"
+                action={() =>
+                  toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))
+                }
+              />
             </div>
-
-
           </div>
 
-          <div
-            className={`group fixed bottom-4 left-4 mb-2 ml-2 rounded-full text-xs ${getStatusColor(
-              connectionStatus
-            )}`}
-          >
-            <div className="flex gap-1">
-              <span className="animate-pulse">●</span>
-              <span>
-                {connectionStatus === ReadyState.OPEN
-                  ? 'Ready'
-                  : connectionStatus === ReadyState.CLOSED
-                  ? 'Disconnected'
-                  : 'Wallet Not Connected'}
-              </span>
+          <div className="w-full p-4">
+            <div className={`text-xs ${getStatusColor(connectionStatus)}`}>
+              <div className="flex gap-1">
+                <span className="animate-pulse">●</span>
+                <span>
+                  {connectionStatus === ReadyState.OPEN
+                    ? 'Ready'
+                    : connectionStatus === ReadyState.CLOSED
+                    ? 'Disconnected'
+                    : 'Wallet Not Connected'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
