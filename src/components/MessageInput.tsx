@@ -6,7 +6,8 @@ export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { sendMessage, interactor, setInteractor, isBotThinking } = useChatContext();
+  const { sendMessage, interactor, setInteractor, isBotThinking, connectionStatus } =
+    useChatContext();
 
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if (e.key === 'I') {
@@ -58,7 +59,7 @@ export const MessageInput = ({}) => {
       />
     </svg>
   );
-
+  const isConnected = connectionStatus == 1;
   return (
     <form onSubmit={handleSendMessage}>
       <div className="flex">
@@ -67,7 +68,9 @@ export const MessageInput = ({}) => {
           onChange={(e) => setMessageInput(e.target.value)}
           className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-600"
           placeholder={
-            isBotThinking
+            !isConnected
+              ? 'Connecting to the server...'
+              : isBotThinking
               ? 'Please wait while your message is processing...'
               : interactor === 'user'
               ? 'Enter your message...'
@@ -76,7 +79,7 @@ export const MessageInput = ({}) => {
           tabIndex={0}
           value={messageInput}
           ref={inputRef}
-          disabled={isBotThinking}
+          disabled={isBotThinking || !isConnected}
         />
         <button
           className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out disabled:cursor-not-allowed disabled:text-gray-500"
