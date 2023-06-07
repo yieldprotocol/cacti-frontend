@@ -20,10 +20,12 @@ export const MessageTranslator = ({ message }: { message: string }) => {
             {
               // if it's a string, just return a TextResponse Component
               // otherwise, let's try to translate the widget
-              typeof item === 'string'
-                ? item &&
-                  composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`)
-                : getWidget(item) // Widgetize(item)
+              typeof item === 'string' ? (
+                item &&
+                composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`)
+              ) : (
+                <Widget widget={item} />
+              )
             }
           </Fragment>
         );
@@ -40,41 +42,40 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const getWidget = (widget: Widget): JSX.Element => {
+const Widget = ({ widget }: { widget: Widget }) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgsStripQuotes(args);
-
   const inputString = `${fnName}(${args})`;
 
-  const widgets = new Map<string, () => JSX.Element>();
+  const render = useMemo(() => {
+    switch (fnName) {
+      case 'uniswap':
+        return (
+          <Uniswap
+            tokenInSymbol={parsedArgs[0]}
+            tokenOutSymbol={parsedArgs[1]}
+            inputAmount={parsedArgs[3]}
+          />
+        );
+      case 'yield-protocol-lend':
+        return (
+          <YieldProtocolLend
+            tokenInSymbol={parsedArgs[0]}
+            inputAmount={parsedArgs[1]}
+            action="lend"
+            projectName="yield-protocol"
+          />
+        );
 
-  widgets.set('uniswap', () => (
-    <ConnectFirst>
-      <Uniswap
-        tokenInSymbol={parsedArgs[0]}
-        tokenOutSymbol={parsedArgs[1]}
-        inputAmount={parsedArgs[3]}
-      />
-    </ConnectFirst>
-  ));
+      default:
+        return (
+          <div className="inline-block bg-slate-500 p-5 text-white">
+            Widget not implemented for <code>{inputString}</code>
+          </div>
+        );
+    }
+  }, [fnName, inputString, parsedArgs]);
 
-  widgets.set('yield-protocol-lend', () => (
-    <ConnectFirst>
-      <YieldProtocolLend
-        tokenInSymbol={parsedArgs[0]}
-        inputAmount={parsedArgs[1]}
-        action="lend"
-        projectName="yield-protocol"
-      />
-    </ConnectFirst>
-  ));
-
-  return widgets.has(fnName) ? (
-    widgets.get(fnName)!()
-  ) : (
-    <div className="inline-block bg-slate-500 p-5 text-white">
-      Widget not implemented for <code>{inputString}</code>
-    </div>
-  );
+  return <ConnectFirst>{render}</ConnectFirst>;
 };
