@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
 import {
+  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   Cog8ToothIcon,
   DocumentIcon,
@@ -171,6 +172,11 @@ const Sidebar = () => {
                 icon={<ArrowTopRightOnSquareIcon />}
                 label="StoryBook"
                 action={() => toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))}
+              />
+              <MoreItem
+                icon={ <ArrowPathIcon />}
+                label="Reset App"
+                action={reset}
               />
             </div>
           </div>

@@ -36,9 +36,9 @@ const ChatBox = () => {
           <div className="col-span-8">
             <MessageInput />
           </div>
-          <div className="col-span-2">
+          {/* <div className="col-span-2">
             <ResetButton styleOption="iconAndText" />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
