@@ -2,7 +2,9 @@ import { ReactNode, useContext } from 'react';
 import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import SettingsContext from '@/contexts/SettingsContext';
-import Cactus1 from './experimental_/CactiImages/Cactus1';
+import Cactus1 from './CactiImages/Cactus1';
+import Cactus2 from './CactiImages/Cactus2';
+import Cactus3 from './CactiImages/Cactus3';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col">{children}</div>;
@@ -40,12 +42,14 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="mt-4 w-[90%] text-center md:mt-2 md:px-6">
-      <h1 className=" md:pd-0 mb-8 text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
-        🌵 Cacti Chat
-      </h1>
-      <div className="flex h-full  justify-center gap-x-8 ">
+
+      {/* <div className= "mt-12 mb-12 text-3xl font-bold text-white font-satisfy ">
+      🌵 Cacti 
+      </div> */}
+
+      <div className=" mt-12 flex h-full  justify-center gap-x-8 ">
         <WelcomeColumn>
-          <BoltIcon className="mt-3 h-12 text-gray-300" />
+          <Cactus1 className='h-16' />
           <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>
           <WelcomeBox onClick={() => sendMessage('Find some dog nfts')}>
             &rdquo;Browse some dog nfts&rdquo;
@@ -57,21 +61,25 @@ const WelcomeMessage = () => {
             &rdquo;Get the price of ETH in terms of USD&rdquo;
           </WelcomeBox>
         </WelcomeColumn>
+
         <WelcomeColumn>
-          <RocketLaunchIcon className="mt-3 h-12 text-gray-300" />
+           <Cactus2 className='h-16' />
           <WelcomeBoxSubtitle>Capabilities</WelcomeBoxSubtitle>
           <WelcomeBox>Generate transactions to send tokens or Swap on Uniswap</WelcomeBox>
           <WelcomeBox>Query NFT collections</WelcomeBox>
           <WelcomeBox>Check on chain data</WelcomeBox>
         </WelcomeColumn>
         <WelcomeColumn>
-          <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" />
+        
+        <Cactus3 className='h-16' />
+          {/* <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" /> */}
           <WelcomeBoxSubtitle>Limitations</WelcomeBoxSubtitle>
           <WelcomeBox>Can only interact with Ethereum mainnet</WelcomeBox>
           <WelcomeBox>Does not support all tokens for all commands</WelcomeBox>
           <WelcomeBox>More limitations</WelcomeBox>
         </WelcomeColumn>
       </div>
+
     </div>
   );
 };

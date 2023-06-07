@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ShareIcon } from '@heroicons/react/24/outline';
-import { ResetButton } from '@/components/ResetButton';
-import WelcomeMessage from '@/components/WelcomeMessage';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import { ChatHeader } from './ChatHeader';
+
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
+
+import  WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
