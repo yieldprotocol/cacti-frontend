@@ -1,17 +1,9 @@
-import { ReadyState } from 'react-use-websocket';
 import { useRouter } from 'next/router';
 import { EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/20/solid';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import SettingsDropdown from '@/components/SettingsDropdown';
-import { useChatContext } from '@/contexts/ChatContext';
+import { CustomConnectButton } from './CustomConnectButton';
 
 const Header = () => {
-  // const { connectionStatus } = useChatContext();
-  // const getStatusColor = (status: ReadyState): string => {
-  //   if (status === ReadyState.OPEN) return 'text-green-500';
-  //   if (status === ReadyState.CLOSED) return 'text-red-500';
-  //   return 'text-orange-500';
-  // };
 
   const router = useRouter();
   const { s: threadId } = router.query;
@@ -67,8 +59,8 @@ const Header = () => {
         ) : null}
 
         <div className="fixed right-0 top-0 z-10 mr-4 mt-4 inline-flex gap-3">
-          <ConnectButton />
-          <SettingsDropdown />
+          <CustomConnectButton />
+          {/* <SettingsDropdown /> */}
         </div>
       </div>
     </div>
