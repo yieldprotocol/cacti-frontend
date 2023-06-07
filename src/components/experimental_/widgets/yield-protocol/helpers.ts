@@ -90,8 +90,10 @@ const getCallValue = async (calls: ICallData[]) =>
  * @returns
  */
 export const getWrapEthCallData = (to: Address, value: BigNumber, chainId = 1): ICallData[] => {
+  const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
+
   const targetContract = getContract({
-    address: contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE)!,
+    address: address!,
     abi: wrapEtherModuleAbi,
   });
 
