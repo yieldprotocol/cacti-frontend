@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
 import {
   ArrowTopRightOnSquareIcon,
@@ -11,6 +11,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import ChatList from './ChatList';
+import SettingsContext, { Setting } from '@/contexts/SettingsContext';
+import { DevToolsModal } from '../devTools/DevToolsModal';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -26,6 +28,7 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { connectionStatus } = useChatContext();
+  const { settings:{developerTools}, changeSetting } = useContext(SettingsContext);
 
   const getStatusColor = (status: ReadyState): string => {
     if (status === ReadyState.OPEN) return 'text-green-500';
@@ -73,6 +76,12 @@ const Sidebar = () => {
 
   return (
     <>
+
+      <DevToolsModal
+        openState={developerTools}
+        handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
+      />
+      
       {sidebarOpen && (
         <div
           className="
@@ -156,7 +165,7 @@ const Sidebar = () => {
               <MoreItem
                 icon={<WrenchIcon />}
                 label="Open DevTools (alt-D) "
-                action={() => console.log('s')}
+                action={() => changeSetting(Setting.DEVELOPER_TOOLS, !developerTools)}
               />
               <MoreItem
                 icon={<ArrowTopRightOnSquareIcon />}
