@@ -1,5 +1,6 @@
-import { Fragment, useEffect ,createElement } from 'react';
+import { Fragment, createElement, useEffect } from 'react';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { getToken } from 'next-auth/jwt';
 import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
@@ -23,7 +24,6 @@ import {
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
-
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -38,25 +38,24 @@ import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import { SwapWidget } from './widgets/swap/SwapWidget';
-import { getToken } from 'next-auth/jwt';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
   return (
     <SharedStateContextProvider>
-    <div className="flex flex-col gap-3">
-      {stringsAndWidgets.map((item, i) => {
-        return (
-          <Fragment key={`i${i}`}>
-            {
-              // if it's a string, just return the string
-              // otherwise, let's try to translate the widget
-              typeof item === 'string' ? item : Widgetize(item)
-            }
-          </Fragment>
-        );
-      })}
-    </div>
+      <div className="flex flex-col gap-3">
+        {stringsAndWidgets.map((item, i) => {
+          return (
+            <Fragment key={`i${i}`}>
+              {
+                // if it's a string, just return the string
+                // otherwise, let's try to translate the widget
+                typeof item === 'string' ? item : Widgetize(item)
+              }
+            </Fragment>
+          );
+        })}
+      </div>
     </SharedStateContextProvider>
   );
 };
@@ -85,12 +84,7 @@ const Widgetize = (widget: Widget) => {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
         return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
       }
-      // Swap widget
-      case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
-          parseArgsStripQuotes(args);
-        return <SwapWidget {...{ tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw }} />;
-      }
+
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
