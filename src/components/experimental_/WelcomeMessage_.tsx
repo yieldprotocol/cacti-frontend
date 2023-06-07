@@ -13,22 +13,13 @@ const WelcomeColumn = ({ children }: { children: ReactNode }) => {
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
-  const {
-    settings: { experimentalUi },
-  } = useContext(SettingsContext);
-
-  const onClickClasses = onClick ? 'cursor-pointer hover:bg-gray-500' : '';
+  const onClickClasses = onClick ? 'cursor-pointer hover:bg-white/20 hover:border-red-500 hover:border-opacity-90' : '';
   return (
     <div
       className={`
-      my-4 max-w-[250px]  rounded-lg text-white text-sm
-
-      ${
-        experimentalUi
-          ? 'border-[1px] border-white border-opacity-10 text-opacity-70'
-          : 'bg-gray-600'
-      } 
-      p-4 text-center  md:p-2 ${onClickClasses}`}
+      my-4 max-w-[250px]  rounded-lg border-[1px] border-white
+      border-opacity-10 p-4 text-center text-sm text-white
+      text-opacity-70 md:p-2 ${onClickClasses}`}
       onClick={onClick}
     >
       <p className="flex min-h-[48px] items-center justify-center">{children}</p>
@@ -44,7 +35,6 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="w-[90%]">
-
       <div className="mb-12">
         <Image src={cactiImage} alt="CactiChat" className="scale-75" />
       </div>
