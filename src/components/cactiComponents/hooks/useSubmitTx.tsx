@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
+import { PayableOverrides } from 'ethers';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 
 export type TxBasicParams = {
@@ -8,7 +8,7 @@ export type TxBasicParams = {
   abi: any;
   functionName: string;
   args: any[];
-  overrides?: PayableOverrides | Overrides | CallOverrides;
+  overrides?: PayableOverrides;
 };
 
 /**
@@ -22,9 +22,13 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-  const { config } = usePrepareContractWrite(params);
-
+  const {
+    config,
+    isError: isPrepareError,
+    error: prepareError,
+  } = usePrepareContractWrite({ ...params, enabled: !!params });
   const { data: writeData, isLoading: isWaitingOnUser, write, isError } = useContractWrite(config);
+
   const {
     data: receipt,
     error,
@@ -46,7 +50,7 @@ const useSubmitTx = (
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
-  }, [receipt, status]);
+  }, [error?.message, receipt, status]);
 
   return {
     submitTx: write,
@@ -59,6 +63,7 @@ const useSubmitTx = (
 
     isSuccess,
     isError,
+    isPrepareError,
 
     error,
   };
