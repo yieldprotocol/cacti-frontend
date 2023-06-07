@@ -27,9 +27,6 @@ const ChatBox = () => {
   return (
     <div className=" flex h-full justify-center">
       <div className="flex h-full w-[100%] flex-col justify-between pt-20">
-        {/* Header */}
-
-        {threadId && (<ChatHeader threadId={threadId} />)}
 
         {/* chat area */}
         <div className="grid h-full grid-cols-12 overflow-auto ">

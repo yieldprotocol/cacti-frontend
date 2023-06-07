@@ -35,6 +35,12 @@ const Sidebar = () => {
     return 'text-orange-500';
   };
 
+  const getStatusText = (status: ReadyState): string => {
+    if (status === ReadyState.OPEN) return 'Ready';
+    if (status === ReadyState.CLOSED) return 'Disconnected';
+    return 'Not Ready - Check Wallet';
+  };
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -117,6 +123,19 @@ const Sidebar = () => {
               <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
               <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
             </div>
+
+            <div className="mt-8 text-xs ">Status</div>
+            <div className="py-4">
+              <MoreItem icon={<HomeIcon />} label="Home" link="/" />
+              <MoreItem icon={<Cog8ToothIcon />} label="Settings" link="/" />
+              <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" />
+              <MoreItem icon={<DocumentIcon />} label="Documentation" link="/" />
+              <MoreItem icon={<GithubIcon />} label="Github" link="/" />
+              <MoreItem icon={<DiscordIcon />} label="Discord" link="/" />
+              <MoreItem icon={<TwitterIcon />} label="Twitter" link="/" />
+            </div>
+
+
           </div>
 
           <div
