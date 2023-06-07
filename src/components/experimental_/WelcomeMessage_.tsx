@@ -44,11 +44,12 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="w-[90%]">
-      <div className="text-start ">
+
+      <div className="mb-12">
         <Image src={cactiImage} alt="CactiChat" className="scale-75" />
       </div>
 
-      <div className="  flex h-full  justify-center gap-x-8 ">
+      <div className=" flex h-full  justify-center gap-x-8 ">
         <WelcomeColumn>
           <Cactus1 className="h-16" />
           <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>
