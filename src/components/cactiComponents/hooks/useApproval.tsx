@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
+  Address,
   erc20ABI,
   useAccount,
   useContract,
@@ -23,19 +24,9 @@ export type ApprovalBasicParams = {
 };
 
 const useApproval = (params: ApprovalBasicParams | undefined) => {
-  /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (params === undefined || params.address === AddressZero)
-    return { approve: undefined, hasAllowance: true };
+  const { isETH } = useToken(undefined, params?.address); // get token data from address (zero address === ETH)
 
-  const { amount, address, spender } = params;
-
-  // const addressOrAddressZero = address || ethers.constants.AddressZero; // if address is undefined, use addressZero
-  const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
-
-  // const amountOrZero = amount ? amount : BigNumber.from(0);
-  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
-
-  const [hash, setHash] = useState<`0x${string}`>();
+  const [hash, setHash] = useState<Address>();
   const [txPending, setTxPending] = useState(false);
 
   const signer = useSigner();
@@ -43,13 +34,12 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
 
   // Get allowance amount
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: params?.address! ?? undefined,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [account!, spender!],
-    scopeKey: `allowance_${address}`,
+    args: [account!, params?.spender!],
     cacheTime: 20_000,
-    enabled: true,
+    enabled: !!params?.spender,
   });
 
   /* Get the useForkSettings the settings context */
@@ -58,22 +48,26 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
   } = useContext(SettingsContext);
 
   // for using in fork env
-  const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
+  const contract = useContract({
+    address: params?.address,
+    abi: erc20ABI,
+    signerOrProvider: signer,
+  });
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: params?.address ?? undefined,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [spender!, amountToUse],
-    // enabled: true,
+    args: [params?.spender!, params?.amount!],
+    enabled: !!params?.spender,
   });
 
-  const { write: approvalWrite, writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
 
-  const approveTx = async () => {
+  const approveTx = useCallback(async () => {
     setTxPending(true);
     try {
       if (isForkedEnv) {
-        const tx = await contract?.approve(spender!, amountToUse);
+        const tx = await contract?.approve(params?.spender!, params?.amount!);
         setHash(tx?.hash as `0x${string}`);
       } else {
         const tx = await approvalWriteAsync?.();
@@ -84,7 +78,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
       setTxPending(false);
     }
     setTxPending(false);
-  };
+  }, [approvalWriteAsync, contract, isForkedEnv, params?.amount, params?.spender]);
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
@@ -92,7 +86,8 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
   });
 
   return {
-    approveTx,
+    /* if params are undefined, or address is addressZero (ETH), return empty object */
+    approveTx: !params?.address || params.address === AddressZero ? undefined : approveTx,
     refetchAllowance,
 
     approvalReceipt: data,
@@ -104,7 +99,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     approvalError: isError,
     approvalSuccess: isSuccess,
 
-    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: isETH ? true : allowanceAmount?.gte(params?.amount!), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 
