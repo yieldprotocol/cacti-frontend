@@ -9,7 +9,7 @@ export const MessageInput = ({}) => {
   const { sendMessage, interactor, setInteractor } = useChatContext();
 
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key === "k") {
+    if (e.ctrlKey && e.key === 'k') {
       e.preventDefault();
       focusInput();
     }
