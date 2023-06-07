@@ -3666,6 +3666,7 @@ __metadata:
     "@uniswap/v3-periphery": ^1.4.3
     autoprefixer: ^10.4.13
     axios: ^1.3.4
+    clsx: ^1.2.1
     copy-to-clipboard: ^3.3.3
     dotenv: ^16.0.3
     eslint: 8.32.0
@@ -3797,7 +3798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0, clsx@npm:^1.1.1":
+"clsx@npm:^1.1.0, clsx@npm:^1.1.1, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
