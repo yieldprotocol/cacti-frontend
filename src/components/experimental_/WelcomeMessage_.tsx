@@ -6,7 +6,7 @@ import SettingsContext from '@/contexts/SettingsContext';
 import Cactus1 from './CactiImages/Cactus1';
 import Cactus2 from './CactiImages/Cactus2';
 import Cactus3 from './CactiImages/Cactus3';
-import cactiImage from './CactiImages/cacti.png';
+import cactiImage from './CactiImages/cacti_4.png';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col">{children}</div>;
@@ -45,7 +45,7 @@ const WelcomeMessage = () => {
   return (
     <div className="w-[90%]">
       <div className="text-start ">
-        <Image src={cactiImage} alt="CactiChat" className="scale-50" />
+        <Image src={cactiImage} alt="CactiChat" className="scale-75" />
       </div>
 
       <div className="  flex h-full  justify-center gap-x-8 ">
