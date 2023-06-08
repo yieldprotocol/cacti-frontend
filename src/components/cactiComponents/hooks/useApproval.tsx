@@ -40,7 +40,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     functionName: 'allowance',
     args: [account!, spender],
     cacheTime: 20_000,
-    enabled: !!account,
+    enabled: !!account && !isETH,
   });
 
   /* Get the useForkSettings the settings context */
@@ -60,6 +60,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender, approvalAmount],
+    enabled: !!account && !isETH,
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
