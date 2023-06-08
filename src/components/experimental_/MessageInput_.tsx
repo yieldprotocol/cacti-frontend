@@ -16,7 +16,8 @@ const IconBtn: React.FC<ButtonProps> = ({ children, ...rest }) => (
         w-10
         place-items-center rounded-lg
         bg-teal-400/30 text-gray-100
-        hover:cursor-pointer hover:bg-gray-800 hover:text-gray-200 disabled:cursor-not-allowed disabled:bg-teal-200/20 disabled:text-gray-400
+        duration-200 hover:cursor-pointer hover:bg-gray-800 hover:text-gray-200 disabled:cursor-not-allowed disabled:bg-teal-200/20
+        disabled:text-teal-100/40
         `}
     {...rest}
   >
