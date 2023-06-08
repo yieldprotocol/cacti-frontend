@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import React, { ButtonHTMLAttributes } from 'react';
 import {
   ChatBubbleLeftRightIcon,
@@ -23,17 +23,41 @@ const IconBtn: React.FC<ButtonProps> = ({ children, ...rest }) => (
     {children}
   </button>
 );
+/**
+ * used for focusing with crtl + k and auto focus on mount
+ */
+const useFocus = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === 'k') {
+      e.preventDefault();
+      focusInput();
+    }
+  }, []);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
+  // /* set input focus on mount */
+  useEffect(() => {
+    focusInput();
+  }, []);
+  return [inputRef];
+};
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  // const inputRef = useRef<HTMLInputElement>(null);
 
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
-
-  /* set input focus on mount */
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const [inputRef] = useFocus();
 
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
