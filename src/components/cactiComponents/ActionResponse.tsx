@@ -86,34 +86,30 @@ export const ActionResponse = ({
   const [action, setAction] = useState<Action>();
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
-  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } =
-    useApproval(approvalParams);
+  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
+    approvalParams!
+  ); // TODO fix handling of undefined approvalParams
 
-
-
-  /** 
-   * 
+  /**
+   *
    * Check if the acount has enough balance from the transaction: NOTE this is only
-   * 
+   *
    *  */
-  
+
   useEffect(() => {
+    // // Lastl, try get value from overrides
+    // (txParams.overrides as PayableOverrides)?.value &&
+    // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
 
-            // // Lastl, try get value from overrides
-            // (txParams.overrides as PayableOverrides)?.value &&
-            // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
-
-    if (balance && approvalParams?.address && approvalParams?.approvalAmount )  {
-      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount))
-    } 
-    else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
-      setHasEnoughBalance( balance.gte(txParams.args[1]) );
+    if (balance && approvalParams?.address && approvalParams?.approvalAmount) {
+      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
+    } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
+      setHasEnoughBalance(balance.gte(txParams.args[1]));
     }
     // default case, set enough balance to true
     else {
       setHasEnoughBalance(true);
     }
-
   }, [txParams, approvalParams, balance]);
 
   /**
