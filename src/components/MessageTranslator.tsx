@@ -420,6 +420,7 @@ const StreamingListContainer = ({
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
   if (operation === 'create') {
     return (
       <div className="p-3 text-white">
