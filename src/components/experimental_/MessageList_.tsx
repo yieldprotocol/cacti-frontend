@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
+import { ChatHeader } from './ChatHeader';
 import { MessageItem } from './MessageItem_';
 
 export const MessageList = () => {

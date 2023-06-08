@@ -8,24 +8,22 @@ import erc1155ABI from '@/abi/erc1155ABI.json';
  * @param address
  */
 const useBalance = (
-  address?: `0x${string}`,
+  tokenAddress?: `0x${string}`,
   compareAmount?: BigNumber,
   erc1155TokenId?: string
 ) => {
   const { address: account } = useAccount();
 
-  const isETH = address === ethers.constants.AddressZero || !address; // if no address is specified, or address is 0x0, then assume it's eth
-
   // erc20 or eth if zero or no address is specified
   const { data, isLoading } = useBalanceWagmi({
     address: account,
-    token: isETH ? undefined : address,
+    token: tokenAddress,
     enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
   });
 
   // erc1155
   const { data: erc1155_data, isLoading: erc1155_Loading } = useContractRead({
-    address,
+    address: tokenAddress,
     abi: erc1155ABI,
     functionName: 'balanceOf',
     args: [account, erc1155TokenId],

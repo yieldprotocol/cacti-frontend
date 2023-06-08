@@ -14,13 +14,12 @@ import {
 import SettingsContext from '@/contexts/SettingsContext';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
-import { cleanValue } from '@/utils';
-import useBalance from './useBalance';
 
 export type ApprovalBasicParams = {
-  amount: BigNumber;
-  address: `0x${string}`; // token address
-  spender: `0x${string}`;
+  approvalAmount: BigNumber;
+  address: Address;
+  spender: Address;
+  skipApproval?: boolean;
 };
 
 const useApproval = (params: ApprovalBasicParams | undefined) => {
@@ -57,7 +56,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     address: params?.address ?? undefined,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [params?.spender!, params?.amount!],
+    args: [params?.spender!, params?.approvalAmount!],
     enabled: !!params?.spender,
   });
 
@@ -67,8 +66,8 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     setTxPending(true);
     try {
       if (isForkedEnv) {
-        const tx = await contract?.approve(params?.spender!, params?.amount!);
-        setHash(tx?.hash as `0x${string}`);
+        const tx = await contract?.approve(params?.spender!, params?.approvalAmount!);
+        setHash(tx?.hash as `0x${string}`); // TODO fix
       } else {
         const tx = await approvalWriteAsync?.();
         setHash(tx?.hash);
@@ -78,7 +77,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
       setTxPending(false);
     }
     setTxPending(false);
-  }, [approvalWriteAsync, contract, isForkedEnv, params?.amount, params?.spender]);
+  }, [approvalWriteAsync, contract, isForkedEnv, params?.approvalAmount, params?.spender]);
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
@@ -99,7 +98,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     approvalError: isError,
     approvalSuccess: isSuccess,
 
-    hasAllowance: isETH ? true : allowanceAmount?.gte(params?.amount!), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: isETH ? true : BigNumber.from(allowanceAmount)?.gte(params?.approvalAmount!), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 

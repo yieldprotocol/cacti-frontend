@@ -6,6 +6,7 @@ import {
   PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import Avatar from '../Avatar';
 
 export const UserMessage = ({
   actor,
@@ -71,8 +72,9 @@ export const UserMessage = ({
     >
       <div>
         {!isCommenter ? (
-          <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
+          <Avatar actor="user" size={16} />
         ) : (
+          // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
           <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
         )}
       </div>

@@ -68,7 +68,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const Widgetize = (widget: Widget) => {
+export const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
