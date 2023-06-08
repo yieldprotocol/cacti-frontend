@@ -11,9 +11,9 @@ import {
   WrenchIcon,
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
-import ChatList from './ChatList';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { DevToolsModal } from '../devTools/DevToolsModal';
+import ChatList from './ChatList';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -29,7 +29,10 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { connectionStatus } = useChatContext();
-  const { settings:{developerTools}, changeSetting } = useContext(SettingsContext);
+  const {
+    settings: { developerTools },
+    changeSetting,
+  } = useContext(SettingsContext);
 
   const getStatusColor = (status: ReadyState): string => {
     if (status === ReadyState.OPEN) return 'text-green-500';
@@ -77,12 +80,11 @@ const Sidebar = () => {
 
   return (
     <>
-
       <DevToolsModal
         openState={developerTools}
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
-      
+
       {sidebarOpen && (
         <div
           className="
@@ -173,11 +175,7 @@ const Sidebar = () => {
                 label="StoryBook"
                 action={() => toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))}
               />
-              <MoreItem
-                icon={ <ArrowPathIcon />}
-                label="Reset App"
-                action={reset}
-              />
+              <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
             </div>
           </div>
 

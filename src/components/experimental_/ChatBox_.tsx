@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
-
-import  WelcomeMessage from './WelcomeMessage_';
+import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
