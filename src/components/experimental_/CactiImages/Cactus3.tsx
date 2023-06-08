@@ -1,9 +1,10 @@
-import * as React from "react"
-const Cactus3 = (props:any) => (
+import * as React from 'react';
+
+const Cactus3 = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width='100%'
-    height='100%'
+    width="100%"
+    height="100%"
     viewBox="0 0 300 300"
     fill="none"
     {...props}
@@ -41,10 +42,7 @@ const Cactus3 = (props:any) => (
         <feOffset />
         <feGaussianBlur stdDeviation={2.798} />
         <feColorMatrix values="0 0 0 0 0.968627 0 0 0 0 0.00784314 0 0 0 0 0.00784314 0 0 0 1 0" />
-        <feBlend
-          in2="effect1_dropShadow_3_17"
-          result="effect2_dropShadow_3_17"
-        />
+        <feBlend in2="effect1_dropShadow_3_17" result="effect2_dropShadow_3_17" />
         <feColorMatrix
           in="SourceAlpha"
           result="hardAlpha"
@@ -53,10 +51,7 @@ const Cactus3 = (props:any) => (
         <feOffset />
         <feGaussianBlur stdDeviation={9.792} />
         <feColorMatrix values="0 0 0 0 0.968627 0 0 0 0 0.00784314 0 0 0 0 0.00784314 0 0 0 1 0" />
-        <feBlend
-          in2="effect2_dropShadow_3_17"
-          result="effect3_dropShadow_3_17"
-        />
+        <feBlend in2="effect2_dropShadow_3_17" result="effect3_dropShadow_3_17" />
         <feColorMatrix
           in="SourceAlpha"
           result="hardAlpha"
@@ -65,10 +60,7 @@ const Cactus3 = (props:any) => (
         <feOffset />
         <feGaussianBlur stdDeviation={19.584} />
         <feColorMatrix values="0 0 0 0 0.968627 0 0 0 0 0.00784314 0 0 0 0 0.00784314 0 0 0 1 0" />
-        <feBlend
-          in2="effect3_dropShadow_3_17"
-          result="effect4_dropShadow_3_17"
-        />
+        <feBlend in2="effect3_dropShadow_3_17" result="effect4_dropShadow_3_17" />
         <feColorMatrix
           in="SourceAlpha"
           result="hardAlpha"
@@ -77,10 +69,7 @@ const Cactus3 = (props:any) => (
         <feOffset />
         <feGaussianBlur stdDeviation={33.574} />
         <feColorMatrix values="0 0 0 0 0.968627 0 0 0 0 0.00784314 0 0 0 0 0.00784314 0 0 0 1 0" />
-        <feBlend
-          in2="effect4_dropShadow_3_17"
-          result="effect5_dropShadow_3_17"
-        />
+        <feBlend in2="effect4_dropShadow_3_17" result="effect5_dropShadow_3_17" />
         <feColorMatrix
           in="SourceAlpha"
           result="hardAlpha"
@@ -89,17 +78,10 @@ const Cactus3 = (props:any) => (
         <feOffset />
         <feGaussianBlur stdDeviation={58.754} />
         <feColorMatrix values="0 0 0 0 0.968627 0 0 0 0 0.00784314 0 0 0 0 0.00784314 0 0 0 1 0" />
-        <feBlend
-          in2="effect5_dropShadow_3_17"
-          result="effect6_dropShadow_3_17"
-        />
-        <feBlend
-          in="SourceGraphic"
-          in2="effect6_dropShadow_3_17"
-          result="shape"
-        />
+        <feBlend in2="effect5_dropShadow_3_17" result="effect6_dropShadow_3_17" />
+        <feBlend in="SourceGraphic" in2="effect6_dropShadow_3_17" result="shape" />
       </filter>
     </defs>
   </svg>
-)
-export default Cactus3
+);
+export default Cactus3;
