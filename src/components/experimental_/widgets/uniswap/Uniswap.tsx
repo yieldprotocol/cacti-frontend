@@ -18,6 +18,7 @@ import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
+import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface UniswapProps {
   tokenInSymbol: string;
@@ -139,7 +140,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   // );
 
   return (
-    <>
+    <ConnectFirst>
       <HeaderResponse text="Swap with uniswap" projectName="uniswap" />
       <ResponseRow>
         <DoubleLineResponse
@@ -173,7 +174,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         // stepper
         // disabled={true}
       />
-    </>
+    </ConnectFirst>
   );
 };
 

@@ -85,22 +85,24 @@ export const ActionResponse = ({
     useApproval(approvalParams);
 
   /** Check if the acount has enough balance from the transaction */
+  // const getTxAmount = useCallback(() => {
+  //   if (!txParams) return undefined;
+  //   if (txParams?.overrides?.value) return txParams?.overrides?.value;
+  //   // if (txParams?.amount) return txParams?.amount;
+  //   return undefined;
+  // },[txParams]);
+  
   const valueFromOverrides = (txParams?.overrides as PayableOverrides)?.value! as
     | BigNumber
     | undefined; // TODO find a workaround for this
+  
+  /** Check if the acount has enough balance from the transaction */
   const { data: balance, isGTEcompared: hasBalance } = useBalance(
     approvalParams?.address,
     approvalParams?.amount || valueFromOverrides
   );
 
-  // /**
-  //  * Set the txParams to 'undefined' until hasBalance and hasAllowance are both true.
-  //  **/
-  // useEffect(() => {
-  //   hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
-  // }, [hasBalance, hasAllowance]);
-
-  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
 
   /**
    * BUTTON FLOW:
