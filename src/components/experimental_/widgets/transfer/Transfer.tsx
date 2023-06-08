@@ -1,9 +1,6 @@
 import { parseUnits, zeroPad } from 'ethers/lib/utils.js';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
-import { TransferButton } from '@/components/widgets/Transfer';
-import { ActionPanel } from '@/components/widgets/helpers/ActionPanel';
 import useToken from '@/hooks/useToken';
-import { shortenAddress } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { erc20ABI, useEnsAddress } from 'wagmi';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
@@ -19,14 +16,14 @@ interface TransferWidgetProps {
 const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWidgetProps) => {
   
   const {isETH, data: token } = useToken( tokenSymbol );  
-  if (!isETH && !token) return null; // if not eth, and there is no token - abort.
-
   const amount = parseUnits(amtString, token?.decimals);
 
   // Resolve ENS name
   const { data: receiverAddress } = useEnsAddress({
       name: receiver,
   });
+
+  if (!isETH && !token) return null; // if not eth, and there is no token - abort.
 
   const approval = {
     approvalAmount: amount,
