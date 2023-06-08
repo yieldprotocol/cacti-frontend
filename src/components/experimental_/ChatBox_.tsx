@@ -20,6 +20,7 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
+
     <div className=" flex h-full justify-center">
       <div className="flex h-full w-[100%] flex-col justify-between pt-20">
         {/* chat area */}

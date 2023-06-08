@@ -1,4 +1,4 @@
-import { Fragment, createElement, useMemo, useState } from 'react';
+import { Fragment, createElement, useContext, useEffect, useMemo, useState } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
 import * as cactiComponents from '@/components/cactiComponents';
 import { CactiResponse } from '@/components/cactiComponents';
@@ -8,26 +8,50 @@ import { cleanValue, findProjectByName, shortenAddress } from '@/utils';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Uniswap from './widgets/uniswap/Uniswap';
+import SettingsContext from '@/contexts/SettingsContext';
+import { parseMessage } from '@/utils/parse-message';
+import { parse } from 'path';
+import { Widgetize } from '../MessageTranslator';
+
+import {
+  ListItem,
+  SharedStateContextProvider,
+  useSharedStateContext,
+} from '@/contexts/SharedStateContext';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
-  const stringsAndWidgets = useParseMessage(message);
+
+  const {settings: {experimentalUi}} = useContext(SettingsContext);
+  const parsedMessage = useMemo(() => parseMessage(message), [message])
+
+  const [componentList, setComponentList] = useState<(JSX.Element|null)[]>();
+  
+  useEffect(()=>{
+
+    parsedMessage && console.log('Parsed changed:' , parsedMessage);
+
+    if ( parsedMessage && parsedMessage.length)  {
+      
+      const list = parsedMessage.map((item: string| Widget)=>{
+        /* if item is a string (and not nothing ) send a text response */
+        if (typeof item === 'string' && item.trim() !== '') return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`)
+        /* if item has a fnName, assume its a widget */
+        if (typeof item !== 'string' && item.fnName ) return getWidget(item) 
+        /* else return null */
+        return null
+      });
+
+      setComponentList(list);
+    }
+
+  }, [parsedMessage])
+
   return (
+    <SharedStateContextProvider>
     <div className="flex flex-col gap-2">
-      {stringsAndWidgets.map((item, i) => {
-        return (
-          <Fragment key={`i${i}`}>
-            {
-              // if it's a string, just return a TextResponse Component
-              // otherwise, let's try to translate the widget
-              typeof item === 'string'
-                ? item &&
-                  composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`)
-                : getWidget(item) // Widgetize(item)
-            }
-          </Fragment>
-        );
-      })}
+      { componentList && componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
     </div>
+    </SharedStateContextProvider>
   );
 };
 
@@ -40,6 +64,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 const getWidget = (widget: Widget): JSX.Element => {
+  
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgsStripQuotes(args);
@@ -58,11 +83,20 @@ const getWidget = (widget: Widget): JSX.Element => {
     </ConnectFirst>
   ));
 
-  return widgets.has(fnName) ? (
-    widgets.get(fnName)!()
-  ) : (
-    <div className="inline-block bg-slate-500 p-5 text-white">
+  if (widgets.has(fnName) ) {
+    /* If available, return the widget in the widgets map */
+    return widgets.get(fnName)!();
+  } else {
+    /* Else, try to get the widget from the previous implementation */
+    try {
+      return <>{Widgetize(widget)}</>
+    } catch (e) {
+      return <div className="inline-block bg-slate-500 p-5 text-white">
       Widget not implemented for <code>{inputString}</code>
     </div>
-  );
+    }
+  }
+
 };
+
+
