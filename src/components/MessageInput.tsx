@@ -69,7 +69,7 @@ export const MessageInput = ({}) => {
           className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-600"
           placeholder={
             !isConnected
-              ? 'Connecting to the server...'
+              ? 'Chat disabled while disconnected'
               : isBotThinking
               ? 'Please wait while your message is processing...'
               : interactor === 'user'
