@@ -11,7 +11,7 @@ import {
 } from 'wagmi';
 
 export type TxBasicParams = {
-  address: `0x${string}`;
+  address: `0x${string}`| undefined;
   abi: any;
   functionName: string;
   args: any[];

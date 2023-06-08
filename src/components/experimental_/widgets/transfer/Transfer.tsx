@@ -1,4 +1,4 @@
-import { parseUnits } from 'ethers/lib/utils.js';
+import { parseUnits, zeroPad } from 'ethers/lib/utils.js';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { TransferButton } from '@/components/widgets/Transfer';
 import { ActionPanel } from '@/components/widgets/helpers/ActionPanel';
@@ -7,6 +7,7 @@ import { shortenAddress } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { erc20ABI, useEnsAddress } from 'wagmi';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
+import { AddressZero } from '@ethersproject/constants';
 
 interface TransferWidgetProps {
   inputString: string;
@@ -17,10 +18,8 @@ interface TransferWidgetProps {
 
 const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWidgetProps) => {
   
-  const { getToken, getTokenIsETH } = useToken();
-  const token = getToken(tokenSymbol);
-  const isEth = getTokenIsETH();
-  if (!isEth && !token) return null; // if not eth, and there is no token - abort.
+  const {isETH, data: token } = useToken( tokenSymbol );  
+  if (!isETH && !token) return null; // if not eth, and there is no token - abort.
 
   const amount = parseUnits(amtString, token?.decimals);
 
@@ -29,12 +28,19 @@ const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWid
       name: receiver,
   });
 
+  const approval = {
+    approvalAmount: amount,
+    address: token!.address as `0x${string}`,
+    spender: AddressZero as `0x${string}`,
+    skipApproval: true,
+  }
+
   /* tx parameters to transfer ETH */ 
-  const tx = isEth ? {
-    address: receiverAddress ? receiverAddress : (receiver as `0x${string}`),
+  const tx = isETH ? {
+    address: undefined,
     abi: undefined,
     functionName: SEND_ETH_FNNAME,
-    args: [amount],
+    args: [receiverAddress ? receiverAddress : (receiver as `0x${string}`), amount],
   }
    /* tx parameters to transfer an ERC20 token */
   : {
@@ -56,7 +62,7 @@ const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWid
       <ActionResponse
         label={`Transfer ${amtString || ''}`}
         txParams={ tx }
-        // approvalParams={approval}
+        approvalParams= { approval }
         // stepper
         // disabled={true}
       />

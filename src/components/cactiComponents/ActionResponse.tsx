@@ -8,7 +8,7 @@ import { useAccount, usePrepareContractWrite } from 'wagmi';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
-import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import useSubmitTx, { SEND_ETH_FNNAME, TxBasicParams } from './hooks/useSubmitTx';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -73,36 +73,48 @@ export const ActionResponse = ({
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
+  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
+
+  // const { data: nativeBalance } = useBalance();
+  const { data: balance } = useBalance(approvalParams?.address);
+
+  const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
+
+  // button state
   const [label, setLabel] = useState<string | undefined>();
   const [state, setState] = useState(ActionResponseState.LOADING);
-
-  // const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
-
   const [action, setAction] = useState<Action>();
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
   const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } =
     useApproval(approvalParams);
 
-  /** Check if the acount has enough balance from the transaction */
-  // const getTxAmount = useCallback(() => {
-  //   if (!txParams) return undefined;
-  //   if (txParams?.overrides?.value) return txParams?.overrides?.value;
-  //   // if (txParams?.amount) return txParams?.amount;
-  //   return undefined;
-  // },[txParams]);
-  
-  const valueFromOverrides = (txParams?.overrides as PayableOverrides)?.value! as
-    | BigNumber
-    | undefined; // TODO find a workaround for this
-  
-  /** Check if the acount has enough balance from the transaction */
-  const { data: balance, isGTEcompared: hasBalance } = useBalance(
-    approvalParams?.address,
-    approvalParams?.amount || valueFromOverrides
-  );
 
-  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
+
+  /** 
+   * 
+   * Check if the acount has enough balance from the transaction: NOTE this is only
+   * 
+   *  */
+  
+  useEffect(() => {
+
+            // // Lastl, try get value from overrides
+            // (txParams.overrides as PayableOverrides)?.value &&
+            // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
+
+    if (balance && approvalParams?.address && approvalParams?.approvalAmount )  {
+      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount))
+    } 
+    else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
+      setHasEnoughBalance( balance.gte(txParams.args[1]) );
+    }
+    // default case, set enough balance to true
+    else {
+      setHasEnoughBalance(true);
+    }
+
+  }, [txParams, approvalParams, balance]);
 
   /**
    * BUTTON FLOW:
@@ -110,14 +122,14 @@ export const ActionResponse = ({
    **/
   useEffect(() => {
     // case:not enough balance */
-    if (!hasBalance) {
+    if (!hasEnoughBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
       setState(ActionResponseState.DISABLED);
     }
 
     /* -------- APPROVAL FLOW --------- */
-    if (!hasAllowance && hasBalance) {
+    if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
       if (true) {
         setAction({ name: 'approve', fn: approveTx });
@@ -146,7 +158,7 @@ export const ActionResponse = ({
     }
 
     /* -------- TRANSACTION FLOW --------- */
-    if (hasAllowance && hasBalance) {
+    if (hasAllowance && hasEnoughBalance) {
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx) {
         console.log('Building TX: Has balance and allowance.');
@@ -181,7 +193,7 @@ export const ActionResponse = ({
       }
     }
   }, [
-    hasBalance,
+    hasEnoughBalance,
     hasAllowance,
     isWaitingOnUser,
     isTransacting,

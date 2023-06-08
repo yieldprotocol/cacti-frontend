@@ -14,26 +14,26 @@ import SettingsContext from '@/contexts/SettingsContext';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import useBalance from './useBalance';
 
 export type ApprovalBasicParams = {
-  amount: BigNumber;
+  approvalAmount: BigNumber;
   address: `0x${string}`;
   spender: `0x${string}`;
+  skipApproval?: boolean;
 };
 
 const useApproval = (params: ApprovalBasicParams | undefined) => {
   /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (params === undefined || params.address === AddressZero)
-    return { approve: undefined, hasAllowance: true };
+  if (params === undefined || params.address === AddressZero || params.skipApproval)
+    return { approveTx: undefined, hasAllowance: true };
 
-  const { amount, address, spender } = params;
+  const { approvalAmount, address, spender } = params;
 
   // const addressOrAddressZero = address || ethers.constants.AddressZero; // if address is undefined, use addressZero
   const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
 
   // const amountOrZero = amount ? amount : BigNumber.from(0);
-  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
+  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
 
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
