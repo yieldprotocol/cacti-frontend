@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 import { AddressZero } from '@ethersproject/constants';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import {
   Address,
   erc20ABI,
@@ -22,10 +22,12 @@ export type ApprovalBasicParams = {
   skipApproval?: boolean;
 };
 
-const useApproval = (params: ApprovalBasicParams | undefined) => {
-  const { isETH } = useToken(undefined, params?.address); // get token data from address (zero address === ETH)
+const useApproval = (params: ApprovalBasicParams) => {
+  const { approvalAmount, address, spender } = params;
 
-  const [hash, setHash] = useState<Address>();
+  const { isETH } = useToken(undefined, address); // get token data from address (zero address === ETH)
+
+  const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
   const signer = useSigner();
@@ -33,12 +35,12 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
 
   // Get allowance amount
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: params?.address! ?? undefined,
+    address,
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [account!, params?.spender!],
+    args: [account!, spender],
     cacheTime: 20_000,
-    enabled: !!params?.spender,
+    enabled: !!account,
   });
 
   /* Get the useForkSettings the settings context */
@@ -52,12 +54,12 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     abi: erc20ABI,
     signerOrProvider: signer,
   });
+
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: params?.address ?? undefined,
+    address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [params?.spender!, params?.approvalAmount!],
-    enabled: !!params?.spender,
+    args: [spender, approvalAmount],
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
@@ -85,8 +87,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
   });
 
   return {
-    /* if params are undefined, or address is addressZero (ETH), return empty object */
-    approveTx: !params?.address || params.address === AddressZero ? undefined : approveTx,
+    approveTx: params.address === AddressZero || isETH ? undefined : approveTx,
     refetchAllowance,
 
     approvalReceipt: data,
@@ -98,7 +99,7 @@ const useApproval = (params: ApprovalBasicParams | undefined) => {
     approvalError: isError,
     approvalSuccess: isSuccess,
 
-    hasAllowance: isETH ? true : BigNumber.from(allowanceAmount)?.gte(params?.approvalAmount!), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: isETH ? true : allowanceAmount?.gte(approvalAmount),
   };
 };
 

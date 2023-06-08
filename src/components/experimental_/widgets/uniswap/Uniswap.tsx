@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import {
   ActionResponse,
@@ -13,9 +13,10 @@ import {
 } from '@/components/cactiComponents';
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
+import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
+import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
-import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
@@ -104,16 +105,16 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   );
 
   const approval = useMemo(
-    () => ({
-      address: tokenIn?.address as `0x${string}`,
-      amount: amountIn,
+    (): ApprovalBasicParams => ({
+      address: tokenInIsETH ? ethers.constants.AddressZero : (tokenIn?.address as `0x${string}`),
+      approvalAmount: amountIn,
       spender: SWAP_ROUTER_02_ADDRESSES(chainId),
     }),
-    [amountIn, chainId, tokenIn?.address]
+    [amountIn, chainId, tokenIn?.address, tokenInIsETH]
   );
 
   const tx = useMemo(
-    () => ({
+    (): TxBasicParams => ({
       address: SWAP_ROUTER_02_ADDRESSES(chainId),
       abi: SwapRouter02Abi,
       functionName: 'exactInputSingle',
