@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
 import { IconBtn } from './shared/IconBtn';
 
 export const UserMessage = ({
@@ -79,10 +78,9 @@ export const UserMessage = ({
         </div>
       )}
       <div
-        className={clsx(
-          'flex gap-1 opacity-0 duration-200 group-hover:opacity-100',
+        className={`flex gap-1 opacity-0 duration-200 group-hover:opacity-100 ${
           isEditing && 'hidden'
-        )}
+          }`}
       >
         <IconBtn onClick={() => setIsEditing(true)}>
           <PencilSquareIcon className="h-4 w-4" />

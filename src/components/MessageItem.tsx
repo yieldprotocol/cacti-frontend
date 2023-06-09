@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import clsx from 'clsx';
 import Avatar from '@/components/Avatar';
 import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessageTranslator } from '@/components/MessageTranslator';
@@ -9,16 +8,13 @@ import { Message, useChatContext } from '@/contexts/ChatContext';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (
-    <div className={clsx(actor !== 'user' &&'bg-gray-600')}>
-
-    <div
-      className={clsx(
-        'group m-auto flex max-w-5xl items-start gap-2 p-4 text-base md:gap-6',
-        actor !== 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
-      )}
-    >
-      {children}
-    </div>
+    <div className={`${actor !== 'user' && 'bg-gray-600'}`}>
+      <div
+        className={`group m-auto flex max-w-5xl items-start gap-2 p-4 text-base md:gap-6 ${actor !== 'user' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white'
+          }`}
+      >
+        {children}
+      </div>
     </div>
   );
 };
