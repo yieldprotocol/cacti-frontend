@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
-import { parseEther } from 'ethers/lib/utils.js';
+
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -18,13 +18,11 @@ export type TxBasicParams = {
   overrides?: PayableOverrides | Overrides | CallOverrides;
 };
 
-// random UUID for any send transactions. 
+/**
+ * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName). 
+ * TODO: consider security implications of this
+ * */
 export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
-
-// export type SendTxBasicParams = {
-//   to: `0x${string}`| undefined;
-//   value: ethers.BigNumber | undefined;
-// }
 
 /**
  * @description Prepares and Submits an arbitrary transaction request and returns relevant tx states and tx data
@@ -40,9 +38,12 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-  /* note: usePrepareContractWrite/usePrepareSend only run if all params are defined */
+  
+  /**
+   * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication 
+   * */
+  /* prepare a write transaction */
   const { config: writeConfig } = usePrepareContractWrite(params);
-
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
     params?.functionName === SEND_ETH_FNNAME
@@ -56,35 +57,47 @@ const useSubmitTx = (
   const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
 
   /* usePrepped data to run write or send transactions */
-  const {
-    data: writeData,
-    isLoading: isWaitingOnUser,
-    write,
-    isError: ErrorWrite,
-  } = useContractWrite(writeConfig);
-  const {
-    data: sendData,
-    isLoading: isWaitingOnUserSend,
-    sendTransaction,
-    isError: ErrorSend,
-  } = useSendTransaction(sendConfig);
+  const writeTx = useContractWrite(writeConfig);
+  const sendTx = useSendTransaction(sendConfig);
 
-  const combined = {
-    data: writeData || sendData,
-    isLoading: isWaitingOnUser || isWaitingOnUserSend,
-    transact: write || sendTransaction,
-    isError: ErrorWrite || ErrorSend,
-  };
+  /* 'Combined results'  - Alhtough it will effectively be one or the other */
+  const [data, setData] = useState<any>();
+  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
+  const [transact, setTransact] = useState<any>();
+  const [isError, setIsError] = useState<any>();
 
+  useEffect(()=>{
+    const {
+      data: writeData,
+      isLoading: isWaitingOnUser,
+      write,
+      isError: writeError,
+    } = writeTx
+
+    const {
+      data: sendData,
+      isLoading: isWaitingOnUserSend,
+      sendTransaction,
+      isError: sendError,
+    } = sendTx
+
+    setData(writeData || sendData);
+    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
+    setTransact(write || sendTransaction);
+    setIsError(writeError || sendError);
+
+  },[writeTx, sendTx] )
+
+
+  /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
     error,
-    // isError,
     isLoading: isTransacting,
     isSuccess,
     status,
   } = useWaitForTransaction({
-    hash: combined.data?.hash,
+    hash: data?.hash,
     onSuccess,
     onError,
   });
@@ -99,18 +112,19 @@ const useSubmitTx = (
     }
   }, [receipt, status]);
 
+
+  /* Return the transaction data and states */
   return {
-    submitTx: combined.transact,
+    submitTx: transact,
 
     receipt,
-    hash: combined.data?.hash,
+    hash: data?.hash,
+
+    isWaitingOnUser: isWaitingOnUser,
+    isError: isError,
 
     isTransacting,
-    isWaitingOnUser,
-
     isSuccess,
-    isError: combined.isError,
-
     error,
   };
 };
