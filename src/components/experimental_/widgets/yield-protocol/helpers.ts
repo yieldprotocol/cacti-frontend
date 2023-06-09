@@ -2,8 +2,8 @@ import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'eth
 import { Address } from 'wagmi';
 import { getContract } from 'wagmi/actions';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
+import ladleAbi from './contracts/abis/Ladle.json';
 import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule.json';
-import ladleAbi from './contracts/abis/ladle.json';
 import contractAddresses, { ContractNames } from './contracts/config';
 import { LadleActions, ModuleActions } from './operations';
 
