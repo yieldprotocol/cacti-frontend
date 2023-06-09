@@ -63,7 +63,7 @@ const YieldProtocolLend = ({
   useEffect(() => {
     (async () => {
       const approvalParams: ApprovalBasicParams = {
-        address: tokenIn?.address!,
+        tokenAddress: tokenIn?.address!,
         spender: ladle!,
         approvalAmount: amount!,
       }; // TODO handle no token or ladle addresses more gracefully
