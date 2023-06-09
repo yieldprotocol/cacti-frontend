@@ -78,7 +78,7 @@ const getWidget = (widget: Widget): JSX.Element => {
   if (widgets.has(fnName)) {
     return widgets.get(fnName)!();
   } else {
-  /* Else, 'try' to get the widget from the previous implementation */
+    /* Else, 'try' to get the widget from the previous implementation */
     try {
       return <>{Widgetize(widget)}</>;
     } catch (e) {

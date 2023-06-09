@@ -53,8 +53,9 @@ const componentsList = [
     id: 7,
     name: 'Action Response',
     str: '',
-    component: <ActionResponse label="Submit" />,
+    component: <ActionResponse label="Submit" txParams={undefined} approvalParams={undefined} />,
   },
+
   // { id: 8, name: 'Table Response',  str: '', component: <TableResponse /> },
 ];
 
@@ -114,7 +115,9 @@ const WidgetToString = () => {
         >
           <option selected>Choose a component</option>
           {componentsList.map((component) => (
-            <option value={component.id}>{component.name}</option>
+            <option value={component.id} key={component.id}>
+              {component.name}
+            </option>
           ))}
         </select>
 
@@ -141,7 +144,7 @@ const WidgetToString = () => {
       <div className="flex w-full justify-center space-y-2 border border-dotted border-white/20 p-4 ">
         <div className="w-[80%] space-y-2">
           {components.map((comp_: any) => (
-            <div className="flex gap-2">
+            <div className="flex gap-2" key={comp_.id}>
               <div className="flex-grow "> {composeFromString(`[${comp_.str || comp_}]`)}</div>
               <button className="flex-shrink" onClick={() => removeComponent(comp_.id)}>
                 x
@@ -163,7 +166,6 @@ const WidgetToString = () => {
       </div>
       Experimental React code:
       <div className="font-mono">
-        {' '}
         {reactElementToJSXString(<>{components.map((c) => composeFromString(`[${c.str}]`))}</>)}
       </div>
     </div>

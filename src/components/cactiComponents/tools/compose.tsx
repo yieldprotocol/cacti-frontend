@@ -34,7 +34,7 @@ export const composeFromString = (inputString: string): React.ReactElement => {
             ...item.props,
           });
         });
-        return <ResponseRow>{singleLineOfComponents}</ResponseRow>;
+        return <ResponseRow key={parsedItem[0].response}>{singleLineOfComponents}</ResponseRow>;
       }
       // Case 3: If not a cactiComponent resort to default: a text response with the item as the input
       return createElement(cactiComponents[CactiResponse.TextResponse], {
