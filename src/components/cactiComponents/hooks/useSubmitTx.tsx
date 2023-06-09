@@ -11,14 +11,14 @@ import {
 } from 'wagmi';
 
 export type TxBasicParams = {
-  address: `0x${string}`| undefined;
+  address: `0x${string}` | undefined;
   abi: any;
   functionName: string;
   args: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
 };
 
-// random UUID for any send transactions. 
+// random UUID for any send transactions.
 export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
 
 // export type SendTxBasicParams = {

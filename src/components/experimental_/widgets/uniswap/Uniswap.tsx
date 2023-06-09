@@ -38,7 +38,6 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
-  
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -76,12 +75,11 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
 
   // shortcircuit if no input amount
   if (inputAmount === '*' || inputAmount === '{amount}')
-  return (
-    <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
-  );
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
+    );
   if (!tokenOutSymbol)
-  return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
-
+    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
 
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);

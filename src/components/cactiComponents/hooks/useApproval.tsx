@@ -22,8 +22,7 @@ export type ApprovalBasicParams = {
   skipApproval?: boolean;
 };
 
-const useApproval = ( params: ApprovalBasicParams ) => {
-  
+const useApproval = (params: ApprovalBasicParams) => {
   const { approvalAmount, address, spender } = params;
 
   // const addressOrAddressZero = address || ethers.constants.AddressZero; // if address is undefined, use addressZero
@@ -90,7 +89,7 @@ const useApproval = ( params: ApprovalBasicParams ) => {
 
   /* if params are undefined, or address is addressZero (ETH), return empty object */
   if (params === undefined || params.address === AddressZero || params.skipApproval)
-  return { approveTx: undefined, hasAllowance: true };
+    return { approveTx: undefined, hasAllowance: true };
 
   return {
     approveTx,
