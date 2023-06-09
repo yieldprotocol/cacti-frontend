@@ -17,7 +17,7 @@ import { cleanValue } from '@/utils';
 
 export type ApprovalBasicParams = {
   approvalAmount: BigNumber;
-  address: `0x${string}`;
+  tokenAddress: `0x${string}`;
   spender: `0x${string}`;
   skipApproval?: boolean;
 };
@@ -35,26 +35,26 @@ const useApproval = (params: ApprovalBasicParams) => {
   const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
-  const { approvalAmount, address, spender } = params;
-  const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
+  const { approvalAmount, tokenAddress, spender } = params;
+  const { data: token } = useToken(undefined, tokenAddress); // get token data from address (zero address === ETH)
   // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
   const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
 
   // Get allowance amount - doesn't run if address or spender is undefined
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spender!],
-    scopeKey: `allowance_${address}`,
+    scopeKey: `allowance_${tokenAddress}`,
     cacheTime: 20_000,
     enabled: true,
   });
 
-  // Prepare the approval transaction 
-  const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
+  // Prepare the approval transaction
+  const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
@@ -86,7 +86,7 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (params === undefined || params.address === AddressZero || params.skipApproval)
+  if (params.tokenAddress === AddressZero || params.spender === AddressZero || params.skipApproval)
     return { approveTx: undefined, hasAllowance: true };
 
   return {

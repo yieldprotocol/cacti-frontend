@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
-
+import { BigNumber, CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -11,15 +10,15 @@ import {
 } from 'wagmi';
 
 export type TxBasicParams = {
-  address: `0x${string}`| undefined;
-  abi: any;
-  functionName: string;
-  args: any[];
+  address?: `0x${string}`;
+  abi?: any;
+  functionName?: string;
+  args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
 };
 
 /**
- * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName). 
+ * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName).
  * TODO: consider security implications of this
  * */
 export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
@@ -33,25 +32,20 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
  */
-const useSubmitTx = (
-  params: TxBasicParams | undefined,
-  onSuccess?: () => void,
-  onError?: () => void
-) => {
-  
+const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
   /**
-   * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication 
+   * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
   /* prepare a write transaction */
   const { config: writeConfig } = usePrepareContractWrite(params);
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
-    params?.functionName === SEND_ETH_FNNAME
+    params && params.functionName !== SEND_ETH_FNNAME
       ? undefined
       : {
           request: {
             to: params?.address as string,
-            value: params?.args[0],
+            value: params?.args ? params.args[0] : BigNumber.from(0),
           },
         };
   const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
@@ -66,28 +60,21 @@ const useSubmitTx = (
   const [transact, setTransact] = useState<any>();
   const [isError, setIsError] = useState<any>();
 
-  useEffect(()=>{
-    const {
-      data: writeData,
-      isLoading: isWaitingOnUser,
-      write,
-      isError: writeError,
-    } = writeTx
+  useEffect(() => {
+    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
 
     const {
       data: sendData,
       isLoading: isWaitingOnUserSend,
       sendTransaction,
       isError: sendError,
-    } = sendTx
+    } = sendTx;
 
     setData(writeData || sendData);
     setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
     setTransact(write || sendTransaction);
     setIsError(writeError || sendError);
-
-  },[writeTx, sendTx] )
-
+  }, [writeTx, sendTx]);
 
   /* Use the TX hash to wait for the transaction to be mined */
   const {
@@ -111,7 +98,6 @@ const useSubmitTx = (
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
   }, [receipt, status]);
-
 
   /* Return the transaction data and states */
   return {

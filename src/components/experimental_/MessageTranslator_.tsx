@@ -5,12 +5,10 @@ import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
-import Transfer from './widgets/transfer/Transfer';
-
 export const MessageTranslator = ({ message }: { message: string }) => {
-  
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
@@ -60,26 +58,27 @@ const getWidget = (widget: Widget): JSX.Element => {
   const widgets = new Map<string, () => JSX.Element>();
 
   widgets.set('uniswap', () => (
-      <Uniswap
-        tokenInSymbol={parsedArgs[0]}
-        tokenOutSymbol={parsedArgs[1]}
-        inputAmount={parsedArgs[3]}
-      />
+    <Uniswap
+      tokenInSymbol={parsedArgs[0]}
+      tokenOutSymbol={parsedArgs[1]}
+      inputAmount={parsedArgs[3]}
+    />
   ));
 
   widgets.set('transfer', () => (
-      <Transfer
-        inputString={inputString}
-        tokenSymbol={parsedArgs[0]}
-        amtString={parsedArgs[1]}
-        receiver={parsedArgs[2]}
-      />
+    <Transfer
+      inputString={inputString}
+      tokenSymbol={parsedArgs[0]}
+      amtString={parsedArgs[1]}
+      receiver={parsedArgs[2]}
+    />
   ));
 
-   /* If available, return the widget in the widgets map */
-  if (widgets.has(fnName)) { return widgets.get(fnName)!()} 
-   /* Else, 'try' to get the widget from the previous implementation */
-  else {
+  /* If available, return the widget in the widgets map */
+  if (widgets.has(fnName)) {
+    return widgets.get(fnName)!();
+  } else {
+  /* Else, 'try' to get the widget from the previous implementation */
     try {
       return <>{Widgetize(widget)}</>;
     } catch (e) {

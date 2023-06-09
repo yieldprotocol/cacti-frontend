@@ -12,7 +12,6 @@ const useBalance = (
   compareAmount?: BigNumber,
   erc1155TokenId?: string
 ) => {
-  
   const { address: account } = useAccount();
 
   /* erc20 or eth if zero or no address is specified */
