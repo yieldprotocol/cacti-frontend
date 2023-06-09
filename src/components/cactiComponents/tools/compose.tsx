@@ -22,7 +22,7 @@ export const composeFromString = (inputString: string): React.ReactElement => {
     const parsedItems = JSON.parse(inputString) as CactiStringComponent[];
 
     // Create a component for each component desciption in the array
-    const components = parsedItems.map((parsedItem: CactiStringComponent, i) => {
+    const components = parsedItems.map((parsedItem: CactiStringComponent) => {
       // Case 1: If we have a component that matches a cactiComponent type, create a component with it
       if (cactiComponents[parsedItem.response]) {
         return createElement(cactiComponents[parsedItem.response], parsedItem.props);
@@ -34,8 +34,7 @@ export const composeFromString = (inputString: string): React.ReactElement => {
             ...item.props,
           });
         });
-        // TODO - add a more kosher key to the ResponseRow
-        return <ResponseRow key={i}>{singleLineOfComponents}</ResponseRow>;
+        return <ResponseRow key={parsedItem[0].response}>{singleLineOfComponents}</ResponseRow>;
       }
       // Case 3: If not a cactiComponent resort to default: a text response with the item as the input
       return createElement(cactiComponents[CactiResponse.TextResponse], {

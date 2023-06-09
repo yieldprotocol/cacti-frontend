@@ -106,11 +106,11 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
 
   const approval = useMemo(
     (): ApprovalBasicParams => ({
-      address: tokenInIsETH ? ethers.constants.AddressZero : (tokenIn?.address as `0x${string}`),
+      tokenAddress: tokenIn?.address!,
       approvalAmount: amountIn,
       spender: SWAP_ROUTER_02_ADDRESSES(chainId),
     }),
-    [amountIn, chainId, tokenIn?.address, tokenInIsETH]
+    [amountIn, chainId, tokenIn?.address]
   );
 
   const tx = useMemo(

@@ -1,8 +1,7 @@
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AddressZero } from '@ethersproject/constants';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
-  Address,
   erc20ABI,
   useAccount,
   useContract,
@@ -14,63 +13,62 @@ import {
 import SettingsContext from '@/contexts/SettingsContext';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
+import { cleanValue } from '@/utils';
 
 export type ApprovalBasicParams = {
   approvalAmount: BigNumber;
-  address: Address;
-  spender: Address;
+  tokenAddress: `0x${string}`;
+  spender: `0x${string}`;
   skipApproval?: boolean;
 };
 
 const useApproval = (params: ApprovalBasicParams) => {
-  const { approvalAmount, address, spender } = params;
-
-  const { isETH } = useToken(undefined, address); // get token data from address (zero address === ETH)
-
-  const [hash, setHash] = useState<`0x${string}`>();
-  const [txPending, setTxPending] = useState(false);
-
-  const signer = useSigner();
-  const { address: account } = useAccount();
-
-  // Get allowance amount
-  const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [account!, spender],
-    cacheTime: 20_000,
-    enabled: !!account && !isETH,
-  });
-
   /* Get the useForkSettings the settings context */
   const {
     settings: { isForkedEnv },
   } = useContext(SettingsContext);
 
-  // for using in fork env
-  const contract = useContract({
-    address: params?.address,
+  const signer = useSigner();
+  const { address: account } = useAccount();
+
+  //local state
+  const [hash, setHash] = useState<`0x${string}`>();
+  const [txPending, setTxPending] = useState(false);
+
+  const { approvalAmount, tokenAddress, spender } = params;
+  const { data: token } = useToken(undefined, tokenAddress); // get token data from address (zero address === ETH)
+  // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
+  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
+
+  // Get allowance amount - doesn't run if address or spender is undefined
+  const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
+    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
-    signerOrProvider: signer,
+    functionName: 'allowance',
+    args: [account!, spender!],
+    scopeKey: `allowance_${tokenAddress}`,
+    cacheTime: 20_000,
+    enabled: true,
   });
 
+  // Prepare the approval transaction
+  const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
-    address,
+    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
     functionName: 'approve',
-    args: [spender, approvalAmount],
-    enabled: !!account && !isETH,
+    args: [spender!, amountToUse],
+    // enabled: true,
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
 
-  const approveTx = useCallback(async () => {
+  const approveTx = async () => {
     setTxPending(true);
     try {
       if (isForkedEnv) {
-        const tx = await contract?.approve(params?.spender!, params?.approvalAmount!);
-        setHash(tx?.hash as `0x${string}`); // TODO fix
+        const tx = await contract?.approve(spender!, amountToUse);
+        setHash(tx?.hash as `0x${string}`);
       } else {
         const tx = await approvalWriteAsync?.();
         setHash(tx?.hash);
@@ -80,15 +78,19 @@ const useApproval = (params: ApprovalBasicParams) => {
       setTxPending(false);
     }
     setTxPending(false);
-  }, [approvalWriteAsync, contract, isForkedEnv, params?.approvalAmount, params?.spender]);
+  };
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
     onSuccess: () => refetchAllowance(),
   });
 
+  /* if params are undefined, or address is addressZero (ETH), return empty object */
+  if (params.tokenAddress === AddressZero || params.spender === AddressZero || params.skipApproval)
+    return { approveTx: undefined, hasAllowance: true };
+
   return {
-    approveTx: params.address === AddressZero || isETH ? undefined : approveTx,
+    approveTx,
     refetchAllowance,
 
     approvalReceipt: data,
@@ -100,7 +102,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     approvalError: isError,
     approvalSuccess: isSuccess,
 
-    hasAllowance: isETH ? true : allowanceAmount?.gte(approvalAmount),
+    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 

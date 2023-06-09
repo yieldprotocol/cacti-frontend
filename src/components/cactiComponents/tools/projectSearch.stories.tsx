@@ -22,9 +22,10 @@ export const ProjectSearch = (props: any) => {
           onChange={(e) => searchProjects(e.target.value)}
         />
       </div>
+
       <div>
-        {projects.map((project, i) => (
-          <div key={i} className="flex items-center space-x-2 p-2">
+        {projects.map((project) => (
+          <div className="flex items-center space-x-2 p-2" key={project.id}>
             <strong> {project.name} </strong>- {project.description}
           </div>
         ))}
