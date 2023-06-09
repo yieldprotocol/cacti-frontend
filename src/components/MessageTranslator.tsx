@@ -419,7 +419,18 @@ const StreamingListContainer = ({
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, []);
+  }, [
+    item,
+    newIsThinking,
+    newPrefix,
+    newSuffix,
+    operation,
+    setIsThinking,
+    setItems,
+    setPrefix,
+    setSuffix,
+  ]);
+
   if (operation === 'create') {
     return (
       <div className="p-3 text-white">

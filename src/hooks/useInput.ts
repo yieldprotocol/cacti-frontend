@@ -22,10 +22,11 @@ const useInput = (input: string, tokenSymbol: string, mutate?: (input: BigNumber
   const { decimals } = token;
   const inputCleaned = cleanValue(input, decimals);
   const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
+
   return useMemo(() => {
     if (!inputBN) return undefined;
     return mutate ? mutate(inputBN) : inputBN;
-  }, [mutate]);
+  }, [inputBN, mutate]);
 };
 
 export default useInput;

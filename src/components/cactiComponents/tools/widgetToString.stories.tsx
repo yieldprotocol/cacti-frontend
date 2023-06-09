@@ -114,7 +114,9 @@ const WidgetToString = () => {
         >
           <option selected>Choose a component</option>
           {componentsList.map((component) => (
-            <option value={component.id}>{component.name}</option>
+            <option key={component.id} value={component.id}>
+              {component.name}
+            </option>
           ))}
         </select>
 
@@ -140,8 +142,8 @@ const WidgetToString = () => {
       </div>
       <div className="flex w-full justify-center space-y-2 border border-dotted border-white/20 p-4 ">
         <div className="w-[80%] space-y-2">
-          {components.map((comp_: any) => (
-            <div className="flex gap-2">
+          {components.map((comp_, i) => (
+            <div className="flex gap-2" key={i}>
               <div className="flex-grow "> {composeFromString(`[${comp_.str || comp_}]`)}</div>
               <button className="flex-shrink" onClick={() => removeComponent(comp_.id)}>
                 x

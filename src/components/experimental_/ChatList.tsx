@@ -35,7 +35,7 @@ const ChatList = () => {
     if (params.get('s')) {
       setSelectedId(params.get('s') as string);
     }
-  }, [window.location]);
+  }, []);
 
   return (
     <>

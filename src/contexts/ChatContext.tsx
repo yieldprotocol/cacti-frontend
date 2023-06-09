@@ -216,9 +216,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [wsSendMessage]
   );
 
-  const sendAction = (action: JsonValue) => {
-    wsSendMessage({ actor: 'user', type: 'action', payload: action });
-  };
+  const sendAction = useCallback(
+    (action: JsonValue) => {
+      wsSendMessage({ actor: 'user', type: 'action', payload: action });
+    },
+    [wsSendMessage]
+  );
 
   const truncateUntilNextHumanMessage = (
     messageId: string,

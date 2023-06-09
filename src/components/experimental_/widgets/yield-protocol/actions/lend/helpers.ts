@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import { getContract } from 'wagmi/actions';
-import poolAbi from '../../contracts/abis/pool.json';
+import poolAbi from '../../contracts/abis/Pool.json';
 import { ICallData, getWrapEthCallData } from '../../helpers';
 import { LadleActions, RoutedActions } from '../../operations';
 
