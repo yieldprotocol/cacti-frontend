@@ -97,11 +97,13 @@ export const ActionResponse = ({
     }
   );
 
+
   /**
    *
    * Check if the acount has enough balance from the transaction: NOTE this is only
    *
    *  */
+
   useEffect(() => {
     // // Lastl, try get value from overrides
     // (txParams.overrides as PayableOverrides)?.value &&

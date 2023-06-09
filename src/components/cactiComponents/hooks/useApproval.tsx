@@ -23,6 +23,7 @@ export type ApprovalBasicParams = {
 };
 
 const useApproval = (params: ApprovalBasicParams) => {
+
   /* Get the useForkSettings the settings context */
   const {
     settings: { isForkedEnv },
