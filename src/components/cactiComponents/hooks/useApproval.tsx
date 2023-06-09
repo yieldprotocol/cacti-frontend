@@ -22,23 +22,25 @@ export type ApprovalBasicParams = {
   skipApproval?: boolean;
 };
 
-const useApproval = ( params: ApprovalBasicParams ) => {
-  
-  const { approvalAmount, address, spender } = params;
-
-  // const addressOrAddressZero = address || ethers.constants.AddressZero; // if address is undefined, use addressZero
-  const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
-
-  // const amountOrZero = amount ? amount : BigNumber.from(0);
-  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
-
-  const [hash, setHash] = useState<`0x${string}`>();
-  const [txPending, setTxPending] = useState(false);
+const useApproval = (params: ApprovalBasicParams) => {
+  /* Get the useForkSettings the settings context */
+  const {
+    settings: { isForkedEnv },
+  } = useContext(SettingsContext);
 
   const signer = useSigner();
   const { address: account } = useAccount();
 
-  // Get allowance amount
+  //local state
+  const [hash, setHash] = useState<`0x${string}`>();
+  const [txPending, setTxPending] = useState(false);
+
+  const { approvalAmount, address, spender } = params;
+  const { data: token } = useToken(undefined, address); // get token data from address (zero address === ETH)
+  // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
+  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
+
+  // Get allowance amount - doesn't run if address or spender is undefined
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
     address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
     abi: erc20ABI,
@@ -49,12 +51,7 @@ const useApproval = ( params: ApprovalBasicParams ) => {
     enabled: true,
   });
 
-  /* Get the useForkSettings the settings context */
-  const {
-    settings: { isForkedEnv },
-  } = useContext(SettingsContext);
-
-  // for using in fork env
+  // Prepare the approval transaction 
   const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
     address: spender ? address : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
@@ -64,7 +61,7 @@ const useApproval = ( params: ApprovalBasicParams ) => {
     // enabled: true,
   });
 
-  const { write: approvalWrite, writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
 
   const approveTx = async () => {
     setTxPending(true);
@@ -90,7 +87,7 @@ const useApproval = ( params: ApprovalBasicParams ) => {
 
   /* if params are undefined, or address is addressZero (ETH), return empty object */
   if (params === undefined || params.address === AddressZero || params.skipApproval)
-  return { approveTx: undefined, hasAllowance: true };
+    return { approveTx: undefined, hasAllowance: true };
 
   return {
     approveTx,

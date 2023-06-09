@@ -56,14 +56,16 @@ type Action = {
 export const ActionResponse = ({
   txParams,
   approvalParams,
+  // onSuccess,
   label: label_,
   disabled,
   stepper,
 }: // assertCallParams
 // altAction,
 {
-  txParams?: TxBasicParams;
-  approvalParams?: ApprovalBasicParams;
+  txParams: TxBasicParams;
+  approvalParams: ApprovalBasicParams;
+  // onSuccess?: () => void;
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
@@ -90,15 +92,12 @@ export const ActionResponse = ({
     useApproval(approvalParams);
 
 
-
   /** 
    * 
    * Check if the acount has enough balance from the transaction: NOTE this is only
    * 
    *  */
-  
   useEffect(() => {
-
             // // Lastl, try get value from overrides
             // (txParams.overrides as PayableOverrides)?.value &&
             // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
