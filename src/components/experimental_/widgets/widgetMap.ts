@@ -1,7 +1,3 @@
-
-
 export const widgetMap = () => {
-
-
-    return 
-}
+  return;
+};

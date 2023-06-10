@@ -7,8 +7,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { findProjectByName, shortenAddress } from '@/utils';
 import projectList from '@/utils/ProjectList.json';
-import { ResponseWrap } from './helpers/layout';
 import Avatar from '../Avatar';
+import { ResponseWrap } from './helpers/layout';
 
 /**
  * Header Response Elements are indicating with what app, service, or contract a user is about to interact. User have the option to leave the service and open in a new window a direct link to the app or service if they want to interact through their UI rather through our interface.
@@ -18,7 +18,6 @@ export const HeaderResponse = (props: any) => {
   const [project, setProject] = useState<any>();
 
   useEffect(() => {
-
     if (props.projectName) {
       try {
         const project = findProjectByName(props.projectName);
@@ -32,7 +31,6 @@ export const HeaderResponse = (props: any) => {
     // if (props.projectName==='user') {
     //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
     // }
-
   }, [props.projectName]);
 
   return (
