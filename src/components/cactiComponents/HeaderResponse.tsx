@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { findProjectByName, shortenAddress } from '@/utils';
 import projectList from '@/utils/ProjectList.json';
+import Avatar from '../Avatar';
 import { ResponseWrap } from './helpers/layout';
 
 /**
@@ -26,6 +27,10 @@ export const HeaderResponse = (props: any) => {
         setProject(undefined);
       }
     }
+
+    // if (props.projectName==='user') {
+    //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
+    // }
   }, [props.projectName]);
 
   return (
@@ -39,7 +44,8 @@ export const HeaderResponse = (props: any) => {
               alt="projectLogo"
             />
           ) : (
-            <div className="h-[16px] w-[16px] rounded-full bg-teal-700" />
+            <Avatar actor={'user'} size={16} />
+            // <div className="h-[16px] w-[16px] rounded-full bg-teal-700" />
           )}
           <div>{props.text}</div>
         </div>

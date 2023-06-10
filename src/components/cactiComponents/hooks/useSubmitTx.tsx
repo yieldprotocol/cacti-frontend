@@ -1,19 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { parseEther } from 'ethers/lib/utils.js';
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from 'wagmi';
 
 export type TxBasicParams = {
-  address: `0x${string}`;
+  address: `0x${string}` | undefined;
   abi: any;
   functionName: string;
   args: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
 };
 
+// random UUID for any send transactions.
+export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
+
+// export type SendTxBasicParams = {
+//   to: `0x${string}`| undefined;
+//   value: ethers.BigNumber | undefined;
+// }
+
 /**
- * @description Submits an arbitrary transaction request and returns relevant tx states and tx data
- * @param request the transaction parameters to submit
+ * @description Prepares and Submits an arbitrary transaction request and returns relevant tx states and tx data
+ * 
+ * @param params the transaction parameters prepare and submit
+ * @param sendParams the send ETH transaction parameters to prepare and submit
+
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
  */
@@ -22,9 +40,42 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
-  const { config } = usePrepareContractWrite(params);
+  /* note: usePrepareContractWrite/usePrepareSend only run if all params are defined */
+  const { config: writeConfig } = usePrepareContractWrite(params);
 
-  const { data: writeData, isLoading: isWaitingOnUser, write, isError } = useContractWrite(config);
+  /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
+  const sendParams =
+    params?.functionName === SEND_ETH_FNNAME
+      ? undefined
+      : {
+          request: {
+            to: params?.address as string,
+            value: params?.args[0],
+          },
+        };
+  const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
+
+  /* usePrepped data to run write or send transactions */
+  const {
+    data: writeData,
+    isLoading: isWaitingOnUser,
+    write,
+    isError: ErrorWrite,
+  } = useContractWrite(writeConfig);
+  const {
+    data: sendData,
+    isLoading: isWaitingOnUserSend,
+    sendTransaction,
+    isError: ErrorSend,
+  } = useSendTransaction(sendConfig);
+
+  const combined = {
+    data: writeData || sendData,
+    isLoading: isWaitingOnUser || isWaitingOnUserSend,
+    transact: write || sendTransaction,
+    isError: ErrorWrite || ErrorSend,
+  };
+
   const {
     data: receipt,
     error,
@@ -33,7 +84,7 @@ const useSubmitTx = (
     isSuccess,
     status,
   } = useWaitForTransaction({
-    hash: writeData?.hash,
+    hash: combined.data?.hash,
     onSuccess,
     onError,
   });
@@ -49,16 +100,16 @@ const useSubmitTx = (
   }, [receipt, status]);
 
   return {
-    submitTx: write,
+    submitTx: combined.transact,
 
     receipt,
-    hash: writeData?.hash,
+    hash: combined.data?.hash,
 
     isTransacting,
     isWaitingOnUser,
 
     isSuccess,
-    isError,
+    isError: combined.isError,
 
     error,
   };

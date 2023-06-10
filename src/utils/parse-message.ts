@@ -1,5 +1,10 @@
 type RegExpMatchArrayWithIndices = RegExpMatchArray & { indices: Array<[number, number]> };
 
+export type Widget = {
+  fnName: string;
+  args: any;
+};
+
 export const parseMessage = (str: string) => {
   /** Regex parses any function between <| and |>.
    * 2 capture groups, one being the function name, and the other being all the params.
