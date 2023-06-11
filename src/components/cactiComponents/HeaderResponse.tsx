@@ -39,13 +39,12 @@ export const HeaderResponse = (props: any) => {
         <div className="flex items-center space-x-4">
           {project?.logo || props.altImageUrl ? (
             <img
-              className="h-[16px] w-[16px] rounded-full"
+              className="avatar"
               src={project.logo || props.altImageUrl}
               alt="projectLogo"
             />
           ) : (
-            <Avatar actor={'user'} size={16} />
-            // <div className="h-[16px] w-[16px] rounded-full bg-teal-700" />
+              <Avatar actor={'user'} />
           )}
           <div>{props.text}</div>
         </div>
