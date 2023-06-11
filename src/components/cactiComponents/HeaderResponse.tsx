@@ -38,11 +38,7 @@ export const HeaderResponse = (props: any) => {
       <div className="flex items-center justify-between p-2 ">
         <div className="flex items-center space-x-4">
           {project?.logo || props.altImageUrl ? (
-            <img
-              className="avatar"
-              src={project.logo || props.altImageUrl}
-              alt="projectLogo"
-            />
+            <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
           ) : (
               <Avatar actor={'user'} />
           )}

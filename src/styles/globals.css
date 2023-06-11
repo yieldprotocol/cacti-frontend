@@ -38,11 +38,10 @@
   }
 }
 
-
 .avatar {
-  @apply h-6 w-6 rounded-full grid place-items-center overflow-hidden;
+  @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
 }
 
-.center{
+.center {
   @apply grid place-items-center;
 }

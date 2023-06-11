@@ -10,16 +10,13 @@ interface ActorProps {
 export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) => {
   const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
   return ensImage ? (
-    <img
-      alt="avatar"
-      src={ensImage}
-    />
+    <img alt="avatar" src={ensImage} />
   ) : (
       <Jazzicon diameter={24} seed={address ? jsNumberForAddress(address) : 0} />
   );
 };
 
-const Avatar = ({ actor, }: ActorProps) => {
+const Avatar = ({ actor }: ActorProps) => {
   const { address } = useAccount();
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
