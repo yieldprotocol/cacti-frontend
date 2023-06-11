@@ -12,7 +12,7 @@ export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) 
   return ensImage ? (
     <img alt="avatar" src={ensImage} />
   ) : (
-      <Jazzicon diameter={24} seed={address ? jsNumberForAddress(address) : 0} />
+    <Jazzicon diameter={24} seed={address ? jsNumberForAddress(address) : 0} />
   );
 };
 
@@ -26,15 +26,15 @@ const Avatar = ({ actor }: ActorProps) => {
       {actor === 'user' ? (
         <UserAvatar address={address!} />
       ) : actor === 'system' ? (
-          <div className="center h-full w-full border bg-gray-100 text-teal-900 ">
-            <CommandLineIcon className="h-4 w-4" />
-          </div>
-      ) : actor === 'commenter' ? (
-            <div className="center h-full w-full border bg-gray-100 text-gray-700">
-              <ClipboardDocumentListIcon className="h-4 w-4" />
+        <div className="center h-full w-full border bg-gray-100 text-teal-900 ">
+          <CommandLineIcon className="h-4 w-4" />
         </div>
-          ) : (
-            <img src={botAvatar} alt="bot avatar" />
+      ) : actor === 'commenter' ? (
+        <div className="center h-full w-full border bg-gray-100 text-gray-700">
+          <ClipboardDocumentListIcon className="h-4 w-4" />
+        </div>
+      ) : (
+        <img src={botAvatar} alt="bot avatar" />
       )}
     </div>
   );

@@ -40,7 +40,7 @@ export const HeaderResponse = (props: any) => {
           {project?.logo || props.altImageUrl ? (
             <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
           ) : (
-              <Avatar actor={'user'} />
+            <Avatar actor={'user'} />
           )}
           <div>{props.text}</div>
         </div>
