@@ -24,6 +24,7 @@ export enum Setting {
   FORK_ENV_URL = 'forkEnvUrl',
 
   EXPERIMENTAL_UI = 'experimentalUi',
+  DEVELOPER_TOOLS = 'developerTools',
 }
 
 export enum ApprovalType {
@@ -45,6 +46,8 @@ export interface ISettings {
   diagnostics: boolean;
 
   experimentalUi: boolean;
+
+  developerTools: boolean;
 
   isForkedEnv: boolean;
   forkEnvUrl: string;
@@ -72,6 +75,8 @@ const initState: ISettings = {
 
   /* UI test */
   experimentalUi: true,
+
+  developerTools: false,
 
   /** Development settings **/
 
@@ -124,6 +129,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
           : 'Fork disconnected. Working on mainnet.'
       }`
     );
+  });
+  useHotkeys('alt+d', () => {
+    const currentDevSetting = settings.developerTools;
+    changeSetting(Setting.DEVELOPER_TOOLS, !currentDevSetting);
   });
 
   /* Pre - Update all settings in state based on localStorage */

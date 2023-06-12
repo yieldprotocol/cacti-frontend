@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import dynamic from 'next/dynamic';
+import Sidebar from '@/components/experimental_/SideBar';
 import SettingsContext from '@/contexts/SettingsContext';
 
 const HeaderDynamic = dynamic(() => import('@/components/Header'), {
@@ -13,6 +14,12 @@ const ChatBoxDynamic = dynamic(() => import('@/components/ChatBox'), {
 const ExperimentalChatBox = dynamic(() => import('@/components/experimental_/ChatBox_'), {
   ssr: false,
 });
+const SideBarDynamic = dynamic(() => import('@/components/experimental_/SideBar'), {
+  ssr: false,
+});
+const ExperimentalHeader = dynamic(() => import('@/components/experimental_/Header_'), {
+  ssr: false,
+});
 
 export const Home = () => {
   const {
@@ -22,7 +29,8 @@ export const Home = () => {
   return (
     <>
       <div className={`flex h-screen ${experimentalUi ? 'bg-[#031016]' : 'bg-gray-700'}`}>
-        <HeaderDynamic />
+        {!experimentalUi ? <HeaderDynamic /> : <ExperimentalHeader />}
+        {!experimentalUi ? null : <SideBarDynamic />}
         <div className="w-full">
           {!experimentalUi ? <ChatBoxDynamic /> : <ExperimentalChatBox />}
         </div>

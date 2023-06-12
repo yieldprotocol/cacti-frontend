@@ -25,7 +25,7 @@ export const ProjectSearch = (props: any) => {
 
       <div>
         {projects.map((project) => (
-          <div className="flex items-center space-x-2 p-2">
+          <div className="flex items-center space-x-2 p-2" key={project.id}>
             <strong> {project.name} </strong>- {project.description}
           </div>
         ))}

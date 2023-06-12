@@ -1,14 +1,14 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { toast } from 'react-toastify';
+import { AddressZero } from '@ethersproject/constants';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
-import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
-import { ActionStepper } from './ActionStepper';
+import useSubmitTx, { SEND_ETH_FNNAME, TxBasicParams } from './hooks/useSubmitTx';
 
 export enum ActionResponseState {
   LOADING, // background async checks
@@ -26,21 +26,19 @@ export enum ActionResponseState {
 const StyledButton = tw.button`
   inline-flex items-center justify-center
   height-[40px]
-  py-[8px] px-[24px]
-  rounded-[8px]
-  border-[1px] border-white border-opacity-10
+  py-2 rounded-lg
+  border-[1px] border-white/10
   bg-[#2E8C87]
-  text-sm text-white/90
-  active:bg-transparent
+  text-white/70 w-full duration-200
 `;
-
+const disabledStyle = 'cursor-not-allowed bg-teal-800/10 text-white/30';
 const stylingByState = {
-  [ActionResponseState.WAITING_FOR_USER]: 'cursor-not-allowed', // waiting for user action:  likely a confirmation
-  [ActionResponseState.LOADING]: 'cursor-not-allowed', // system working in background : async calls/checks
-  [ActionResponseState.DISABLED]: 'bg-opacity-20 text-white/20 cursor-not-allowed', // user interaction not allowed (eg. not enough balance, or error with building tx)
-  [ActionResponseState.READY]: '', // tx ready to go, but not submitted.
-  [ActionResponseState.TRANSACTING]: 'cursor-not-allowed', // tx submitting and is transacting.
-  [ActionResponseState.SUCCESS]: 'bg-green-800', // tx completed successfully.
+  [ActionResponseState.WAITING_FOR_USER]: disabledStyle, // waiting for user action:  likely a confirmation
+  [ActionResponseState.LOADING]: disabledStyle, // system working in background : async calls/checks
+  [ActionResponseState.DISABLED]: disabledStyle, // user interaction not allowed (eg. not enough balance, or error with building tx)
+  [ActionResponseState.READY]: 'bg-transparent hover:bg-teal-900', // tx ready to go, but not submitted.
+  [ActionResponseState.TRANSACTING]: disabledStyle, // tx submitting and is transacting.
+  [ActionResponseState.SUCCESS]: 'bg-teal-900/70', // tx completed successfully.
   [ActionResponseState.ERROR]: 'text-white/30 bg-red-600/50', // tx completed, but failed.
 };
 
@@ -56,14 +54,16 @@ type Action = {
 export const ActionResponse = ({
   txParams,
   approvalParams,
+  // onSuccess,
   label: label_,
   disabled,
-  stepper
+  stepper,
 }: // assertCallParams
 // altAction,
 {
-  txParams?: TxBasicParams;
-  approvalParams?: ApprovalBasicParams;
+  txParams: TxBasicParams | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
@@ -73,51 +73,64 @@ export const ActionResponse = ({
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
+  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
+
+  // const { data: nativeBalance } = useBalance();
+  const { data: balance } = useBalance(approvalParams?.tokenAddress);
+
+  const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
+
+  // button state
   const [label, setLabel] = useState<string | undefined>();
   const [state, setState] = useState(ActionResponseState.LOADING);
-
-  // const [txToPrepare, setTxToPrepare] = useState<TxBasicParams>();
-
   const [action, setAction] = useState<Action>();
 
-  /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
-  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } =
-    useApproval(approvalParams);
-
-  /** Check if the acount has enough balance from the transaction */
-  const valueFromOverrides = (txParams?.overrides as PayableOverrides)?.value! as
-    | BigNumber
-    | undefined; // TODO find a workaround for this
-  const { data: balance, isGTEcompared: hasBalance } = useBalance(
-    approvalParams?.address,
-    approvalParams?.amount || valueFromOverrides
+  /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
+  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
+    approvalParams || {
+      tokenAddress: AddressZero,
+      spender: AddressZero,
+      approvalAmount: BigNumber.from(0),
+      skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
+    }
   );
 
-  // /**
-  //  * Set the txParams to 'undefined' until hasBalance and hasAllowance are both true.
-  //  **/
-  // useEffect(() => {
-  //   hasBalance && hasAllowance ? setTxToPrepare(txParams) : setTxToPrepare(undefined);
-  // }, [hasBalance, hasAllowance]);
+  /**
+   *
+   * Check if the acount has enough balance from the transaction: NOTE this is only
+   *
+   *  */
 
-  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txParams);
+  useEffect(() => {
+    // // Lastl, try get value from overrides
+    // (txParams.overrides as PayableOverrides)?.value &&
+    // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
+
+    if (balance && approvalParams?.tokenAddress && approvalParams?.approvalAmount) {
+      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
+    } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
+      setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
+    }
+    // default case, set enough balance to true
+    else {
+      setHasEnoughBalance(true);
+    }
+  }, [txParams, approvalParams, balance]);
 
   /**
    * BUTTON FLOW:
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
-    
     // case:not enough balance */
-    if (!hasBalance) {
+    if (!hasEnoughBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
       setState(ActionResponseState.DISABLED);
     }
 
     /* -------- APPROVAL FLOW --------- */
-    if (!hasAllowance && hasBalance) {
-
+    if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
       if (true) {
         setAction({ name: 'approve', fn: approveTx });
@@ -146,8 +159,7 @@ export const ActionResponse = ({
     }
 
     /* -------- TRANSACTION FLOW --------- */
-    if (hasAllowance && hasBalance) {
-      
+    if (hasAllowance && hasEnoughBalance) {
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx) {
         console.log('Building TX: Has balance and allowance.');
@@ -181,9 +193,8 @@ export const ActionResponse = ({
         setState(ActionResponseState.TRANSACTING);
       }
     }
-  }, 
-  [
-    hasBalance,
+  }, [
+    hasEnoughBalance,
     hasAllowance,
     isWaitingOnUser,
     isTransacting,
@@ -196,20 +207,12 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  const returnComponent = () => { 
-    if (address && stepper) return <ActionStepper />
-    if (address && !stepper) return <StyledButton
-        className={`bg-teal-900 ${extraStyle}`}
-        onClick={(e) => action && action.fn?.()}
-        >
+  if (address && stepper) return <ActionStepper />;
+  if (address && !stepper)
+    return (
+      <StyledButton className={`${extraStyle}`} onClick={(e) => action && action.fn?.()}>
         {label || <Skeleton width={100} />}
-        </StyledButton>
-    return <ConnectButton />
-  }
-
-  return (
-    <div className="flex w-full justify-center">
-      {returnComponent()}
-    </div>
-  );
+      </StyledButton>
+    );
+  return <ConnectButton />;
 };

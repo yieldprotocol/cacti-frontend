@@ -21,8 +21,8 @@ const SubmitButton = ({
   styleProps?: string;
 }) => (
   <button
-    className={`${styleProps} 
-    flex rounded-sm border border-gray-200/25 bg-gray-900/80 p-3.5 hover:cursor-pointer hover:bg-gray-900 disabled:cursor-not-allowed
+    className={`
+    ${styleProps} border hover:cursor-pointer disabled:cursor-not-allowed
     ${isError ? 'border border-red-500/25' : ''}
     ${isSuccess ? 'border border-green-500/25' : ''}
     ${isPendingConfirm ? 'border border-yellow-500/25' : ''}

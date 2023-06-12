@@ -1,40 +1,90 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { BigNumber, CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useWaitForTransaction,
+} from 'wagmi';
 
 export type TxBasicParams = {
-  address: `0x${string}`;
-  abi: any;
-  functionName: string;
-  args: any[];
+  address?: `0x${string}`;
+  abi?: any;
+  functionName?: string;
+  args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
 };
 
 /**
- * @description Submits an arbitrary transaction request and returns relevant tx states and tx data
- * @param request the transaction parameters to submit
+ * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName).
+ * TODO: consider security implications of this
+ * */
+export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
+
+/**
+ * @description Prepares and Submits an arbitrary transaction request and returns relevant tx states and tx data
+ * 
+ * @param params the transaction parameters prepare and submit
+ * @param sendParams the send ETH transaction parameters to prepare and submit
+
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
  */
-const useSubmitTx = (
-  params: TxBasicParams | undefined,
-  onSuccess?: () => void,
-  onError?: () => void
-) => {
+const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
+  /**
+   * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
+   * */
+  /* prepare a write transaction */
+  const { config: writeConfig } = usePrepareContractWrite(params);
+  /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
+  const sendParams =
+    params && params.functionName !== SEND_ETH_FNNAME
+      ? undefined
+      : {
+          request: {
+            to: params?.address as string,
+            value: params?.args ? params.args[0] : BigNumber.from(0),
+          },
+        };
+  const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
 
-  const { config } = usePrepareContractWrite(params);
+  /* usePrepped data to run write or send transactions */
+  const writeTx = useContractWrite(writeConfig);
+  const sendTx = useSendTransaction(sendConfig);
 
-  const { data: writeData, isLoading: isWaitingOnUser, write, isError } = useContractWrite(config);
+  /* 'Combined results'  - Alhtough it will effectively be one or the other */
+  const [data, setData] = useState<any>();
+  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
+  const [transact, setTransact] = useState<any>();
+  const [isError, setIsError] = useState<any>();
+
+  useEffect(() => {
+    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
+
+    const {
+      data: sendData,
+      isLoading: isWaitingOnUserSend,
+      sendTransaction,
+      isError: sendError,
+    } = sendTx;
+
+    setData(writeData || sendData);
+    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
+    setTransact(write || sendTransaction);
+    setIsError(writeError || sendError);
+  }, [writeTx, sendTx]);
+
+  /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
     error,
-    // isError,
     isLoading: isTransacting,
     isSuccess,
     status,
   } = useWaitForTransaction({
-    hash: writeData?.hash,
+    hash: data?.hash,
     onSuccess,
     onError,
   });
@@ -49,18 +99,18 @@ const useSubmitTx = (
     }
   }, [receipt, status]);
 
+  /* Return the transaction data and states */
   return {
-    submitTx: write,
+    submitTx: transact,
 
     receipt,
-    hash: writeData?.hash,
+    hash: data?.hash,
+
+    isWaitingOnUser: isWaitingOnUser,
+    isError: isError,
 
     isTransacting,
-    isWaitingOnUser,
-
     isSuccess,
-    isError,
-
     error,
   };
 };

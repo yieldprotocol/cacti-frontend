@@ -28,7 +28,7 @@ export const DebugPanel = ({ handleClose }: { handleClose: () => void }) => {
             <input
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
-              className="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+              className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
               id="customPrompt"
               type="text"
               placeholder="Prompt"

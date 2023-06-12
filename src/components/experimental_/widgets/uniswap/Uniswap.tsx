@@ -18,6 +18,7 @@ import useToken from '@/hooks/useToken';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
+import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface UniswapProps {
   tokenInSymbol: string;
@@ -37,13 +38,6 @@ interface ExactInputSingleParams {
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
-  if (inputAmount === '*' || inputAmount === '{amount}')
-    return (
-      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
-    );
-  if (!tokenOutSymbol)
-    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
-
   const chainId = useChainId();
 
   const { address: receiver } = useAccount();
@@ -79,6 +73,14 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: undefined,
   });
 
+  // shortcircuit if no input amount
+  if (inputAmount === '*' || inputAmount === '{amount}')
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
+    );
+  if (!tokenOutSymbol)
+    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
+
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
 
@@ -107,8 +109,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   };
 
   const approval = {
-    address: tokenIn?.address as `0x${string}`,
-    amount: amountIn,
+    tokenAddress: tokenIn?.address as `0x${string}`,
+    approvalAmount: amountIn,
     spender: SWAP_ROUTER_02_ADDRESSES(chainId),
   };
 
@@ -139,7 +141,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   // );
 
   return (
-    <>
+    <ConnectFirst>
       <HeaderResponse text="Swap with uniswap" projectName="uniswap" />
       <ResponseRow>
         <DoubleLineResponse
@@ -173,7 +175,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         // stepper
         // disabled={true}
       />
-    </>
+    </ConnectFirst>
   );
 };
 

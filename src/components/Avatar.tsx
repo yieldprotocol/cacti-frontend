@@ -1,32 +1,40 @@
-import Image from 'next/image';
-import { UserIcon } from '@heroicons/react/20/solid';
+import { jsNumberForAddress } from 'react-jazzicon';
+import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import { ClipboardDocumentListIcon, CommandLineIcon } from '@heroicons/react/24/outline';
-import profilePic from '@/public/punk2042.png';
+import { useAccount, useEnsAvatar } from 'wagmi';
 
-interface Props {
+interface ActorProps {
   actor: string;
 }
 
-const Avatar = ({ actor }: Props) => {
+export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) => {
+  const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+  return ensImage ? (
+    <img alt="avatar" src={ensImage} />
+  ) : (
+    <Jazzicon diameter={24} seed={address ? jsNumberForAddress(address) : 0} />
+  );
+};
+
+const Avatar = ({ actor }: ActorProps) => {
+  const { address } = useAccount();
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 
   return (
-    <div className="rounded-md bg-gray-300 shadow-md">
+    <div className="avatar">
       {actor === 'user' ? (
-        <Image
-          width={32}
-          height={32}
-          className="h-full w-8 max-w-none rounded-md"
-          src={profilePic}
-          alt="bot avatar"
-        />
+        <UserAvatar address={address!} />
       ) : actor === 'system' ? (
-        <CommandLineIcon className="h-8 w-8 text-black" />
+        <div className="center h-full w-full border bg-gray-100 text-teal-900 ">
+          <CommandLineIcon className="h-4 w-4" />
+        </div>
       ) : actor === 'commenter' ? (
-        <ClipboardDocumentListIcon className="h-8 w-8 text-black" />
+        <div className="center h-full w-full border bg-gray-100 text-gray-700">
+          <ClipboardDocumentListIcon className="h-4 w-4" />
+        </div>
       ) : (
-        <img className="h-full w-8 max-w-none rounded-md" src={botAvatar} alt="bot avatar" />
+        <img src={botAvatar} alt="bot avatar" />
       )}
     </div>
   );
