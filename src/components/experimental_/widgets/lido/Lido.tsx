@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
+import { Address } from 'wagmi';
 import stethAbi from '@/abi/steth.json';
 import {
   ActionResponse,
@@ -8,29 +9,23 @@ import {
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
-import useChainId from '@/hooks/useChainId';
+import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
 interface LidoProps {
   inputAmount: BigNumber;
-  
 }
 
 const Lido = ({ inputAmount }: LidoProps) => {
-  const tokenInSymbol = 'ETH';
-  const tokenOutSymbol = 'stETH';
+  const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
+  const { data: tokenOut } = useToken('STETH');
 
-  const chainId = useChainId();
+  const inputCleaned = cleanValue(inputAmount.toString(), tokenIn?.decimals);
+  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { data: tokenInChecked } = useToken('ETH');
-
-  const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
-  
-  const tx = {
-    address: useToken(tokenOutSymbol).data?.address as `0x${string}`,
+  const tx: TxBasicParams = {
+    address: tokenOut?.address as Address | undefined,
     abi: stethAbi,
     functionName: 'submit',
     args: ['0x0000000000000000000000000000000000000000'],
@@ -48,10 +43,9 @@ const Lido = ({ inputAmount }: LidoProps) => {
         <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
       </ResponseRow>
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on Lido`}
+        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} on Lido`}
+        approvalParams={undefined}
         txParams={tx}
-        // stepper
-        // disabled={true}
       />
     </>
   );
