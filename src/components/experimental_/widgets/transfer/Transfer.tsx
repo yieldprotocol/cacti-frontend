@@ -21,8 +21,6 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
     name: receiver,
   });
 
- console.log( 'reciever', receiverAddress); 
-
   if (!isETH && !token) return null; // if not eth, and there is no token - abort.
 
   const approval = {
