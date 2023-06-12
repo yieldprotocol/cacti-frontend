@@ -215,10 +215,6 @@ export const ActionResponse = ({
     // approveTx
   ]);
 
-  useEffect(()=>{
-    // console.log( submitTx )
-  },[submitTx])
-
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
