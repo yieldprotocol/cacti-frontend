@@ -24,11 +24,11 @@ export const ResponseWrap = (props: any) => (
     flex-grow
     flex-col
     rounded-[8px]
-    border-[1px] border-white border-opacity-10 text-sm
-    text-white text-opacity-75 hover:border-opacity-20 
+    border-[1px] border-white/10
+    text-white/70 
     ${props.classNameExtra}
     w-max-[400px]
-    p-1
+    px-2 py-4
   `}
   >
     {props.children}
