@@ -30,7 +30,7 @@ const IconBtn: React.FC<ButtonProps> = ({ children, ...rest }) => (
 const useFocus = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key === 'k') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       focusInput();
     }
