@@ -37,3 +37,11 @@
     left: calc(100% - var(--light-width) / 2);
   }
 }
+
+.avatar {
+  @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
+}
+
+.center {
+  @apply grid place-items-center;
+}

@@ -14,14 +14,14 @@ const useBalance = (
 ) => {
   const { address: account } = useAccount();
 
-  // erc20 or eth if zero or no address is specified
+  /* erc20 or eth if zero or no address is specified */
   const { data, isLoading } = useBalanceWagmi({
     address: account,
     token: tokenAddress,
     enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
   });
 
-  // erc1155
+  /* erc1155 */
   const { data: erc1155_data, isLoading: erc1155_Loading } = useContractRead({
     address: tokenAddress,
     abi: erc1155ABI,
@@ -32,7 +32,7 @@ const useBalance = (
 
   const [comparisons, setComparisons] = useState<any>();
 
-  // keep the comparisons in sync with the balance
+  /* keep the comparisons in sync with the balance */
   useEffect(() => {
     const data_bn = erc1155TokenId ? (erc1155_data as BigNumber) : data?.value;
     if (compareAmount && data_bn) {

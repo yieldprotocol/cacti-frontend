@@ -26,7 +26,7 @@ const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWid
 
   const approval = {
     approvalAmount: amount,
-    address: token!.address as `0x${string}`,
+    tokenAddress: token!.address as `0x${string}`,
     spender: AddressZero as `0x${string}`,
     skipApproval: true,
   };

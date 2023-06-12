@@ -1,6 +1,6 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { toast } from 'react-toastify';
+import { AddressZero } from '@ethersproject/constants';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -54,14 +54,16 @@ type Action = {
 export const ActionResponse = ({
   txParams,
   approvalParams,
+  // onSuccess,
   label: label_,
   disabled,
   stepper,
 }: // assertCallParams
 // altAction,
 {
-  txParams?: TxBasicParams;
-  approvalParams?: ApprovalBasicParams;
+  txParams: TxBasicParams | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
@@ -74,7 +76,7 @@ export const ActionResponse = ({
   const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
 
   // const { data: nativeBalance } = useBalance();
-  const { data: balance } = useBalance(approvalParams?.address);
+  const { data: balance } = useBalance(approvalParams?.tokenAddress);
 
   const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
 
@@ -83,9 +85,15 @@ export const ActionResponse = ({
   const [state, setState] = useState(ActionResponseState.LOADING);
   const [action, setAction] = useState<Action>();
 
-  /** Check for the approval. If no approvalParams, hasAllowance === true and approve == undefined  */
-  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } =
-    useApproval(approvalParams);
+  /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
+  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
+    approvalParams || {
+      tokenAddress: AddressZero,
+      spender: AddressZero,
+      approvalAmount: BigNumber.from(0),
+      skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
+    }
+  );
 
   /**
    *
@@ -98,10 +106,10 @@ export const ActionResponse = ({
     // (txParams.overrides as PayableOverrides)?.value &&
     // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
 
-    if (balance && approvalParams?.address && approvalParams?.approvalAmount) {
+    if (balance && approvalParams?.tokenAddress && approvalParams?.approvalAmount) {
       setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
     } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
-      setHasEnoughBalance(balance.gte(txParams.args[1]));
+      setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
     }
     // default case, set enough balance to true
     else {
