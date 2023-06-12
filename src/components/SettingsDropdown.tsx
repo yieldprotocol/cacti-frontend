@@ -19,7 +19,7 @@ const SettingsDropdown = () => {
     <Menu as="div" className="relative">
       <div className="relative">
         {isForkedEnv && (
-          <ExclamationCircleIcon className="absolute top-0 right-0 h-4 w-4 text-green-500" />
+          <ExclamationCircleIcon className="absolute right-0 top-0 h-4 w-4 text-green-500" />
         )}
         <Menu.Button className="h-full w-full rounded-md p-2 align-middle hover:bg-gray-800">
           <Cog8ToothIcon className="h-6 w-6 text-white hover:text-gray-200" />
