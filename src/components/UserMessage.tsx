@@ -80,7 +80,7 @@ export const UserMessage = ({
       <div
         className={`flex gap-1 opacity-0 duration-200 group-hover:opacity-100 ${
           isEditing && 'hidden'
-          }`}
+        }`}
       >
         <IconBtn onClick={() => setIsEditing(true)}>
           <PencilSquareIcon className="h-4 w-4" />
