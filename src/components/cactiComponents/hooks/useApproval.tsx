@@ -53,17 +53,17 @@ const useApproval = (params: ApprovalBasicParams) => {
     args: [account!, spender!],
     scopeKey: `allowance_${tokenAddress}`,
     cacheTime: 20_000,
-    // enabled: !!validateAddress(tokenAddress) && !!validateAddress(spender), // only enable if both address and spender are defined.
+    enabled: !!validateAddress(spender) && !params.skipApproval , // only enable if both address and spender are defined, and not skip approval
   });
 
-  // Prepare the approval transaction
+  // Prepare the approval transaction - doesn't run if address or spender is undefined
   const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
     address: validateAddress(tokenAddress),
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
-    // enabled: !!validateAddress(tokenAddress) && !!validateAddress(spender), // only enable if both address and spender are defined.
+    enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);

@@ -211,7 +211,7 @@ export const ActionResponse = ({
     isError,
     approvalWaitingOnUser,
     approvalTransacting,
-    // submitTx,
+    submitTx,
     // approveTx
   ]);
 
