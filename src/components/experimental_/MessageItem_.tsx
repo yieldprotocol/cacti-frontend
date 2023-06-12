@@ -33,7 +33,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
   };
 
   return (
-    <div className={`flex py-2`}>
+    <div className={`flex py-1`}>
       <div className={`flex w-full flex-col`}>
         {actor === 'bot' && <MessageTranslator message={payload} />}
         {actor === 'system' && <SystemMessage message={payload} />}

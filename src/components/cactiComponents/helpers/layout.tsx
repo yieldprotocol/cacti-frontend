@@ -21,7 +21,7 @@ export const ResponseWrap = (props: any) => (
   <div
     className={`
     flex
-    flex-grow
+    flex-grow 
     flex-col
     rounded-[8px]
     border-[1px] border-white/10
