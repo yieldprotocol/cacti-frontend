@@ -1,5 +1,14 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  FormEvent,
+  HtmlHTMLAttributes,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import React, { ButtonHTMLAttributes } from 'react';
+import { ReadyState } from 'react-use-websocket';
 import {
   ChatBubbleLeftRightIcon,
   PaperAirplaneIcon,
@@ -7,9 +16,11 @@ import {
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+interface IconBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
 
-const IconBtn: React.FC<ButtonProps> = ({ children, ...rest }) => (
+const IconBtn = ({ children, ...rest }: IconBtnProps) => (
   <button
     className={`
         grid h-10
@@ -39,6 +50,7 @@ const useFocus = () => {
   const focusInput = () => {
     inputRef.current?.focus();
   };
+
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
     return () => {
@@ -55,7 +67,6 @@ const useFocus = () => {
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
-  // const inputRef = useRef<HTMLInputElement>(null);
 
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
   const [inputRef] = useFocus();
@@ -72,7 +83,9 @@ export const MessageInput = ({}) => {
     e.preventDefault();
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
   };
-  const isConnected = connectionStatus === 1;
+
+  const isConnected = connectionStatus === ReadyState.OPEN;
+
   return (
     <div className="flex w-[90%] items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
       <div className="text-end">
