@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address, useAccount } from 'wagmi';
+import { useAccount } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -62,15 +62,18 @@ const YieldProtocolLend = ({
   // set tx params (specific to yield protocol)
   useEffect(() => {
     (async () => {
+      if (!tokenIn) return console.error('tokenIn is undefined');
+      if (!amount) return console.error('amount is undefined');
+      if (!ladle) return console.error('ladle is undefined');
+
       const approvalParams: ApprovalBasicParams = {
-        tokenAddress: tokenIn?.address!,
-        spender: ladle!,
-        approvalAmount: amount!,
-      }; // TODO handle no token or ladle addresses more gracefully
+        tokenAddress: tokenIn.address,
+        spender: ladle,
+        approvalAmount: amount,
+      };
       setApprovalParams(approvalParams);
 
-      const baseAddress = tokenIn?.address as Address | undefined;
-      if (!baseAddress) return;
+      const baseAddress = tokenIn.address;
       const seriesEntities = SERIES_ENTITIES.get(chainId);
       if (!seriesEntities) return;
 
@@ -85,10 +88,10 @@ const YieldProtocolLend = ({
 
       const lendCallData = lend(address, amount!, baseAddress, poolAddress, tokenInIsETH);
 
-      setTxParams(lendCallData ? await getTxParams(lendCallData, ladle!) : undefined);
+      setTxParams(lendCallData ? await getTxParams(lendCallData, ladle) : undefined);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
     })();
-  }, [address, amount, chainId, ladle, tokenIn?.address, tokenInIsETH]);
+  }, [address, amount, chainId, ladle, tokenIn, tokenInIsETH]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out
