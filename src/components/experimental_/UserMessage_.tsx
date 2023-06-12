@@ -59,13 +59,13 @@ export const UserMessage = ({
       flex justify-between ${
         isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
       } 
-      hover:bg-gray-700/20 hover:ring-1
-      hover:ring-gray-500/80 focus:text-gray-50
-      focus:ring-gray-500/80
-      ${isEditing ? 'ring-1 ring-gray-500/80' : ''}
+      focus-within:ring-gray-700/70 hover:bg-gray-700/20
+      hover:ring-1 hover:ring-gray-700/70
+      focus:text-gray-50
+      ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
       mt-[32px]
       items-center
-      p-3
+      overflow-hidden rounded-lg p-3 duration-200
    `}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
