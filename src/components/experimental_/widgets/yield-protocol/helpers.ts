@@ -113,3 +113,33 @@ export const getWrapEthCallData = (to: Address, value: BigNumber, chainId = 1): 
     },
   ];
 };
+
+/**
+ * Handles unwrapping eth specific to Yield Protocol
+ * @dev any non-zero value can be supplied to unwrap; all eth available will be unwrapped (value specified does not matter)
+ * @param to address to unwrap eth to
+ * @param value amount of eth to unwrap
+ * @param chainId chainId to use (defaults to mainnet for now)
+ * @returns
+ */
+const getUnwrapEthCallData = (to: Address, value: BigNumber, chainId = 1): ICallData[] => {
+  const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
+
+  const targetContract = getContract({
+    address: address!,
+    abi: wrapEtherModuleAbi,
+  });
+
+  if (!targetContract) {
+    console.error('WrapEtherModule contract not found');
+    return [];
+  }
+
+  return [
+    {
+      operation: LadleActions.Fn.EXIT_ETHER,
+      args: [to] as LadleActions.Args.EXIT_ETHER,
+      ignoreIf: value.eq(ethers.constants.Zero),
+    },
+  ];
+};
