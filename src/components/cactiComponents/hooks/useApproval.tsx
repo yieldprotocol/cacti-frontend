@@ -22,6 +22,11 @@ export type ApprovalBasicParams = {
   skipApproval?: boolean;
 };
 
+const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined => {
+  if (addr === AddressZero || addr === undefined) return undefined;
+  return addr;
+};
+
 const useApproval = (params: ApprovalBasicParams) => {
   /* Get the useForkSettings the settings context */
   const {
@@ -42,23 +47,23 @@ const useApproval = (params: ApprovalBasicParams) => {
 
   // Get allowance amount - doesn't run if address or spender is undefined
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: validateAddress(tokenAddress),
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spender!],
     scopeKey: `allowance_${tokenAddress}`,
     cacheTime: 20_000,
-    enabled: true,
+    // enabled: !!validateAddress(tokenAddress) && !!validateAddress(spender), // only enable if both address and spender are defined.
   });
 
   // Prepare the approval transaction
   const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
-    address: spender ? tokenAddress : undefined, // check if spender is defined. if it (or address) is undefined, this hook doesn't run. ( https://wagmi.sh/react/hooks/useContractRead )
+    address: validateAddress(tokenAddress),
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
-    // enabled: true,
+    // enabled: !!validateAddress(tokenAddress) && !!validateAddress(spender), // only enable if both address and spender are defined.
   });
 
   const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
@@ -86,7 +91,11 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (params.tokenAddress === AddressZero || params.spender === AddressZero || params.skipApproval)
+  if (
+    validateAddress(tokenAddress) === undefined ||
+    validateAddress(spender) === undefined ||
+    params.skipApproval
+  )
     return { approveTx: undefined, hasAllowance: true };
 
   return {

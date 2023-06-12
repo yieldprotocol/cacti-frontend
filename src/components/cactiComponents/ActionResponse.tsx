@@ -75,7 +75,7 @@ export const ActionResponse = ({
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting, isError } = useSubmitTx(txParams);
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -162,11 +162,19 @@ export const ActionResponse = ({
 
     /* -------- TRANSACTION FLOW --------- */
     if (hasAllowance && hasEnoughBalance) {
+      
       /* case tx/approval success, waiting for tx-building */
-      if (!submitTx) {
+      if (!submitTx && !isError) {
         console.log('Building TX: Has balance and allowance.');
         setLabel('Validating the transaction...');
         setState(ActionResponseState.LOADING);
+      }
+
+      /* case approval success, but trnasaction error with tx-building */
+      if (!submitTx && isError) {
+        console.log('Error Building/Validating tx');
+        setLabel('Error validating the transaction.');
+        setState(ActionResponseState.ERROR);
       }
 
       /* case tx/approval success, waiting for tx-building */
@@ -200,11 +208,16 @@ export const ActionResponse = ({
     hasAllowance,
     isWaitingOnUser,
     isTransacting,
+    isError,
     approvalWaitingOnUser,
     approvalTransacting,
-    submitTx,
+    // submitTx,
     // approveTx
   ]);
+
+  useEffect(()=>{
+    // console.log( submitTx )
+  },[submitTx])
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];

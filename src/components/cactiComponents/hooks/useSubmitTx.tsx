@@ -40,12 +40,12 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const { config: writeConfig } = usePrepareContractWrite(params);
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
-    params && params.functionName !== SEND_ETH_FNNAME
+    params && params.args && params.functionName !== SEND_ETH_FNNAME
       ? undefined
       : {
           request: {
-            to: params?.address as string,
-            value: params?.args ? params.args[0] : BigNumber.from(0),
+            to: params?.args?.[0] as string,
+            value: params?.args?.[1] || BigNumber.from(0),
           },
         };
   const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
@@ -55,25 +55,25 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const sendTx = useSendTransaction(sendConfig);
 
   /* 'Combined results'  - Alhtough it will effectively be one or the other */
-  const [data, setData] = useState<any>();
-  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
-  const [transact, setTransact] = useState<any>();
-  const [isError, setIsError] = useState<any>();
+  const [data, setData] = useState<any>(undefined);
+  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>(false);
+  const [transact, setTransact] = useState<any>(undefined);
+  const [isError, setIsError] = useState<any>(undefined);
 
   useEffect(() => {
-    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
-
+    const { data: writeData, isLoading:isLoadingWrite , write, isError: writeError } = writeTx;
     const {
       data: sendData,
-      isLoading: isWaitingOnUserSend,
+      isLoading: isLoadingSend,
       sendTransaction,
       isError: sendError,
     } = sendTx;
-
+   
     setData(writeData || sendData);
-    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
-    setTransact(write || sendTransaction);
+    setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
+    setTransact( () =>  { write || sendTransaction });
     setIsError(writeError || sendError);
+
   }, [writeTx, sendTx]);
 
   /* Use the TX hash to wait for the transaction to be mined */
