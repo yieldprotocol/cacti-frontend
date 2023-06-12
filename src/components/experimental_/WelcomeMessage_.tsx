@@ -13,9 +13,7 @@ const WelcomeColumn = ({ children }: { children: ReactNode }) => {
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
-  const onClickClasses = onClick
-    ? 'cursor-pointer hover:bg-white/20 hover:border-red-500 hover:border-opacity-90'
-    : '';
+  const onClickClasses = onClick ? 'cursor-pointer hover:bg-teal-100/10' : '';
   return (
     <div
       className={`
