@@ -60,20 +60,16 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const [transact, setTransact] = useState<any>(undefined);
   const [isError, setIsError] = useState<any>(undefined);
 
+  const { data: writeData, isLoading: isLoadingWrite, write, isError: writeError } = writeTx;
+  const { data: sendData, isLoading: isLoadingSend, sendTransaction, isError: sendError } = sendTx;
+
   useEffect(() => {
-    const { data: writeData, isLoading:isLoadingWrite , write, isError: writeError } = writeTx;
-    const {
-      data: sendData,
-      isLoading: isLoadingSend,
-      sendTransaction,
-      isError: sendError,
-    } = sendTx;
-   
+    if (write) setTransact(() => write);
+    if (sendTransaction) setTransact(() => sendTransaction);
+
     setData(writeData || sendData);
     setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
-    setTransact( () =>  { write || sendTransaction });
     setIsError(writeError || sendError);
-
   }, [writeTx, sendTx]);
 
   /* Use the TX hash to wait for the transaction to be mined */
