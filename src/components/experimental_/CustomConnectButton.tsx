@@ -53,8 +53,7 @@ export const CustomConnectButton = () => {
 
               return (
                 <div className="flex cursor-pointer items-center gap-4 " onClick={openAccountModal}>
-                  <Avatar actor="user" size={24} />
-
+                  <Avatar actor="user" />
                   <div>
                     <div className="text-sm font-semibold text-white/70">
                       {' '}

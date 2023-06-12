@@ -17,30 +17,26 @@ export const InlineChip = (props: any) => {
       className={`
       height-[32px] 
       inline-block 
-      rounded-[8px] 
+      rounded 
       bg-white bg-opacity-5 
-      p-2
+      py-[6px] pl-2 pr-4
       text-sm text-white text-opacity-75
       hover:shadow-lg focus:shadow-lg focus:outline-none
      `}
     >
-      <div className="flex gap-[8px] p-1">
-        <div className="flex items-center gap-[8px]">
-          {props.image ? (
-            <img src={props.image} className={`h-[16px] w-[16px] rounded-full`} alt="Avatar" />
-          ) : (
-            <Image
-              src={profilePic}
-              className={`h-[16px] w-[16px] rounded-full bg-slate-600 ${!props.image && 'p-1'}`}
-              alt="Avatar"
-            />
-          )}
+      <div className="flex items-center gap-2 p-1">
+        <div className="flex items-center gap-2">
+          <div className="avatar border-2 border-transparent ring-1 ring-white/20">
+            <img src={props?.image || profilePic} alt="Avatar" width={20} height={20} />
+          </div>
           {/* If the label is an address, shorten it */}
-          <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
+          <div className="font-semibold">
+            {props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}
+          </div>
         </div>
         <div>
           {props.showCopyButton && (
-            <div className="w-[16px]">
+            <div className="center h-4 w-4">
               <DocumentDuplicateIcon />
             </div>
           )}

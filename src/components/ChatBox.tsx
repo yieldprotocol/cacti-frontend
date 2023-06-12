@@ -19,17 +19,16 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className="flex max-h-full min-h-full flex-col justify-between pt-20 ">
+    <div className="flex max-h-full min-h-full flex-col justify-between pt-20">
       <div className="min-h-full overflow-auto">
         {ready ? messageContentComponent : <Spinner />}
       </div>
 
-      <div className="grid w-full grid-cols-12 gap-2 py-5">
-        <div className="col-span-2" />
-        <div className="col-span-8">
+      <div className="mx-auto flex w-full max-w-5xl gap-2 py-5">
+        <div className="grow">
           <MessageInput />
         </div>
-        <div className="col-span-2 px-8">
+        <div>
           <ResetButton styleOption="iconAndText" />
         </div>
       </div>
