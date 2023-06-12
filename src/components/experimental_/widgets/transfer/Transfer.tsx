@@ -58,7 +58,7 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
         projectName="user"
       />
       <ActionResponse
-        label={`Transfer ${amtString || ''}`}
+        label={`Transfer ${amtString || ''} ${tokenSymbol}`}
         txParams={tx}
         approvalParams={approval}
         // stepper
