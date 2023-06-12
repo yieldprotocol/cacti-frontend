@@ -72,7 +72,7 @@ export const UserMessage = ({
     >
       <div>
         {!isCommenter ? (
-          <Avatar actor="user" size={16} />
+          <Avatar actor="user" />
         ) : (
           // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
           <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
