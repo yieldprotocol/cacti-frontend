@@ -15,6 +15,7 @@ export type TxBasicParams = {
   functionName?: string;
   args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
+  enabled?: boolean;
 };
 
 /**
@@ -50,6 +51,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
       handleError(error);
     },
   });
+
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
     params && params.args && params.functionName !== SEND_ETH_FNNAME
@@ -79,12 +81,15 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const { data: sendData, isLoading: isLoadingSend, sendTransaction, error: sendError } = sendTx;
 
   useEffect(() => {
+
     if (write) setTransact(() => write);
     if (sendTransaction) setTransact(() => sendTransaction);
 
     setData(writeData || sendData);
     setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
 
+    /* Always reset error on any change */
+    setError(undefined);
     if (writeError) handleError(writeError);
     if (sendError) handleError(sendError);
 

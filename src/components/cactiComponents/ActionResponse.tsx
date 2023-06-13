@@ -1,6 +1,7 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
+import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -41,7 +42,7 @@ const stylingByState = {
   [ActionResponseState.READY]: '', // tx ready to go, but not submitted.
   [ActionResponseState.TRANSACTING]: 'cursor-not-allowed', // tx submitting and is transacting.
   [ActionResponseState.SUCCESS]: 'bg-green-800', // tx completed successfully.
-  [ActionResponseState.ERROR]: 'text-white/30 bg-red-600/50', // tx completed, but failed.
+  [ActionResponseState.ERROR]: 'cursor-not-allowed text-white/30 bg-red-600/50', // tx completed, but failed.
 };
 
 type Action = {
@@ -117,7 +118,6 @@ export const ActionResponse = ({
     else {
       setHasEnoughBalance(true);
     }
-    
   }, [txParams, approvalParams, balance]);
 
   /**
@@ -222,12 +222,28 @@ export const ActionResponse = ({
     if (address && stepper) return <ActionStepper />;
     if (address && !stepper)
       return (
-        <StyledButton
-          className={`bg-teal-900 ${extraStyle}`}
-          onClick={(e) => action && action.fn?.()}
-        >
-          {label || <Skeleton width={100} />}
-        </StyledButton>
+        <div className="flex items-center gap-4">
+          <StyledButton
+            className={`bg-teal-900 ${extraStyle}`}
+            onClick={(e) => action && action.fn?.()}
+          >
+            {label || <Skeleton width={100} />}
+          </StyledButton>
+
+          {error && (
+            <div className="group relative flex">
+              <div className="h-6 w-6 text-white/20">
+                <InformationCircleIcon />
+              </div>
+              <div
+                className="absolute left-8 rounded-md bg-gray-900 p-2  border border-gray-700
+                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                {error}
+              </div>
+            </div>
+          )}
+        </div>
       );
     return <ConnectButton />;
   };
