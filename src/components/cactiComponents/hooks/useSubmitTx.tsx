@@ -33,11 +33,24 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param onError callback to run on error
  */
 const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
+  
+  const [error, setError] = useState<string>();
+  const handleError = (error: any) => {
+
+    console.log(error.message);
+    setError(error.message)
+  };
+
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
   /* prepare a write transaction */
-  const { config: writeConfig } = usePrepareContractWrite(params);
+  const { config: writeConfig } = usePrepareContractWrite({
+    ...params,
+    onError(error) {
+      handleError(error);
+    },
+  });
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
     params && params.args && params.functionName !== SEND_ETH_FNNAME
@@ -48,7 +61,10 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
             value: params?.args?.[1] || BigNumber.from(0),
           },
         };
-  const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
+  const { config: sendConfig } = usePrepareSendTransaction({ ...sendParams,
+    onError(error) {
+      handleError(error);
+    },}); // sendParams
 
   /* usePrepped data to run write or send transactions */
   const writeTx = useContractWrite(writeConfig);
@@ -58,10 +74,10 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const [data, setData] = useState<any>(undefined);
   const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>(false);
   const [transact, setTransact] = useState<any>(undefined);
-  const [isError, setIsError] = useState<any>(undefined);
+  // const [isError, setIsError] = useState<any>(undefined);
 
-  const { data: writeData, isLoading: isLoadingWrite, write, isError: writeError } = writeTx;
-  const { data: sendData, isLoading: isLoadingSend, sendTransaction, isError: sendError } = sendTx;
+  const { data: writeData, isLoading: isLoadingWrite, write, error: writeError } = writeTx;
+  const { data: sendData, isLoading: isLoadingSend, sendTransaction, error: sendError } = sendTx;
 
   useEffect(() => {
     if (write) setTransact(() => write);
@@ -69,7 +85,8 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
 
     setData(writeData || sendData);
     setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
-    setIsError(writeError || sendError);
+    setError(writeError || sendError);
+
   }, [
     write,
     sendTransaction,
@@ -84,7 +101,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
-    error,
+    // error: transactError,
     isLoading: isTransacting,
     isSuccess,
     status,
@@ -112,7 +129,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
     hash: data?.hash,
 
     isWaitingOnUser: isWaitingOnUser,
-    isError: isError,
+    // isError: isError,
 
     isTransacting,
     isSuccess,

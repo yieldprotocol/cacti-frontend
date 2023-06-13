@@ -75,7 +75,7 @@ export const ActionResponse = ({
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting, isError } = useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txParams);
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -102,7 +102,6 @@ export const ActionResponse = ({
    * Check if the acount has enough balance from the transaction: NOTE this is only
    *
    *  */
-
   useEffect(() => {
     // // Lastl, try get value from overrides
     // (txParams.overrides as PayableOverrides)?.value &&
@@ -113,10 +112,12 @@ export const ActionResponse = ({
     } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
       setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
     }
+
     // default case, set enough balance to true
     else {
       setHasEnoughBalance(true);
     }
+    
   }, [txParams, approvalParams, balance]);
 
   /**
@@ -163,16 +164,16 @@ export const ActionResponse = ({
     /* -------- TRANSACTION FLOW --------- */
     if (hasAllowance && hasEnoughBalance) {
       /* case tx/approval success, waiting for tx-building */
-      if (!submitTx && !isError) {
+      if (!submitTx && !error) {
         console.log('Building TX: Has balance and allowance.');
         setLabel('Validating the transaction...');
         setState(ActionResponseState.LOADING);
       }
 
       /* case approval success, but trnasaction error with tx-building */
-      if (!submitTx && isError) {
+      if (!submitTx && error) {
         console.log('Error Building/Validating tx');
-        setLabel('Error validating the transaction.');
+        setLabel(`Error validating the transaction.`);
         setState(ActionResponseState.ERROR);
       }
 
@@ -207,7 +208,7 @@ export const ActionResponse = ({
     hasAllowance,
     isWaitingOnUser,
     isTransacting,
-    isError,
+    error,
     approvalWaitingOnUser,
     approvalTransacting,
     submitTx,
