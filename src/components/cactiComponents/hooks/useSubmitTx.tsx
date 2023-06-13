@@ -35,8 +35,7 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
 const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
   
   const [error, setError] = useState<string>();
-  const handleError = (error: any) => {
-
+  const handleError = (error: Error) => {
     console.log(error.message);
     setError(error.message)
   };
@@ -85,7 +84,9 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
 
     setData(writeData || sendData);
     setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
-    setError(writeError || sendError);
+
+    if (writeError) handleError(writeError);
+    if (sendError) handleError(sendError);
 
   }, [
     write,
@@ -101,7 +102,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
-    // error: transactError,
+    error: transactError,
     isLoading: isTransacting,
     isSuccess,
     status,
@@ -114,7 +115,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   /* DEVELOPER logging */
   useEffect(() => {
     if (receipt?.status === 0) {
-      toast.error(`Transaction Error: ${error?.message}`);
+      toast.error(`Transaction Error: ${transactError?.message}`);
     }
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
