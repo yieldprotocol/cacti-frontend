@@ -21,7 +21,7 @@ const LidoDeposit = ({ inputString }: LidoProps) => {
   const { data: tokenOut } = useToken('STETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const value = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const tx: TxBasicParams = {
     address: tokenOut?.address as Address | undefined,
@@ -29,7 +29,7 @@ const LidoDeposit = ({ inputString }: LidoProps) => {
     functionName: 'submit',
     args: ['0x0000000000000000000000000000000000000000'],
     overrides: {
-      value: tokenInIsETH ? amountIn : 0,
+      value,
     },
   };
 
