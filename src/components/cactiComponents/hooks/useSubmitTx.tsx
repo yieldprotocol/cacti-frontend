@@ -64,14 +64,12 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const { data: sendData, isLoading: isLoadingSend, sendTransaction, isError: sendError } = sendTx;
 
   useEffect(() => {
-
     if (write) setTransact(() => write);
     if (sendTransaction) setTransact(() => sendTransaction);
 
     setData(writeData || sendData);
     setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
     setIsError(writeError || sendError);
-
   }, [
     write,
     sendTransaction,

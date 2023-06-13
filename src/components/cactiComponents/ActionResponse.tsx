@@ -162,7 +162,6 @@ export const ActionResponse = ({
 
     /* -------- TRANSACTION FLOW --------- */
     if (hasAllowance && hasEnoughBalance) {
-      
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx && !isError) {
         console.log('Building TX: Has balance and allowance.');

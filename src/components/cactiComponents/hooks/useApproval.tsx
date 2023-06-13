@@ -53,7 +53,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     args: [account!, spender!],
     scopeKey: `allowance_${tokenAddress}`,
     cacheTime: 20_000,
-    enabled: !!validateAddress(spender) && !params.skipApproval , // only enable if both address and spender are defined, and not skip approval
+    enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined, and not skip approval
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
