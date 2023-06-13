@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import {
   ArrowTopRightOnSquareIcon,
   ChevronDownIcon,
@@ -32,10 +31,15 @@ export const HeaderResponse = (props: any) => {
     //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
     // }
   }, [props.projectName]);
-
-  return (
+  const url = project?.url || props.altUrl;
+  return url ? (
     <ResponseWrap>
-      <div className="flex items-center justify-between p-2 ">
+      <a
+        href={url}
+        className="group flex items-center justify-between px-2"
+        target="_blank"
+        rel="noreferrer"
+      >
         <div className="flex items-center space-x-4">
           {project?.logo || props.altImageUrl ? (
             <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
@@ -44,15 +48,8 @@ export const HeaderResponse = (props: any) => {
           )}
           <div>{props.text}</div>
         </div>
-        {(project?.url || props.altUrl) && (
-          <div
-            className="w-[16px]"
-            onClick={() => window.open(project?.url || props.externalUrl, '_blank')}
-          >
-            <ArrowTopRightOnSquareIcon />
-          </div>
-        )}
-      </div>
+        <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
+      </a>
     </ResponseWrap>
-  );
+  ) : null;
 };
