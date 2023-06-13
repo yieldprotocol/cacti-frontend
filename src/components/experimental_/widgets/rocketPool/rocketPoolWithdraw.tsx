@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { Address } from 'wagmi';
 import stethAbi from '@/abi/steth.json';
@@ -20,15 +21,23 @@ const RethWithdraw = ({ inputString }: RethProps) => {
   const { data: tokenIn } = useToken('RETH');
   const { data: tokenOut } = useToken('ETH');
 
-  const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const inputCleaned = useMemo(
+    () => cleanValue(inputString.toString(), tokenIn?.decimals),
+    [inputString, tokenIn?.decimals]
+  );
+  const value = useMemo(() => {
+    return parseUnits(inputCleaned!, tokenIn?.decimals);
+  }, [inputCleaned, tokenIn?.decimals]);
 
-  const tx: TxBasicParams = {
-    address: tokenOut?.address as Address | undefined,
-    abi: stethAbi,
-    functionName: 'submit',
-    args: ['0x0000000000000000000000000000000000000000'],
-  };
+  const tx: TxBasicParams = useMemo(
+    () => ({
+      address: tokenOut?.address as Address | undefined,
+      abi: stethAbi,
+      functionName: 'submit',
+      args: ['0x0000000000000000000000000000000000000000'],
+    }),
+    [tokenOut?.address]
+  );
 
   return (
     <>

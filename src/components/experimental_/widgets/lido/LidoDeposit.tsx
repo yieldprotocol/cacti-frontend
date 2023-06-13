@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { Address } from 'wagmi';
 import stethAbi from '@/abi/steth.json';
@@ -17,21 +18,29 @@ interface LidoProps {
 }
 
 const LidoDeposit = ({ inputString }: LidoProps) => {
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
+  const { data: tokenIn } = useToken('ETH');
   const { data: tokenOut } = useToken('STETH');
 
-  const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
-  const value = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const inputCleaned = useMemo(
+    () => cleanValue(inputString.toString(), tokenIn?.decimals),
+    [inputString, tokenIn?.decimals]
+  );
+  const value = useMemo(() => {
+    return parseUnits(inputCleaned!, tokenIn?.decimals);
+  }, [inputCleaned, tokenIn?.decimals]);
 
-  const tx: TxBasicParams = {
-    address: tokenOut?.address as Address | undefined,
-    abi: stethAbi,
-    functionName: 'submit',
-    args: ['0x0000000000000000000000000000000000000000'],
-    overrides: {
-      value,
-    },
-  };
+  const tx: TxBasicParams = useMemo(
+    () => ({
+      address: tokenOut?.address as Address | undefined,
+      abi: stethAbi,
+      functionName: 'submit',
+      args: ['0x0000000000000000000000000000000000000000'],
+      overrides: {
+        value,
+      },
+    }),
+    [tokenOut?.address, value]
+  );
 
   return (
     <>
