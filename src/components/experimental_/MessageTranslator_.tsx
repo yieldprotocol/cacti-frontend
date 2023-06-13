@@ -76,17 +76,9 @@ const getWidget = (widget: Widget): JSX.Element => {
     />
   ));
 
-  widgets.set(
-    'deposit-eth-lido',
+  widgets.set('deposit-eth-lido', () => <Lido inputString={parsedArgs[0]} />);
 
-    () => <Lido inputString={parsedArgs[0]} />
-  );
-
-  widgets.set(
-    'deposit-eth-reth',
-
-    () => <Reth inputString={parsedArgs[0]} />
-  );
+  widgets.set('deposit-eth-reth', () => <Reth inputString={parsedArgs[0]} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
