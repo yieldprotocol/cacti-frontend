@@ -31,25 +31,29 @@ export const HeaderResponse = (props: any) => {
     //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
     // }
   }, [props.projectName]);
+
   const url = project?.url || props.altUrl;
+
   return url ? (
-    <ResponseWrap>
-      <a
-        href={url}
-        className="group flex items-center justify-between px-2"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <div className="flex items-center space-x-4">
-          {project?.logo || props.altImageUrl ? (
-            <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
-          ) : (
-            <Avatar actor={'user'} />
-          )}
-          <div>{props.text}</div>
+    <a
+      href={url}
+      className="group flex w-full cursor-pointer items-center justify-between rounded-md hover:ring-1 hover:ring-gray-700/70"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <ResponseWrap>
+        <div className="flex w-full justify-between px-1">
+          <div className="flex items-center space-x-4">
+            {project?.logo || props.altImageUrl ? (
+              <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
+            ) : (
+              <Avatar actor={'user'} />
+            )}
+            <div>{props.text}</div>
+          </div>
+          <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
         </div>
-        <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
-      </a>
-    </ResponseWrap>
+      </ResponseWrap>
+    </a>
   ) : null;
 };
