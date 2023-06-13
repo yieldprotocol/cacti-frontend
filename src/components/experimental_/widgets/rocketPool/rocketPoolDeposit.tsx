@@ -19,7 +19,7 @@ const RethDeposit = ({ inputString }: RethProps) => {
   const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const value = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const tx: TxBasicParams = {
     address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
@@ -27,7 +27,7 @@ const RethDeposit = ({ inputString }: RethProps) => {
     functionName: 'deposit',
     args: [],
     overrides: {
-      value: tokenInIsETH ? amountIn : 0,
+      value,
     },
   };
 

@@ -39,7 +39,7 @@ const LidoDeposit = ({ inputString }: LidoProps) => {
       <ResponseRow>
         <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="stETH" />
       </ResponseRow>
       <ActionResponse
         label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Lido`}

@@ -17,7 +17,7 @@ interface RethProps {
 }
 
 const RethWithdraw = ({ inputString }: RethProps) => {
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken('RETH');
+  const { data: tokenIn } = useToken('RETH');
   const { data: tokenOut } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
@@ -36,7 +36,7 @@ const RethWithdraw = ({ inputString }: RethProps) => {
       <ResponseRow>
         <SingleLineResponse tokenSymbol="rETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" />
       </ResponseRow>
       <ActionResponse
         label={`Withdraw ${inputCleaned || ''} ${tokenIn?.symbol || ''} from Rocket Pool`}

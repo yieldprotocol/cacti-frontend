@@ -17,7 +17,7 @@ interface LidoProps {
 }
 
 const LidoWithdraw = ({ inputString }: LidoProps) => {
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken('STETH');
+  const { data: tokenIn } = useToken('STETH');
   const { data: tokenOut } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
@@ -28,9 +28,6 @@ const LidoWithdraw = ({ inputString }: LidoProps) => {
     abi: stethAbi,
     functionName: 'submit',
     args: ['0x0000000000000000000000000000000000000000'],
-    overrides: {
-      value: tokenInIsETH ? amountIn : 0,
-    },
   };
 
   return (
@@ -39,7 +36,7 @@ const LidoWithdraw = ({ inputString }: LidoProps) => {
       <ResponseRow>
         <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" />
       </ResponseRow>
       <ActionResponse
         label={`Withdraw ${inputCleaned || ''} ${tokenIn?.symbol || ''} from Lido`}
