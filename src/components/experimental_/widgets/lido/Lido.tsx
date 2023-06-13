@@ -14,14 +14,14 @@ import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
 interface LidoProps {
-  inputAmount: BigNumber;
+  inputString: string;
 }
 
-const Lido = ({ inputAmount }: LidoProps) => {
+const Lido = ({ inputString }: LidoProps) => {
   const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
   const { data: tokenOut } = useToken('STETH');
 
-  const inputCleaned = cleanValue(inputAmount.toString(), tokenIn?.decimals);
+  const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const tx: TxBasicParams = {
@@ -30,20 +30,20 @@ const Lido = ({ inputAmount }: LidoProps) => {
     functionName: 'submit',
     args: ['0x0000000000000000000000000000000000000000'],
     overrides: {
-      value: tokenInIsETH ? inputAmount : 0,
+      value: tokenInIsETH ? amountIn : 0,
     },
   };
 
   return (
     <>
-      <HeaderResponse text="Deposit ETH in Lido" />
+      <HeaderResponse text="Deposit ETH into Lido for stETH" />
       <ResponseRow>
         <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
         <IconResponse icon="forward" />
         <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
       </ResponseRow>
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} on Lido`}
+        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Lido`}
         approvalParams={undefined}
         txParams={tx}
       />
