@@ -1,6 +1,6 @@
-import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import rETHAbi from '@/abi/rETH.json';
+import { Address } from 'wagmi';
+import stethAbi from '@/abi/steth.json';
 import {
   ActionResponse,
   HeaderResponse,
@@ -12,21 +12,22 @@ import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
-interface RethProps {
+interface LidoProps {
   inputString: string;
 }
 
-const Reth = ({ inputString }: RethProps) => {
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
+const LidoWithdraw = ({ inputString }: LidoProps) => {
+  const { data: tokenIn, isETH: tokenInIsETH } = useToken('STETH');
+  const { data: tokenOut } = useToken('ETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const tx: TxBasicParams = {
-    address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
-    abi: rETHAbi,
-    functionName: 'deposit',
-    args: [],
+    address: tokenOut?.address as Address | undefined,
+    abi: stethAbi,
+    functionName: 'submit',
+    args: ['0x0000000000000000000000000000000000000000'],
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
@@ -34,14 +35,14 @@ const Reth = ({ inputString }: RethProps) => {
 
   return (
     <>
-      <HeaderResponse text="Deposit ETH into Rocket Pool for rETH" />
+      <HeaderResponse text="Withdraw stETH from Lido for ETH" />
       <ResponseRow>
-        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="rETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
       </ResponseRow>
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Rocket Pool`}
+        label={`Withdraw ${inputCleaned || ''} ${tokenIn?.symbol || ''} from Lido`}
         approvalParams={undefined}
         txParams={tx}
       />
@@ -49,4 +50,4 @@ const Reth = ({ inputString }: RethProps) => {
   );
 };
 
-export default Reth;
+export default LidoWithdraw;

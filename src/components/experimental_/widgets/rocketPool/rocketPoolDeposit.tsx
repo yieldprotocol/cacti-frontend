@@ -1,7 +1,5 @@
-import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { Address } from 'wagmi';
-import stethAbi from '@/abi/steth.json';
+import rETHAbi from '@/abi/rETH.json';
 import {
   ActionResponse,
   HeaderResponse,
@@ -13,22 +11,21 @@ import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
-interface LidoProps {
+interface RethProps {
   inputString: string;
 }
 
-const Lido = ({ inputString }: LidoProps) => {
+const RethDeposit = ({ inputString }: RethProps) => {
   const { data: tokenIn, isETH: tokenInIsETH } = useToken('ETH');
-  const { data: tokenOut } = useToken('STETH');
 
   const inputCleaned = cleanValue(inputString.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const tx: TxBasicParams = {
-    address: tokenOut?.address as Address | undefined,
-    abi: stethAbi,
-    functionName: 'submit',
-    args: ['0x0000000000000000000000000000000000000000'],
+    address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
+    abi: rETHAbi,
+    functionName: 'deposit',
+    args: [],
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
@@ -36,14 +33,14 @@ const Lido = ({ inputString }: LidoProps) => {
 
   return (
     <>
-      <HeaderResponse text="Deposit ETH into Lido for stETH" />
+      <HeaderResponse text="Deposit ETH into Rocket Pool for rETH" />
       <ResponseRow>
         <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
         <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol="stETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="rETH" value={inputCleaned} />
       </ResponseRow>
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Lido`}
+        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Rocket Pool`}
         approvalParams={undefined}
         txParams={tx}
       />
@@ -51,4 +48,4 @@ const Lido = ({ inputString }: LidoProps) => {
   );
 };
 
-export default Lido;
+export default RethDeposit;

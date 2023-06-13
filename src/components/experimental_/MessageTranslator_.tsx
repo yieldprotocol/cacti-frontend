@@ -5,8 +5,8 @@ import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import Lido from './widgets/lido/Lido';
-import Reth from './widgets/rocket/Rocket';
+import Lido from './widgets/lido/LidoDeposit';
+import Reth from './widgets/rocketPool/rocketPoolDeposit';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
@@ -77,8 +77,10 @@ const getWidget = (widget: Widget): JSX.Element => {
   ));
 
   widgets.set('deposit-eth-lido', () => <Lido inputString={parsedArgs[0]} />);
+  widgets.set('withdraw-eth-lido', () => <Lido inputString={parsedArgs[0]} />);
 
   widgets.set('deposit-eth-reth', () => <Reth inputString={parsedArgs[0]} />);
+  widgets.set('withdraw-eth-reth', () => <Reth inputString={parsedArgs[0]} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
