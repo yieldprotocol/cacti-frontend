@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
+import { useAccount } from 'wagmi';
 import rETHAbi from '@/abi/rETH.json';
 import {
   ActionResponse,
@@ -11,11 +12,9 @@ import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import { useAccount } from 'wagmi';
 
 interface RethProps {
   inputAmount: BigNumber;
-  
 }
 
 const Reth = ({ inputAmount }: RethProps) => {
@@ -28,11 +27,11 @@ const Reth = ({ inputAmount }: RethProps) => {
 
   const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
-//   console.log('amountIn', amountIn)
-//   console.log('useAccount().address', useAccount().address)
-//   console.log(inputCleaned)
+  //   console.log('amountIn', amountIn)
+  //   console.log('useAccount().address', useAccount().address)
+  //   console.log(inputCleaned)
   const tx = {
-    address: "0xDD3f50F8A6CafbE9b31a427582963f465E745AF8" as `0x${string}`,
+    address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8' as `0x${string}`,
     abi: rETHAbi,
     functionName: 'deposit',
     args: [],
