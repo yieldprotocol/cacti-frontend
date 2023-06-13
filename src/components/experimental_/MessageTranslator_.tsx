@@ -66,11 +66,7 @@ const getWidget = (widget: Widget): JSX.Element => {
   ));
 
   widgets.set('transfer', () => (
-    <Transfer
-      tokenSymbol={parsedArgs[0]}
-      amtString={parsedArgs[1]}
-      receiver={parsedArgs[2]}
-    />
+    <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   ));
 
   /* If available, return the widget in the widgets map */
