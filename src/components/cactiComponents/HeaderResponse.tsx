@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import {
   ArrowTopRightOnSquareIcon,
   ChevronDownIcon,
@@ -33,26 +32,28 @@ export const HeaderResponse = (props: any) => {
     // }
   }, [props.projectName]);
 
-  return (
-    <ResponseWrap>
-      <div className="flex items-center justify-between p-2 ">
-        <div className="flex items-center space-x-4">
-          {project?.logo || props.altImageUrl ? (
-            <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
-          ) : (
-            <Avatar actor={'user'} />
-          )}
-          <div>{props.text}</div>
-        </div>
-        {(project?.url || props.altUrl) && (
-          <div
-            className="w-[16px]"
-            onClick={() => window.open(project?.url || props.externalUrl, '_blank')}
-          >
-            <ArrowTopRightOnSquareIcon />
+  const url = project?.url || props.altUrl;
+
+  return url ? (
+    <a
+      href={url}
+      className="group flex w-full cursor-pointer items-center justify-between rounded-md hover:ring-1 hover:ring-gray-700/70"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <ResponseWrap>
+        <div className="flex w-full justify-between px-1">
+          <div className="flex items-center space-x-4">
+            {project?.logo || props.altImageUrl ? (
+              <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
+            ) : (
+              <Avatar actor={'user'} />
+            )}
+            <div>{props.text}</div>
           </div>
-        )}
-      </div>
-    </ResponseWrap>
-  );
+          <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
+        </div>
+      </ResponseWrap>
+    </a>
+  ) : null;
 };

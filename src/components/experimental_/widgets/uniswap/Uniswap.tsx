@@ -142,7 +142,11 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
 
   return (
     <ConnectFirst>
-      <HeaderResponse text="Swap with uniswap" projectName="uniswap" />
+      <HeaderResponse
+        text="Swap with uniswap"
+        projectName="uniswap"
+        altUrl={`https://app.uniswap.org/#/swap`}
+      />
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}
