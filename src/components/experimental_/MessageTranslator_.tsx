@@ -4,9 +4,10 @@ import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import Lido from './widgets/lido/LidoDeposit';
-import Reth from './widgets/rocketPool/rocketPoolDeposit';
+import LidoDeposit from './widgets/lido/LidoDeposit';
+import LidoWithdraw from './widgets/lido/LidoWithdraw';
+import RethDeposit from './widgets/rocketPool/rocketPoolDeposit';
+import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
@@ -54,7 +55,9 @@ const parseArgsStripQuotes = (args: string): any[] => {
 const getWidget = (widget: Widget): JSX.Element => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
+  console.log('🦄 ~ file: MessageTranslator_.tsx:57 ~ getWidget ~ fnName:', fnName);
   const parsedArgs = parseArgsStripQuotes(args);
+  console.log('🦄 ~ file: MessageTranslator_.tsx:58 ~ getWidget ~ parsedArgs:', parsedArgs);
   const inputString = `${fnName}(${args})`;
 
   const widgets = new Map<string, () => JSX.Element>();
@@ -76,11 +79,11 @@ const getWidget = (widget: Widget): JSX.Element => {
     />
   ));
 
-  widgets.set('deposit-eth-lido', () => <Lido inputString={parsedArgs[0]} />);
-  widgets.set('withdraw-eth-lido', () => <Lido inputString={parsedArgs[0]} />);
+  widgets.set('deposit-eth-lido', () => <LidoDeposit inputString={parsedArgs[0]} />);
+  widgets.set('withdraw-eth-lido', () => <LidoWithdraw inputString={parsedArgs[0]} />);
 
-  widgets.set('deposit-eth-reth', () => <Reth inputString={parsedArgs[0]} />);
-  widgets.set('withdraw-eth-reth', () => <Reth inputString={parsedArgs[0]} />);
+  widgets.set('deposit-eth-reth', () => <RethDeposit inputString={parsedArgs[0]} />);
+  widgets.set('withdraw-eth-reth', () => <RethWithdraw inputString={parsedArgs[0]} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
