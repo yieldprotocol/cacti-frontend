@@ -1,7 +1,11 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
-import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -72,12 +76,12 @@ export const ActionResponse = ({
   onSuccess?: () => JSX.Element | string;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
-
 }) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess } = useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } =
+    useSubmitTx(txParams);
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -219,8 +223,8 @@ export const ActionResponse = ({
     approvalWaitingOnUser,
     approvalTransacting,
     submitTx,
-    isSuccess
-    
+    isSuccess,
+
     // approveTx
   ]);
 
@@ -249,6 +253,20 @@ export const ActionResponse = ({
                 text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
               >
                 {error}
+              </div>
+            </div>
+          )}
+
+          {isSuccess && (
+            <div className="group relative flex">
+              <div className="h-6 w-6 text-white/20">
+                <CheckCircleIcon />
+              </div>
+              <div
+                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
+                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                {receipt?.transactionHash}
               </div>
             </div>
           )}
