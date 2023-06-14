@@ -26,13 +26,11 @@ export const InlineChip = (props: any) => {
     >
       <div className="flex items-center gap-2 p-1">
         <div className="flex items-center gap-2">
-          <div >
+          <div>
             <img src={props?.image || profilePic} alt="Avatar" width={20} height={20} />
           </div>
           {/* If the label is an address, shorten it */}
-          <div>
-            {props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}
-          </div>
+          <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
         </div>
         <div>
           {props.showCopyButton && (
