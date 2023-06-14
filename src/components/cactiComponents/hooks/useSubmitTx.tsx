@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
-  useContractWrite,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -27,7 +26,7 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @description Prepares and Submits an arbitrary transaction request and returns relevant tx states and tx data
  *
  * @param params the transaction parameters prepare and submit
- * @param sendParams the send ETH transaction parameters to prepare and submit
+ * @param sendParams the send transaction parameters to prepare and submit
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
  */
@@ -45,35 +44,17 @@ const useSubmitTx = (
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig } = usePrepareSendTransaction({
-    ...sendParams,
-    enabled: !!sendParams,
+    request: { ...(writeConfig.request ?? sendParams) },
+    enabled: !!(writeConfig.request ?? sendParams),
   });
 
   /* usePrepped data to run write or send transactions */
-  const writeTx = useContractWrite(writeConfig);
-  const sendTx = useSendTransaction(sendConfig);
-
-  /* 'Combined results'  - Alhtough it will effectively be one or the other */
-  const [data, setData] = useState<any>();
-  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
-  const [transact, setTransact] = useState<any>();
-  const [isError, setIsError] = useState<any>();
-
-  useEffect(() => {
-    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
-
-    const {
-      data: sendData,
-      isLoading: isWaitingOnUserSend,
-      sendTransaction,
-      isError: sendError,
-    } = sendTx;
-
-    setData(writeData || sendData);
-    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
-    setTransact(write || sendTransaction);
-    setIsError(writeError || sendError);
-  }, [writeTx, sendTx]);
+  const {
+    data,
+    isLoading: isWaitingOnUser,
+    sendTransactionAsync,
+    isError,
+  } = useSendTransaction(sendConfig);
 
   /* Use the TX hash to wait for the transaction to be mined */
   const {
@@ -96,17 +77,17 @@ const useSubmitTx = (
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
-  }, [receipt, status]);
+  }, [error?.message, receipt, status]);
 
   /* Return the transaction data and states */
   return {
-    submitTx: transact,
+    submitTx: sendTransactionAsync,
 
     receipt,
     hash: data?.hash,
 
-    isWaitingOnUser: isWaitingOnUser,
-    isError: isError,
+    isWaitingOnUser,
+    isError,
 
     isTransacting,
     isSuccess,

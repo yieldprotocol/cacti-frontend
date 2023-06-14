@@ -1,4 +1,4 @@
-import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -44,7 +44,7 @@ const stylingByState = {
 
 type Action = {
   name: string;
-  fn: ((overrideConfig?: undefined) => void | Promise<void>) | undefined;
+  fn: (overrideConfig?: undefined) => any;
 };
 
 /**
@@ -63,8 +63,8 @@ export const ActionResponse = ({
 // altAction,
 {
   txParams: TxBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
   approvalParams: ApprovalBasicParams | undefined;
+  sendParams?: UnsignedTransaction | undefined;
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
@@ -211,7 +211,7 @@ export const ActionResponse = ({
   if (address && stepper) return <ActionStepper />;
   if (address && !stepper)
     return (
-      <StyledButton className={`${extraStyle}`} onClick={(e) => action && action.fn?.()}>
+      <StyledButton className={`${extraStyle}`} onClick={() => action && action.fn?.()}>
         {label || <Skeleton width={100} />}
       </StyledButton>
     );
