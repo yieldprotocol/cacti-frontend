@@ -68,13 +68,16 @@ export const ActionResponse = ({
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
+
+  onSuccess?: () => JSX.Element | string;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
+
 }) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting, error } = useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess } = useSubmitTx(txParams);
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -200,6 +203,12 @@ export const ActionResponse = ({
         setLabel(defaultLabel);
         setState(ActionResponseState.TRANSACTING);
       }
+
+      if (isSuccess) {
+        console.log('TX SUCCESS');
+        setLabel('Transaction Complete');
+        setState(ActionResponseState.SUCCESS);
+      }
     }
   }, [
     hasEnoughBalance,
@@ -210,6 +219,8 @@ export const ActionResponse = ({
     approvalWaitingOnUser,
     approvalTransacting,
     submitTx,
+    isSuccess
+    
     // approveTx
   ]);
 
