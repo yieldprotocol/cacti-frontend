@@ -15,7 +15,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   } = useContext(SettingsContext);
   const parsedMessage = useMemo(() => parseMessage(message), [message]);
 
-  const [componentList, setComponentList] = useState<(JSX.Element | null)[]>();
+  const [componentList, setComponentList] = useState<(JSX.Element | null | undefined)[]>();
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
@@ -84,7 +84,7 @@ const Widget = ({ widget }: { widget: Widget }) => {
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
-    return widgets.get(fnName);
+    return widgets.get(fnName)!;
   } else {
     /* Else, 'try' to get the widget from the previous implementation */
     try {

@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants';
 import { parseUnits, zeroPad } from 'ethers/lib/utils.js';
-import { erc20ABI, useEnsAddress } from 'wagmi';
+import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
@@ -14,6 +14,7 @@ interface TransferWidgetProps {
 }
 
 const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWidgetProps) => {
+  const { address: account } = useAccount();
   const { isETH, data: token } = useToken(tokenSymbol);
   const amount = parseUnits(amtString, token?.decimals);
 
@@ -60,6 +61,7 @@ const Transfer = ({ inputString, tokenSymbol, amtString, receiver }: TransferWid
         label={`Transfer ${amtString || ''}`}
         txParams={tx}
         approvalParams={approval}
+        sendParams={isETH ? { to: receiverAddress, from: account, value: amount } : undefined}
         // stepper
         // disabled={true}
       />

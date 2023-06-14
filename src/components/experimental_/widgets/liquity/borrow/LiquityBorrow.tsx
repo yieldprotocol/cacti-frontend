@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { EthersLiquity } from '@liquity/lib-ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { UnsignedTransaction, parseUnits } from 'ethers/lib/utils.js';
 import {
   ActionResponse,
   HeaderResponse,
@@ -19,28 +19,25 @@ interface BorrowProps {
 }
 
 const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
+  const signer = useSigner();
   const { data: borrowToken } = useToken('LUSD');
   const { data: collateralToken } = useToken('ETH');
-  const borrowAmtCleaned = cleanValue(borrowAmount.toString(), borrowToken?.decimals);
-  const _borrowAmount = parseUnits(borrowAmtCleaned!, borrowToken?.decimals);
-  const collateralAmtCleaned = cleanValue(collateralAmount.toString(), borrowToken?.decimals);
-  const _collateralAmount = parseUnits(collateralAmtCleaned!, borrowToken?.decimals);
+  const borrowLUSD = +(cleanValue(borrowAmount.toString(), borrowToken?.decimals) || 0);
+  const depositCollateral = +(cleanValue(collateralAmount.toString(), borrowToken?.decimals) || 0);
 
-  const signer = useSigner();
-
-  const [txParams, setTxParams] = useState<TxBasicParams>();
+  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
 
   useEffect(() => {
     (async () => {
       if (!signer) return;
       const liquity = await EthersLiquity.connect(signer);
-      const txParams = liquity.populate.openTrove({
-        borrowLUSD: _borrowAmount,
-        depositCollateral: _collateralAmount,
+      const { rawPopulatedTransaction: params } = await liquity.populate.openTrove({
+        borrowLUSD,
+        depositCollateral,
       });
-      console.log('🦄 ~ file: index.tsx:41 ~ txParams:', txParams);
+      setSendParams(params);
     })();
-  }, [_borrowAmount, _collateralAmount, signer]);
+  }, [signer, borrowLUSD, depositCollateral]);
 
   return (
     <>
@@ -49,14 +46,12 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
         projectName="Liquity"
         altUrl={`https://www.liquity.org/`}
       />
-      <ResponseRow>
-        <SingleLineResponse
-          tokenSymbol={borrowToken?.symbol}
-          tokenValueInUsd={100}
-          amount={borrowAmtCleaned}
-          amountValueInUsd={100}
-        />
-      </ResponseRow>
+      <SingleLineResponse
+        tokenSymbol={borrowToken?.symbol}
+        tokenValueInUsd={100}
+        amount={borrowLUSD}
+        amountValueInUsd={100}
+      />
       <ListResponse
         title="Breakdown"
         data={[
@@ -67,8 +62,9 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
         collapsible
       />
       <ActionResponse
-        label={`Borrow ${borrowAmtCleaned} ${borrowToken?.symbol} using ${collateralAmtCleaned} ${collateralToken?.symbol}`}
-        txParams={txParams}
+        label={`Borrow ${borrowLUSD} ${borrowToken?.symbol} using ${depositCollateral} ${collateralToken?.symbol}`}
+        txParams={undefined}
+        sendParams={sendParams}
         approvalParams={undefined}
       />
     </>
