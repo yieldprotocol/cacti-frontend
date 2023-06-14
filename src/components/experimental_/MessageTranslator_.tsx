@@ -5,6 +5,7 @@ import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
@@ -55,28 +56,35 @@ const Widget = ({ widget }: { widget: Widget }) => {
   const parsedArgs = parseArgsStripQuotes(args);
   const inputString = `${fnName}(${args})`;
 
-  const widgets = new Map<string, () => JSX.Element>();
+  const widgets = new Map<string, JSX.Element>();
 
-  widgets.set('uniswap', () => (
+  widgets.set(
+    'uniswap',
     <Uniswap
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
     />
-  ));
+  );
 
-  widgets.set('transfer', () => (
+  widgets.set(
+    'transfer',
     <Transfer
       inputString={inputString}
       tokenSymbol={parsedArgs[0]}
       amtString={parsedArgs[1]}
       receiver={parsedArgs[2]}
     />
-  ));
+  );
+
+  widgets.set(
+    'liquity-borrow',
+    <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
-    return widgets.get(fnName)!();
+    return widgets.get(fnName);
   } else {
     /* Else, 'try' to get the widget from the previous implementation */
     try {

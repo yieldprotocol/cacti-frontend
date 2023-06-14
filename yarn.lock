@@ -3168,6 +3168,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@liquity/lib-ethers@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@liquity/lib-ethers@npm:3.4.0"
+  peerDependencies:
+    "@liquity/lib-base": ^3.0.0
+    ethers: ^5.3.0
+  checksum: 320c7d9febf62857417c92a34fa78291acc69caa184d6f31175daf058a2a7d9abf73dc8b1217f3f6d5613eaaa6aadfb57869be479bfce2dc9435bd1afe3710ad
+  languageName: node
+  linkType: hard
+
 "@lit-labs/react@npm:^1.0.2":
   version: 1.2.0
   resolution: "@lit-labs/react@npm:1.2.0"
@@ -8348,6 +8358,7 @@ __metadata:
     "@center-inc/react": ^1.1.7
     "@headlessui/react": ^1.7.7
     "@heroicons/react": ^2.0.14
+    "@liquity/lib-ethers": ^3.4.0
     "@next/font": 13.1.2
     "@rainbow-me/rainbowkit": ^0.8.1
     "@storybook/addon-essentials": ^7.0.12

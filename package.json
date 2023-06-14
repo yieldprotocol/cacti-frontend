@@ -24,6 +24,7 @@
     "@center-inc/react": "^1.1.7",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.14",
+    "@liquity/lib-ethers": "^3.4.0",
     "@next/font": "13.1.2",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@types/node": "18.11.18",
