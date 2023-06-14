@@ -220,7 +220,7 @@ export const ActionResponse = ({
     if (address && stepper) return <ActionStepper />;
     if (address && !stepper)
       return (
-        <div className=" w-full flex items-center gap-4">
+        <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
             onClick={(e) => action && action.fn?.()}
