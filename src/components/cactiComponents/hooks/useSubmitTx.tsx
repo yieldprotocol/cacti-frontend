@@ -34,11 +34,10 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param onError callback to run on error
  */
 const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
-  
   const [error, setError] = useState<string>();
   const handleError = (error: Error) => {
     console.log(error.message);
-    setError(error.message)
+    setError(error.message);
   };
 
   /**
@@ -62,10 +61,12 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
             value: params?.args?.[1] || BigNumber.from(0),
           },
         };
-  const { config: sendConfig } = usePrepareSendTransaction({ ...sendParams,
+  const { config: sendConfig } = usePrepareSendTransaction({
+    ...sendParams,
     onError(error) {
       handleError(error);
-    },}); // sendParams
+    },
+  }); // sendParams
 
   /* usePrepped data to run write or send transactions */
   const writeTx = useContractWrite(writeConfig);
@@ -81,7 +82,6 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const { data: sendData, isLoading: isLoadingSend, sendTransaction, error: sendError } = sendTx;
 
   useEffect(() => {
-
     if (write) setTransact(() => write);
     if (sendTransaction) setTransact(() => sendTransaction);
 
@@ -92,7 +92,6 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
     setError(undefined);
     if (writeError) handleError(writeError);
     if (sendError) handleError(sendError);
-
   }, [
     write,
     sendTransaction,

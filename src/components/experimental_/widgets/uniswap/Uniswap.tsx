@@ -114,15 +114,15 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     spender: SWAP_ROUTER_02_ADDRESSES(chainId),
   };
 
-  const tx = {   
-    address: SWAP_ROUTER_02_ADDRESSES(chainId), 
+  const tx = {
+    address: SWAP_ROUTER_02_ADDRESSES(chainId),
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
     args: [params],
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
-    enabled: !quoteIsLoading // NOTE: here we are only enabling when the  async call is ready!!
+    enabled: !quoteIsLoading, // NOTE: here we are only enabling when the  async call is ready!!
   };
 
   return (

@@ -234,7 +234,7 @@ export const ActionResponse = ({
                 <InformationCircleIcon />
               </div>
               <div
-                className="absolute left-8 rounded-md bg-gray-900 p-2  border border-gray-700
+                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
                 text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
               >
                 {error}
@@ -247,5 +247,4 @@ export const ActionResponse = ({
   };
 
   return <div className="flex w-full justify-center">{returnComponent()}</div>;
-
 };
