@@ -1,17 +1,67 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { ChatBubbleLeftRightIcon, PaperClipIcon } from '@heroicons/react/24/outline';
+import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
+import { ReadyState } from 'react-use-websocket';
+import {
+  ChatBubbleLeftRightIcon,
+  PaperAirplaneIcon,
+  PaperClipIcon,
+} from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
+
+interface IconBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+const IconBtn = ({ children, ...rest }: IconBtnProps) => (
+  <button
+    className={`
+        grid h-10
+        w-10
+        place-items-center rounded-lg
+        bg-teal-400/30 text-gray-100
+        duration-200 hover:cursor-pointer hover:bg-gray-800 hover:text-gray-200 disabled:cursor-not-allowed disabled:bg-teal-200/20
+        disabled:text-teal-100/40
+        `}
+    {...rest}
+  >
+    {children}
+  </button>
+);
+/**
+ * used for focusing with crtl + k and auto focus on mount
+ */
+const useFocus = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      focusInput();
+    }
+  }, []);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
+  // /* set input focus on mount */
+  useEffect(() => {
+    focusInput();
+  }, []);
+  return [inputRef];
+};
 
 export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  const { sendMessage, interactor, setInteractor } = useChatContext();
-
-  /* set input focus on mount */
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
+  const [inputRef] = useFocus();
 
   const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
@@ -26,78 +76,46 @@ export const MessageInput = ({}) => {
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
   };
 
-  // const sendButtonIcon = (
-  //   <svg
-  //     xmlns="http://www.w3.org/2000/svg"
-  //     fill="none"
-  //     viewBox="0 0 24 24"
-  //     strokeWidth={1.5}
-  //     stroke="currentColor"
-  //     className="h-5 w-5 focus:bg-gray-800"
-  //   >
-  //     <path
-  //       strokeLinecap="round"
-  //       strokeLinejoin="round"
-  //       d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-  //     />
-  //   </svg>
-  // );
+  const isConnected = connectionStatus === ReadyState.OPEN;
 
   return (
-    <div className={`grid w-[90%] grid-cols-12 items-center gap-3 p-3`}>
-      <div className="col-span-1 text-end">
+    <div className="flex w-[90%] items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
+      <div className="text-end">
         <button
-          className="w-[24px] cursor-pointer select-none align-middle text-white/70 transition ease-in-out hover:text-white"
+          className="grid h-10 w-10 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
+          type="button"
           onClick={toggleInteractionMode}
         >
-          {interactor === 'user' ? <ChatBubbleLeftRightIcon /> : <PaperClipIcon />}
+          {interactor === 'user' ? (
+            <ChatBubbleLeftRightIcon className="h-6 w-6" />
+          ) : (
+            <PaperClipIcon className="h-6 w-6" />
+          )}
         </button>
       </div>
 
-      <div className="col-span-9">
-        <form onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            onChange={(e) => setMessageInput(e.target.value)}
-            placeholder={
-              interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
-            }
-            tabIndex={0}
-            value={messageInput}
-            ref={inputRef}
-            className={`   
-            w-full
-            rounded-[8px] 
+      <form onSubmit={handleSendMessage} className="flex w-full grow items-center">
+        <input
+          type="text"
+          onChange={(e) => setMessageInput(e.target.value)}
+          placeholder={
+            interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
+          }
+          tabIndex={0}
+          value={messageInput}
+          ref={inputRef}
+          className={`   
+            grow
             bg-transparent
-            p-2
-            text-white/70
-            ring-1
-
-            ring-white/20
-            hover:bg-gray-700/20
-            hover:ring-1
-            hover:ring-white/80
-            
-            focus:text-gray-50
-            focus:outline-none
-            focus:ring-1
-            focus:ring-white/80
+            tracking-wider
+            text-gray-400 placeholder:text-gray-500
+            focus:text-gray-100 focus:outline-none
           `}
-          />
-        </form>
-      </div>
-
-      <div className="col-span-2">
-        <button
-          className="cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-          onClick={handleSendMessage}
-        >
-          {/* <div className="flex justify-center">{sendButtonIcon}</div> */}
-          <div className="flex w-full justify-center px-2 text-sm text-white/70">
-            <div>Submit</div>
-          </div>
-        </button>
-      </div>
+        />
+        <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
+          <PaperAirplaneIcon className="h-5 w-5" />
+        </IconBtn>
+      </form>
     </div>
   );
 };

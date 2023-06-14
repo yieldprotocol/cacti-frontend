@@ -6,10 +6,11 @@ export const MessageInput = ({}) => {
   const [messageInput, setMessageInput] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { sendMessage, interactor, setInteractor } = useChatContext();
+  const { sendMessage, interactor, setInteractor, isBotThinking, connectionStatus } =
+    useChatContext();
 
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'I') {
+    if (e.ctrlKey && e.key === 'k') {
       e.preventDefault();
       focusInput();
     }
@@ -58,28 +59,39 @@ export const MessageInput = ({}) => {
       />
     </svg>
   );
-
+  const isConnected = connectionStatus == 1;
   return (
     <form onSubmit={handleSendMessage}>
       <div className="flex">
         <input
           type="text"
           onChange={(e) => setMessageInput(e.target.value)}
-          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none"
-          placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
+          className="mr-4 block w-full rounded-sm border border-solid border-gray-500 bg-gray-600 bg-clip-padding px-3 py-1.5 pr-10 text-base font-normal text-white transition ease-in-out focus:border-gray-400 focus:text-white focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-600"
+          placeholder={
+            !isConnected
+              ? 'Chat disabled while disconnected'
+              : isBotThinking
+              ? 'Please wait while your message is processing...'
+              : interactor === 'user'
+              ? 'Enter your message...'
+              : 'Enter your comment...'
+          }
           tabIndex={0}
           value={messageInput}
           ref={inputRef}
+          disabled={isBotThinking || !isConnected}
         />
         <button
-          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out"
+          className="-ml-14 w-10 cursor-pointer select-none text-center text-white transition ease-in-out disabled:cursor-not-allowed disabled:text-gray-500"
           onClick={handleSendMessage}
+          disabled={isBotThinking || !messageInput}
         >
           <div className="flex justify-center">{sendButtonIcon}</div>
         </button>
         <button
-          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out"
+          className="mx-4 w-6 cursor-pointer select-none text-center text-white transition ease-in-out disabled:cursor-not-allowed disabled:text-gray-600"
           onClick={toggleInteractionMode}
+          disabled={isBotThinking}
         >
           {interactor === 'user' ? <ChatBubbleLeftEllipsisIcon /> : <ClipboardDocumentListIcon />}
         </button>
