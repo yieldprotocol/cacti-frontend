@@ -13,19 +13,26 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   } = useContext(SettingsContext);
   const parsedMessage = useMemo(() => parseMessage(message), [message]);
 
-  const [componentList, setComponentList] = useState<(JSX.Element | null)[]>();
+  const [componentList, setComponentList] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.map((item: string | Widget) => {
-        /* if item is a string (and not nothing ) send a text response */
+      const list = parsedMessage.reduce((list, item, idx) => {
+        /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
-          return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`);
+          return [
+            ...list,
+            composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
+          ];
+
         /* if item has a fnName, assume its a widget */
-        if (typeof item !== 'string' && item.fnName) return <Widget widget={item} />;
+        if (typeof item !== 'string' && item.fnName)
+          return [...list, <Widget key={idx} widget={item} />];
+
         /* else return null */
-        return null;
-      });
+        return list;
+      }, [] as JSX.Element[]);
+
       setComponentList(list);
     }
   }, [parsedMessage]);
@@ -33,8 +40,9 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   return (
     <SharedStateContextProvider>
       <div className="flex flex-col gap-2">
-        {componentList &&
-          componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+        {componentList.map((component, i) => (
+          <Fragment key={`i${i}`}>{component}</Fragment>
+        ))}
       </div>
     </SharedStateContextProvider>
   );
