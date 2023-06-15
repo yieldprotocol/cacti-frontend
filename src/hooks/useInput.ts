@@ -1,8 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { cleanValue } from '@/utils';
 import useToken from './useToken';
+
+type Input = {
+  value: BigNumber | undefined;
+  formatted: string | undefined;
+  decimals: number;
+};
 
 /**
  * Cleans an input value to a token's decimals, then parses it
@@ -10,13 +16,13 @@ import useToken from './useToken';
  * @param input
  * @param tokenSymbol
  * @param transform
- * @returns {BigNumber}
+ * @returns {Input}
  */
 const useInput = (
   input: string,
   tokenSymbol: string,
   mutate?: (inputBN: BigNumber) => BigNumber
-): BigNumber | undefined => {
+) => {
   const { data: token } = useToken(tokenSymbol);
 
   if (!token) {
@@ -25,12 +31,14 @@ const useInput = (
 
   const { decimals } = token;
 
-  return useMemo(() => {
+  return useMemo((): Input => {
     const inputCleaned = cleanValue(input, decimals);
     const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
-    if (!inputBN) return undefined;
+    if (!inputBN) return { value: undefined, formatted: undefined, decimals };
 
-    return mutate ? mutate(inputBN) : inputBN;
+    const value = mutate ? mutate(inputBN) : inputBN;
+    const formatted = formatUnits(value, decimals);
+    return { value, formatted, decimals };
   }, [decimals, input, mutate]);
 };
 
