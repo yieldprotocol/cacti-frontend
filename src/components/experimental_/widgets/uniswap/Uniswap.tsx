@@ -122,8 +122,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       overrides: {
         value: tokenInIsETH ? amountIn : 0,
       },
+      enabled: !quoteIsLoading && !!quote, // NOTE: here we are only enabling when the  async call is ready!!
     }),
-    [amountIn, chainId, params, tokenInIsETH]
+    [amountIn, chainId, params, tokenInIsETH, quoteIsLoading, quote]
   );
 
   if (inputAmount === '*' || inputAmount === '{amount}')
@@ -133,9 +134,14 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   if (!tokenOutSymbol)
     return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
 
+
   return (
     <ConnectFirst>
-      <HeaderResponse text="Swap with uniswap" projectName="uniswap" />
+      <HeaderResponse
+        text="Swap with uniswap"
+        projectName="uniswap"
+        altUrl={`https://app.uniswap.org/#/swap`}
+      />
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}

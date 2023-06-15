@@ -38,10 +38,19 @@
   }
 }
 
-.avatar {
-  @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
+button:disabled {
+  cursor: not-allowed;
+}
+button:focus {
+  outline: none;
 }
 
-.center {
-  @apply grid place-items-center;
+@layer components {
+  .avatar {
+    @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
+  }
+
+  .center {
+    @apply grid place-items-center;
+  }
 }
