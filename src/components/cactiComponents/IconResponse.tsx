@@ -28,11 +28,5 @@ const IconSet: Map<IconType, React.ReactElement> = new Map([
  */
 export const IconResponse = (props: any) => {
   const icon = IconSet.has(props.icon) ? IconSet.get(props.icon) : null;
-  return (
-    <>
-      {icon && (
-        <div className="h-[24px] w-[24px] flex-shrink text-white text-opacity-70">{icon}</div>
-      )}
-    </>
-  );
+  return <>{icon && <div className="h-[24px] w-[24px] flex-shrink text-white/30">{icon}</div>}</>;
 };
