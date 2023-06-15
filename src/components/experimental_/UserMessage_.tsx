@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import {
-  ChatBubbleLeftIcon,
+  PaperAirplaneIcon,
   PaperClipIcon,
   PencilIcon,
-  PlayIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import Avatar from '../Avatar';
+
+interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+const iconBtnBaseStyle = 'center rounded-lg overflow-hidden w-9 h-9 text-white/70';
+
+const IconBtn = ({ children, ...rest }: IconBtnProps) => (
+  <button className={iconBtnBaseStyle} {...rest}>
+    {children}
+  </button>
+);
 
 export const UserMessage = ({
   actor,
@@ -22,11 +33,8 @@ export const UserMessage = ({
   submitDelete: () => void;
 }) => {
   const [input, setInput] = useState(initialText);
-  const [hovered, setHovered] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-
   const inputRef = useRef<HTMLInputElement>(null);
-
   const isCommenter = actor === 'commenter';
 
   useEffect(() => {
@@ -63,12 +71,9 @@ export const UserMessage = ({
       hover:ring-1 hover:ring-gray-700/70
       focus:text-gray-50
       ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
+      group
       mt-[32px]
-      items-center
-      overflow-hidden rounded-lg p-3 duration-200
-   `}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      items-center overflow-hidden rounded-lg p-3 duration-200`}
     >
       <div>
         {!isCommenter ? (
@@ -116,24 +121,25 @@ export const UserMessage = ({
         </div>
       ) : (
         <>
-          <button
-            className="flex p-2 text-white/70 hover:text-white"
-            onClick={() => setIsEditing(true)}
-          >
-            <PencilIcon className="h-4 w-4" />
-          </button>
-
-          <button className="flex p-2 text-white/70 hover:text-white" onClick={submitDelete}>
-            <TrashIcon className="h-4 w-4" />
-          </button>
-
-          {!isCommenter && (
-            <button className="flex p-2 text-white/70" onClick={submitRegenerate}>
-              <div className=" h-[20px] w-[20px] rounded-sm bg-teal-900 p-1 text-white/70 hover:text-white active:bg-transparent">
-                <PlayIcon />
-              </div>
-            </button>
-          )}
+          <div className="durtaion-200 flex items-center gap-2 opacity-0 group-hover:opacity-100">
+            <IconBtn
+              onClick={() => setIsEditing(true)}
+              className={`${iconBtnBaseStyle} hover:bg-teal-100/10`}
+            >
+              <PencilIcon className="h-4 w-4" />
+            </IconBtn>
+            <IconBtn className={`${iconBtnBaseStyle} hover:bg-red-800/60`} onClick={submitDelete}>
+              <TrashIcon className="h-4 w-4" />
+            </IconBtn>
+            {!isCommenter && (
+              <IconBtn
+                onClick={submitRegenerate}
+                className={`${iconBtnBaseStyle} hover:bg-teal-800/60`}
+              >
+                <PaperAirplaneIcon className="h-4 w-4" />
+              </IconBtn>
+            )}
+          </div>
         </>
       )}
     </div>

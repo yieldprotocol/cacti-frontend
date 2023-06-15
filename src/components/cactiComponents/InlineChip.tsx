@@ -17,7 +17,7 @@ export const InlineChip = (props: any) => {
       className={`
       height-[32px] 
       inline-block 
-      rounded 
+      rounded-lg
       bg-white bg-opacity-5 
       py-[6px] pl-2 pr-4
       text-sm text-white text-opacity-75
@@ -26,13 +26,11 @@ export const InlineChip = (props: any) => {
     >
       <div className="flex items-center gap-2 p-1">
         <div className="flex items-center gap-2">
-          <div className="avatar border-2 border-transparent ring-1 ring-white/20">
+          <div>
             <img src={props?.image || profilePic} alt="Avatar" width={20} height={20} />
           </div>
           {/* If the label is an address, shorten it */}
-          <div className="font-semibold">
-            {props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}
-          </div>
+          <div>{props.label.slice(0, 2) !== '0x' ? props.label : shortenAddress(props.label)}</div>
         </div>
         <div>
           {props.showCopyButton && (
