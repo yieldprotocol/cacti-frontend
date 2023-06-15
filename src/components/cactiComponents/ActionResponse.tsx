@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -39,7 +44,7 @@ const stylingByState = {
   [ActionResponseState.READY]: 'bg-transparent hover:bg-teal-900', // tx ready to go, but not submitted.
   [ActionResponseState.TRANSACTING]: disabledStyle, // tx submitting and is transacting.
   [ActionResponseState.SUCCESS]: 'bg-teal-900/70', // tx completed successfully.
-  [ActionResponseState.ERROR]: 'text-white/30 bg-red-600/50', // tx completed, but failed.
+  [ActionResponseState.ERROR]: 'cursor-not-allowed text-white/30 bg-red-600/50', // tx completed, but failed.
 };
 
 type Action = {
@@ -68,13 +73,18 @@ export const ActionResponse = ({
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
+
+  onSuccess?: () => JSX.Element | string;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
 }) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting } = useSubmitTx(txParams, sendParams);
+  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
+    txParams,
+    sendParams
+  );
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -101,7 +111,6 @@ export const ActionResponse = ({
    * Check if the acount has enough balance from the transaction: NOTE this is only
    *
    *  */
-
   useEffect(() => {
     // // Lastl, try get value from overrides
     // (txParams.overrides as PayableOverrides)?.value &&
@@ -112,6 +121,7 @@ export const ActionResponse = ({
     } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
       setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
     }
+
     // default case, set enough balance to true
     else {
       setHasEnoughBalance(true);
@@ -162,10 +172,17 @@ export const ActionResponse = ({
     /* -------- TRANSACTION FLOW --------- */
     if (hasAllowance && hasEnoughBalance) {
       /* case tx/approval success, waiting for tx-building */
-      if (!submitTx) {
+      if (!submitTx && !error) {
         console.log('Building TX: Has balance and allowance.');
         setLabel('Validating the transaction...');
         setState(ActionResponseState.LOADING);
+      }
+
+      /* case approval success, but trnasaction error with tx-building */
+      if (!submitTx && error) {
+        console.log('Error Building/Validating tx');
+        setLabel(`Error validating the transaction.`);
+        setState(ActionResponseState.ERROR);
       }
 
       /* case tx/approval success, waiting for tx-building */
@@ -193,27 +210,74 @@ export const ActionResponse = ({
         setLabel(defaultLabel);
         setState(ActionResponseState.TRANSACTING);
       }
+
+      if (isSuccess) {
+        console.log('TX SUCCESS');
+        setLabel('Transaction Complete');
+        setState(ActionResponseState.SUCCESS);
+      }
     }
   }, [
     hasEnoughBalance,
     hasAllowance,
     isWaitingOnUser,
     isTransacting,
+    error,
     approvalWaitingOnUser,
     approvalTransacting,
     submitTx,
     defaultLabel,
+    isSuccess,
+
+    // approveTx
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  if (address && stepper) return <ActionStepper />;
-  if (address && !stepper)
-    return (
-      <StyledButton className={`${extraStyle}`} onClick={() => action && action.fn?.()}>
-        {label || <Skeleton width={100} />}
-      </StyledButton>
-    );
-  return <ConnectButton />;
+  const returnComponent = () => {
+    if (address && stepper) return <ActionStepper />;
+    if (address && !stepper)
+      return (
+        <div className=" flex w-full items-center gap-4">
+          <StyledButton
+            className={`bg-teal-900 ${extraStyle}`}
+            onClick={(e) => action && action.fn?.()}
+          >
+            {label || <Skeleton width={100} />}
+          </StyledButton>
+
+          {error && (
+            <div className="group relative flex">
+              <div className="h-6 w-6 text-white/20">
+                <InformationCircleIcon />
+              </div>
+              <div
+                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
+                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                {error}
+              </div>
+            </div>
+          )}
+
+          {isSuccess && (
+            <div className="group relative flex">
+              <div className="h-6 w-6 text-white/20">
+                <CheckCircleIcon />
+              </div>
+              <div
+                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
+                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                {receipt?.transactionHash}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    return <ConnectButton />;
+  };
+
+  return <div className="flex w-full justify-center">{returnComponent()}</div>;
 };

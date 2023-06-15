@@ -8,6 +8,7 @@ import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const {
@@ -69,11 +70,16 @@ const Widget = ({ widget }: { widget: Widget }) => {
 
   widgets.set(
     'transfer',
-    <Transfer
-      inputString={inputString}
-      tokenSymbol={parsedArgs[0]}
-      amtString={parsedArgs[1]}
-      receiver={parsedArgs[2]}
+    <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
+  );
+
+  widgets.set(
+    'yield-protocol-lend',
+    <YieldProtocolLend
+      tokenInSymbol={parsedArgs[0]}
+      inputAmount={parsedArgs[1]}
+      action="lend"
+      projectName="yield-protocol"
     />
   );
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
@@ -14,6 +14,7 @@ export type TxBasicParams = {
   functionName?: string;
   args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
+  enabled?: boolean;
 };
 
 /**
@@ -36,6 +37,12 @@ const useSubmitTx = (
   onSuccess?: () => void,
   onError?: () => void
 ) => {
+  const [error, setError] = useState<string>();
+  const handleError = (error: Error) => {
+    console.log(error.message);
+    if (onError) onError();
+    setError(error.message);
+  };
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
@@ -46,6 +53,7 @@ const useSubmitTx = (
   const { config: sendConfig } = usePrepareSendTransaction({
     request: { ...(writeConfig.request ?? sendParams) },
     enabled: !!(writeConfig.request ?? sendParams),
+    onError: handleError,
   });
 
   /* usePrepped data to run write or send transactions */
@@ -59,7 +67,7 @@ const useSubmitTx = (
   /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
-    error,
+    error: transactError,
     isLoading: isTransacting,
     isSuccess,
     status,
@@ -72,12 +80,12 @@ const useSubmitTx = (
   /* DEVELOPER logging */
   useEffect(() => {
     if (receipt?.status === 0) {
-      toast.error(`Transaction Error: ${error?.message}`);
+      toast.error(`Transaction Error: ${transactError?.message}`);
     }
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
-  }, [error?.message, receipt, status]);
+  }, [receipt?.status, receipt?.transactionHash, transactError?.message]);
 
   /* Return the transaction data and states */
   return {

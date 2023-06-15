@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import SwapRouter02Abi from '@/abi/SwapRouter02.json';
 import {
   ActionResponse,
@@ -13,9 +13,10 @@ import {
 } from '@/components/cactiComponents';
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
+import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
+import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
-import useTokenApproval from '@/hooks/useTokenApproval';
 import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
@@ -73,14 +74,6 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: undefined,
   });
 
-  // shortcircuit if no input amount
-  if (inputAmount === '*' || inputAmount === '{amount}')
-    return (
-      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
-    );
-  if (!tokenOutSymbol)
-    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
-
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
 
@@ -97,48 +90,49 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     ? cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2)
     : undefined;
 
-  const params: ExactInputSingleParams = {
-    tokenIn: tokenInChecked?.address!,
-    tokenOut: tokenOutChecked?.address!,
-    fee: BigNumber.from(3000),
-    recipient: receiver!,
-    deadline: BigNumber.from(0),
-    amountIn: amountIn,
-    amountOutMinimum: amountOutMinimum!,
-    sqrtPriceLimitX96: BigNumber.from(0),
-  };
+  const params: ExactInputSingleParams = useMemo(
+    () => ({
+      tokenIn: tokenInChecked?.address!,
+      tokenOut: tokenOutChecked?.address!,
+      fee: BigNumber.from(3000),
+      recipient: receiver!,
+      deadline: BigNumber.from(0),
+      amountIn: amountIn,
+      amountOutMinimum: amountOutMinimum!,
+      sqrtPriceLimitX96: BigNumber.from(0),
+    }),
+    [amountIn, amountOutMinimum, receiver, tokenInChecked?.address, tokenOutChecked?.address]
+  );
 
-  const approval = {
-    tokenAddress: tokenIn?.address as `0x${string}`,
-    approvalAmount: amountIn,
-    spender: SWAP_ROUTER_02_ADDRESSES(chainId),
-  };
+  const approval = useMemo(
+    (): ApprovalBasicParams => ({
+      tokenAddress: tokenIn?.address!,
+      approvalAmount: amountIn,
+      spender: SWAP_ROUTER_02_ADDRESSES(chainId),
+    }),
+    [amountIn, chainId, tokenIn?.address]
+  );
 
-  const tx = {
-    address: SWAP_ROUTER_02_ADDRESSES(chainId),
-    abi: SwapRouter02Abi,
-    functionName: 'exactInputSingle',
-    args: [params],
-    overrides: {
-      value: tokenInIsETH ? amountIn : 0,
-    },
-  };
+  const tx = useMemo(
+    (): TxBasicParams => ({
+      address: SWAP_ROUTER_02_ADDRESSES(chainId),
+      abi: SwapRouter02Abi,
+      functionName: 'exactInputSingle',
+      args: [params],
+      overrides: {
+        value: tokenInIsETH ? amountIn : 0,
+      },
+      enabled: !quoteIsLoading && !!quote, // NOTE: here we are only enabling when the  async call is ready!!
+    }),
+    [amountIn, chainId, params, tokenInIsETH, quoteIsLoading, quote]
+  );
 
-  // const { config: swapConfig } = usePrepareContractWrite({
-  //   address: SWAP_ROUTER_02_ADDRESSES(chainId),
-  //   abi: SwapRouter02Abi,
-  //   functionName: 'exactInputSingle',
-  //   args: [params],
-  //   overrides: {
-  //     value: tokenInIsETH ? amountIn : 0,
-  //   },
-  // });
-
-  // const { hasBalance, hasAllowance } = useTokenApproval(
-  //   tokenIn?.address as `0x${string}`,
-  //   amountIn,
-  //   SWAP_ROUTER_02_ADDRESSES(chainId)
-  // );
+  if (inputAmount === '*' || inputAmount === '{amount}')
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to trade on Uniswap." />
+    );
+  if (!tokenOutSymbol)
+    return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
 
   return (
     <ConnectFirst>
