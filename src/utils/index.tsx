@@ -80,3 +80,9 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
 /* handle Address/hash shortening */
 export const abbreviateHash = (addr: string, buffer: number = 4) =>
   `${addr?.substring(0, buffer)}...${addr?.substring(addr.length - buffer)}`;
+
+
+export const navigateToExternalUrl = (url: URL|string) => {
+  const url_ = new URL(url);
+  window.open(url_, '_blank');
+};

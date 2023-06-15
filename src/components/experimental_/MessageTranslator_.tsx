@@ -5,6 +5,7 @@ import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import { NftAsset } from './widgets/nft/NftAsset';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
@@ -41,18 +42,19 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   );
 };
 
-const parseArgsStripQuotes = (args: string): any[] => {
-  return args
-    ? JSON.parse(
-        JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
-      )
-    : [];
+const parseArgs = (args: string | object) => {
+  if (args && typeof args === 'string')
+    return JSON.parse(
+      JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
+    );
+  if (args && typeof args === 'object') return { ...args };
+  return [];
 };
 
 const getWidget = (widget: Widget): JSX.Element => {
   const { name: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
-  const parsedArgs = parseArgsStripQuotes(args);
+  const parsedArgs = parseArgs(args);
   const inputString = `${fnName}(${args})`;
 
   const widgets = new Map<string, JSX.Element>();
@@ -60,19 +62,21 @@ const getWidget = (widget: Widget): JSX.Element => {
   /**
    * Aggregator display widgets
    * */
-  widgets.set(
-    'list-container',
-    <Fragment>
-      {JSON.parse(args).items.map((item: Widget, i: number) => (
-        <Fragment key={`i${i}`}>{getWidget({ name: item.name, args: item.args })}</Fragment>
-      )) || null}
-    </Fragment>
-  );
+  const ListContainer = (props: any) => {
+    return (
+      <Fragment>
+        {JSON.parse(props.items).items.map((item: { name: string; params: any }, i: number) => (
+          <Fragment key={`i${i}`}>{getWidget({ name: item.name, args: item.params })}</Fragment>
+        )) || null}
+      </Fragment>
+    );
+  };
+
+  widgets.set('list-container', <ListContainer items={args}  />);
 
   /**
    * Implemented Indivudual Widgets
    * */
-
   widgets.set(
     'uniswap',
     <Uniswap
@@ -86,6 +90,12 @@ const getWidget = (widget: Widget): JSX.Element => {
     'transfer',
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   );
+
+  /* Nft widgets */
+  widgets.set('nft-asset-container', <NftAsset {...parsedArgs} />);
+
+
+
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

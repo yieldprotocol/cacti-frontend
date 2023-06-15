@@ -1,15 +1,6 @@
-import { useMemo, useState } from 'react';
-import Image from 'next/image';
-import {
-  ArrowTopRightOnSquareIcon,
-  ArrowUpOnSquareIcon,
-  ArrowUpRightIcon,
-} from '@heroicons/react/24/outline';
-import Skeleton from '@/components/SkeletonWrap';
-import { findTokenBySymbol } from '@/utils';
-import { InlineChip } from './InlineChip';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
-import { mockText } from './helpers/mocks';
+import { navigateToExternalUrl } from '@/utils';
 
 const TagItem = (props: { tag: string }) => {
   return (
@@ -19,28 +10,52 @@ const TagItem = (props: { tag: string }) => {
   );
 };
 
+export type ImageResponseProps = {
+  actionLabel?: string,
+  actionValue?: string,
+  description?: string,
+  image: string,
+  imageTags?: string[],
+  title?: string,
+  imageLink?: string,
+  subTitle?:string
+};
+
 /**
  * Image response element
  * @param props
  * @returns
  */
-export const ImageResponse = (props: any) => {
+export const ImageResponse = (props: ImageResponseProps) => {
   const tagList = props.imageTags || [];
 
   return (
-    <ResponseWrap classNameExtra="w-[400px]">
+    <ResponseWrap classNameExtra="w-full">
       {props.title && ( // if has title
         <ResponseTitle>
-          {props.title}
+
+          <div>
+            {props.title}
+            {props.subTitle}
+          </div>
 
           {props.imageLink && ( // if has external link
-            <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
+            <div onClick={()=> navigateToExternalUrl(props.imageLink!) }>
+              <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
+            </div>
           )}
         </ResponseTitle>
       )}
 
       <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded p-2">
-        <img className="w-full" src={props.image} alt={props.title} />
+        {props.image ? (
+          <img className="w-full" src={props.image} alt={props.title} />
+        ) : (
+          <div className="w-full items-center justify-center rounded-lg bg-gray-100 text-4xl text-gray-400">
+            ?
+          </div>
+        )}
+
         {tagList.length > 1 && ( // if has tags
           <div className="space-x-2 space-y-1 py-2 ">
             {tagList.map((tag: string) => (
