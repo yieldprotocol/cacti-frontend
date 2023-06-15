@@ -18,12 +18,13 @@ export const MessageTranslator = ({ message }: { message: string }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
+       
       const list = parsedMessage.map((item: string | Widget) => {
         /* if item is a string (and not nothing ) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
           return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`);
         /* if item has a fnName, assume its a widget */
-        if (typeof item !== 'string' && item.fnName) return getWidget(item);
+        if (typeof item !== 'string' && item.name) return getWidget(item);
         /* else return null */
         return null;
       });
@@ -50,12 +51,29 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 const getWidget = (widget: Widget): JSX.Element => {
-  const { fnName: fn, args } = widget;
+  const { name: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgsStripQuotes(args);
   const inputString = `${fnName}(${args})`;
 
   const widgets = new Map<string, JSX.Element>();
+
+  /** 
+   * Aggregator display widgets 
+   * */
+  widgets.set('list-container', (
+    <Fragment>
+       {JSON.parse(args).items.map(( item: Widget, i: number) => (
+            <Fragment key={`i${i}`}>
+              {getWidget( { name: item.name, args: item.args })}
+            </Fragment>
+          )) || null}
+    </Fragment>
+  ));
+
+ /**
+  * Implemented Indivudual Widgets 
+  * */ 
 
   widgets.set('uniswap', (
     <Uniswap

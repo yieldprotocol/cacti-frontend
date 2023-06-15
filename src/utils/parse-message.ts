@@ -1,10 +1,5 @@
 type RegExpMatchArrayWithIndices = RegExpMatchArray & { indices: Array<[number, number]> };
 
-export type Widget = {
-  fnName: string;
-  args: any;
-};
-
 export const parseMessage = (str: string) => {
   /** Regex parses any function between <| and |>.
    * 2 capture groups, one being the function name, and the other being all the params.
@@ -22,25 +17,25 @@ export const parseMessage = (str: string) => {
     return {
       start,
       end,
-      fnName: capture1,
+      name: capture1,
       args: capture2,
     };
   });
   // TODO: sloppy
   return parsedMatches.reduce((acc, match, i) => {
-    const { fnName, args, start, end } = match;
+    const { name, args, start, end } = match;
     if (acc.length === 0 && parsedMatches.length === i + 1)
-      return [str.substring(0, start), { fnName, args }, str.substring(end)];
-    if (acc.length === 0) return [str.substring(0, start), { fnName, args }];
+      return [str.substring(0, start), { name, args }, str.substring(end)];
+    if (acc.length === 0) return [str.substring(0, start), { name, args }];
     const lastIndexEnd = parsedMatches[i - 1].end;
     if (parsedMatches.length === i + 1) {
       return [
         ...acc,
         str.substring(lastIndexEnd, match.start),
-        { fnName, args },
+        { name, args },
         str.substring(end),
       ];
     }
-    return [...acc, str.substring(lastIndexEnd, match.start), { fnName, args }];
+    return [...acc, str.substring(lastIndexEnd, match.start), { name, args }];
   }, [] as (string | Widget)[]);
 };
