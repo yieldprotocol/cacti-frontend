@@ -7,7 +7,7 @@ import { composeFromString } from '../cactiComponents/tools/compose';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
-export const MessageTranslator = ({ message }: { message: string }) => {
+const MessageTranslator = ({ message }: { message: string }) => {
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
@@ -94,3 +94,5 @@ const Widget = ({ widget }: { widget: Widget }) => {
     }
   }
 };
+
+export default MessageTranslator;
