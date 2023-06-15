@@ -18,7 +18,6 @@ export const MessageTranslator = ({ message }: { message: string }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-       
       const list = parsedMessage.map((item: string | Widget) => {
         /* if item is a string (and not nothing ) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
@@ -58,34 +57,35 @@ const getWidget = (widget: Widget): JSX.Element => {
 
   const widgets = new Map<string, JSX.Element>();
 
-  /** 
-   * Aggregator display widgets 
+  /**
+   * Aggregator display widgets
    * */
-  widgets.set('list-container', (
+  widgets.set(
+    'list-container',
     <Fragment>
-       {JSON.parse(args).items.map(( item: Widget, i: number) => (
-            <Fragment key={`i${i}`}>
-              {getWidget( { name: item.name, args: item.args })}
-            </Fragment>
-          )) || null}
+      {JSON.parse(args).items.map((item: Widget, i: number) => (
+        <Fragment key={`i${i}`}>{getWidget({ name: item.name, args: item.args })}</Fragment>
+      )) || null}
     </Fragment>
-  ));
+  );
 
- /**
-  * Implemented Indivudual Widgets 
-  * */ 
+  /**
+   * Implemented Indivudual Widgets
+   * */
 
-  widgets.set('uniswap', (
+  widgets.set(
+    'uniswap',
     <Uniswap
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
     />
-  ));
+  );
 
-  widgets.set('transfer', (
+  widgets.set(
+    'transfer',
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
-  ));
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

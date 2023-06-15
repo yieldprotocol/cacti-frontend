@@ -29,12 +29,7 @@ export const parseMessage = (str: string) => {
     if (acc.length === 0) return [str.substring(0, start), { name, args }];
     const lastIndexEnd = parsedMatches[i - 1].end;
     if (parsedMatches.length === i + 1) {
-      return [
-        ...acc,
-        str.substring(lastIndexEnd, match.start),
-        { name, args },
-        str.substring(end),
-      ];
+      return [...acc, str.substring(lastIndexEnd, match.start), { name, args }, str.substring(end)];
     }
     return [...acc, str.substring(lastIndexEnd, match.start), { name, args }];
   }, [] as (string | Widget)[]);
