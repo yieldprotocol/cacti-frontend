@@ -143,7 +143,7 @@ export const ActionResponse = ({
     /* -------- APPROVAL FLOW --------- */
     if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
-      if (true) {
+      if (approveTx) {
         setAction({ name: 'approve', fn: approveTx });
         console.log('READY FOR APPROVAL: Has balance.');
         setLabel(`A token approval is required`);
