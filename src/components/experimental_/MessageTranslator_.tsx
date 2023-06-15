@@ -22,7 +22,7 @@ export const MessageTranslator = ({ message }: { message: string }) => {
         if (typeof item === 'string' && item.trim() !== '')
           return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`);
         /* if item has a fnName, assume its a widget */
-        if (typeof item !== 'string' && item.fnName) return getWidget(item);
+        if (typeof item !== 'string' && item.fnName) return <Widget widget={item} />;
         /* else return null */
         return null;
       });
@@ -48,7 +48,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const getWidget = (widget: Widget): JSX.Element => {
+const Widget = ({ widget }: { widget: Widget }) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgsStripQuotes(args);
