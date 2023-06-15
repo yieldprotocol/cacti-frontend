@@ -32,11 +32,11 @@ export const ImageResponse = (props: ImageResponseProps) => {
   return (
     <ResponseWrap classNameExtra="w-full">
       {props.title && ( // if has title
-        <ResponseTitle>
+        <ResponseTitle >
 
-          <div>
+          <div className='' >
             {props.title}
-            {props.subTitle}
+            <div className='text-xs text-white/50'>{props.subTitle}</div>
           </div>
 
           {props.imageLink && ( // if has external link
@@ -47,7 +47,7 @@ export const ImageResponse = (props: ImageResponseProps) => {
         </ResponseTitle>
       )}
 
-      <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded p-2">
+      <div className="max-w-sm gap-2 space-y-2 overflow-hidden rounded-xl p-2 bg-white bg-opacity-5 ">
         {props.image ? (
           <img className="w-full" src={props.image} alt={props.title} />
         ) : (
@@ -56,7 +56,10 @@ export const ImageResponse = (props: ImageResponseProps) => {
           </div>
         )}
 
-        {tagList.length > 1 && ( // if has tags
+
+      </div>
+
+      {tagList.length > 1 && ( // if has tags
           <div className="space-x-2 space-y-1 py-2 ">
             {tagList.map((tag: string) => (
               <TagItem tag={tag} key={tag} />
@@ -72,7 +75,6 @@ export const ImageResponse = (props: ImageResponseProps) => {
             <div>{props.actionValue}</div>
           </div>
         )}
-      </div>
     </ResponseWrap>
   );
 };
