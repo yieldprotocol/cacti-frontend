@@ -122,7 +122,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
-    enabled: !quoteIsLoading, // NOTE: here we are only enabling when the  async call is ready!!
+    enabled: !quoteIsLoading && !!quote, // NOTE: here we are only enabling when the  async call is ready!!
   };
 
   return (
