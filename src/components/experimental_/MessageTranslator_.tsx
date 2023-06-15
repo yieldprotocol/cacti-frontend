@@ -4,7 +4,6 @@ import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 

@@ -1,11 +1,6 @@
 import { useRouter } from 'next/router';
 import { EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/20/solid';
-import SettingsDropdown from '@/components/SettingsDropdown';
 import { CustomConnectButton } from './CustomConnectButton';
-
-const Header = () => {
-  const router = useRouter();
-  const { s: threadId } = router.query;
 
   // const ShareButton = () => {
   //   return (
@@ -38,6 +33,10 @@ const Header = () => {
       </div>
     );
   };
+
+const Header = () => {
+  const router = useRouter();
+  const { s: threadId } = router.query;
 
   return (
     <div

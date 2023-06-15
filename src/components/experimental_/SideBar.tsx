@@ -25,6 +25,28 @@ const MoreItem = ({ icon, action, label }: MoreItem) => {
   );
 };
 
+const MenuButton = ({ action }: {action: ()=>void}) => {
+  return (
+    <div
+      className="
+      flex
+      cursor-pointer 
+      select-none 
+      justify-center 
+      rounded-[8px] p-2
+       text-xs 
+       text-white/70
+       hover:bg-white
+       hover:bg-opacity-20"
+      onClick={action}
+    >
+      <div className="h-4 w-4">
+        <QueueListIcon />
+      </div>
+    </div>
+  );
+};
+
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -56,28 +78,6 @@ const Sidebar = () => {
     window.open(url, '_blank');
   };
 
-  const MenuButton = () => {
-    return (
-      <div
-        className="
-        flex
-        cursor-pointer 
-        select-none 
-        justify-center 
-        rounded-[8px] p-2
-         text-xs 
-         text-white/70
-         hover:bg-white
-         hover:bg-opacity-20"
-        onClick={toggleSidebar}
-      >
-        <div className="h-4 w-4">
-          <QueueListIcon />
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
       <DevToolsModal
@@ -107,7 +107,7 @@ const Sidebar = () => {
         >
           <div className="w-full p-4">
             <div className="flex w-full items-center gap-2">
-              <MenuButton />
+              <MenuButton action={toggleSidebar} />
 
               <div
                 className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
@@ -198,7 +198,7 @@ const Sidebar = () => {
 
       {!sidebarOpen && (
         <div className="absolute left-4 top-4 p-2">
-          <MenuButton />
+          <MenuButton action={toggleSidebar} />
           {connectionStatus === ReadyState.OPEN ? null : (
             <div
               className={`fixed left-2 top-2 rounded-full text-xs ${getStatusColor(
