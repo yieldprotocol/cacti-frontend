@@ -55,9 +55,9 @@ const getWidget = (widget: Widget): JSX.Element => {
   const parsedArgs = parseArgsStripQuotes(args);
   const inputString = `${fnName}(${args})`;
 
-  const widgets = new Map<string, () => JSX.Element>();
+  const widgets = new Map<string, JSX.Element>();
 
-  widgets.set('uniswap', () => (
+  widgets.set('uniswap', (
     <Uniswap
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
@@ -65,13 +65,13 @@ const getWidget = (widget: Widget): JSX.Element => {
     />
   ));
 
-  widgets.set('transfer', () => (
+  widgets.set('transfer', (
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   ));
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
-    return widgets.get(fnName)!();
+    return widgets.get(fnName)!;
   } else {
     /* Else, 'try' to get the widget from the previous implementation */
     try {
