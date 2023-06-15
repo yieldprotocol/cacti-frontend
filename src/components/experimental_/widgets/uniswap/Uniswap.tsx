@@ -122,23 +122,8 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     overrides: {
       value: tokenInIsETH ? amountIn : 0,
     },
+    enabled: !quoteIsLoading, // NOTE: here we are only enabling when the  async call is ready!!
   };
-
-  // const { config: swapConfig } = usePrepareContractWrite({
-  //   address: SWAP_ROUTER_02_ADDRESSES(chainId),
-  //   abi: SwapRouter02Abi,
-  //   functionName: 'exactInputSingle',
-  //   args: [params],
-  //   overrides: {
-  //     value: tokenInIsETH ? amountIn : 0,
-  //   },
-  // });
-
-  // const { hasBalance, hasAllowance } = useTokenApproval(
-  //   tokenIn?.address as `0x${string}`,
-  //   amountIn,
-  //   SWAP_ROUTER_02_ADDRESSES(chainId)
-  // );
 
   return (
     <ConnectFirst>

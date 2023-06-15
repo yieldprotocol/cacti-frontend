@@ -15,6 +15,7 @@ export type TxBasicParams = {
   functionName?: string;
   args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
+  enabled?: boolean;
 };
 
 /**
@@ -33,53 +34,79 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param onError callback to run on error
  */
 const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
+  const [error, setError] = useState<string>();
+  const handleError = (error: Error) => {
+    console.log(error.message);
+    setError(error.message);
+  };
+
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
   /* prepare a write transaction */
-  const { config: writeConfig } = usePrepareContractWrite(params);
+  const { config: writeConfig } = usePrepareContractWrite({
+    ...params,
+    onError(error) {
+      handleError(error);
+    },
+  });
+
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const sendParams =
-    params && params.functionName !== SEND_ETH_FNNAME
+    params && params.args && params.functionName !== SEND_ETH_FNNAME
       ? undefined
       : {
           request: {
-            to: params?.address as string,
-            value: params?.args ? params.args[0] : BigNumber.from(0),
+            to: params?.args?.[0] as string,
+            value: params?.args?.[1] || BigNumber.from(0),
           },
         };
-  const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
+  const { config: sendConfig } = usePrepareSendTransaction({
+    ...sendParams,
+    onError(error) {
+      handleError(error);
+    },
+  }); // sendParams
 
   /* usePrepped data to run write or send transactions */
   const writeTx = useContractWrite(writeConfig);
   const sendTx = useSendTransaction(sendConfig);
 
   /* 'Combined results'  - Alhtough it will effectively be one or the other */
-  const [data, setData] = useState<any>();
-  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
-  const [transact, setTransact] = useState<any>();
-  const [isError, setIsError] = useState<any>();
+  const [data, setData] = useState<any>(undefined);
+  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>(false);
+  const [transact, setTransact] = useState<any>(undefined);
+  // const [isError, setIsError] = useState<any>(undefined);
+
+  const { data: writeData, isLoading: isLoadingWrite, write, error: writeError } = writeTx;
+  const { data: sendData, isLoading: isLoadingSend, sendTransaction, error: sendError } = sendTx;
 
   useEffect(() => {
-    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
-
-    const {
-      data: sendData,
-      isLoading: isWaitingOnUserSend,
-      sendTransaction,
-      isError: sendError,
-    } = sendTx;
+    if (write) setTransact(() => write);
+    if (sendTransaction) setTransact(() => sendTransaction);
 
     setData(writeData || sendData);
-    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
-    setTransact(write || sendTransaction);
-    setIsError(writeError || sendError);
-  }, [writeTx, sendTx]);
+    setIsWaitingOnUser(isLoadingWrite || isLoadingSend);
+
+    /* Always reset error on any change */
+    setError(undefined);
+    if (writeError) handleError(writeError);
+    if (sendError) handleError(sendError);
+  }, [
+    write,
+    sendTransaction,
+    writeData,
+    sendData,
+    isLoadingWrite,
+    isLoadingSend,
+    writeError,
+    sendError,
+  ]);
 
   /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
-    error,
+    error: transactError,
     isLoading: isTransacting,
     isSuccess,
     status,
@@ -92,7 +119,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   /* DEVELOPER logging */
   useEffect(() => {
     if (receipt?.status === 0) {
-      toast.error(`Transaction Error: ${error?.message}`);
+      toast.error(`Transaction Error: ${transactError?.message}`);
     }
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
@@ -107,7 +134,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
     hash: data?.hash,
 
     isWaitingOnUser: isWaitingOnUser,
-    isError: isError,
+    // isError: isError,
 
     isTransacting,
     isSuccess,
