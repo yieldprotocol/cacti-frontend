@@ -10,6 +10,7 @@ import {
   SingleLineResponse,
   TextResponse,
 } from '@/components/cactiComponents';
+import { TxBasicParams } from '../../../cactiComponents/hooks/useSubmitTx';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import getZKSyncTx from './zksync-utils';
 
@@ -20,24 +21,19 @@ interface ZKSyncProps {
 
 const ZKSyncDeposit = ({ token, userAmount }: ZKSyncProps) => {
   const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const [txAndApproval, setTxAndApproval] = useState({ tx: undefined, approval: undefined });
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const [txAndApproval, setTxAndApproval] = useState<{ tx?: TxBasicParams; approval?: any }>({
+    tx: undefined,
+    approval: undefined,
+  });
 
   useEffect(() => {
-    if (chain?.id === goerli.id) {
-      getZKSyncTx(token, userAmount)
-        .then(({ tx, approval }) => {
-          setTxAndApproval({ tx, approval });
-        })
-        .catch(console.error);
-    }
+    getZKSyncTx(token, userAmount)
+      .then(({ tx, approval }) => {
+        setTxAndApproval({ tx, approval });
+      })
+      .catch(console.error);
   }, [chain?.id, token, userAmount]);
-
-  useEffect(() => {
-    if (chain?.id !== goerli.id) {
-      switchNetwork?.(goerli.id);
-    }
-  }, []);
 
   return (
     <ConnectFirst>
@@ -45,8 +41,18 @@ const ZKSyncDeposit = ({ token, userAmount }: ZKSyncProps) => {
       <SingleLineResponse tokenSymbol={token} value={userAmount} />
       <ActionResponse
         label={`Bridge ${userAmount} ${token} to zkSync`}
-        txParams={txAndApproval.tx}
-        approvalParams={undefined}
+        txParams={{
+          fullTxRequest: txAndApproval.tx,
+          chainId: goerli.id,
+        }}
+        approvalParams={token.toUpperCase() !== 'ETH' ? txAndApproval.approval : undefined}
+        preProcessFn={async () => {
+          if (process.env.NODE_ENV === 'production') {
+            await switchNetworkAsync?.(1);
+          } else {
+            await switchNetworkAsync?.(goerli.id);
+          }
+        }}
       />
     </ConnectFirst>
   );

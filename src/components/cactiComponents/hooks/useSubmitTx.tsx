@@ -16,6 +16,8 @@ export type TxBasicParams = {
   args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
   enabled?: boolean;
+  chainId?: number;
+  fullTxRequest?: ethers.providers.TransactionRequest;
 };
 
 /**
@@ -51,16 +53,28 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
     },
   });
 
-  /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
-  const sendParams =
-    params && params.args && params.functionName !== SEND_ETH_FNNAME
-      ? undefined
-      : {
-          request: {
-            to: params?.args?.[0] as string,
-            value: params?.args?.[1] || BigNumber.from(0),
-          },
-        };
+  let sendParams: { chainId: number; request?: any } = {
+    chainId: params?.chainId || 1,
+  };
+  if (params && params.fullTxRequest) {
+    sendParams = {
+      ...sendParams,
+      request: {
+        ...params.fullTxRequest,
+        to: params?.fullTxRequest?.to as string,
+      },
+    };
+    /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
+  } else if (params && params.args && params.functionName === SEND_ETH_FNNAME) {
+    sendParams = {
+      ...sendParams,
+      request: {
+        to: params?.args?.[0] as string,
+        value: params?.args?.[1] || BigNumber.from(0),
+      },
+    };
+  }
+
   const { config: sendConfig } = usePrepareSendTransaction({
     ...sendParams,
     onError(error) {
