@@ -17,7 +17,6 @@ import {
 import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
 import {
-  ListItem,
   SharedStateContextProvider,
   useSharedStateContext,
 } from '@/contexts/SharedStateContext';
@@ -363,19 +362,19 @@ export const Widgetize = (widget: Widget) => {
 };
 
 interface ListContainerProps {
-  items: ListItem[];
+  items: Widget[];
 }
 interface ListItemContainerProps {
-  item: ListItem;
+  item: Widget;
 }
 
 const ListContainer = ({ items }: ListContainerProps) => {
   return (
     <div className="text-black">
       <Grid>
-        {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
+        {items?.map(({ name, args }: { name: string; args: string }, i: number) => (
           <Fragment key={`i${i}`}>
-            {Widgetize({ name: name, args: JSON.stringify(params) })}
+            {Widgetize({ name: name, args: JSON.stringify(args) })}
           </Fragment>
         )) || ''}
       </Grid>
@@ -385,7 +384,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
 
 interface StreamingListContainerProps {
   operation: string;
-  item: ListItem | null;
+  item: Widget | null;
   prefix: string | null;
   suffix: string | null;
   isThinking: boolean | null;

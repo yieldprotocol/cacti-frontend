@@ -1,6 +1,4 @@
 import { Fragment } from 'react';
-import Grid from '@/components/Grid';
-import { ListItem } from '@/contexts/SharedStateContext';
 
 interface ListContainerProps {
   items: JSX.Element[];

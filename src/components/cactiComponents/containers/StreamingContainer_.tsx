@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { ListItem, useSharedStateContext } from '@/contexts/SharedStateContext';
+import { useSharedStateContext } from '@/contexts/SharedStateContext';
 import ListContainer from './ListContainer_';
 
 interface StreamingContainerProps {
   operation: string;
-  item: ListItem | null;
+  item: Widget | null;
   prefix: string | null;
   suffix: string | null;
   isThinking: boolean | null;

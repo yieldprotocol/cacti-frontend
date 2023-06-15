@@ -1,15 +1,14 @@
 import { Fragment } from 'react';
 import Grid from '@/components/Grid';
-import { ListItem } from '@/contexts/SharedStateContext';
 
 interface ListContainerProps {
-  items: ListItem[];
+  items: Widget[];
 }
 const GridContainer = ({ items }: ListContainerProps) => {
   return (
     <div className="text-black">
       <Grid>
-        {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
+        {items?.map(({ name, args }: { name: string; args: string }, i: number) => (
           <Fragment key={`i${i}`}>
             {/* // {Widgetize({ fnName: name, args: JSON.stringify(params) })} */}
           </Fragment>
