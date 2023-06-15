@@ -56,17 +56,19 @@ const getWidget = (widget: Widget): JSX.Element => {
 
   const widgets = new Map<string, JSX.Element>();
 
-  widgets.set('uniswap', (
+  widgets.set(
+    'uniswap',
     <Uniswap
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
     />
-  ));
+  );
 
-  widgets.set('transfer', (
+  widgets.set(
+    'transfer',
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
-  ));
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

@@ -39,7 +39,6 @@ const SecondaryActions = () => {
 };
 
 export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
-
   return (
     <div className="w-full items-center bg-white bg-opacity-5 p-2 ">
       <div className={`mb-4 flex justify-between px-4 py-2 text-white/70 `}>

@@ -25,7 +25,7 @@ const MoreItem = ({ icon, action, label }: MoreItem) => {
   );
 };
 
-const MenuButton = ({ action }: {action: ()=>void}) => {
+const MenuButton = ({ action }: { action: () => void }) => {
   return (
     <div
       className="
