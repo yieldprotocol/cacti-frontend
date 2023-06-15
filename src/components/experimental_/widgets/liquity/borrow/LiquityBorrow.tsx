@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { EthersLiquity } from '@liquity/lib-ethers';
-import { UnsignedTransaction, parseUnits } from 'ethers/lib/utils.js';
+import { UnsignedTransaction } from 'ethers/lib/utils.js';
 import {
   ActionResponse,
   HeaderResponse,
   ListResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
-import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
