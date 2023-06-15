@@ -7,6 +7,7 @@ import { composeFromString } from '../cactiComponents/tools/compose';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const {
@@ -72,6 +73,10 @@ const getWidget = (widget: Widget): JSX.Element => {
       amtString={parsedArgs[1]}
       receiver={parsedArgs[2]}
     />
+  ));
+
+  widgets.set('zksync-deposit', () => (
+    <ZKSyncDeposit token={parsedArgs[0]} userAmount={parsedArgs[1]} />
   ));
 
   /* If available, return the widget in the widgets map */
