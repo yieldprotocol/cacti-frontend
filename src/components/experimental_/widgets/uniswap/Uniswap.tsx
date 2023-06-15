@@ -134,7 +134,6 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   if (!tokenOutSymbol)
     return <TextResponse text={`Please enter a valid token to trade on Uniswap`} />;
 
-
   return (
     <ConnectFirst>
       <HeaderResponse
