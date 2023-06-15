@@ -48,7 +48,7 @@ const YieldProtocolLend = ({
   const { data: tokenOut, isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
   const label = `
         ${toTitleCase(action)} ${inputAmount} ${tokenInSymbol} on ${toTitleCase(projectName)}`;
-  const amount = useInput(inputAmount, tokenInSymbol);
+  const { value: amount } = useInput(inputAmount, tokenInSymbol);
 
   /***************INPUTS******************************************/
 
