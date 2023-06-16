@@ -2,10 +2,8 @@ import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import {
-  BugAntIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
@@ -245,7 +243,7 @@ export const ActionResponse = ({
           </StyledButton>
 
           {error && (
-            <div className="groupError group relative flex ">
+            <div className="group relative flex ">
               <div className="h-6 w-6 text-white/20">
                 <ExclamationTriangleIcon />
               </div>
@@ -261,7 +259,7 @@ export const ActionResponse = ({
           )}
 
           {isSuccess && (
-            <div className="groupSuccess group relative flex">
+            <div className="group relative flex">
               <div className="h-6 w-6 text-white/20">
                 <CheckCircleIcon />
               </div>
