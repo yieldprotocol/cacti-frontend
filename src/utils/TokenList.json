@@ -880,6 +880,14 @@
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"
     },
     {
+      "name": "Dai Stablecoin",
+      "address": "0x3e7676937A7E96CFB7616f255b9AD9FF47363D4b",
+      "symbol": "DAI",
+      "decimals": 18,
+      "chainId": 280,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"
+    },
+    {
       "chainId": 1,
       "address": "0x081131434f93063751813C619Ecca9C4dC7862a3",
       "name": "Mines of Dalarnia",

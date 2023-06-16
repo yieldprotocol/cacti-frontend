@@ -8,6 +8,7 @@ import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
+import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const {
@@ -72,6 +73,10 @@ const getWidget = (widget: Widget): JSX.Element => {
 
   widgets.set('zksync-deposit', () => (
     <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
+  ));
+
+  widgets.set('zksync-withdraw', () => (
+    <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   ));
 
   /* If available, return the widget in the widgets map */

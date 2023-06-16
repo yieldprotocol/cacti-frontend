@@ -48,6 +48,11 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
         bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? 1 : goerli.id);
         zkSyncProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
       }
+
+      if (!bridgeToken) {
+        throw new Error(`Token ${tokenSymbol} not supported`);
+      }
+
       const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
 
       const ethSigner = browserWalletProvider.getSigner();

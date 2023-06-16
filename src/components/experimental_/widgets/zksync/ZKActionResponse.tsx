@@ -75,6 +75,7 @@ const ZKSyncActionResponse = ({
             className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
               text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
           >
+            {/* TODO: Show a link to the chain-specific block explorer to allow user to see the details of tx */}
             {txHash}
           </div>
         </div>
