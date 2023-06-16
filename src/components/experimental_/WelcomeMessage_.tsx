@@ -1,8 +1,6 @@
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import Image from 'next/image';
-import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
-import SettingsContext from '@/contexts/SettingsContext';
 import Cactus1 from './CactiImages/Cactus1';
 import Cactus2 from './CactiImages/Cactus2';
 import Cactus3 from './CactiImages/Cactus3';

@@ -44,7 +44,7 @@ const useBalance = (
         isLTcompared: data_bn.lt(compareAmount),
       });
     }
-  }, [data, erc1155_data]);
+  }, [compareAmount, data, erc1155TokenId, erc1155_data]);
 
   return {
     data: erc1155TokenId ? (erc1155_data as BigNumber) : data?.value,

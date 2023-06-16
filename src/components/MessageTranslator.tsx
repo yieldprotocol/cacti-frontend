@@ -84,12 +84,7 @@ export const Widgetize = (widget: Widget) => {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
         return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
       }
-      // Swap widget
-      case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
-          parseArgsStripQuotes(args);
-        return <SwapWidget {...{ tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw }} />;
-      }
+
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
@@ -424,7 +419,18 @@ const StreamingListContainer = ({
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, []);
+  }, [
+    item,
+    newIsThinking,
+    newPrefix,
+    newSuffix,
+    operation,
+    setIsThinking,
+    setItems,
+    setPrefix,
+    setSuffix,
+  ]);
+
   if (operation === 'create') {
     return (
       <div className="p-3 text-white">
