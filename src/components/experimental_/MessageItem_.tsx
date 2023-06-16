@@ -33,20 +33,20 @@ export const MessageItem = ({ message }: { message: Message }) => {
   };
 
   return (
-      <div className={`flex w-full flex-col`}>
-        {actor === 'bot' && <MessageTranslator message={message} />}
-        {actor === 'system' && <SystemMessage message={payload} />}
-        {isUser && (
-          <UserMessage
-            {...{
-              actor,
-              initialText: payload,
-              submitEdit,
-              submitRegenerate,
-              submitDelete,
-            }}
-          />
-        )}
-      </div>
+    <div className={`flex w-full flex-col`}>
+      {actor === 'bot' && <MessageTranslator message={message} />}
+      {actor === 'system' && <SystemMessage message={payload} />}
+      {isUser && (
+        <UserMessage
+          {...{
+            actor,
+            initialText: payload,
+            submitEdit,
+            submitRegenerate,
+            submitDelete,
+          }}
+        />
+      )}
+    </div>
   );
 };

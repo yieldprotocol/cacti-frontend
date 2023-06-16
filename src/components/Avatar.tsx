@@ -2,7 +2,6 @@ import { jsNumberForAddress } from 'react-jazzicon';
 import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import { ClipboardDocumentListIcon, CommandLineIcon } from '@heroicons/react/24/outline';
 import { useAccount, useEnsAvatar } from 'wagmi';
-import Cactus1 from './experimental_/CactiImages/Cactus1';
 import CactusAvatar from './experimental_/CactiImages/CactusAvatar';
 
 interface ActorProps {
@@ -20,7 +19,7 @@ export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) 
 
 const Avatar = ({ actor }: ActorProps) => {
   const { address } = useAccount();
-  
+
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 
@@ -38,7 +37,7 @@ const Avatar = ({ actor }: ActorProps) => {
         </div>
       ) : (
         <div className="center h-full w-full bg-white bg-opacity-5 ">
-         <CactusAvatar color={'#ffffff70'} />
+          <CactusAvatar color={'#ffffff70'} />
         </div>
         // <img src={botAvatar} alt="bot avatar" />
       )}

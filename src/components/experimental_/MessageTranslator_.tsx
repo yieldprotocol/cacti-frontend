@@ -36,8 +36,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   return (
     <SharedStateContextProvider>
-      <div className={`grid-gap-2 grid grid-cols-12 py-3 mb-8 `}>
-       
+      <div className={`grid-gap-2 mb-8 grid grid-cols-12 py-3 `}>
         <div className="col-span-2 py-4">
           <div className="float-right">
             <Avatar actor="bot" />

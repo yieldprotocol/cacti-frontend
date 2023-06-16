@@ -82,7 +82,7 @@ export const MessageInput = ({}) => {
     <div className="grid grid-cols-12">
       <div className="col-span-2"> </div>
 
-      <div className="flex col-span-8 items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
+      <div className="col-span-8 flex items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
         <div className="text-end">
           <button
             className="grid h-10 w-10 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"

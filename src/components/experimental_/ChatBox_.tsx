@@ -23,13 +23,11 @@ const ChatBox = () => {
     <div className="flex h-full justify-center">
       <div className="flex h-full w-full flex-col pt-20">
         {/* chat area */}
-        <div className="h-full overflow-auto">
-            {ready ? messageContentComponent : <Spinner />}
-        </div>
+        <div className="h-full overflow-auto">{ready ? messageContentComponent : <Spinner />}</div>
 
         {/* Chat input */}
         <div className="items-center bg-white bg-opacity-5 p-2 py-[24px]">
-            <MessageInput />
+          <MessageInput />
         </div>
       </div>
     </div>

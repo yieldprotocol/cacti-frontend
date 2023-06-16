@@ -74,9 +74,9 @@ export const UserMessage = ({
       focus:text-gray-50
       ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
       grid-gap-2 
-      grid
-      grid-cols-12 items-center overflow-hidden
       group
+      grid grid-cols-12 items-center
+      overflow-hidden
       py-3
       `}
     >
