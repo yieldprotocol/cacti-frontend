@@ -79,43 +79,47 @@ export const MessageInput = ({}) => {
   const isConnected = connectionStatus === ReadyState.OPEN;
 
   return (
-    <div className="flex w-[90%] items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
-      <div className="text-end">
-        <button
-          className="grid h-10 w-10 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
-          type="button"
-          onClick={toggleInteractionMode}
-        >
-          {interactor === 'user' ? (
-            <ChatBubbleLeftRightIcon className="h-6 w-6" />
-          ) : (
-            <PaperClipIcon className="h-6 w-6" />
-          )}
-        </button>
-      </div>
+    <div className="grid grid-cols-12">
+      <div className="col-span-2"> </div>
 
-      <form onSubmit={handleSendMessage} className="flex w-full grow items-center">
-        <input
-          type="text"
-          onChange={(e) => setMessageInput(e.target.value)}
-          placeholder={
-            interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
-          }
-          tabIndex={0}
-          value={messageInput}
-          ref={inputRef}
-          className={`   
+      <div className="col-span-8 flex items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
+        <div className="text-end">
+          <button
+            className="grid h-10 w-10 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
+            type="button"
+            onClick={toggleInteractionMode}
+          >
+            {interactor === 'user' ? (
+              <ChatBubbleLeftRightIcon className="h-6 w-6" />
+            ) : (
+              <PaperClipIcon className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+
+        <form onSubmit={handleSendMessage} className="flex w-full grow items-center">
+          <input
+            type="text"
+            onChange={(e) => setMessageInput(e.target.value)}
+            placeholder={
+              interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
+            }
+            tabIndex={0}
+            value={messageInput}
+            ref={inputRef}
+            className={`   
             grow
             bg-transparent
             tracking-wider
-            text-gray-400 placeholder:text-gray-500
-            focus:text-gray-100 focus:outline-none
+            text-white/30 placeholder:text-white/30
+            focus:text-white/70 focus:outline-none
           `}
-        />
-        <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
-          <PaperAirplaneIcon className="h-5 w-5" />
-        </IconBtn>
-      </form>
+          />
+          <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
+            <PaperAirplaneIcon className="h-5 w-5" />
+          </IconBtn>
+        </form>
+      </div>
     </div>
   );
 };

@@ -20,22 +20,14 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className=" flex h-full justify-center">
-      <div className="flex h-full w-full flex-col justify-between pt-20">
+    <div className="flex h-full justify-center">
+      <div className="flex h-full w-full flex-col pt-20">
         {/* chat area */}
-        <div className="grid h-full grid-cols-12 overflow-auto ">
-          <div className="col-span-2" />
-          <div className="col-span-8">{ready ? messageContentComponent : <Spinner />}</div>
-        </div>
-        {/* Chat inpu */}
-        <div className="grid grid-cols-12 items-center bg-white bg-opacity-5 p-2 py-[24px]">
-          <div className="col-span-2" />
-          <div className="col-span-8">
-            <MessageInput />
-          </div>
-          {/* <div className="col-span-2">
-            <ResetButton styleOption="iconAndText" />
-          </div> */}
+        <div className="h-full overflow-auto">{ready ? messageContentComponent : <Spinner />}</div>
+
+        {/* Chat input */}
+        <div className="items-center bg-white bg-opacity-5 p-2 py-[24px]">
+          <MessageInput />
         </div>
       </div>
     </div>

@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -235,10 +231,10 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  const returnComponent = () => {
-    if (address && stepper) return <ActionStepper />;
-    if (address && !stepper)
-      return (
+  return (
+    <div className="flex w-full justify-center">
+      {address && stepper && <ActionStepper />}
+      {address && !stepper && (
         <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
@@ -248,13 +244,15 @@ export const ActionResponse = ({
           </StyledButton>
 
           {error && (
-            <div className="group relative flex">
+            <div className="group relative flex ">
               <div className="h-6 w-6 text-white/20">
-                <InformationCircleIcon />
+                <ExclamationTriangleIcon />
               </div>
               <div
-                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute left-8 hidden rounded-md border  border-gray-700 bg-gray-900
+                p-2 text-sm 
+                text-white/70 group-hover:block
+                "
               >
                 {error}
               </div>
@@ -267,17 +265,18 @@ export const ActionResponse = ({
                 <CheckCircleIcon />
               </div>
               <div
-                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute left-8 hidden rounded-md border  border-gray-700 bg-gray-900
+                p-2 text-sm 
+                text-white/70 group-hover:block
+                "
               >
                 {receipt?.transactionHash}
               </div>
             </div>
           )}
         </div>
-      );
-    return <ConnectButton />;
-  };
-
-  return <div className="flex w-full justify-center">{returnComponent()}</div>;
+      )}
+      {!address && <ConnectButton />}
+    </div>
+  );
 };
