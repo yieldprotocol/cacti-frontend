@@ -79,14 +79,15 @@ const Widget = ({ widget }: { widget: Widget }) => {
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   );
 
-  widgets.set('yield-protocol-lend', () => (
+  widgets.set(
+    'yield-protocol-lend',
     <YieldProtocolLend
       tokenInSymbol={parsedArgs[0]}
       inputAmount={parsedArgs[1]}
       action="lend"
       projectName="yield-protocol"
     />
-  ));
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
