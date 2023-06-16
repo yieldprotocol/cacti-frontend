@@ -10,12 +10,14 @@ export const BotThinking = () => {
         </div>
       </div>
 
-      <div className="col-span-8 flex 
+      <div
+        className="col-span-8 flex 
           h-full w-full flex-col 
           gap-2 
           px-4 
           text-white/70
-          ">
+          "
+      >
         <ResponseWrap>
           <div className="relative h-[16px] overflow-hidden rounded-[6px] ">
             <div className="botLight" />
