@@ -33,30 +33,20 @@ export const MessageItem = ({ message }: { message: Message }) => {
   };
 
   return (
-    <div className={`flex py-1`}>
-      <div className={`flex w-full flex-col`}>
-        {actor === 'bot' && <MessageTranslator message={payload} />}
-        {actor === 'system' && <SystemMessage message={payload} />}
-        {isUser && (
-          <UserMessage
-            {...{
-              actor,
-              initialText: payload,
-              submitEdit,
-              submitRegenerate,
-              submitDelete,
-            }}
-          />
-        )}
-      </div>
-
-      {actor === 'bot' && (
-        <div className="w-[10%]">
-          <FeedbackButton message={message} />
-        </div>
+    <div className={`flex w-full flex-col`}>
+      {actor === 'bot' && <MessageTranslator message={message} />}
+      {actor === 'system' && <SystemMessage message={payload} />}
+      {isUser && (
+        <UserMessage
+          {...{
+            actor,
+            initialText: payload,
+            submitEdit,
+            submitRegenerate,
+            submitDelete,
+          }}
+        />
       )}
-      {actor === 'system' && <div className="w-[10%]" />}
-      {isUser && <div className="w-[10%]" />}
     </div>
   );
 };

@@ -1,11 +1,7 @@
 import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import tw from 'tailwind-styled-components';
@@ -244,13 +240,15 @@ export const ActionResponse = ({
           </StyledButton>
 
           {error && (
-            <div className="group relative flex">
+            <div className="group relative flex ">
               <div className="h-6 w-6 text-white/20">
-                <InformationCircleIcon />
+                <ExclamationTriangleIcon />
               </div>
               <div
-                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute left-8 hidden rounded-md border  border-gray-700 bg-gray-900
+                p-2 text-sm 
+                text-white/70 group-hover:block
+                "
               >
                 {error}
               </div>
@@ -263,8 +261,10 @@ export const ActionResponse = ({
                 <CheckCircleIcon />
               </div>
               <div
-                className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute left-8 hidden rounded-md border  border-gray-700 bg-gray-900
+                p-2 text-sm 
+                text-white/70 group-hover:block
+                "
               >
                 {receipt?.transactionHash}
               </div>
