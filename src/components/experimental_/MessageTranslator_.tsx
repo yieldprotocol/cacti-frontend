@@ -4,30 +4,36 @@ import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
-export const MessageTranslator = ({ message }: { message: string }) => {
+const MessageTranslator = ({ message }: { message: string }) => {
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
   const parsedMessage = useMemo(() => parseMessage(message), [message]);
 
-  const [componentList, setComponentList] = useState<(JSX.Element | null)[]>();
+  const [componentList, setComponentList] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.map((item: string | Widget) => {
-        /* if item is a string (and not nothing ) send a text response */
+      const list = parsedMessage.reduce((list, item, idx) => {
+        /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
-          return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`);
+          return [
+            ...list,
+            composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
+          ];
+
         /* if item has a fnName, assume its a widget */
-        if (typeof item !== 'string' && item.fnName) return getWidget(item);
+        if (typeof item !== 'string' && item.fnName)
+          return [...list, <Widget key={idx} widget={item} />];
+
         /* else return null */
-        return null;
-      });
+        return list;
+      }, [] as JSX.Element[]);
+
       setComponentList(list);
     }
   }, [parsedMessage]);
@@ -35,8 +41,9 @@ export const MessageTranslator = ({ message }: { message: string }) => {
   return (
     <SharedStateContextProvider>
       <div className="flex flex-col gap-2">
-        {componentList &&
-          componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+        {componentList.map((component, i) => (
+          <Fragment key={`i${i}`}>{component}</Fragment>
+        ))}
       </div>
     </SharedStateContextProvider>
   );
@@ -50,25 +57,27 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const getWidget = (widget: Widget): JSX.Element => {
+const Widget = ({ widget }: { widget: Widget }) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgsStripQuotes(args);
   const inputString = `${fnName}(${args})`;
 
-  const widgets = new Map<string, () => JSX.Element>();
+  const widgets = new Map<string, JSX.Element>();
 
-  widgets.set('uniswap', () => (
+  widgets.set(
+    'uniswap',
     <Uniswap
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
     />
-  ));
+  );
 
-  widgets.set('transfer', () => (
+  widgets.set(
+    'transfer',
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
-  ));
+  );
 
   widgets.set('yield-protocol-lend', () => (
     <YieldProtocolLend
@@ -81,7 +90,7 @@ const getWidget = (widget: Widget): JSX.Element => {
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
-    return widgets.get(fnName)!();
+    return widgets.get(fnName)!;
   } else {
     /* Else, 'try' to get the widget from the previous implementation */
     try {
@@ -95,3 +104,5 @@ const getWidget = (widget: Widget): JSX.Element => {
     }
   }
 };
+
+export default MessageTranslator;

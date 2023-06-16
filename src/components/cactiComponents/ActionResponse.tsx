@@ -231,10 +231,10 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  const returnComponent = () => {
-    if (address && stepper) return <ActionStepper />;
-    if (address && !stepper)
-      return (
+  return (
+    <div className="flex w-full justify-center">
+      {address && stepper && <ActionStepper />}
+      {address && !stepper && (
         <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
@@ -271,9 +271,8 @@ export const ActionResponse = ({
             </div>
           )}
         </div>
-      );
-    return <ConnectButton />;
-  };
-
-  return <div className="flex w-full justify-center">{returnComponent()}</div>;
+      )}
+      {!address && <ConnectButton />}
+    </div>
+  );
 };
