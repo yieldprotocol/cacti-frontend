@@ -6,6 +6,7 @@ import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
+import { ExperimentalUiToggle } from './ExperimentalUiToggle';
 import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
 import { SessionInfo } from './SessionInfo';
@@ -78,7 +79,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
 
                       <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
-
+                        <ExperimentalUiToggle />
                         <ResetButton />
                       </div>
 

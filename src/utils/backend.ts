@@ -28,6 +28,7 @@ function isEnvTag(envTag: any): envTag is EnvTag {
 
 export const getBackendHost = () => {
   const envTag = process.env.NEXT_PUBLIC_ENV_TAG || DEFAULT_ENV_TAG;
+
   if (!isEnvTag(envTag)) {
     throw Error(`Invalid env tag: ${envTag}; must be one of ${Object.values(EnvTag)}`);
   }

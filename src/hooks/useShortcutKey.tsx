@@ -1,11 +1,14 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 const useShortcutKey = (key: string, action: () => void, msg?: string) => {
-  const handleKeyPress = (event: any) => {
-    if (event.altKey === true) {
-      event.key === `${key}` && action();
-    }
-  };
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.altKey === true) {
+        event.key === `${key}` && action();
+      }
+    },
+    [action, key]
+  );
 
   useEffect(() => {
     // attach the event listener on load
@@ -14,7 +17,7 @@ const useShortcutKey = (key: string, action: () => void, msg?: string) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, []);
+  }, [handleKeyPress]);
 };
 
 export default useShortcutKey;

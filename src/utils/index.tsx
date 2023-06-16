@@ -4,6 +4,7 @@ import tokenListJson from '@/utils/TokenList.json';
 import { Project } from '../types';
 
 export const shortenAddress = (address: string) => address.slice(0, 6) + '...' + address.slice(-4);
+
 export const findTokenBySymbol = (symbol: string, chainId: number) =>
   tokenListJson.tokens.find(
     (token) => token.symbol.toUpperCase() === symbol.toUpperCase() && token.chainId === chainId
@@ -20,13 +21,22 @@ export const findProjectByName = (name: string): Project => {
   const found = projectListJson.find(
     (project) =>
       project.name.toLowerCase() == name.toLowerCase() ||
-      project.slug.toLowerCase() == name.toLowerCase()
+      project.slug?.toLowerCase() == name.toLowerCase() ||
+      project.id?.toLowerCase() == name.toLowerCase()
   );
   if (!found) throw new Error(`No project found for name ${name}`);
 
   return {
     id: found.slug,
     name: found.name,
+    /* optionals */
+    url: found.url,
+    logo: found.logo,
+    description: found.description,
+    slug: found.slug,
+    category: found.category,
+    twitter: found.twitter,
+    parentProtocol: found.parentProtocol,
   };
 };
 
@@ -70,3 +80,6 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
 /* handle Address/hash shortening */
 export const abbreviateHash = (addr: string, buffer: number = 4) =>
   `${addr?.substring(0, buffer)}...${addr?.substring(addr.length - buffer)}`;
+
+export const toTitleCase = (str: string) =>
+  str.replace(/\w\S*/g, (txt: string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());

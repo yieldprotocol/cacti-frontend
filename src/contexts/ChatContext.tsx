@@ -128,6 +128,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const onClose = () => {
     console.log('Websocket closed');
     setIsBotThinking(false);
+    // toast.info('Websocket closed');
+  };
+
+  const onError = () => {
+    // toast.error('Websocket Error', { autoClose: false, closeOnClick: true });
   };
 
   useEffect(() => {
@@ -211,9 +216,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     [wsSendMessage]
   );
 
-  const sendAction = (action: JsonValue) => {
-    wsSendMessage({ actor: 'user', type: 'action', payload: action });
-  };
+  const sendAction = useCallback(
+    (action: JsonValue) => {
+      wsSendMessage({ actor: 'user', type: 'action', payload: action });
+    },
+    [wsSendMessage]
+  );
 
   const truncateUntilNextHumanMessage = (
     messageId: string,

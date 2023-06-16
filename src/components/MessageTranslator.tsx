@@ -1,4 +1,7 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, createElement, useEffect } from 'react';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { getToken } from 'next-auth/jwt';
+import { useNetwork } from 'wagmi';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -19,7 +22,8 @@ import {
   useSharedStateContext,
 } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import { shortenAddress } from '@/utils';
+import useToken from '@/hooks/useToken';
+import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -64,7 +68,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
     : [];
 };
 
-const Widgetize = (widget: Widget) => {
+export const Widgetize = (widget: Widget) => {
   const { fnName: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
@@ -80,14 +84,12 @@ const Widgetize = (widget: Widget) => {
         const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
         return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
       }
-      // Swap widget
-      case 'uniswap': {
-        const [tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw] =
-          parseArgsStripQuotes(args);
-        return <SwapWidget {...{ tokenInSymbol, tokenOutSymbol, buyOrSell, amountInStrRaw }} />;
-      }
+
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
+        const token = getToken(tokenSymbol);
+        // const amount = parseUnits(amtString, token?.decimals);
+        // const project = findProjectByName(projectName);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
@@ -417,7 +419,18 @@ const StreamingListContainer = ({
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, []);
+  }, [
+    item,
+    newIsThinking,
+    newPrefix,
+    newSuffix,
+    operation,
+    setIsThinking,
+    setItems,
+    setPrefix,
+    setSuffix,
+  ]);
+
   if (operation === 'create') {
     return (
       <div className="p-3 text-white">

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 

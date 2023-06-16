@@ -1,8 +1,10 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   RainbowKitProvider,
+  darkTheme,
   getDefaultWallets,
   lightTheme,
 } from '@rainbow-me/rainbowkit';
@@ -14,13 +16,18 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
+import SettingsContext from './SettingsContext';
 
-const ConnectionWrapper = ({ children, session }: { children: ReactNode; session: Session }) => {
+const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
+
+  const {
+    settings: { experimentalUi },
+  } = useContext(SettingsContext);
 
   const mainnetFork = {
     id: 1,
@@ -65,7 +72,7 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
   });
 
   const getCustomNonce = async () => {
-    /* add in any async call here to add a custom nonce eg. server call */
+    /* Async call to retrieve a custom nonce */
     const backendUrl = getBackendApiUrl();
     const resp = await axios.get(`${backendUrl}/nonce`, { withCredentials: true });
     const nonce = resp.data as string;
@@ -107,22 +114,42 @@ const ConnectionWrapper = ({ children, session }: { children: ReactNode; session
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <SessionProvider refetchInterval={0} session={session}>
-        <RainbowKitSiweNextAuthProvider
-          getCustomNonce={getCustomNonce}
-          getSiweMessageOptions={getSiweMessageOptions}
-          getSigninCallback={getSigninCallback}
-          getSignoutCallback={getSignoutCallback}
-        >
+      <SessionProvider refetchInterval={0} session={pageProps?.session}>
+        {useSiwe && (
+          <RainbowKitSiweNextAuthProvider
+            getCustomNonce={getCustomNonce}
+            getSiweMessageOptions={getSiweMessageOptions}
+            getSigninCallback={getSigninCallback}
+            getSignoutCallback={getSignoutCallback}
+          >
+            <RainbowKitProvider
+              chains={chains}
+              theme={
+                experimentalUi
+                  ? darkTheme({ accentColor: '#1f2937' })
+                  : lightTheme({ accentColor: '#1f2937' })
+              }
+              showRecentTransactions={true}
+            >
+              {children}
+            </RainbowKitProvider>
+          </RainbowKitSiweNextAuthProvider>
+        )}
+
+        {!useSiwe && (
           <RainbowKitProvider
             chains={chains}
-            theme={lightTheme({ accentColor: '#1f2937' })}
+            theme={
+              experimentalUi
+                ? darkTheme({ accentColor: '#1f2937' })
+                : lightTheme({ accentColor: '#1f2937' })
+            }
             showRecentTransactions={true}
             avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
-        </RainbowKitSiweNextAuthProvider>
+        )}
       </SessionProvider>
     </WagmiConfig>
   );

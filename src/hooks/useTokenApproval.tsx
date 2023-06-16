@@ -29,6 +29,7 @@ const useTokenApproval = (
 
   const signer = useSigner();
   const { address: account } = useAccount();
+
   // Get allowance amount
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
     address: address as `0x${string}`,
@@ -36,6 +37,7 @@ const useTokenApproval = (
     functionName: 'allowance',
     args: [account!, spenderAddress],
   });
+
   /* Get the useForkSettings the settings context */
   const {
     settings: { isForkedEnv },

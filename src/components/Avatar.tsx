@@ -2,63 +2,44 @@ import { jsNumberForAddress } from 'react-jazzicon';
 import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import { ClipboardDocumentListIcon, CommandLineIcon } from '@heroicons/react/24/outline';
 import { useAccount, useEnsAvatar } from 'wagmi';
+import CactusAvatar from './experimental_/CactiImages/CactusAvatar';
 
-interface Props {
+interface ActorProps {
   actor: string;
 }
 
-export const UserAvatar = ({
-  address,
-  size,
-}: {
-  address: `0x${string}` | undefined;
-  size: number;
-}) => {
+export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) => {
   const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
   return ensImage ? (
-    <img
-      alt="avatar"
-      src={ensImage}
-      className={`h-[${size}px] w-[${size}px] max-w-none rounded-full`}
-      width={size}
-      height={size}
-    />
+    <img alt="avatar" src={ensImage} />
   ) : (
-    <Jazzicon diameter={size} seed={address ? jsNumberForAddress(address) : 0} />
+    <Jazzicon diameter={24} seed={address ? jsNumberForAddress(address) : 0} />
   );
 };
 
-const Avatar = ({ actor }: Props) => {
+const Avatar = ({ actor }: ActorProps) => {
   const { address } = useAccount();
-  const avatarSize = 40;
-  const avatarSizeStyle = `h-40px w-40px`;
+
   const botAvatar =
     'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
 
   return (
-    <div>
+    <div className="avatar">
       {actor === 'user' ? (
-        <div className={avatarSizeStyle}>
-          <UserAvatar address={address!} size={avatarSize} />
-        </div>
+        <UserAvatar address={address!} />
       ) : actor === 'system' ? (
-        <CommandLineIcon
-          className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
-        />
-      ) : actor === 'commenter' ? (
-        <ClipboardDocumentListIcon
-          className={`${avatarSizeStyle} max-w-none rounded-md bg-gray-300 text-black`}
-        />
-      ) : (
-        <div className={avatarSizeStyle}>
-          <img
-            className={`${avatarSizeStyle} max-w-none rounded-full`}
-            src={botAvatar}
-            alt="bot avatar"
-            width={avatarSize}
-            height={avatarSize}
-          />
+        <div className="center h-full w-full border bg-gray-100 text-teal-900 ">
+          <CommandLineIcon className="h-4 w-4" />
         </div>
+      ) : actor === 'commenter' ? (
+        <div className="center h-full w-full border bg-gray-100 text-gray-700">
+          <ClipboardDocumentListIcon className="h-4 w-4" />
+        </div>
+      ) : (
+        <div className="center h-full w-full bg-white bg-opacity-10 ">
+          <CactusAvatar color={'#ffffff70'} />
+        </div>
+        // <img src={botAvatar} alt="bot avatar" />
       )}
     </div>
   );
