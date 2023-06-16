@@ -36,6 +36,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       const isETH = tokenSymbol.toUpperCase() === 'ETH';
       const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
 
+      // --- Step 1: Check and request user to change wallet network to zkSync depending on env --- //
       let bridgeToken;
       let zkSyncJsonRpcProvider;
       let l1ChainId;
@@ -60,10 +61,10 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
         throw new Error(`Token ${tokenSymbol} not supported`);
       }
 
+      // --- Step 2: Initiate withdraw from zksync --- //
+
       const zkSyncWalletProvider = new zksync.Web3Provider(browserWallet);
-
       const zkSyncSigner = zkSyncWalletProvider.getSigner();
-
       const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
       const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
 

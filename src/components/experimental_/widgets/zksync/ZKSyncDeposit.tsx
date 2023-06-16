@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
+import { stat } from 'fs';
 import { useChainId, useNetwork, useSwitchNetwork } from 'wagmi';
 import { goerli, mainnet, zkSync, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
@@ -17,9 +18,28 @@ interface ZKSyncProps {
   userAmount: string;
 }
 
+export enum ZKSyncDepositState {
+  SWITCH_TO_MAINNET_NETWORK,
+  SWITCH_TO_GOERLI_NETWORK,
+  CONFIRM_L1_TX,
+  WAIT_FOR_L2_INCLUSION,
+  DONE,
+}
+
+const stateToLabel = {
+  [ZKSyncDepositState.SWITCH_TO_MAINNET_NETWORK]: 'Change wallet network to Mainnet',
+  [ZKSyncDepositState.SWITCH_TO_GOERLI_NETWORK]: 'Change wallet network to Goerli',
+  [ZKSyncDepositState.CONFIRM_L1_TX]: 'Confirm transaction in your wallet',
+  [ZKSyncDepositState.WAIT_FOR_L2_INCLUSION]:
+    'Waiting for deposit to be included in zkSync... (can take a few minutes)',
+  [ZKSyncDepositState.DONE]: 'Deposit successful',
+};
+
 // Implementation based on example in doc: https://era.zksync.io/docs/reference/concepts/bridging/bridging-asset.html#deposits-to-l2
 const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
-  const [label, setLabel] = useState(`Bridge ${userAmount} ${tokenSymbol.toUpperCase()} to zkSync`);
+  const defaultLabel = `Bridge ${userAmount} ${tokenSymbol.toUpperCase()} to zkSync`;
+
+  const [label, setLabel] = useState(defaultLabel);
   const [txHash, setTxHash] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -35,14 +55,19 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       let bridgeToken;
       let zkSyncJsonRpcProvider;
+
+      // --- Step 1: Check and request user to change wallet network to Goerli/Mainnet depending on env --- //
+
       if (process.env.NODE_ENV === 'production') {
         if (chain?.id !== mainnet.id) {
-          await switchNetworkAsync?.(1);
+          setLabel(stateToLabel[ZKSyncDepositState.SWITCH_TO_MAINNET_NETWORK]);
+          await switchNetworkAsync?.(mainnet.id);
         }
         bridgeToken = findTokenBySymbol(tokenSymbol, mainnet.id);
         zkSyncJsonRpcProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
       } else {
         if (chain?.id !== goerli.id) {
+          setLabel(stateToLabel[ZKSyncDepositState.SWITCH_TO_GOERLI_NETWORK]);
           await switchNetworkAsync?.(goerli.id);
         }
         bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? mainnet.id : goerli.id);
@@ -53,6 +78,8 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
         throw new Error(`Token ${tokenSymbol} not supported`);
       }
 
+      // --- Step 2: Initiate bridge to zkSync --- //
+
       const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
 
       const ethSigner = browserWalletProvider.getSigner();
@@ -61,6 +88,8 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
       const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
 
+      setLabel(stateToLabel[ZKSyncDepositState.CONFIRM_L1_TX]);
+
       const depositHandle = await zkSyncSigner.deposit({
         to: await ethSigner.getAddress(),
         token: isETH ? zksync.utils.ETH_ADDRESS : (bridgeToken?.address as `0x${string}`),
@@ -68,25 +97,25 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
         approveERC20: isETH ? false : true,
       });
 
-      setLabel(`Deposit transaction sent to zkSync.`);
+      setLabel(stateToLabel[ZKSyncDepositState.WAIT_FOR_L2_INCLUSION]);
+
       setTxHash(depositHandle.hash);
-      setLabel(`Waiting for deposit to be included in zkSync... (can take a few minutes)`);
       await depositHandle.wait();
-      setLabel(`${tokenSymbol.toUpperCase()} available in zkSync`);
+
+      setLabel(stateToLabel[ZKSyncDepositState.DONE]);
+
       setIsSuccess(true);
     } catch (e: any) {
-      setLabel(`Error: ${e.message}`);
+      setLabel(defaultLabel);
       setError(e.message);
+      setDisabled(false);
     }
   };
 
   return (
     <>
       <ConnectFirst>
-        <HeaderResponse
-          text={`Bridge ${userAmount} ${tokenSymbol} from L1 to zkSync`}
-          projectName="zkSync"
-        />
+        <HeaderResponse text={defaultLabel} projectName="zkSync" />
         <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
         <ZKSyncActionResponse
           label={label}
