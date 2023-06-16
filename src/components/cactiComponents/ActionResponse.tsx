@@ -238,7 +238,7 @@ export const ActionResponse = ({
         <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
-            onClick={async (e) => action && action.fn?.()}
+            onClick={(e) => action && action.fn?.()}
           >
             {label || <Skeleton width={100} />}
           </StyledButton>
