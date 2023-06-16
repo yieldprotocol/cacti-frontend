@@ -7,7 +7,7 @@ import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import ZKSyncActionResponse from './ZKActionResponse';
+import ZKSyncActionResponse from './ZKSyncActionResponse';
 
 export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
 export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
@@ -110,25 +110,24 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     } catch (e: any) {
       setLabel(defaultLabel);
       setError(e.message);
+    } finally {
       setDisabled(false);
     }
   };
 
   return (
-    <>
-      <ConnectFirst>
-        <HeaderResponse text={defaultLabel} projectName="zkSync" />
-        <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
-        <ZKSyncActionResponse
-          label={label}
-          onClick={() => handleZKSyncDeposit()}
-          isSuccess={isSuccess}
-          error={error}
-          txHash={txHash}
-          disabled={disabled}
-        />
-      </ConnectFirst>
-    </>
+    <ConnectFirst>
+      <HeaderResponse text={defaultLabel} projectName="zkSync" />
+      <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
+      <ZKSyncActionResponse
+        label={label}
+        onClick={() => handleZKSyncDeposit()}
+        isSuccess={isSuccess}
+        error={error}
+        txHash={txHash}
+        disabled={disabled}
+      />
+    </ConnectFirst>
   );
 };
 

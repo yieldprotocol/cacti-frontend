@@ -7,7 +7,7 @@ import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import ZKSyncActionResponse from './ZKActionResponse';
+import ZKSyncActionResponse from './ZKSyncActionResponse';
 
 export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
 export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
@@ -48,7 +48,7 @@ const stateToLabel = {
   [ZKSyncWithdrawalState.REQUEST_CONFIRM_L1_TX]: 'Confirm transaction in your wallet',
   [ZKSyncWithdrawalState.WAIT_FOR_LI_FINALIZATION]:
     'Withdrawal is waiting to be finalized on L1... (can take a few hours)',
-  [ZKSyncWithdrawalState.DONE]: 'Deposit successful',
+  [ZKSyncWithdrawalState.DONE]: 'Withdrawal successful',
 };
 
 // Implementation based on example in doc: https://era.zksync.io/docs/dev/how-to/send-message-l2-l1.html#example
@@ -152,6 +152,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       setLabel(defaultLabel);
       console.log(e);
       setError(e.message);
+    } finally {
       setDisabled(false);
     }
   };
