@@ -1,18 +1,21 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import { Message } from '@/contexts/ChatContext';
 import SettingsContext from '@/contexts/SettingsContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
+import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
+import { FeedbackButton } from './FeedbackButton_';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 
-export const MessageTranslator = ({ message }: { message: string }) => {
+export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
-  const parsedMessage = useMemo(() => parseMessage(message), [message]);
+  const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
 
   const [componentList, setComponentList] = useState<(JSX.Element | null)[]>();
 
@@ -33,9 +36,31 @@ export const MessageTranslator = ({ message }: { message: string }) => {
 
   return (
     <SharedStateContextProvider>
-      <div className="flex flex-col gap-2">
-        {componentList &&
-          componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+      <div className={`grid-gap-2 grid grid-cols-12 py-3 mb-8 `}>
+       
+        <div className="col-span-2 py-4">
+          <div className="float-right">
+            <Avatar actor="bot" />
+          </div>
+        </div>
+
+        <div
+          className=" 
+          col-span-8 flex 
+          h-full w-full flex-col 
+          gap-2 
+          px-4 
+          text-white/70
+          focus:outline-none
+          "
+        >
+          {componentList &&
+            componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+        </div>
+
+        <div className="text-white/70">
+          <FeedbackButton message={message} />
+        </div>
       </div>
     </SharedStateContextProvider>
   );

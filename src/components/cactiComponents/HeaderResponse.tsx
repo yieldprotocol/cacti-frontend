@@ -51,7 +51,7 @@ export const HeaderResponse = (props: any) => {
             )}
             <div>{props.text}</div>
           </div>
-          <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
+          <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100"  />
         </div>
       </ResponseWrap>
     </a>
