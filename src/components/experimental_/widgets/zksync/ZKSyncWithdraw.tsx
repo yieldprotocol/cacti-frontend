@@ -6,6 +6,7 @@ import { goerli, mainnet, zkSync, zkSync as zkSyncMain, zkSyncTestnet } from 'wa
 import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
+import { ResponseRow } from '../../../cactiComponents/helpers/layout';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import ZKSyncActionResponse from './ZKActionResponse';
 
@@ -84,6 +85,8 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       setLabel(`Withraw transaction sent to zkSync.`);
       setTxHash(withdrawHandle.hash);
       setLabel(`Waiting for withdraw to be processed... (can take a few minutes)`);
+
+      // TODO: Currently this taken hours to process on testnet, needs some kind of UI/UX feedback to better inform the user
       const receipt = await withdrawHandle.waitFinalize();
 
       // More info on the withdrawal delay: https://era.zksync.io/docs/reference/concepts/bridging/bridging-asset.html#withdrawals-to-l1
@@ -98,7 +101,8 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
         zkSyncJsonRpcProvider
       );
 
-      //await zkSyncL1Signer.finalizeWithdrawal(withdrawHandle.hash, receipt.);
+      // TODO: Finalize withdrawal on L1 using the index in Merkle retrieved from the receipt
+      //await zkSyncL1Signer.finalizeWithdrawal(withdrawHandle.hash);
 
       // More info on the withdrawal delay: https://era.zksync.io/docs/reference/concepts/bridging/bridging-asset.html#withdrawals-to-l1
       setLabel(`Withdrawal is waiting to be finalized on L1... (can take upto 24 hours)`);
@@ -112,19 +116,21 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   };
 
   return (
-    <>
-      <ConnectFirst>
-        <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
-        <ZKSyncActionResponse
-          label={label}
-          onClick={() => handleZKSyncWithdraw()}
-          isSuccess={isSuccess}
-          error={error}
-          txHash={txHash}
-          disabled={disabled}
-        />
-      </ConnectFirst>
-    </>
+    <ConnectFirst>
+      <HeaderResponse
+        text={`Withdraw ${userAmount} ${tokenSymbol} from zkSync to L1`}
+        projectName="zkSync"
+      />
+      <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
+      <ZKSyncActionResponse
+        label={label}
+        onClick={() => handleZKSyncWithdraw()}
+        isSuccess={isSuccess}
+        error={error}
+        txHash={txHash}
+        disabled={disabled}
+      />
+    </ConnectFirst>
   );
 };
 

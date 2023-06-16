@@ -54,5 +54,10 @@
     "logo": "https://icons.llama.fi/uniswap.png",
     "parentProtocol": "Uniswap",
     "slug": "uniswap"
+  },
+  {
+    "name": "zkSync",
+    "url": "https://zksync.io/",
+    "logo": "https://zksync.io/favicon.ico"
   }
 ]

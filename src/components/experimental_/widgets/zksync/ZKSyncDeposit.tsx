@@ -83,7 +83,10 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   return (
     <>
       <ConnectFirst>
-        <HeaderResponse text="Bridge to zkSync" />
+        <HeaderResponse
+          text={`Bridge ${userAmount} ${tokenSymbol} from L1 to zkSync`}
+          projectName="zkSync"
+        />
         <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
         <ZKSyncActionResponse
           label={label}
