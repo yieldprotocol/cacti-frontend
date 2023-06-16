@@ -57,6 +57,7 @@
   },
   {
     "name": "zkSync",
+    "description": "zkSync is an L2 scaling solution for Ethereum",
     "url": "https://zksync.io/",
     "logo": "https://zksync.io/favicon.ico"
   }

@@ -62,7 +62,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
 
       const depositHandle = await zkSyncSigner.deposit({
-        to: await browserWalletProvider.getSigner().getAddress(),
+        to: await ethSigner.getAddress(),
         token: isETH ? zksync.utils.ETH_ADDRESS : (bridgeToken?.address as `0x${string}`),
         amount: bridgeAmount,
         approveERC20: isETH ? false : true,
@@ -70,9 +70,9 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       setLabel(`Deposit transaction sent to zkSync.`);
       setTxHash(depositHandle.hash);
-      setLabel(`Waiting for deposit to be processed in L2... (can take a few minutes)`);
+      setLabel(`Waiting for deposit to be included in zkSync... (can take a few minutes)`);
       await depositHandle.wait();
-      setLabel(`${tokenSymbol.toUpperCase()} available in L2`);
+      setLabel(`${tokenSymbol.toUpperCase()} available in zkSync`);
       setIsSuccess(true);
     } catch (e: any) {
       setLabel(`Error: ${e.message}`);
