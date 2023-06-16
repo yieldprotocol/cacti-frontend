@@ -245,13 +245,15 @@ export const ActionResponse = ({
           </StyledButton>
 
           {error && (
-            <div className="relative flex group">
+            <div className="relative flex group groupError ">
               <div className="h-6 w-6 text-white/20">
                 <ExclamationTriangleIcon />
               </div>
               <div
                 className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                text-sm text-white/70 
+                hidden group-hover:block
+                "
               >
                 {error}
               </div>
@@ -259,13 +261,15 @@ export const ActionResponse = ({
           )}
 
           {isSuccess && (
-            <div className="group relative flex">
+            <div className="group groupSuccess relative flex">
               <div className="h-6 w-6 text-white/20">
                 <CheckCircleIcon />
               </div>
               <div
                 className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
-                text-sm text-white/70 opacity-0 transition-opacity group-hover:opacity-100"
+                text-sm text-white/70 
+                hidden group-hover:block
+                "
               >
                 {receipt?.transactionHash}
               </div>
