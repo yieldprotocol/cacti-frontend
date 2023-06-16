@@ -63,7 +63,6 @@ export const ActionResponse = ({
   label: label_,
   disabled,
   stepper,
-  preProcessFn,
 }: // assertCallParams
 // altAction,
 {
@@ -75,7 +74,6 @@ export const ActionResponse = ({
   stepper?: boolean;
 
   onSuccess?: () => JSX.Element | string;
-  preProcessFn?: () => Promise<void>;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
 }) => {
@@ -240,10 +238,7 @@ export const ActionResponse = ({
         <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
-            onClick={async (e) => {
-              preProcessFn && (await preProcessFn());
-              action && action.fn?.();
-            }}
+            onClick={async (e) => action && action.fn?.()}
           >
             {label || <Skeleton width={100} />}
           </StyledButton>

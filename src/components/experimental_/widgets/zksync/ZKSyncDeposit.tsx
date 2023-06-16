@@ -1,60 +1,87 @@
 import { useEffect, useState } from 'react';
+import { BigNumber, ethers } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
-import { goerli } from 'wagmi/chains';
+import { goerli, mainnet, zkSync, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
-import {
-  ActionResponse,
-  HeaderResponse,
-  IconResponse,
-  ListResponse,
-  SingleLineResponse,
-  TextResponse,
-} from '@/components/cactiComponents';
-import { TxBasicParams } from '../../../cactiComponents/hooks/useSubmitTx';
+import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
+import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import getZKSyncTx from './zksync-utils';
+import ZKSyncActionResponse from './ZKActionResponse';
+import handleZkSyncTx from './zksync-utils';
+
+export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
+export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
 
 interface ZKSyncProps {
-  token: string;
+  tokenSymbol: string;
   userAmount: string;
 }
 
-const ZKSyncDeposit = ({ token, userAmount }: ZKSyncProps) => {
-  const { chain } = useNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const [txAndApproval, setTxAndApproval] = useState<{ tx?: TxBasicParams; approval?: any }>({
-    tx: undefined,
-    approval: undefined,
-  });
+const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
+  const [label, setLabel] = useState(`Bridge ${userAmount} ${tokenSymbol.toUpperCase()} to zkSync`);
+  const [txHash, setTxHash] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [disabled, setDisabled] = useState(false);
 
-  useEffect(() => {
-    getZKSyncTx(token, userAmount)
-      .then(({ tx, approval }) => {
-        setTxAndApproval({ tx, approval });
-      })
-      .catch(console.error);
-  }, [chain?.id, token, userAmount]);
+  const handleZKSyncDeposit = async () => {
+    try {
+      setDisabled(true);
+      const isETH = tokenSymbol.toUpperCase() === 'ETH';
+      const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
+      const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
+
+      let bridgeToken;
+      let zkSyncProvider;
+      if (process.env.NODE_ENV === 'production') {
+        bridgeToken = findTokenBySymbol(tokenSymbol, 1);
+        zkSyncProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
+      } else {
+        bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? 1 : goerli.id);
+        zkSyncProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
+      }
+
+      const ethSigner = browserWalletProvider.getSigner();
+      const zkSyncSigner = zksync.L1Signer.from(ethSigner, zkSyncProvider);
+
+      const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
+      const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
+
+      const depositHandle = await zkSyncSigner.deposit({
+        to: await browserWalletProvider.getSigner().getAddress(),
+        token: isETH ? zksync.utils.ETH_ADDRESS : (bridgeToken?.address as `0x${string}`),
+        amount: bridgeAmount,
+        approveERC20: isETH ? false : true,
+      });
+
+      setLabel(`Deposit transaction sent to zkSync.`);
+      setTxHash(depositHandle.hash);
+      setLabel(`Waiting for deposit to be processed in L2... (can take a few minutes))`);
+      await depositHandle.wait();
+      setLabel(`${tokenSymbol.toUpperCase()} available in L2`);
+      setIsSuccess(true);
+    } catch (e: any) {
+      setLabel(`Error: ${e.message}`);
+      setError(e.message);
+    }
+  };
 
   return (
-    <ConnectFirst>
-      <HeaderResponse text="Bridge to zkSync" />
-      <SingleLineResponse tokenSymbol={token} value={userAmount} />
-      <ActionResponse
-        label={`Bridge ${userAmount} ${token} to zkSync`}
-        txParams={{
-          fullTxRequest: txAndApproval.tx,
-          chainId: goerli.id,
-        }}
-        approvalParams={token.toUpperCase() !== 'ETH' ? txAndApproval.approval : undefined}
-        preProcessFn={async () => {
-          if (process.env.NODE_ENV === 'production') {
-            await switchNetworkAsync?.(1);
-          } else {
-            await switchNetworkAsync?.(goerli.id);
-          }
-        }}
-      />
-    </ConnectFirst>
+    <>
+      <ConnectFirst>
+        <HeaderResponse text="Bridge to zkSync" />
+        <SingleLineResponse tokenSymbol={tokenSymbol} value={userAmount} />
+        <ZKSyncActionResponse
+          label={label}
+          onClick={() => handleZKSyncDeposit()}
+          isSuccess={isSuccess}
+          error={error}
+          txHash={txHash}
+          disabled={disabled}
+        />
+      </ConnectFirst>
+    </>
   );
 };
 

@@ -71,7 +71,7 @@ const getWidget = (widget: Widget): JSX.Element => {
   ));
 
   widgets.set('zksync-deposit', () => (
-    <ZKSyncDeposit token={parsedArgs[0]} userAmount={parsedArgs[1]} />
+    <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   ));
 
   /* If available, return the widget in the widgets map */
