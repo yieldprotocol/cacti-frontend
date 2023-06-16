@@ -44,9 +44,7 @@ const Header = () => {
     //     threadId ? 'bg-white bg-opacity-5 ' : ''
     //   } `}
     // >
-    <div
-    className={`fixed right-0 inline-flex w-full items-center p-4`}
-   >
+    <div className={`fixed right-0 inline-flex w-full items-center p-4`}>
       <div className={`ml-[250px] flex justify-between px-4 py-2 text-white/70 `}>
         {threadId ? (
           <div className="space-y-2">
