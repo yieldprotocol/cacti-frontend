@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { stat } from 'fs';
-import { useChainId, useNetwork, useSwitchNetwork } from 'wagmi';
-import { goerli, mainnet, zkSync, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { goerli, mainnet, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
@@ -19,16 +18,20 @@ interface ZKSyncProps {
 }
 
 export enum ZKSyncDepositState {
-  SWITCH_TO_MAINNET_NETWORK,
-  SWITCH_TO_GOERLI_NETWORK,
+  SWITCH_WALLET_TO_L1,
   CONFIRM_L1_TX,
   WAIT_FOR_L2_INCLUSION,
   DONE,
 }
 
 const stateToLabel = {
-  [ZKSyncDepositState.SWITCH_TO_MAINNET_NETWORK]: 'Change wallet network to Mainnet',
-  [ZKSyncDepositState.SWITCH_TO_GOERLI_NETWORK]: 'Change wallet network to Goerli',
+  [ZKSyncDepositState.SWITCH_WALLET_TO_L1]: (env: string) => {
+    if (env === 'production') {
+      return 'Switch wallet network to Ethereum Mainnet';
+    } else {
+      return 'Switch wallet network to Goerli';
+    }
+  },
   [ZKSyncDepositState.CONFIRM_L1_TX]: 'Confirm transaction in your wallet',
   [ZKSyncDepositState.WAIT_FOR_L2_INCLUSION]:
     'Waiting for deposit to be included in zkSync... (can take a few minutes)',
@@ -57,22 +60,21 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       let zkSyncJsonRpcProvider;
 
       // --- Step 1: Check and request user to change wallet network to Goerli/Mainnet depending on env --- //
-
       if (process.env.NODE_ENV === 'production') {
         if (chain?.id !== mainnet.id) {
-          setLabel(stateToLabel[ZKSyncDepositState.SWITCH_TO_MAINNET_NETWORK]);
           await switchNetworkAsync?.(mainnet.id);
         }
         bridgeToken = findTokenBySymbol(tokenSymbol, mainnet.id);
         zkSyncJsonRpcProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
       } else {
         if (chain?.id !== goerli.id) {
-          setLabel(stateToLabel[ZKSyncDepositState.SWITCH_TO_GOERLI_NETWORK]);
           await switchNetworkAsync?.(goerli.id);
         }
         bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? mainnet.id : goerli.id);
         zkSyncJsonRpcProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
       }
+
+      setLabel(stateToLabel[ZKSyncDepositState.SWITCH_WALLET_TO_L1](process.env.NODE_ENV));
 
       if (!bridgeToken) {
         throw new Error(`Token ${tokenSymbol} not supported`);
