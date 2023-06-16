@@ -6,39 +6,39 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 
-export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
-  const ShareButton = () => {
-    return (
-      <div
-        className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-        onClick={() => console.log('share')}
-      >
-        <div className="text-xs text-white/70 ">Share</div>
-      </div>
-    );
-  };
+const ShareButton = () => {
+  return (
+    <div
+      className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
+      onClick={() => console.log('share')}
+    >
+      <div className="text-xs text-white/70 ">Share</div>
+    </div>
+  );
+};
 
-  const PrimaryActions = () => {
-    return (
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-4">
-          <PencilIcon />
-        </div>
-        <div className="h-4 w-4">
-          <ShareIcon />
-        </div>
-      </div>
-    );
-  };
-
-  const SecondaryActions = () => {
-    return (
+const PrimaryActions = () => {
+  return (
+    <div className="flex items-center gap-2">
       <div className="h-4 w-4">
-        <EllipsisVerticalIcon />
+        <PencilIcon />
       </div>
-    );
-  };
+      <div className="h-4 w-4">
+        <ShareIcon />
+      </div>
+    </div>
+  );
+};
 
+const SecondaryActions = () => {
+  return (
+    <div className="h-4 w-4">
+      <EllipsisVerticalIcon />
+    </div>
+  );
+};
+
+export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
   return (
     <div className="w-full items-center bg-white bg-opacity-5 p-2 ">
       <div className={`mb-4 flex justify-between px-4 py-2 text-white/70 `}>
@@ -54,8 +54,7 @@ export const ChatHeader = ({ threadId }: { threadId: String | String[] }) => {
 
         <div className={`flex flex-row items-center  gap-2`}>
           <div>
-            {' '}
-            <ShareButton />{' '}
+            <ShareButton />
           </div>
           <div className="h-4 w-4">
             <TrashIcon />

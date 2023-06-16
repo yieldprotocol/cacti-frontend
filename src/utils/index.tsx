@@ -80,3 +80,6 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
 /* handle Address/hash shortening */
 export const abbreviateHash = (addr: string, buffer: number = 4) =>
   `${addr?.substring(0, buffer)}...${addr?.substring(addr.length - buffer)}`;
+
+export const toTitleCase = (str: string) =>
+  str.replace(/\w\S*/g, (txt: string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());

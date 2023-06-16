@@ -64,33 +64,41 @@ export const UserMessage = ({
   return (
     <div
       className={`
-      flex justify-between ${
+      flex 
+      justify-between 
+      ${
         isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
-      } 
-      focus-within:ring-gray-700/70 hover:bg-gray-700/20
-      hover:ring-1 hover:ring-gray-700/70
+      }
+      focus-within:ring-gray-700/70
+      hover:bg-gray-700/20
       focus:text-gray-50
       ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
+      grid-gap-2 
       group
-      mt-[32px]
-      items-center overflow-hidden rounded-lg p-3 duration-200`}
+      grid grid-cols-12 items-center
+      overflow-hidden
+      py-3
+      `}
     >
-      <div>
-        {!isCommenter ? (
-          <Avatar actor="user" />
-        ) : (
-          // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
-          <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
-        )}
+      <div className="col-span-2">
+        <div className="float-right">
+          {!isCommenter ? (
+            <Avatar actor="user" />
+          ) : (
+            // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
+            <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
+          )}
+        </div>
       </div>
 
       <input
         ref={inputRef}
         className={`
-        flex h-full w-full flex-col 
+        col-span-8 flex h-full w-full 
+        flex-col
         bg-transparent
         p-2
-        px-4
+        px-8
         text-white/70
         focus:outline-none
       `}

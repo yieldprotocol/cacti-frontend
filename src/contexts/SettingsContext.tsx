@@ -74,7 +74,7 @@ const initState: ISettings = {
   disclaimerChecked: false,
 
   /* UI test */
-  experimentalUi: true,
+  experimentalUi: false,
 
   developerTools: false,
 

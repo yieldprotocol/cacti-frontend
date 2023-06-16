@@ -20,7 +20,7 @@ export const TxStatus = ({ hash }: Props) => {
     } else if (isError) {
       sendAction({ actionType: 'transaction', hash, success: false, error: JSON.stringify(error) });
     }
-  }, [isSuccess, isError, error, hash]);
+  }, [isSuccess, isError, error, hash, sendAction]);
 
   return (
     <div>
