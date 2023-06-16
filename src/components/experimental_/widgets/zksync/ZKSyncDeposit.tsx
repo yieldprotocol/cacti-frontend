@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useChainId, useNetwork, useSwitchNetwork } from 'wagmi';
 import { goerli, mainnet, zkSync, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import ZKSyncActionResponse from './ZKActionResponse';
-import handleZkSyncTx from './zksync-utils';
 
 export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
 export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
@@ -24,23 +23,31 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
   const [disabled, setDisabled] = useState(false);
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const { chain } = useNetwork();
 
   const handleZKSyncDeposit = async () => {
     try {
       setDisabled(true);
       const isETH = tokenSymbol.toUpperCase() === 'ETH';
       const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
-      const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
 
       let bridgeToken;
       let zkSyncProvider;
       if (process.env.NODE_ENV === 'production') {
+        if (chain?.id !== 1) {
+          await switchNetworkAsync?.(1);
+        }
         bridgeToken = findTokenBySymbol(tokenSymbol, 1);
         zkSyncProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
       } else {
+        if (chain?.id !== goerli.id) {
+          await switchNetworkAsync?.(goerli.id);
+        }
         bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? 1 : goerli.id);
         zkSyncProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
       }
+      const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
 
       const ethSigner = browserWalletProvider.getSigner();
       const zkSyncSigner = zksync.L1Signer.from(ethSigner, zkSyncProvider);
@@ -57,7 +64,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       setLabel(`Deposit transaction sent to zkSync.`);
       setTxHash(depositHandle.hash);
-      setLabel(`Waiting for deposit to be processed in L2... (can take a few minutes))`);
+      setLabel(`Waiting for deposit to be processed in L2... (can take a few minutes)`);
       await depositHandle.wait();
       setLabel(`${tokenSymbol.toUpperCase()} available in L2`);
       setIsSuccess(true);
