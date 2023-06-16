@@ -42,7 +42,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             <Avatar actor="bot" />
           </div>
         </div>
-
         <div
           className=" 
           col-span-8 flex 

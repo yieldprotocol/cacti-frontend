@@ -2,6 +2,7 @@ import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import {
+  BugAntIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
@@ -244,9 +245,9 @@ export const ActionResponse = ({
           </StyledButton>
 
           {error && (
-            <div className="group relative flex">
+            <div className="relative flex group">
               <div className="h-6 w-6 text-white/20">
-                <InformationCircleIcon />
+                <ExclamationTriangleIcon />
               </div>
               <div
                 className="absolute left-8 rounded-md border border-gray-700  bg-gray-900 p-2
