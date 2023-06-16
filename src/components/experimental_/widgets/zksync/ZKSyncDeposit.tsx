@@ -34,19 +34,19 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
 
       let bridgeToken;
-      let zkSyncProvider;
+      let zkSyncJsonRpcProvider;
       if (process.env.NODE_ENV === 'production') {
-        if (chain?.id !== 1) {
+        if (chain?.id !== mainnet.id) {
           await switchNetworkAsync?.(1);
         }
-        bridgeToken = findTokenBySymbol(tokenSymbol, 1);
-        zkSyncProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
+        bridgeToken = findTokenBySymbol(tokenSymbol, mainnet.id);
+        zkSyncJsonRpcProvider = new zksync.Provider(zkSyncMain.rpcUrls.default.http[0]);
       } else {
         if (chain?.id !== goerli.id) {
           await switchNetworkAsync?.(goerli.id);
         }
-        bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? 1 : goerli.id);
-        zkSyncProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
+        bridgeToken = findTokenBySymbol(tokenSymbol, isETH ? mainnet.id : goerli.id);
+        zkSyncJsonRpcProvider = new zksync.Provider(zkSyncTestnet.rpcUrls.default.http[0]);
       }
 
       if (!bridgeToken) {
@@ -56,7 +56,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
 
       const ethSigner = browserWalletProvider.getSigner();
-      const zkSyncSigner = zksync.L1Signer.from(ethSigner, zkSyncProvider);
+      const zkSyncSigner = zksync.L1Signer.from(ethSigner, zkSyncJsonRpcProvider);
 
       const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
       const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
