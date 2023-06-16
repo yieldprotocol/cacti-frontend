@@ -17,6 +17,7 @@ interface ZKSyncProps {
   userAmount: string;
 }
 
+// Implementation based on example in doc: https://era.zksync.io/docs/reference/concepts/bridging/bridging-asset.html#deposits-to-l2
 const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   const [label, setLabel] = useState(`Bridge ${userAmount} ${tokenSymbol.toUpperCase()} to zkSync`);
   const [txHash, setTxHash] = useState('');
