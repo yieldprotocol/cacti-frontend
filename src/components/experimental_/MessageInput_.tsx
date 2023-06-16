@@ -1,5 +1,6 @@
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import React, { ButtonHTMLAttributes } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { ReadyState } from 'react-use-websocket';
 import {
   ChatBubbleLeftRightIcon,
@@ -31,7 +32,7 @@ const IconBtn = ({ children, ...rest }: IconBtnProps) => (
  * used for focusing with crtl + k and auto focus on mount
  */
 const useFocus = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
@@ -62,15 +63,24 @@ export const MessageInput = ({}) => {
 
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
   const [inputRef] = useFocus();
-
-  const handleSendMessage = (e: FormEvent) => {
-    e.preventDefault();
+  const submit = useCallback(() => {
     if (messageInput.length > 0) {
       sendMessage(messageInput);
       setMessageInput('');
     }
+  }, [messageInput, sendMessage]);
+
+  const handleSendMessage = (e: FormEvent) => {
+    e.preventDefault();
+    submit();
   };
 
+  const onKeyPress: React.KeyboardEventHandler = (e) => {
+    if (e.code === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submit();
+    }
+  };
   const toggleInteractionMode = (e: FormEvent) => {
     e.preventDefault();
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
@@ -98,8 +108,7 @@ export const MessageInput = ({}) => {
         </div>
 
         <form onSubmit={handleSendMessage} className="flex w-full grow items-center">
-          <input
-            type="text"
+          <TextareaAutosize
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder={
               interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
@@ -107,13 +116,15 @@ export const MessageInput = ({}) => {
             tabIndex={0}
             value={messageInput}
             ref={inputRef}
+            onKeyDown={isConnected && messageInput ? onKeyPress : undefined}
             className={`   
             grow
+            resize-none
             bg-transparent
-            tracking-wider
-            text-white/30 placeholder:text-white/30
-            focus:text-white/70 focus:outline-none
+            tracking-wider text-white/30
+            placeholder:text-white/30 focus:text-white/70 focus:outline-none
           `}
+            maxRows={7}
           />
           <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
             <PaperAirplaneIcon className="h-5 w-5" />
