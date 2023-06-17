@@ -30,19 +30,16 @@ export const Home = () => {
   return (
     <>
       {experimentalUi ? (
-        <AppShell
-          SidebarContent={<SideBarDynamic />}
-          HeaderContent={<ExperimentalHeader />}
-        >
+        <AppShell SidebarContent={<SideBarDynamic />} HeaderContent={<ExperimentalHeader />}>
           <ExperimentalChatBox />
-        </AppShell >
+        </AppShell>
       ) : (
         <div className={`flex h-screen bg-gray-700`}>
           <HeaderDynamic />
-        <div className="w-full">
-              <ChatBoxDynamic />
+          <div className="w-full">
+            <ChatBoxDynamic />
+          </div>
         </div>
-      </div>
       )}
     </>
   );
