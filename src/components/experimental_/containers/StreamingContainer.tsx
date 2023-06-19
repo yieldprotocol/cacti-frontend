@@ -22,87 +22,55 @@ export const StreamingContainer = ({
   const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
     useSharedStateContext();
 
-  // useEffect(() => {
-  //   // handle list items
-  //   if (operation === 'create') {
-  //     setItems([]);
-  //   } else if (operation === 'append' && item) {
-  //     setItems((items) => {
-  //       return [...items, item];
-  //     });
-  //   }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // handle list items
+      if (operation === 'create') {
+        setItems([]);
+      } else if (operation === 'append' && item) {
+        setItems((items) => {
+          return [...items, item];
+        });
+      }
+      // handle prefix/suffix/isThinking
+      if (operation === 'create' || operation === 'update') {
+        if (newPrefix != null) {
+          setPrefix(newPrefix);
+        }
+        if (newSuffix != null) {
+          setSuffix(newSuffix);
+        }
+        if (newIsThinking != null) {
+          setIsThinking(newIsThinking);
+        }
+      }
+    }, 0);
 
-  //   // handle prefix/suffix/isThinking
-  //   if (operation === 'create' || operation === 'update') {
-  //     if (newPrefix != null) {
-  //       setPrefix(newPrefix);
-  //     }
-  //     if (newSuffix != null) {
-  //       setSuffix(newSuffix);
-  //     }
-  //     if (newIsThinking != null) {
-  //       setIsThinking(newIsThinking);
-  //     }
-  //   }
-  // }, [
-  //   // operation,
-  //   // item,
-  //   // newIsThinking,
-  //   // newPrefix,
-  //   // newSuffix,
-  // ]);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     // handle list items
-  //     if (operation === 'create') {
-  //       setItems([]);
-  //     } else if (operation === 'append' && item) {
-  //       setItems((items) => {
-  //         return [...items, item];
-  //       });
-  //     }
-  //     // handle prefix/suffix/isThinking
-  //     if (operation === 'create' || operation === 'update') {
-  //       if (newPrefix != null) {
-  //         setPrefix(newPrefix);
-  //       }
-  //       if (newSuffix != null) {
-  //         setSuffix(newSuffix);
-  //       }
-  //       if (newIsThinking != null) {
-  //         setIsThinking(newIsThinking);
-  //       }
-  //     }
-  //   }, 0);
-
-  //   return () => clearTimeout(timer);
-  // }, [
-  //   item,
-  //   newIsThinking,
-  //   newPrefix,
-  //   newSuffix,
-  //   operation,
-  //   setIsThinking,
-  //   setItems,
-  //   setPrefix,
-  //   setSuffix,
-  // ]);
+    return () => clearTimeout(timer);
+  }, [
+    item,
+    newIsThinking,
+    newPrefix,
+    newSuffix,
+    operation,
+    setIsThinking,
+    setItems,
+    setPrefix,
+    setSuffix,
+  ]);
 
   if (operation === 'create') {
+    console.log(items)
     return (
       <Fragment>
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </span>
         <div className="text-white">
-          something
-          {/* <ListContainer items={items} /> */}
-          {/* {items.map((item: { name: string; args: any }, i: number) => (
-            <Fragment key={`i${i}`}>
-              <Widget key={item.name} widget={{ name: item.name, args: item.args }} />
-            </Fragment>
-          )) || null} */}
+          {/* <ListContainer items={items} /> */}   
+          {items.map((item: { name: string; params: any }, i: number) => (
+              <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
+          )) || null}
         </div>
         <span>{suffix}</span>
       </Fragment>
