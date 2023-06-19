@@ -217,6 +217,7 @@ export const Widgetize = (widget: Widget) => {
           </NftCollectionAssetsContainer>
         );
       }
+      
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
         return <NftCollectionTraitsContainer {...params} />;
@@ -225,6 +226,7 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
+      
       case 'yield-container': {
         const params = JSON.parse(args);
 
@@ -238,6 +240,7 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <StreamingListContainer {...params} />;
       }
+
       case 'table-container': {
         const params = JSON.parse(args);
         const headers = params.headers;
@@ -269,6 +272,7 @@ export const Widgetize = (widget: Widget) => {
           </table>
         );
       }
+
       case 'tx-payload-for-sending-container': {
         const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
           JSON.parse(args);
@@ -292,6 +296,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'multistep-payload-container': {
         const {
           status,

@@ -18,11 +18,14 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   } = useContext(SettingsContext);
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
 
-  const [componentList, setComponentList] = useState<JSX.Element[]>([]);
+  const [componentGroup, setComponentGroup] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
       const list = parsedMessage.reduce((list, item, idx) => {
+
+        console.log(item)
+
         /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
           return [
@@ -38,7 +41,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         return list;
       }, [] as JSX.Element[]);
 
-      setComponentList(list);
+      setComponentGroup(list);
     }
   }, [parsedMessage]);
 
@@ -60,8 +63,8 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
           focus:outline-none
           "
         >
-          {componentList &&
-            componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+          {componentGroup &&
+            componentGroup.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
         </div>
 
         <div className="text-white/70">
@@ -121,7 +124,7 @@ export const Widget = ({ widget }: { widget: Widget }) => {
 
   /* agregator widgets */
   widgets.set('list-container', <ListContainer items={args} />);
-  widgets.set('streaming-container', <StreamingContainer {...parsedArgs} />);
+  widgets.set('streaming-list-container', <StreamingContainer {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
@@ -172,6 +175,7 @@ const StreamingContainer = ({
 }: StreamingContainerProps) => {
   const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
     useSharedStateContext();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       // handle list items
@@ -212,7 +216,7 @@ const StreamingContainer = ({
     return (
       <div className="p-3 text-white">
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
-        <ListContainer items={items} />
+        <ListContainer items={items} /> here
         <span>{suffix}</span>
       </div>
     );
