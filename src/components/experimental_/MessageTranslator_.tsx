@@ -11,6 +11,8 @@ import { NftAsset } from './widgets/nft/NftAsset';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import { ListContainer } from './containers/ListContainer';
+import { StreamingContainer } from './containers/StreamingContainer';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
@@ -141,87 +143,6 @@ export const Widget = ({ widget }: { widget: Widget }) => {
       );
     }
   }
-};
-
-/**
- * Aggregator display containers
- * */
-const ListContainer = (props: any) => {
-  return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {JSON.parse(props.items).items.map((item: { name: string; params: any }, i: number) => (
-        <Fragment key={`i${i}`}>
-          <Widget key={item.name} widget={{ name: item.name, args: item.params }} />{' '}
-        </Fragment>
-      )) || null}
-    </div>
-  );
-};
-
-interface StreamingContainerProps {
-  operation: string;
-  item: Widget | null;
-  prefix: string | null;
-  suffix: string | null;
-  isThinking: boolean | null;
-}
-
-const StreamingContainer = ({
-  operation,
-  item,
-  prefix: newPrefix,
-  suffix: newSuffix,
-  isThinking: newIsThinking,
-}: StreamingContainerProps) => {
-  const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
-    useSharedStateContext();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // handle list items
-      if (operation === 'create') {
-        setItems([]);
-      } else if (operation === 'append' && item) {
-        setItems((items) => {
-          return [...items, item];
-        });
-      }
-      // handle prefix/suffix/isThinking
-      if (operation === 'create' || operation === 'update') {
-        if (newPrefix != null) {
-          setPrefix(newPrefix);
-        }
-        if (newSuffix != null) {
-          setSuffix(newSuffix);
-        }
-        if (newIsThinking != null) {
-          setIsThinking(newIsThinking);
-        }
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [
-    item,
-    newIsThinking,
-    newPrefix,
-    newSuffix,
-    operation,
-    setIsThinking,
-    setItems,
-    setPrefix,
-    setSuffix,
-  ]);
-
-  if (operation === 'create') {
-    return (
-      <div className="p-3 text-white">
-        <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
-        <ListContainer items={items} /> here
-        <span>{suffix}</span>
-      </div>
-    );
-  }
-  return null;
 };
 
 export default MessageTranslator;
