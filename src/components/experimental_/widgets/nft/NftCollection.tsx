@@ -28,7 +28,7 @@ interface NftCollectionTraitValuesContainerProps {
   values: string[];
 }
 
-export const NftCollectionContainer = ({
+export const NftCollection = ({
   network,
   address,
   name,
@@ -36,8 +36,7 @@ export const NftCollectionContainer = ({
 }: NftCollectionContainerProps) => {
   return (
     <>
-
- <ImageResponse
+    <ImageResponse
       // actionLabel={network}
       // actionValue={listPrice}
       // description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -64,80 +63,17 @@ export const NftCollectionContainer = ({
 };
 
 // Collection with a nested list of assets
-export const NftCollection = ({
-  collection,
-  children,
-}: NftCollectionProps) => {
+// export const NftCollection = ({
+//   collection,
+//   children,
+// }: NftCollectionProps) => {
 
-  console.log( collection )
-  return (
-    <div>
-      <div>This is the NFT collection:</div>
-      <div>{collection}</div>
-      <div>Here are some of the NFTs in the collection:</div>
-      <div>{children}</div>
-    </div>
-  );
-};
-
-// Plain list of traits
-export const NftCollectionTraitsContainer = ({
-  network,
-  address,
-  name,
-  traits,
-}: NftCollectionTraitsContainerProps) => {
-  return (
-    <div>
-      <span>
-        The NFT collection, <b>{name || address}</b>, has the following traits:{' '}
-      </span>
-      {traits.map((trait, index, items) => {
-        if (index === items.length - 1)
-          return (
-            <span key={trait}>
-              {index === 0 ? '' : 'and '}
-              <b>{trait}</b>.
-            </span>
-          );
-        return (
-          <span key={trait}>
-            <b>{trait}</b>,{' '}
-          </span>
-        );
-      })}
-    </div>
-  );
-};
-
-// Plain list of trait values
-export const NftCollectionTraitValuesContainer = ({
-  network,
-  address,
-  name,
-  trait,
-  values,
-}: NftCollectionTraitValuesContainerProps) => {
-  return (
-    <div>
-      <span>
-        The trait <b>{trait}</b> of the NFT collection, <b>{name || address}</b>, has the following
-        values:{' '}
-      </span>
-      {values.map((value, index, items) => {
-        if (index === items.length - 1)
-          return (
-            <span key={value}>
-              {index === 0 ? '' : 'and '}
-              <b>{value}</b>.
-            </span>
-          );
-        return (
-          <span key={value}>
-            <b>{value}</b>,{' '}
-          </span>
-        );
-      })}
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <div>This is the NFT collection:</div>
+//       <div>{collection}</div>
+//       <div>Here are some of the NFTs in the collection:</div>
+//       <div>{children}</div>
+//     </div>
+//   );
+// };

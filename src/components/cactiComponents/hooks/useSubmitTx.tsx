@@ -82,6 +82,7 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   const { data: sendData, isLoading: isLoadingSend, sendTransaction, error: sendError } = sendTx;
 
   useEffect(() => {
+
     if (write) setTransact(() => write);
     if (sendTransaction) setTransact(() => sendTransaction);
 

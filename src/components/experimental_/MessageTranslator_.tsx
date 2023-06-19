@@ -7,25 +7,24 @@ import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { FeedbackButton } from './FeedbackButton_';
+import ListContainer from './containers/ListContainer';
+import { StreamingContainer } from './containers/StreamingContainer';
 import { NftAsset } from './widgets/nft/NftAsset';
+import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import { ListContainer } from './containers/ListContainer';
-import { StreamingContainer } from './containers/StreamingContainer';
-import { NftCollection } from './widgets/nft/NftCollection';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
-  const {
-    settings: { experimentalUi },
-  } = useContext(SettingsContext);
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
-
-  const [componentGroup, setComponentGroup] = useState<JSX.Element[]>([]);
+  const [widgetGroup, setWidgetGroup] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
+
       const list = parsedMessage.reduce((list, item, idx) => {
+
+        console.log( item );
 
         /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
@@ -33,6 +32,14 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             ...list,
             composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
+
+        /* handle if a list container is passed */
+        if (typeof item !== 'string' && item.name === 'list-container')
+          return [...list, <ListContainer key={idx} { ...JSON.parse(item.args) } />];
+
+        /* handle is a streaming container is passed */
+        if (typeof item !== 'string' && item.name === 'display-streaming-list-container')
+          return [...list, <StreamingContainer key={idx} { ...JSON.parse(item.args) } />];
 
         /* if item has a fnName, assume its a widget */
         if (typeof item !== 'string' && item.name)
@@ -42,7 +49,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         return list;
       }, [] as JSX.Element[]);
 
-      setComponentGroup(list);
+      setWidgetGroup(list);
     }
   }, [parsedMessage]);
 
@@ -54,20 +61,11 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             <Avatar actor="bot" />
           </div>
         </div>
-        <div
-          className=" 
-          col-span-8 flex 
-          h-full w-full flex-col 
-          gap-2 
-          px-4 
-          text-white/70
-          focus:outline-none
-          "
-        >
-          {componentGroup &&
-            componentGroup.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+        <div className=" col-span-8 flex h-full w-full flex-col gap-2 px-4 text-white/70 focus:outline-none">
+          {widgetGroup.map((component, i) => (
+            <Fragment key={`i${i}`}>{component}</Fragment>
+          ))}
         </div>
-
         <div className="text-white/70">
           <FeedbackButton message={message} />
         </div>
@@ -86,12 +84,11 @@ const parseArgs = (args: string | object) => {
 };
 
 export const Widget = ({ widget }: { widget: Widget }) => {
-  const { name: fn, args } = widget;
-  const fnName = fn.toLowerCase().replace('display-', '');
-  const parsedArgs = parseArgs(args);
-  const inputString = `${fnName}(${args})`;
-
   const widgets = new Map<string, JSX.Element>();
+
+  const { name, args } = widget;
+  const fnName = name.toLowerCase().replace('display-', '');
+  const parsedArgs = parseArgs(args);
 
   /**
    * Implemented Indivudual Widgets
@@ -124,9 +121,9 @@ export const Widget = ({ widget }: { widget: Widget }) => {
     />
   );
 
-  /* agregator widgets */
-  widgets.set('list-container', <ListContainer items={ args } />);
-  widgets.set('streaming-list-container', <StreamingContainer { ...JSON.parse(args||'{}')} />);
+  /* agregator widgets => note we can't send parsedArgs here becasue we need the originals as string args  */
+  // widgets.set('list-container', <ListContainer widgets={...parsedArgs} />);
+  // widgets.set('streaming-list-container', <StreamingContainer {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
@@ -138,7 +135,7 @@ export const Widget = ({ widget }: { widget: Widget }) => {
     } catch (e) {
       return (
         <div className="inline-block bg-slate-500 p-5 text-white">
-          Widget not implemented for <code>{inputString}</code>
+          Widget not implemented for <code>{`${fnName}(${args})`}</code>
         </div>
       );
     }
