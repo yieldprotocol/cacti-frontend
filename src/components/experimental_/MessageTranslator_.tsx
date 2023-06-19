@@ -1,42 +1,72 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import { Message } from '@/contexts/ChatContext';
 import SettingsContext from '@/contexts/SettingsContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
+import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
-import { ConnectFirst } from './widgets/helpers/ConnectFirst';
+import { FeedbackButton } from './FeedbackButton_';
 import { NftAsset } from './widgets/nft/NftAsset';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
-export const MessageTranslator = ({ message }: { message: string }) => {
+export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
-  const parsedMessage = useMemo(() => parseMessage(message), [message]);
+  const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
 
-  const [componentList, setComponentList] = useState<(JSX.Element | null)[]>();
+  const [componentList, setComponentList] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.map((item: string | Widget) => {
-        /* if item is a string (and not nothing ) send a text response */
+      const list = parsedMessage.reduce((list, item, idx) => {
+        /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
-          return composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`);
+          return [
+            ...list,
+            composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
+          ];
+
         /* if item has a fnName, assume its a widget */
-        if (typeof item !== 'string' && item.name) return getWidget(item);
+        if (typeof item !== 'string' && item.name)
+          return [...list, <Widget key={idx} widget={item} />];
+
         /* else return null */
-        return null;
-      });
+        return list;
+      }, [] as JSX.Element[]);
+
       setComponentList(list);
     }
   }, [parsedMessage]);
 
   return (
     <SharedStateContextProvider>
-      <div className="flex flex-col gap-2">
-        {componentList &&
-          componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+      <div className={`grid-gap-2 mb-8 grid grid-cols-12 py-3 `}>
+        <div className="col-span-2 py-4">
+          <div className="float-right">
+            <Avatar actor="bot" />
+          </div>
+        </div>
+        <div
+          className=" 
+          col-span-8 flex 
+          h-full w-full flex-col 
+          gap-2 
+          px-4 
+          text-white/70
+          focus:outline-none
+          "
+        >
+          {componentList &&
+            componentList.map((component, i) => <Fragment key={`i${i}`}>{component}</Fragment>)}
+        </div>
+
+        <div className="text-white/70">
+          <FeedbackButton message={message} />
+        </div>
       </div>
     </SharedStateContextProvider>
   );
@@ -51,28 +81,13 @@ const parseArgs = (args: string | object) => {
   return [];
 };
 
-const getWidget = (widget: Widget): JSX.Element => {
+const Widget = ({ widget }: { widget: Widget }) => {
   const { name: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(args);
   const inputString = `${fnName}(${args})`;
 
   const widgets = new Map<string, JSX.Element>();
-
-  /**
-   * Aggregator display widgets
-   * */
-  const ListContainer = (props: any) => {
-    return (
-      <Fragment>
-        {JSON.parse(props.items).items.map((item: { name: string; params: any }, i: number) => (
-          <Fragment key={`i${i}`}>{getWidget({ name: item.name, args: item.params })}</Fragment>
-        )) || null}
-      </Fragment>
-    );
-  };
-
-  widgets.set('list-container', <ListContainer items={args}  />);
 
   /**
    * Implemented Indivudual Widgets
@@ -94,8 +109,17 @@ const getWidget = (widget: Widget): JSX.Element => {
   /* Nft widgets */
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} />);
 
+  widgets.set(
+    'yield-protocol-lend',
+    <YieldProtocolLend
+      tokenInSymbol={parsedArgs[0]}
+      inputAmount={parsedArgs[1]}
+      action="lend"
+      projectName="yield-protocol"
+    />
+  );
 
-
+  widgets.set('list-container', <ListContainer items={args} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
@@ -113,3 +137,20 @@ const getWidget = (widget: Widget): JSX.Element => {
     }
   }
 };
+
+/**
+ * Aggregator display widgets
+ * */
+const ListContainer = (props: any) => {
+  return (
+    <Fragment>
+      {JSON.parse(props.items).items.map((item: { name: string; params: any }, i: number) => (
+        <Fragment key={`i${i}`}>
+          <Widget key={item.name} widget={{ name: item.name, args: item.params }} />{' '}
+        </Fragment>
+      )) || null}
+    </Fragment>
+  );
+};
+
+export default MessageTranslator;

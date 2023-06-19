@@ -8,7 +8,7 @@ export const ResponseGrid = (props: any) => <div>{props.children}</div>;
  * note spread operator on the children prop, to allow for multiple children.
  */
 export const ResponseRow = (props: any) => (
-  <div className="flex items-center gap-2">{[...props.children]}</div>
+  <div className="flex items-center gap-3 md:gap-6">{[...props.children]}</div>
 );
 
 /**

@@ -1,7 +1,8 @@
+import { Address } from 'wagmi';
 import { Order } from '@/types/seaport';
 
 export interface Token {
-  address: string;
+  address: Address;
   symbol: string;
   decimals: number;
   logoURI: string;
