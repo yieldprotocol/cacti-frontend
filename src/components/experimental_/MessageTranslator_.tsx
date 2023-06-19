@@ -81,7 +81,7 @@ const parseArgs = (args: string | object) => {
   return [];
 };
 
-const Widget = ({ widget }: { widget: Widget }) => {
+export const Widget = ({ widget }: { widget: Widget }) => {
   const { name: fn, args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(args);
@@ -139,7 +139,7 @@ const Widget = ({ widget }: { widget: Widget }) => {
 };
 
 /**
- * Aggregator display widgets
+ * Aggregator display containers
  * */
 const ListContainer = (props: any) => {
   return (
@@ -152,5 +152,6 @@ const ListContainer = (props: any) => {
     </Fragment>
   );
 };
+
 
 export default MessageTranslator;
