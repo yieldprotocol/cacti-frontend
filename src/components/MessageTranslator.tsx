@@ -217,7 +217,7 @@ export const Widgetize = (widget: Widget) => {
           </NftCollectionAssetsContainer>
         );
       }
-      
+
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
         return <NftCollectionTraitsContainer {...params} />;
@@ -226,7 +226,7 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
-      
+
       case 'yield-container': {
         const params = JSON.parse(args);
 

@@ -21,9 +21,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-
       const list = parsedMessage.reduce((list, item, idx) => {
-
         /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
           return [
@@ -33,11 +31,11 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
         /* handle if a list container is passed */
         if (typeof item !== 'string' && item.name === 'list-container')
-          return [...list, <ListContainer key={idx} { ...JSON.parse(item.args) } />];
+          return [...list, <ListContainer key={idx} {...JSON.parse(item.args)} />];
 
         /* handle is a streaming container is passed */
         if (typeof item !== 'string' && item.name === 'display-streaming-list-container')
-          return [...list, <StreamingContainer key={idx} { ...JSON.parse(item.args) } />];
+          return [...list, <StreamingContainer key={idx} {...JSON.parse(item.args)} />];
 
         /* if item has a fnName, assume its a widget */
         if (typeof item !== 'string' && item.name)

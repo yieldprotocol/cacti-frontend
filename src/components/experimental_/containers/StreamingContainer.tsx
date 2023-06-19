@@ -60,16 +60,16 @@ export const StreamingContainer = ({
   ]);
 
   if (operation === 'create') {
-    console.log(items)
+    console.log(items);
     return (
       <Fragment>
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </span>
         <div className="text-white">
-          {/* <ListContainer items={items} /> */}   
-          {items.map((item: { name: string; params: any }, i: number) => (
-              <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
+          {/* <ListContainer items={items} /> */}
+          {items.map((item: any, i: number) => (
+            <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
           )) || null}
         </div>
         <span>{suffix}</span>
