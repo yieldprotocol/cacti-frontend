@@ -13,6 +13,7 @@ import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import { ListContainer } from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import { NftCollection } from './widgets/nft/NftCollection';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
@@ -25,8 +26,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
       const list = parsedMessage.reduce((list, item, idx) => {
-
-        console.log(item)
 
         /* if item is a string (and not nothing) send a text response */
         if (typeof item === 'string' && item.trim() !== '')
@@ -113,6 +112,7 @@ export const Widget = ({ widget }: { widget: Widget }) => {
 
   /* Nft widgets */
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} />);
+  widgets.set('nft-collection-container', <NftCollection {...parsedArgs} />);
 
   widgets.set(
     'yield-protocol-lend',
@@ -125,8 +125,8 @@ export const Widget = ({ widget }: { widget: Widget }) => {
   );
 
   /* agregator widgets */
-  widgets.set('list-container', <ListContainer items={args} />);
-  widgets.set('streaming-list-container', <StreamingContainer {...parsedArgs} />);
+  widgets.set('list-container', <ListContainer items={ args } />);
+  widgets.set('streaming-list-container', <StreamingContainer { ...JSON.parse(args||'{}')} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
