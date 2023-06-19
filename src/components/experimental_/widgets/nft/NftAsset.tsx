@@ -29,9 +29,8 @@ export const NftAsset = ({
   previewImageUrl,
   price,
 }: NftAssetContainerProps) => {
-
   const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
-  
+
   return (
     <ImageResponse
       actionLabel={network}

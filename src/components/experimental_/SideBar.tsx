@@ -12,9 +12,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
+import { navigateToExternalUrl } from '@/utils';
 import { DevToolsModal } from '../devTools/DevToolsModal';
 import ChatList from './ChatList';
-import { navigateToExternalUrl } from '@/utils';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -130,22 +130,30 @@ const Sidebar = () => {
               <MoreItem
                 icon={<DocumentIcon />}
                 label="Documentation"
-                action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
+                action={() =>
+                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+                }
               />
               <MoreItem
                 icon={<GithubIcon />}
                 label="Github"
-                action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
+                action={() =>
+                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+                }
               />
               <MoreItem
                 icon={<DiscordIcon />}
                 label="Discord"
-                action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
+                action={() =>
+                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+                }
               />
               <MoreItem
                 icon={<TwitterIcon />}
                 label="Twitter"
-                action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
+                action={() =>
+                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+                }
               />
             </div>
 

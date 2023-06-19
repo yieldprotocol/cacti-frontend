@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { Message } from '@/contexts/ChatContext';
 import SettingsContext from '@/contexts/SettingsContext';
-import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
+import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
@@ -119,7 +119,9 @@ export const Widget = ({ widget }: { widget: Widget }) => {
     />
   );
 
+  /* agregator widgets */
   widgets.set('list-container', <ListContainer items={args} />);
+  widgets.set('streaming-container', <StreamingContainer {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
@@ -143,15 +145,79 @@ export const Widget = ({ widget }: { widget: Widget }) => {
  * */
 const ListContainer = (props: any) => {
   return (
-    <Fragment>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {JSON.parse(props.items).items.map((item: { name: string; params: any }, i: number) => (
         <Fragment key={`i${i}`}>
           <Widget key={item.name} widget={{ name: item.name, args: item.params }} />{' '}
         </Fragment>
       )) || null}
-    </Fragment>
+    </div>
   );
 };
 
+interface StreamingContainerProps {
+  operation: string;
+  item: Widget | null;
+  prefix: string | null;
+  suffix: string | null;
+  isThinking: boolean | null;
+}
+
+const StreamingContainer = ({
+  operation,
+  item,
+  prefix: newPrefix,
+  suffix: newSuffix,
+  isThinking: newIsThinking,
+}: StreamingContainerProps) => {
+  const { items, setItems, prefix, setPrefix, suffix, setSuffix, isThinking, setIsThinking } =
+    useSharedStateContext();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // handle list items
+      if (operation === 'create') {
+        setItems([]);
+      } else if (operation === 'append' && item) {
+        setItems((items) => {
+          return [...items, item];
+        });
+      }
+      // handle prefix/suffix/isThinking
+      if (operation === 'create' || operation === 'update') {
+        if (newPrefix != null) {
+          setPrefix(newPrefix);
+        }
+        if (newSuffix != null) {
+          setSuffix(newSuffix);
+        }
+        if (newIsThinking != null) {
+          setIsThinking(newIsThinking);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [
+    item,
+    newIsThinking,
+    newPrefix,
+    newSuffix,
+    operation,
+    setIsThinking,
+    setItems,
+    setPrefix,
+    setSuffix,
+  ]);
+
+  if (operation === 'create') {
+    return (
+      <div className="p-3 text-white">
+        <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>{prefix}</span>
+        <ListContainer items={items} />
+        <span>{suffix}</span>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default MessageTranslator;

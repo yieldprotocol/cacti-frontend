@@ -16,10 +16,7 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
-import {
-  SharedStateContextProvider,
-  useSharedStateContext,
-} from '@/contexts/SharedStateContext';
+import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
@@ -368,9 +365,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
     <div className="text-black">
       <Grid>
         {items?.map(({ name, args }: { name: string; args: string }, i: number) => (
-          <Fragment key={`i${i}`}>
-            {Widgetize({ name: name, args: JSON.stringify(args) })}
-          </Fragment>
+          <Fragment key={`i${i}`}>{Widgetize({ name: name, args: JSON.stringify(args) })}</Fragment>
         )) || ''}
       </Grid>
     </div>
