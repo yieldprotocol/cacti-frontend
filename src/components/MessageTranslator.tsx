@@ -419,17 +419,8 @@ const StreamingListContainer = ({
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [
-    item,
-    newIsThinking,
-    newPrefix,
-    newSuffix,
-    operation,
-    setIsThinking,
-    setItems,
-    setPrefix,
-    setSuffix,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (operation === 'create') {
     return (
