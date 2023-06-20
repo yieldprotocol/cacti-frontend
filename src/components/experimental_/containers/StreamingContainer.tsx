@@ -46,7 +46,6 @@ export const StreamingContainer = ({
         }
       }
     }, 0);
-
     return () => clearTimeout(timer);
   }, [
     item,
@@ -67,7 +66,7 @@ export const StreamingContainer = ({
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </span>
         <div className="text-white">
-          <ListContainer widgets={items} />
+          <ListContainer items={items} showCase={false} />
           {/* {items.map((item: any, i: number) => (
             <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
           )) || null} */}

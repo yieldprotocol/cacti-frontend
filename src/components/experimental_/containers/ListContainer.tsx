@@ -1,13 +1,21 @@
 import { Widget } from '../MessageTranslator_';
 
 interface ListContainerProps {
-  widgets: Widget[];
+  items: Widget[];
+  limitCols?: number;
+  showCase?: boolean;
 }
 
-const ListContainer = ({ widgets }: ListContainerProps) => {
+const ListContainer = ({ items, limitCols, showCase }: ListContainerProps) => {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {widgets.map((widget, i: number) => <Widget key={i} widget={widget} />) || null}
+    <div
+      className={`grid grid-cols-1  gap-4 ${
+        limitCols
+          ? `grid-cols-${limitCols}`
+          : 'md:grid-cols-2 lg:grid-cols-3'
+      } `}
+    >
+      {items.map((widget, i: number) => <Widget key={'i' + i} widget={widget} />) || null}
     </div>
   );
 };
