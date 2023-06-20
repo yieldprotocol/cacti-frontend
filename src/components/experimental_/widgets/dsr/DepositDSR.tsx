@@ -9,6 +9,7 @@ import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
+import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface DepositDSRProps {
   depositAmount: string;
@@ -27,7 +28,6 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
     );
 
   const chainId = useChainId();
-
   const { address: receiver } = useAccount();
 
   // Here we use DAI as the tokenIn and SavingsDAI as tokenOut
@@ -51,7 +51,7 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
       approvalAmount: amountIn,
       spender: tokenOut?.address as `0x${string}`,
     }),
-    [amountIn, chainId, tokenIn?.address]
+    [amountIn, chainId, tokenIn]
   );
 
   const tx = useMemo(
@@ -68,19 +68,19 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
   );
 
   return (
-    <>
+    <ConnectFirst>
+
       <HeaderResponse
         text={`Deposit ${inputCleaned} ${tokenInSymbol} in the MakerDAO DSR`}
         projectName="dsr"
       />
-
       <ActionResponse
         label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on MakerDAO DSR`}
         txParams={tx}
         approvalParams={approval}
         // disabled={true}
       />
-    </>
+    </ConnectFirst>
   );
 };
 

@@ -16,6 +16,7 @@ import { ResponseWrap } from './helpers/layout';
 export const HeaderResponse = (props: any) => {
   const [project, setProject] = useState<any>();
 
+
   useEffect(() => {
     if (props.projectName) {
       try {
@@ -33,6 +34,8 @@ export const HeaderResponse = (props: any) => {
   }, [props.projectName]);
 
   const url = project?.url || props.altUrl;
+
+  console.log( 'here is the project name: ' + url)
 
   return url ? (
     <a
