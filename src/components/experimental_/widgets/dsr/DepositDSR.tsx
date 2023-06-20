@@ -59,15 +59,10 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
       address: tokenOut?.address as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'deposit',
-      args: [params],
-      // overrides: {
-      //   value: 0,
-      // },
+      args: Object.values(params) ,
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
-
-  console.log( tx)
 
   return (
     <ConnectFirst>
