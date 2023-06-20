@@ -3,6 +3,7 @@ import { composeFromString } from '@/components/cactiComponents/tools/compose';
 import { useSharedStateContext } from '@/contexts/SharedStateContext';
 import MessageTranslator, { Widget } from '../MessageTranslator_';
 import ListContainer from './ListContainer';
+import { BotThinking } from '../BotThinking';
 
 export interface StreamingContainerProps {
   operation: string;
@@ -53,9 +54,9 @@ export const StreamingContainer = ({
   if (operation === 'create') {
     return (
       <Fragment>
-        <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>
+        <div className='flex flex-row'>
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
-        </span>
+        </div>
         <div className="text-white">
           <ListContainer items={items} showCase={false} />
           {/* {items.map((item: any, i: number) => (
