@@ -9,6 +9,7 @@ import { composeFromString } from '../cactiComponents/tools/compose';
 import { FeedbackButton } from './FeedbackButton_';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import DepositDSR from './widgets/dsr/DepositDSR';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
@@ -110,6 +111,10 @@ const Widget = ({ widget }: { widget: Widget }) => {
       projectName="yield-protocol"
     />
   );
+
+  widgets.set(
+    'savings-dai-deposit',
+    <DepositDSR  depositAmount={parsedArgs[0]} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
