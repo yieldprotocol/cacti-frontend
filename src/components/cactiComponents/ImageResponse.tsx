@@ -14,7 +14,7 @@ export type ImageResponseProps = {
   actionLabel?: string;
   actionValue?: string;
   description?: string;
-  image: string;
+  image?: string;
   imageTags?: string[];
   title?: string;
   imageLink?: string;
@@ -26,7 +26,7 @@ export type ImageResponseProps = {
  * @param props
  * @returns
  */
-export const ImageResponse = (props: ImageResponseProps) => {
+export const ImageResponse = (props: any) => {
   const tagList = props.imageTags || [];
 
   return (

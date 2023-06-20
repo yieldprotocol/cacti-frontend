@@ -4,6 +4,7 @@ import { DoubleLineResponse } from './DoubleLineResponse';
 import { HeaderResponse } from './HeaderResponse';
 import { IconResponse } from './IconResponse';
 import { ImageResponse } from './ImageResponse';
+import { InlineChip } from './InlineChip';
 // import { InlineChip } from './InlineChip';
 import { ListResponse } from './ListResponse';
 import { SingleLineResponse } from './SingleLineResponse';
@@ -19,6 +20,8 @@ export enum CactiResponse {
   ActionResponse = 'ActionResponse',
   ImageResponse = 'ImageResponse',
   DoubleLineResponse = 'DoubleLineResponse',
+  ActionStepper = 'ActionStepper',
+  InlineChip = 'InlineChip',
 }
 
 export {
@@ -31,4 +34,5 @@ export {
   ActionResponse,
   ImageResponse,
   ActionStepper,
+  InlineChip,
 };

@@ -24,7 +24,6 @@ export const StreamingContainer = ({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      
       // handle list items
       if (operation === 'create') {
         setItems([]);
@@ -46,7 +45,6 @@ export const StreamingContainer = ({
           setIsThinking(newIsThinking);
         }
       }
-
     }, 0);
 
     return () => clearTimeout(timer);
@@ -63,14 +61,13 @@ export const StreamingContainer = ({
   ]);
 
   if (operation === 'create') {
-
     return (
       <Fragment>
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </span>
         <div className="text-white">
-          <ListContainer widgets={items} /> 
+          <ListContainer widgets={items} />
           {/* {items.map((item: any, i: number) => (
             <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
           )) || null} */}

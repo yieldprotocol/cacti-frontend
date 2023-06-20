@@ -16,7 +16,6 @@ type CactiStringComponent = {
  */
 export const composeFromString = (inputString: string): React.ReactElement => {
   try {
-
     // Parse the array of strings describing each component.
     const parsedItems = JSON.parse(inputString) as CactiStringComponent[];
 

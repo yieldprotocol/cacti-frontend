@@ -65,7 +65,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 export const Widgetize = (widget: Widget) => {
-  const { name: fn, params:args } = widget;
+  const { name: fn, params: args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
   // The Widgetize function is called recursively. Do not put any hooks here,
@@ -370,7 +370,9 @@ const ListContainer = ({ items }: ListContainerProps) => {
     <div className="text-black">
       <Grid>
         {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
-          <Fragment key={`i${i}`}>{Widgetize({ name: name, params: JSON.stringify(params) })}</Fragment>
+          <Fragment key={`i${i}`}>
+            {Widgetize({ name: name, params: JSON.stringify(params) })}
+          </Fragment>
         )) || ''}
       </Grid>
     </div>
