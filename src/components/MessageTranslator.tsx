@@ -65,7 +65,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 export const Widgetize = (widget: Widget) => {
-  const { name: fn, args } = widget;
+  const { name: fn, params:args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
   // The Widgetize function is called recursively. Do not put any hooks here,
@@ -182,11 +182,11 @@ export const Widgetize = (widget: Widget) => {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ name: asset.name, args: JSON.stringify(asset.params) })}
+            asset={Widgetize({ name: asset.name, params: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ name: name, args: JSON.stringify(params) })}
+                {Widgetize({ name: name, params: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -202,14 +202,14 @@ export const Widgetize = (widget: Widget) => {
           <NftCollectionAssetsContainer
             collection={Widgetize({
               name: collection.name,
-              args: JSON.stringify(collection.params),
+              params: JSON.stringify(collection.params),
             })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ name: name, args: JSON.stringify(params) })}
+                    {Widgetize({ name: name, params: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -264,7 +264,7 @@ export const Widgetize = (widget: Widget) => {
                 };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ name: name, args: JSON.stringify(rowArgs) })}
+                    {Widgetize({ name: name, params: JSON.stringify(rowArgs) })}
                   </Fragment>
                 );
               })}
@@ -369,8 +369,8 @@ const ListContainer = ({ items }: ListContainerProps) => {
   return (
     <div className="text-black">
       <Grid>
-        {items?.map(({ name, args }: { name: string; args: string }, i: number) => (
-          <Fragment key={`i${i}`}>{Widgetize({ name: name, args: JSON.stringify(args) })}</Fragment>
+        {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
+          <Fragment key={`i${i}`}>{Widgetize({ name: name, params: JSON.stringify(params) })}</Fragment>
         )) || ''}
       </Grid>
     </div>

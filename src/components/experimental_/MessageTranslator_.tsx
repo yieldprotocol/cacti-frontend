@@ -31,11 +31,11 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
         /* handle if a list container is passed */
         if (typeof item !== 'string' && item.name === 'list-container')
-          return [...list, <ListContainer key={idx} {...JSON.parse(item.args)} />];
+          return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
 
         /* handle is a streaming container is passed */
         if (typeof item !== 'string' && item.name === 'display-streaming-list-container')
-          return [...list, <StreamingContainer key={idx} {...JSON.parse(item.args)} />];
+          return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
         /* if item has a fnName, assume its a widget */
         if (typeof item !== 'string' && item.name)
@@ -82,9 +82,9 @@ const parseArgs = (args: string | object) => {
 export const Widget = ({ widget }: { widget: Widget }) => {
   const widgets = new Map<string, JSX.Element>();
 
-  const { name, args } = widget;
+  const { name, params } = widget;
   const fnName = name.toLowerCase().replace('display-', '');
-  const parsedArgs = parseArgs(args);
+  const parsedArgs = parseArgs(params);
 
   /**
    * Implemented Indivudual Widgets
@@ -131,7 +131,7 @@ export const Widget = ({ widget }: { widget: Widget }) => {
     } catch (e) {
       return (
         <div className="inline-block bg-slate-500 p-5 text-white">
-          Widget not implemented for <code>{`${fnName}(${args})`}</code>
+          Widget not implemented for <code>{`${fnName}(${params})`}</code>
         </div>
       );
     }

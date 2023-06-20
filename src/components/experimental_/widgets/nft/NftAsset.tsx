@@ -8,6 +8,8 @@ interface NftAssetContainerProps {
   name: string;
   previewImageUrl: string;
   price?: string;
+
+  compact?: boolean
 }
 
 interface NftAssetTraitsContainerProps {

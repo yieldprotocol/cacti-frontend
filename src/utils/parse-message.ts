@@ -18,19 +18,19 @@ export const parseMessage = (str: string) => {
       start,
       end,
       name: capture1,
-      args: capture2,
+      params: capture2,
     };
   });
   // TODO: sloppy
   return parsedMatches.reduce((acc, match, i) => {
-    const { name, args, start, end } = match;
+    const { name, params, start, end } = match;
     if (acc.length === 0 && parsedMatches.length === i + 1)
-      return [str.substring(0, start), { name, args }, str.substring(end)];
-    if (acc.length === 0) return [str.substring(0, start), { name, args }];
+      return [str.substring(0, start), { name, params }, str.substring(end)];
+    if (acc.length === 0) return [str.substring(0, start), { name, params }];
     const lastIndexEnd = parsedMatches[i - 1].end;
     if (parsedMatches.length === i + 1) {
-      return [...acc, str.substring(lastIndexEnd, match.start), { name, args }, str.substring(end)];
+      return [...acc, str.substring(lastIndexEnd, match.start), { name, params }, str.substring(end)];
     }
-    return [...acc, str.substring(lastIndexEnd, match.start), { name, args }];
+    return [...acc, str.substring(lastIndexEnd, match.start), { name, params }];
   }, [] as (string | Widget)[]);
 };

@@ -24,6 +24,7 @@ export const StreamingContainer = ({
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      
       // handle list items
       if (operation === 'create') {
         setItems([]);
@@ -32,6 +33,7 @@ export const StreamingContainer = ({
           return [...items, item];
         });
       }
+
       // handle prefix/suffix/isThinking
       if (operation === 'create' || operation === 'update') {
         if (newPrefix != null) {
@@ -44,6 +46,7 @@ export const StreamingContainer = ({
           setIsThinking(newIsThinking);
         }
       }
+
     }, 0);
 
     return () => clearTimeout(timer);
@@ -60,17 +63,17 @@ export const StreamingContainer = ({
   ]);
 
   if (operation === 'create') {
-    console.log(items);
+
     return (
       <Fragment>
         <span className={`${isThinking ? 'after:animate-ellipse' : ''}`}>
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </span>
         <div className="text-white">
-          {/* <ListContainer items={items} /> */}
-          {items.map((item: any, i: number) => (
+          <ListContainer widgets={items} /> 
+          {/* {items.map((item: any, i: number) => (
             <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
-          )) || null}
+          )) || null} */}
         </div>
         <span>{suffix}</span>
       </Fragment>

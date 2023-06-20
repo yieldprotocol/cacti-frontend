@@ -25,8 +25,8 @@ const meta: Meta<typeof ImageResponse> = {
       default: mockTags,
       control: 'text',
     },
-    imageUrl: {
-      description: 'Custom Image to display instead of the one associated with the project name.',
+    image: {
+      description: 'Custom Image e project name.',
       default: mockImage,
       control: 'text',
     },
@@ -47,11 +47,11 @@ const meta: Meta<typeof ImageResponse> = {
       control: 'text',
     },
 
-    action: {
-      description: 'tx Action ',
-      default: undefined,
-      control: 'text',
-    },
+    // actionLabel: {
+    //   description: 'tx Action ',
+    //   default: undefined,
+    //   control: 'text',
+    // },
   },
 };
 
