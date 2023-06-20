@@ -1,7 +1,6 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { Message } from '@/contexts/ChatContext';
-import SettingsContext from '@/contexts/SettingsContext';
-import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
+import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
@@ -116,10 +115,6 @@ export const Widget = ({ widget }: { widget: Widget }) => {
       projectName="yield-protocol"
     />
   );
-
-  /* agregator widgets => note we can't send parsedArgs here becasue we need the originals as string args  */
-  // widgets.set('list-container', <ListContainer widgets={...parsedArgs} />);
-  // widgets.set('streaming-list-container', <StreamingContainer {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
