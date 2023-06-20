@@ -11,7 +11,7 @@ import { ResponseTitle, ResponseWrap } from './helpers/layout';
  */
 export const TextResponse = (props: any) => {
   return (
-    <ResponseWrap classNameExtra='border-none'>
+    <ResponseWrap classNameExtra="border-none">
       {props.title && !props.collapsible && (
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
