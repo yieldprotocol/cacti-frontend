@@ -60,12 +60,14 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
       abi: ERC4626Abi,
       functionName: 'deposit',
       args: [params],
-      overrides: {
-        value: 0,
-      },
+      // overrides: {
+      //   value: 0,
+      // },
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
+
+  console.log( tx)
 
   return (
     <ConnectFirst>
