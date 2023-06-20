@@ -9,6 +9,11 @@ import projectList from '@/utils/ProjectList.json';
 import Avatar from '../Avatar';
 import { ResponseWrap } from './helpers/layout';
 
+
+const navigateToExternalUrl = ({url}: {url: string|URL }) => { 
+  window.open(new URL(url), '_blank');
+}
+
 /**
  * Header Response Elements are indicating with what app, service, or contract a user is about to interact. User have the option to leave the service and open in a new window a direct link to the app or service if they want to interact through their UI rather through our interface.
  * Includes: Text, ProjectId, Image, Button (Go to Service)
@@ -34,14 +39,8 @@ export const HeaderResponse = (props: any) => {
 
   const url = project?.url || props.altUrl;
 
-  return url ? (
-    <a
-      href={url}
-      className="group flex w-full cursor-pointer items-center justify-between rounded-md hover:ring-1 hover:ring-gray-700/70"
-      target="_blank"
-      rel="noreferrer"
-    >
-      <ResponseWrap>
+  return (
+      <ResponseWrap classNameExtra='group'>
         <div className="flex w-full justify-between px-1">
           <div className="flex items-center space-x-4">
             {project?.logo || props.altImageUrl ? (
@@ -51,9 +50,10 @@ export const HeaderResponse = (props: any) => {
             )}
             <div>{props.text}</div>
           </div>
-          <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100" />
+          <div onClick={()=>navigateToExternalUrl({url}) } className='hover:text-white/90 cursor-pointer '>
+            <ArrowTopRightOnSquareIcon className="w-5 opacity-0 duration-200 group-hover:opacity-100 " />
+          </div>
         </div>
       </ResponseWrap>
-    </a>
-  ) : null;
+  );
 };
