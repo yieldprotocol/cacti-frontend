@@ -22,18 +22,18 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
   };
 
   const Row = ({ params, name }: { name: string; params: any }) => {
-    // TODO we still need to handle the case where a widget is passed as FULL ROW element
+    // TODO we still need to handle the case where a widget is passed as FULL ROW element ie. a Widget type
     const values = headers.map((header: TableHeader) => params[header.fieldName]);
     return (
       <tr>
-        {values.map((value: string | Widget) => {
+        {values.map((value: string | Widget, idx:number) => {
           /* Handle if a Widget description is passed as a cell elemnet*/
           if (typeof value === 'object' && value.name && value.params) {
-            return <Widget widget={value} />;
+            return <Widget key={idx} widget={value} />;
           }
           /* else assume a standard string value */
           return (
-            <td className="whitespace-nowrap px-6 py-3 text-sm font-medium text-white/70">
+            <td key={'xx'} className="whitespace-nowrap px-6 py-3 text-sm font-medium text-white/70">
               {value as string}
             </td>
           );
@@ -50,15 +50,15 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
             <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
               <thead>
                 <tr>
-                  {headers.map((header: any) => (
-                    <HeaderItem {...header} />
+                  {headers.map((header: any, idx:number) => (
+                    <HeaderItem  key={idx} {...header} />
                   ))}
                 </tr>
               </thead>
 
               <tbody className="">
-                {rows.map((row: any) => (
-                  <Row {...row} />
+                {rows.map((row: any, idx:number) => (
+                  <Row  key={idx} {...row} />
                 ))}
               </tbody>
             </table>
