@@ -1,9 +1,9 @@
 import { Fragment, useEffect } from 'react';
 import { composeFromString } from '@/components/cactiComponents/tools/compose';
 import { useSharedStateContext } from '@/contexts/SharedStateContext';
+import { BotThinking } from '../BotThinking';
 import MessageTranslator, { Widget } from '../MessageTranslator_';
 import ListContainer from './ListContainer';
-import { BotThinking } from '../BotThinking';
 
 export interface StreamingContainerProps {
   operation: string;
@@ -54,7 +54,7 @@ export const StreamingContainer = ({
   if (operation === 'create') {
     return (
       <Fragment>
-        <div className='flex flex-row'>
+        <div className="flex flex-row">
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </div>
         <div className="text-white">
