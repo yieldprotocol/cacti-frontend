@@ -11,6 +11,7 @@ import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import RedeemDSR from './widgets/dsr/RedeemDSR';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
@@ -115,6 +116,11 @@ const Widget = ({ widget }: { widget: Widget }) => {
   widgets.set(
     'savings-dai-deposit',
     <DepositDSR  depositAmount={parsedArgs[0]} />);
+
+  widgets.set(
+    'redeem-sdai',
+    <RedeemDSR  shares={parsedArgs[0]}/>
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
