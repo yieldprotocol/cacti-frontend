@@ -10,10 +10,10 @@ import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
+import SimpleTable from './widgets/tables/SimpleTable';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import SimpleTable from './widgets/tables/SimpleTable';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
@@ -83,8 +83,7 @@ export interface WidgetProps {
   widget: Widget;
 }
 
-export const Widget = (props:WidgetProps) => {
-
+export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
   const { name, params, variant } = props.widget;
   const fnName = name.toLowerCase().replace('display-', '');
@@ -107,7 +106,7 @@ export const Widget = (props:WidgetProps) => {
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   );
 
-  widgets.set( 'table-container', <SimpleTable {...JSON.parse(params)}  /> );
+  widgets.set('table-container', <SimpleTable {...JSON.parse(params)} />);
 
   /* Nft widgets */
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);

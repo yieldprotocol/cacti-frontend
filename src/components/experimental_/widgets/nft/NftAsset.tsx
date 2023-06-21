@@ -7,7 +7,7 @@ interface NftAssetProps {
   collectionName: string;
   name: string;
   previewImageUrl: string;
-  price: string| undefined;
+  price: string | undefined;
 
   variant?: boolean; // widget variant
 }
@@ -22,9 +22,16 @@ interface NftAssetTraitValueContainerProps {
   value: string;
 }
 
-export const NftAsset = (
-  { network, address, tokenId, collectionName, name, previewImageUrl, price, variant }: NftAssetProps,
-) => {
+export const NftAsset = ({
+  network,
+  address,
+  tokenId,
+  collectionName,
+  name,
+  previewImageUrl,
+  price,
+  variant,
+}: NftAssetProps) => {
   const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
 
   return (
@@ -37,7 +44,6 @@ export const NftAsset = (
       title={name}
       subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
-
       showcase={variant}
     />
   );

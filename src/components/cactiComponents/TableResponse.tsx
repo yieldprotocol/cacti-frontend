@@ -1,8 +1,8 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { ContractMethodDoesNotExistError } from 'wagmi';
-import { ResponseTitle, ResponseWrap } from './helpers/layout';
 import { Widget } from '../experimental_/MessageTranslator_';
+import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 interface TableHeader {
   fieldName: string;
@@ -21,15 +21,15 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
     );
   };
 
-  const Row = ({params, name}: {name:string, params: any}) => {
-    // TODO we still need to handle the case where a widget is passed as FULL ROW element 
+  const Row = ({ params, name }: { name: string; params: any }) => {
+    // TODO we still need to handle the case where a widget is passed as FULL ROW element
     const values = headers.map((header: TableHeader) => params[header.fieldName]);
     return (
       <tr>
         {values.map((value: string | Widget) => {
           /* Handle if a Widget description is passed as a cell elemnet*/
-          if (typeof value === 'object' && value.name && value.params ) {
-            return <Widget widget={value}  />
+          if (typeof value === 'object' && value.name && value.params) {
+            return <Widget widget={value} />;
           }
           /* else assume a standard string value */
           return (
@@ -47,21 +47,21 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
       <div className="flex flex-col">
         <div className="-m-1.5 overflow-x-auto">
           <div className="inline-block min-w-full p-1.5 align-middle">
-              <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
-                <thead>
-                  <tr>
-                    {headers.map((header: any) => (
-                      <HeaderItem {...header} />
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody className="">
-                  {rows.map((row: any) => (
-                    <Row {...row} />
+            <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr>
+                  {headers.map((header: any) => (
+                    <HeaderItem {...header} />
                   ))}
-                </tbody>
-              </table>
+                </tr>
+              </thead>
+
+              <tbody className="">
+                {rows.map((row: any) => (
+                  <Row {...row} />
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

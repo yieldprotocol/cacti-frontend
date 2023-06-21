@@ -32,7 +32,6 @@ export const ImageResponse = (props: any) => {
 
   return (
     <ResponseWrap classNameExtra="w-full">
-      
       {props.title && ( // if has title
         <ResponseTitle>
           <div className="">
@@ -75,9 +74,6 @@ export const ImageResponse = (props: any) => {
         </div>
       )}
       {props.showcase && <div>showcase</div>}
-    
-    
-    
     </ResponseWrap>
   );
 };
