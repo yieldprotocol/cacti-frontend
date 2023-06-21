@@ -10,7 +10,7 @@ const TagItem = (props: { tag: string }) => {
   );
 };
 
-export type ImageResponseProps = {
+type ImageResponseProps = {
   actionLabel?: string;
   actionValue?: string;
   description?: string;
@@ -19,6 +19,7 @@ export type ImageResponseProps = {
   title?: string;
   imageLink?: string;
   subTitle?: string;
+  showcase?: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export const ImageResponse = (props: any) => {
 
   return (
     <ResponseWrap classNameExtra="w-full">
+      
       {props.title && ( // if has title
         <ResponseTitle>
           <div className="">
@@ -72,6 +74,10 @@ export const ImageResponse = (props: any) => {
           <div>{props.actionValue}</div>
         </div>
       )}
+      {props.showcase && <div>showcase</div>}
+    
+    
+    
     </ResponseWrap>
   );
 };

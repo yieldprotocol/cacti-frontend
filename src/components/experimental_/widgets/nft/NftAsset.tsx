@@ -1,15 +1,15 @@
 import { ImageResponse } from '@/components/cactiComponents';
 
-interface NftAssetContainerProps {
+interface NftAssetProps {
   network: string;
   address: string;
   tokenId: string | number;
   collectionName: string;
   name: string;
   previewImageUrl: string;
-  price?: string;
+  price: string| undefined;
 
-  compact?: boolean;
+  variant?: boolean; // widget variant
 }
 
 interface NftAssetTraitsContainerProps {
@@ -22,15 +22,9 @@ interface NftAssetTraitValueContainerProps {
   value: string;
 }
 
-export const NftAsset = ({
-  network,
-  address,
-  tokenId,
-  collectionName,
-  name,
-  previewImageUrl,
-  price,
-}: NftAssetContainerProps) => {
+export const NftAsset = (
+  { network, address, tokenId, collectionName, name, previewImageUrl, price, variant }: NftAssetProps,
+) => {
   const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
 
   return (
@@ -43,6 +37,8 @@ export const NftAsset = ({
       title={name}
       subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
+
+      showcase={variant}
     />
   );
 };

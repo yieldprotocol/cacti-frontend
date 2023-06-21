@@ -13,6 +13,7 @@ import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import SimpleTable from './widgets/tables/SimpleTable';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
@@ -78,10 +79,14 @@ const parseArgs = (args: string | object) => {
   return [];
 };
 
-export const Widget = ({ widget }: { widget: Widget }) => {
-  const widgets = new Map<string, JSX.Element>();
+export interface WidgetProps {
+  widget: Widget;
+}
 
-  const { name, params } = widget;
+export const Widget = (props:WidgetProps) => {
+
+  const widgets = new Map<string, JSX.Element>();
+  const { name, params, variant } = props.widget;
   const fnName = name.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(params);
 
@@ -102,9 +107,11 @@ export const Widget = ({ widget }: { widget: Widget }) => {
     <Transfer tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} receiver={parsedArgs[2]} />
   );
 
+  widgets.set( 'table-container', <SimpleTable {...JSON.parse(params)}  /> );
+
   /* Nft widgets */
-  widgets.set('nft-asset-container', <NftAsset {...parsedArgs} />);
-  widgets.set('nft-collection-container', <NftCollection {...parsedArgs} />);
+  widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
+  widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
 
   widgets.set(
     'yield-protocol-lend',
@@ -122,7 +129,7 @@ export const Widget = ({ widget }: { widget: Widget }) => {
   } else {
     /* Else, 'try' to get the widget from the previous implementation */
     try {
-      return <>{Widgetize(widget)}</>;
+      return <>{Widgetize(props.widget)}</>;
     } catch (e) {
       return (
         <div className="inline-block bg-slate-500 p-5 text-white">

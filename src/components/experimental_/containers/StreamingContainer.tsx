@@ -58,7 +58,7 @@ export const StreamingContainer = ({
           {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
         </div>
         <div className="text-white">
-          <ListContainer items={items} showCase={false} />
+          <ListContainer items={items} showcaseFirst={false} />
           {/* {items.map((item: any, i: number) => (
             <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
           )) || null} */}
