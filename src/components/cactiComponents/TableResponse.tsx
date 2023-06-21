@@ -1,8 +1,5 @@
-import { Disclosure } from '@headlessui/react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { ContractMethodDoesNotExistError } from 'wagmi';
 import { Widget } from '../experimental_/MessageTranslator_';
-import { ResponseTitle, ResponseWrap } from './helpers/layout';
+import { ResponseWrap } from './helpers/layout';
 
 interface TableHeader {
   fieldName: string;
@@ -26,14 +23,17 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
     const values = headers.map((header: TableHeader) => params[header.fieldName]);
     return (
       <tr>
-        {values.map((value: string | Widget, idx:number) => {
+        {values.map((value: string | Widget, idx: number) => {
           /* Handle if a Widget description is passed as a cell elemnet*/
           if (typeof value === 'object' && value.name && value.params) {
             return <Widget key={idx} widget={value} />;
           }
           /* else assume a standard string value */
           return (
-            <td key={'xx'} className="whitespace-nowrap px-6 py-3 text-sm font-medium text-white/70">
+            <td
+              key={'xx'}
+              className="whitespace-nowrap px-6 py-3 text-sm font-medium text-white/70"
+            >
               {value as string}
             </td>
           );
@@ -50,15 +50,15 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
             <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-700">
               <thead>
                 <tr>
-                  {headers.map((header: any, idx:number) => (
-                    <HeaderItem  key={idx} {...header} />
+                  {headers.map((header: any, idx: number) => (
+                    <HeaderItem key={idx} {...header} />
                   ))}
                 </tr>
               </thead>
 
               <tbody className="">
-                {rows.map((row: any, idx:number) => (
-                  <Row  key={idx} {...row} />
+                {rows.map((row: any, idx: number) => (
+                  <Row key={idx} {...row} />
                 ))}
               </tbody>
             </table>
@@ -69,7 +69,7 @@ export const TableResponse = ({ headers, rows }: { headers: TableHeader[]; rows:
   );
 };
 
-const x = {
+const exampleData = {
   headers: [
     { fieldName: 'project', displayName: 'Project' },
     { fieldName: 'tvlUsd', displayName: 'TVL' },
@@ -126,7 +126,7 @@ const x = {
       params: {
         token: 'USDC',
         network: 'Ethereum',
-        project: 'compound-v3',
+        project: 'aave-v2',
         apy: 1.95197,
         apyAvg30d: 1.93728,
         tvlUsd: 70750123,
