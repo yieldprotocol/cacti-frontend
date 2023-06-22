@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
@@ -20,14 +20,13 @@ import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { ConnectFirst } from '../helpers/ConnectFirst';
+import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
 
 const fetchListing = async (nftAddress: string, tokenId: string) => {
-
-  console.log( nftAddress, tokenId);
-  
+  // console.log( nftAddress, tokenId);
   return axios
     .get(
       `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
@@ -68,54 +67,50 @@ const fetchFulfillParams = async (
     .then((res) => res.data);
 };
 
-const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
-  axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
+// const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
+//   axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
+//   return axios
+//     .get(`${nftAddress}/${tokenID}`, {
+//       headers: {
+//         Accept: 'application/json',
+//         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
+//       },
+//     })
+//     .then((res) => {
+//       return res.data;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
 
-  return axios
-    .get(`${nftAddress}/${tokenID}`, {
-      headers: {
-        Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
-      },
-    })
-    .then((res) => {
-      return res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-
-const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
-  const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
-    fetchNftAsset(nftAddress, tokenId)
-  );
-  return (
-    <>
-      {data ? (
-        <>
-          <div className="flex justify-center">
-            <img className="h-32 w-32 rounded-md" src={data.smallPreviewImageUrl} alt="nft image" />
-          </div>
-          <div>
-            <b>{data.collectionName}</b>: #{tokenId}
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-    </>
-  );
-};
+// const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
+//   const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
+//     fetchNftAsset(nftAddress, tokenId)
+//   );
+//   return (
+//     <>
+//       {data ? (
+//         <>
+//           <div className="flex justify-center">
+//             <img className="h-32 w-32 rounded-md" src={data.smallPreviewImageUrl} alt="nft image" />
+//           </div>
+//           <div>
+//             <b>{data.collectionName}</b>: #{tokenId}
+//           </div>
+//         </>
+//       ) : (
+//         <></>
+//       )}
+//     </>
+//   );
+// };
 
 export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
   // // The new owner will be the receiver
   const { address: account } = useAccount();
   //const addRecentTransaction = useAddRecentTransaction();
   const { refetch: refetchBal } = useBalance();
-
-  // console.log( nftAddress, tokenId )
 
   // fetchListing possible states:
   // If order array is empty, show the NFT is not currently for sale
@@ -130,6 +125,8 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     queryFn: async () => fetchListing(nftAddress, tokenId),
     retry: false,
   });
+
+  console.log(listingData)
 
   const orderHash = listingData?.orders[0]?.order_hash;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
@@ -148,24 +145,32 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     retry: false,
   });
 
-  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
-  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
-  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
+  console.log( fulfillmentData )
 
-  // prepare buying the nft
-  const tx = {
-    address: protocol_address,
-    abi: SeaportAbi,
-    functionName: 'fulfillOrder',
-    args: [
-      { parameters: params, signature: signature },
-      '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
-    ],
-    overrides: {
-      value: BigNumber.from(valueAmount || 0),
-    },
-    enabled: !!params && !!signature,
-  };
+  // const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
+  // const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
+  // const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
+
+  const tx = useMemo(
+    (): TxBasicParams => ({
+      address: protocol_address,
+      abi: SeaportAbi,
+      functionName: 'fulfillOrder',
+      args: [
+        { 
+          parameters: fulfillmentData?.fulfillment_data.orders[0].parameters as Order, 
+          signature: fulfillmentData?.fulfillment_data.orders[0].signature as string
+        },
+        '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
+      ],
+      overrides: {
+        value: BigNumber.from(fulfillmentData?.fulfillment_data.transaction.value as BigNumberish || 0),
+      },
+      enabled: !!fulfillmentData,
+    }),
+    [fulfillmentData]
+  );
+
 
   // // opensea buy nft function
   // const {
@@ -200,7 +205,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         txParams={tx}
         approvalParams={undefined}
         label={'Purchase NFT'}
-        disabled={isExpired}
+        // disabled={isExpired}
         // stepper?: boolean | undefined;
         // onSuccess = {() => refetchBal() }
       />

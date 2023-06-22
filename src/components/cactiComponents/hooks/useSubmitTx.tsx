@@ -40,6 +40,8 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
     setError(error.message);
   };
 
+  console.log('params',  params )
+
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
