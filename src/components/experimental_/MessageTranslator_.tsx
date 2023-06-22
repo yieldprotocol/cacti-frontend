@@ -121,8 +121,8 @@ export const Widget = (props: WidgetProps) => {
   const fnName = name.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(params);
 
-  console.log('WIDGET: ',  `${fnName}(${params})` )
-  console.log('PARSED_ARGS: ', parsedArgs)
+  console.log('WIDGET: ', `${fnName}(${params})`);
+  console.log('PARSED_ARGS: ', parsedArgs);
 
   /**
    * Implemented Indivudual Widgets
@@ -147,7 +147,10 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
   widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
 
-  widgets.set('buy-nft', <BuyNft {...parsedArgs} variant={variant} />);
+  widgets.set(
+    'buy-nft',
+    <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />
+  );
 
   widgets.set(
     'yield-protocol-lend',

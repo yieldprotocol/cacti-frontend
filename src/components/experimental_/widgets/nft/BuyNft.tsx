@@ -13,11 +13,12 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
+import { NftOwner } from '@/components/CheckNftOwner';
+import { ActionResponse } from '@/components/cactiComponents';
 import SubmitButton from '@/components/widgets/common/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
-import { NftOwner } from '@/components/CheckNftOwner';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 
 // @ts-ignore
@@ -106,66 +107,62 @@ const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: str
 };
 
 export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
-  
   // // The new owner will be the receiver
-  // const { address: account } = useAccount();
-  // const addRecentTransaction = useAddRecentTransaction();
-  // const { refetch: refetchBal } = useBalance();
+  const { address: account } = useAccount();
+  //const addRecentTransaction = useAddRecentTransaction();
+  const { refetch: refetchBal } = useBalance();
 
   // console.log( nftAddress, tokenId )
 
-  // // fetchListing possible states:
-  // // If order array is empty, show the NFT is not currently for sale
-  // // If order is no longer valid based on the timestamp, show the fork is out of date
-  // // If !isQueryError, proceed
-  // const {
-  //   isLoading: isQueryLoading,
-  //   isError: isQueryError,
-  //   data: listingData,
-  // } = useQuery({
-  //   queryKey: ['listing', nftAddress, tokenId],
-  //   queryFn: async () => fetchListing(nftAddress, tokenId),
-  //   retry: false,
-  // });
+  // fetchListing possible states:
+  // If order array is empty, show the NFT is not currently for sale
+  // If order is no longer valid based on the timestamp, show the fork is out of date
+  // If !isQueryError, proceed
+  const {
+    isLoading: isQueryLoading,
+    isError: isQueryError,
+    data: listingData,
+  } = useQuery({
+    queryKey: ['listing', nftAddress, tokenId],
+    queryFn: async () => fetchListing(nftAddress, tokenId),
+    retry: false,
+  });
 
-  // const orderHash = listingData?.orders[0]?.order_hash;
-  // const orderExpirationDate = listingData?.orders[0]?.expiration_time;
-  // const protocol_address = listingData?.orders[0]?.protocol_address;
+  const orderHash = listingData?.orders[0]?.order_hash;
+  const orderExpirationDate = listingData?.orders[0]?.expiration_time;
+  const protocol_address = listingData?.orders[0]?.protocol_address;
 
-  // const isExpired = orderExpirationDate < Date.now() / 1000;
+  const isExpired = orderExpirationDate < Date.now() / 1000;
 
-  // // fetchFulfillParams possible states:
-  // // If listing Query failed, error is already shown, no concern to fetchFulfillParams
-  // // If listing Query succeeds but there's no order hash, no concern to fetchFulfillParams
-  // // If listing Query succeeds and there's an order hash, but fetchFulfillParams fails, show error
-  // // If listing Query succeeds and there's an order hash, and fetchFulfillParams succeeds, proceed
-  // const { isError: isFulfillError, data: fulfillmentData } = useQuery({
-  //   queryKey: ['fulfillment', orderHash],
-  //   queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
-  //   retry: false,
-  // });
+  // fetchFulfillParams possible states:
+  // If listing Query failed, error is already shown, no concern to fetchFulfillParams
+  // If listing Query succeeds but there's no order hash, no concern to fetchFulfillParams
+  // If listing Query succeeds and there's an order hash, but fetchFulfillParams fails, show error
+  // If listing Query succeeds and there's an order hash, and fetchFulfillParams succeeds, proceed
+  const { isError: isFulfillError, data: fulfillmentData } = useQuery({
+    queryKey: ['fulfillment', orderHash],
+    queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
+    retry: false,
+  });
 
-  // const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
-  // const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
-  // const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
+  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
+  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
+  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
 
-
-
-
-  // // prepare buying the nft
-  // const { config: writeConfig, isError: isPrepareError } = usePrepareContractWrite({
-  //   address: protocol_address,
-  //   abi: SeaportAbi,
-  //   functionName: 'fulfillOrder',
-  //   args: [
-  //     { parameters: params, signature: signature },
-  //     '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
-  //   ],
-  //   overrides: {
-  //     value: BigNumber.from(valueAmount || 0),
-  //   },
-  //   enabled: !!params && !!signature,
-  // });
+  // prepare buying the nft
+  const tx = {
+    address: protocol_address,
+    abi: SeaportAbi,
+    functionName: 'fulfillOrder',
+    args: [
+      { parameters: params, signature: signature },
+      '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
+    ],
+    overrides: {
+      value: BigNumber.from(valueAmount || 0),
+    },
+    enabled: !!params && !!signature,
+  };
 
   // // opensea buy nft function
   // const {
@@ -193,27 +190,27 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   // }, [addRecentTransaction, isSuccess, nftAddress, refetchBal, tokenId, txData]);
 
   return (
-
-    <>
-
     <ConnectFirst>
+      <div> hello there </div>
 
-    <div> hello there </div>
+      
 
-
+      <ActionResponse
+        txParams={tx}
+        approvalParams={undefined}
+        label={'Purchase NFT'}
+        disabled={isExpired}
+        // stepper?: boolean | undefined;
+        // onSuccess = {() => refetchBal() }
+      />
     </ConnectFirst>
 
+    /* <div className="mb-2 flex flex-col items-center justify-center gap-1">
+          <NFTMetadata nftAddress={nftAddress} tokenId={tokenId} />
+          <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
+        </div> */
 
-
-    <div className="mt-4 flex w-[100%] flex-col items-center justify-center gap-2">
-      
-      
-      <div className="mb-2 flex flex-col items-center justify-center gap-1">
-        <NFTMetadata nftAddress={nftAddress} tokenId={tokenId} />
-        {/* <NftOwner nftAddress={nftAddress} tokenId={tokenId} /> */}
-      </div>
-
-      {/* <SubmitButton
+    /* <SubmitButton
         styleProps="flex rounded-sm border border-gray-200/25 bg-gray-700/80 p-3.5 hover:bg-gray-700"
         label={
           isSuccess
@@ -247,9 +244,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
           isTxPending ||
           isSuccess
         }
-      /> */}
-    </div>
-
-    </>
+      /> */
   );
 };
