@@ -33,6 +33,7 @@ import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import { SwapWidget } from './widgets/swap/SwapWidget';
+import { BuyNFT } from './widgets/BuyNFT';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
@@ -148,18 +149,18 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      // case 'buy-nft': {
-      //   const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
-      //   return (
-      //     <ActionPanel
-      //       header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
-      //       msg={inputString}
-      //       direction="col"
-      //     >
-      //       <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
-      //     </ActionPanel>
-      //   );
-      // }
+      case 'buy-nft': {
+        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
+        return (
+          <ActionPanel
+            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
+            msg={inputString}
+            direction="col"
+          >
+            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
+          </ActionPanel>
+        );
+      }
       // case 'nft-collection-container': {
       //   let params;
       //   try {

@@ -12,7 +12,7 @@ import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
-import { BuyNft } from './widgets/nft/BuyNFT';
+import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';

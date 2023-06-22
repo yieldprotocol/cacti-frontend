@@ -14,7 +14,7 @@ import {
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import { NftOwner } from '@/components/CheckNftOwner';
-import { ActionResponse } from '@/components/cactiComponents';
+import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import SubmitButton from '@/components/widgets/common/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
@@ -122,7 +122,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: listingData,
   } = useQuery({
     queryKey: ['listing', nftAddress, tokenId],
-    queryFn: async () => fetchListing(nftAddress, tokenId),
+    queryFn: async () => fetchListing('0x23581767a106ae21c074b2276d25e5c3e136a68b', '3705'),
     retry: false,
   });
 
@@ -143,6 +143,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     queryKey: ['fulfillment', orderHash],
     queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
     retry: false,
+    enabled: !!listingData
   });
 
   console.log( fulfillmentData )
@@ -199,7 +200,9 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <ConnectFirst>
-      <div> hello there </div>
+      <HeaderResponse 
+        title={'Buy NFT'}
+      />
 
       <ActionResponse
         txParams={tx}
