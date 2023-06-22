@@ -55,7 +55,8 @@ export const StreamingContainer = ({
     return (
       <Fragment>
         <div className="flex flex-row">
-          {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)}
+          <Widget widget={{ name: 'TextResponse', params: { text:prefix } }} />
+          {/* {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)} */}
         </div>
         <div className="text-white">
           <ListContainer items={items} showcaseFirst={false} />
