@@ -110,7 +110,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   // // The new owner will be the receiver
   const { address: account } = useAccount();
   //const addRecentTransaction = useAddRecentTransaction();
-  const { refetch: refetchBal } = useBalance();
+  // const { refetch: refetchBal } = useBalance();
 
   // fetchListing possible states:
   // If order array is empty, show the NFT is not currently for sale
@@ -122,16 +122,15 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     data: listingData,
   } = useQuery({
     queryKey: ['listing', nftAddress, tokenId],
-    queryFn: async () => fetchListing('0x23581767a106ae21c074b2276d25e5c3e136a68b', '3705'),
+    queryFn: async () => fetchListing(nftAddress, tokenId),
     retry: false,
   });
-
-  console.log(listingData);
 
   const orderHash = listingData?.orders[0]?.order_hash;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
   const protocol_address = listingData?.orders[0]?.protocol_address;
 
+  const notForSale = listingData?.orders.length === 0;
   const isExpired = orderExpirationDate < Date.now() / 1000;
 
   // fetchFulfillParams possible states:
@@ -143,14 +142,13 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     queryKey: ['fulfillment', orderHash],
     queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
     retry: false,
-    enabled: !!listingData,
+    enabled: !!listingData && !notForSale && !isExpired,
   });
+  // console.log(fulfillmentData);
 
-  console.log(fulfillmentData);
-
-  // const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
-  // const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
-  // const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
+  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
+  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
+  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
 
   const tx = useMemo(
     (): TxBasicParams => ({
@@ -159,14 +157,14 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       functionName: 'fulfillOrder',
       args: [
         {
-          parameters: fulfillmentData?.fulfillment_data.orders[0].parameters as Order,
-          signature: fulfillmentData?.fulfillment_data.orders[0].signature as string,
+          parameters: params,
+          signature: signature,
         },
         '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
       ],
       overrides: {
         value: BigNumber.from(
-          (fulfillmentData?.fulfillment_data.transaction.value as BigNumberish) || 0
+          valueAmount || 0
         ),
       },
       enabled: !!fulfillmentData,
@@ -201,13 +199,16 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <ConnectFirst>
-      <HeaderResponse title={'Buy NFT'} />
+      <HeaderResponse text={'Buy NFT'} projectName={'Opensea Seaport'} />
+
+      {/* <ImageResponse
+      /> */}
 
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
-        label={'Purchase NFT'}
-        // disabled={isExpired}
+        label={ notForSale ? 'Item not for sale': 'Purchase NFT'}
+        disabled={isExpired || notForSale}
         // stepper?: boolean | undefined;
         // onSuccess = {() => refetchBal() }
       />

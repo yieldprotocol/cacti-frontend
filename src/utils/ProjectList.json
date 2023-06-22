@@ -54,5 +54,21 @@
     "logo": "https://icons.llama.fi/uniswap.png",
     "parentProtocol": "Uniswap",
     "slug": "uniswap"
+  },
+
+  {
+    "id": "2258",
+    "name": "Opensea Seaport",
+    "address": null,
+    "symbol": "-",
+    "url": "https://opensea.io/",
+    "description": "OpenSea is the world's first and largest web3 marketplace for NFTs and crypto collectibles.",
+    "chain": "Ethereum",
+    "logo": "https://icons.llama.fi/opensea-seaport.png",
+    "category": "NFT Marketplace",
+    "chains": ["Ethereum"],
+    "twitter": "opensea",
+    "parentProtocol": "parent#opensea",
+    "slug": "opensea-seaport"
   }
 ]

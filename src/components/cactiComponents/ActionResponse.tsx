@@ -58,6 +58,7 @@ export const ActionResponse = ({
   // onSuccess,
   label: label_,
   disabled,
+  
   stepper,
 }: // assertCallParams
 // altAction,
@@ -167,7 +168,8 @@ export const ActionResponse = ({
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx && !error) {
         console.log('Building TX: Has balance and allowance.');
-        setLabel('Validating the transaction...');
+        // if the button is disabled, the label is controlled by the parent widget
+        !disabled ? setLabel('Validating the transaction...') : setLabel(defaultLabel);
         setState(ActionResponseState.LOADING);
       }
 
@@ -220,7 +222,7 @@ export const ActionResponse = ({
     approvalTransacting,
     submitTx,
     isSuccess,
-
+    disabled
     // approveTx
   ]);
 
