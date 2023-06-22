@@ -75,11 +75,10 @@ export const Widgetize = (widget: Widget) => {
 
   try {
     switch (fnName) {
-      // Transfer widget
-      case 'transfer': {
-        const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
-      }
+      // case 'transfer': {
+      //   const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
+      //   return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
+      // }
 
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
@@ -90,6 +89,7 @@ export const Widgetize = (widget: Widget) => {
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
       }
+      
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
@@ -104,6 +104,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-traits': {
         const [nftAddress, tokenID] = parseArgsStripQuotes(args);
         return (
@@ -116,10 +117,12 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
+
       case 'nfts-by-traits': {
         const [nftAddr, traitType, traitValue] = parseArgsStripQuotes(args);
         return (
@@ -137,6 +140,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-search': {
         const query = args;
         return (
@@ -145,39 +149,39 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      case 'buy-nft': {
-        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
-        return (
-          <ActionPanel
-            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
-            msg={inputString}
-            direction="col"
-          >
-            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
-          </ActionPanel>
-        );
-      }
-      case 'nft-collection-container': {
-        let params;
-        try {
-          params = JSON.parse(args);
-        } catch (e) {
-          const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
-          params = { network, address, name, numAssets, previewImageUrl };
-        }
-        return <NftCollectionContainer {...params} />;
-      }
-      case 'nft-asset-container': {
-        let params;
-        try {
-          params = JSON.parse(args);
-        } catch (e) {
-          const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
-            parseArgsStripQuotes(args);
-          params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
-        }
-        return <NftAssetContainer {...params} />;
-      }
+      // case 'buy-nft': {
+      //   const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
+      //   return (
+      //     <ActionPanel
+      //       header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
+      //       msg={inputString}
+      //       direction="col"
+      //     >
+      //       <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
+      //     </ActionPanel>
+      //   );
+      // }
+      // case 'nft-collection-container': {
+      //   let params;
+      //   try {
+      //     params = JSON.parse(args);
+      //   } catch (e) {
+      //     const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
+      //     params = { network, address, name, numAssets, previewImageUrl };
+      //   }
+      //   return <NftCollectionContainer {...params} />;
+      // }
+      // case 'nft-asset-container': {
+      //   let params;
+      //   try {
+      //     params = JSON.parse(args);
+      //   } catch (e) {
+      //     const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
+      //       parseArgsStripQuotes(args);
+      //     params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
+      //   }
+      //   return <NftAssetContainer {...params} />;
+      // }
       case 'nft-asset-traits-container': {
         const { asset, values } = JSON.parse(args);
         return (
@@ -232,46 +236,45 @@ export const Widgetize = (widget: Widget) => {
 
         return <YieldRowContainer {...params} />;
       }
-      case 'list-container': {
-        const params = JSON.parse(args);
-        return <ListContainer {...params} />;
-      }
-      case 'streaming-list-container': {
-        const params = JSON.parse(args);
-        return <StreamingListContainer {...params} />;
-      }
-
-      case 'table-container': {
-        const params = JSON.parse(args);
-        const headers = params.headers;
-        const rows = params.rows;
-        return (
-          <table className="table-auto border border-gray-500">
-            <thead className="bg-gray-800 text-left">
-              <tr className="border-b border-gray-400">
-                {headers.map(({ displayName }: { displayName: string }, i: number) => (
-                  <th className="px-2 py-1" key={`i${i}`}>
-                    {displayName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
-                const rowArgs = {
-                  headers,
-                  rowParams: params,
-                };
-                return (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ name: name, params: JSON.stringify(rowArgs) })}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        );
-      }
+      // case 'list-container': {
+      //   const params = JSON.parse(args);
+      //   return <ListContainer {...params} />;
+      // }
+      // case 'streaming-list-container': {
+      //   const params = JSON.parse(args);
+      //   return <StreamingListContainer {...params} />;
+      // }
+      // case 'table-container': {
+      //   const params = JSON.parse(args);
+      //   const headers = params.headers;
+      //   const rows = params.rows;
+      //   return (
+      //     <table className="table-auto border border-gray-500">
+      //       <thead className="bg-gray-800 text-left">
+      //         <tr className="border-b border-gray-400">
+      //           {headers.map(({ displayName }: { displayName: string }, i: number) => (
+      //             <th className="px-2 py-1" key={`i${i}`}>
+      //               {displayName}
+      //             </th>
+      //           ))}
+      //         </tr>
+      //       </thead>
+      //       <tbody>
+      //         {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
+      //           const rowArgs = {
+      //             headers,
+      //             rowParams: params,
+      //           };
+      //           return (
+      //             <Fragment key={`i${i}`}>
+      //               {Widgetize({ name: name, params: JSON.stringify(rowArgs) })}
+      //             </Fragment>
+      //           );
+      //         })}
+      //       </tbody>
+      //     </table>
+      //   );
+      // }
 
       case 'tx-payload-for-sending-container': {
         const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
@@ -297,48 +300,48 @@ export const Widgetize = (widget: Widget) => {
         );
       }
 
-      case 'multistep-payload-container': {
-        const {
-          status,
-          workflowId,
-          workflowType,
-          stepId,
-          stepType,
-          stepNumber,
-          isFinalStep,
-          userActionType,
-          tx,
-          errorMsg,
-          description,
-        } = JSON.parse(args);
+      // case 'multistep-payload-container': {
+      //   const {
+      //     status,
+      //     workflowId,
+      //     workflowType,
+      //     stepId,
+      //     stepType,
+      //     stepNumber,
+      //     isFinalStep,
+      //     userActionType,
+      //     tx,
+      //     errorMsg,
+      //     description,
+      //   } = JSON.parse(args);
 
-        const headerText =
-          stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
+      //   const headerText =
+      //     stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
 
-        return (
-          <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <MultiStepContainer
-                  {...{
-                    status,
-                    workflowId,
-                    workflowType,
-                    stepId,
-                    stepType,
-                    userActionType,
-                    stepNumber,
-                    isFinalStep,
-                    tx,
-                    errorMsg,
-                    description,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
-      }
+      //   return (
+      //     <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
+      //       <div className="flex w-[100%] justify-end">
+      //         <ConnectFirst>
+      //           <MultiStepContainer
+      //             {...{
+      //               status,
+      //               workflowId,
+      //               workflowType,
+      //               stepId,
+      //               stepType,
+      //               userActionType,
+      //               stepNumber,
+      //               isFinalStep,
+      //               tx,
+      //               errorMsg,
+      //               description,
+      //             }}
+      //           />
+      //         </ConnectFirst>
+      //       </div>
+      //     </ActionPanel>
+      //   );
+      // }
       default:
         return (
           <div className="inline-block bg-slate-500 p-5 text-white">
