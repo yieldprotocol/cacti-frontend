@@ -26,7 +26,7 @@ import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtoc
  * @param args
  * @returns
  */
-const parseArgs = (args: string | object) => {
+export const parseArgs = (args: string | object) => {
   if (args && typeof args === 'string') {
     try {
       // try directly parse the string as an object
@@ -44,8 +44,6 @@ const parseArgs = (args: string | object) => {
   return [];
 };
 
-
-
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
   const [widgetGroup, setWidgetGroup] = useState<JSX.Element[]>([]);
@@ -57,13 +55,15 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         if (typeof item === 'string' && item.trim() !== '')
           return [
             ...list,
-            <Widget key={item.slice(0,16) } widget={{ name: 'text-response', params: { text: item } }} />,
+            <Widget
+              key={item.slice(0, 16)}
+              widget={{ name: 'textresponse', params: { text: item } }}
+            />,
             // composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
 
         /* if item is an object, assume it is a container or a widget */
         if (typeof item !== 'string' && item.name) {
-          
           /* handle if a list container is passed */
           if (item.name === 'list-container')
             return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
@@ -109,13 +109,13 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   );
 };
 
-
 export interface WidgetProps {
   widget: Widget;
 }
 
 export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
+
   const { name, params, variant } = props.widget;
   const fnName = name.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(params);
@@ -156,8 +156,8 @@ export const Widget = (props: WidgetProps) => {
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */
-  widgets.set('table-response', <TableResponse {...parsedArgs} />);
-  widgets.set('text-response', <TextResponse {...parsedArgs} />);
+  widgets.set('tableresponse', <TableResponse {...parsedArgs} />);
+  widgets.set('textresponse', <TextResponse {...parsedArgs} />);
   widgets.set('table-container', <TableResponse {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
