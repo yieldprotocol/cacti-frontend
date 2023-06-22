@@ -18,6 +18,34 @@ import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 
+/**
+ * This function parses the args passed to a widget,
+ * if the args are a string, it tries to parse it as an object or a comma separated list of strings
+ * if the args are an object, it returns the object
+ * if the args are neither, it returns an empty array
+ * @param args
+ * @returns
+ */
+const parseArgs = (args: string | object) => {
+  if (args && typeof args === 'string') {
+    try {
+      // try directly parse the string as an object
+      return JSON.parse(args); // function could throw exception
+    } catch (e) {
+      /* Alternatively, assume it is a comma separated list of strings */
+      return JSON.parse(
+        JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
+      );
+    }
+  }
+  /* if the args are already an object, return it */
+  if (args && typeof args === 'object') return { ...args };
+  /* else return an empty array as a last resort */
+  return [];
+};
+
+
+
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
   const [widgetGroup, setWidgetGroup] = useState<JSX.Element[]>([]);
@@ -35,6 +63,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
         /* if item is an object, assume it is a container or a widget */
         if (typeof item !== 'string' && item.name) {
+          
           /* handle if a list container is passed */
           if (item.name === 'list-container')
             return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
@@ -80,33 +109,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   );
 };
 
-/**
- * This function parses the args passed to a widget,
- * if the args are a string, it tries to parse it as an object or a comma separated list of strings
- * if the args are an object, it returns the object
- * if the args are neither, it returns an empty array
- * @param args
- * @returns
- */
-const parseArgs = (args: string | object) => {
-  if (args && typeof args === 'string') {
-    try {
-      // try directly parse the string as an object
-      return JSON.parse(args); // function could throw exception
-    } catch (e) {
-      /* Alternatively, assume it is a comma separated list of strings */
-      return JSON.parse(
-        JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
-      );
-    }
-  }
-
-  /* if the args are already an object, return it */
-  if (args && typeof args === 'object') return { ...args };
-
-  /* else return an empty array as a last resort */
-  return [];
-};
 
 export interface WidgetProps {
   widget: Widget;
