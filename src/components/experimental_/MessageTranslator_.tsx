@@ -12,12 +12,12 @@ import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import { BuyNft } from './widgets/nft/BuyNFT';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import { BuyNft } from './widgets/nft/BuyNFT';
 
 /**
  * This function parses the args passed to a widget,
@@ -147,10 +147,7 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
   widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
 
-  widgets.set(
-    'buy-nft',
-    <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />
-  );
+  widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(
     'yield-protocol-lend',

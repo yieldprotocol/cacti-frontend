@@ -193,8 +193,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     <ConnectFirst>
       <div> hello there </div>
 
-      
-
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
