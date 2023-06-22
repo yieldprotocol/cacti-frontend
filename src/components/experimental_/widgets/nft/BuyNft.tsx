@@ -25,6 +25,9 @@ import { ConnectFirst } from '../helpers/ConnectFirst';
 const JSONbig = JSONbigint({ storeAsString: true });
 
 const fetchListing = async (nftAddress: string, tokenId: string) => {
+
+  console.log( nftAddress, tokenId);
+  
   return axios
     .get(
       `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
@@ -83,11 +86,11 @@ const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
     });
 };
 
+
 const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
   const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
     fetchNftAsset(nftAddress, tokenId)
   );
-
   return (
     <>
       {data ? (
