@@ -20,7 +20,7 @@ import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/Sh
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
-import { BuyNFT } from './widgets/BuyNFT';
+import { BuyNFT } from './widgets/BuyNFT_caseChange';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
@@ -89,7 +89,7 @@ export const Widgetize = (widget: Widget) => {
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
       }
-      
+
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
