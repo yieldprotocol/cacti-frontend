@@ -5,6 +5,10 @@ interface TableHeader {
   fieldName: string;
   displayName: string;
 }
+
+// interface TableRow {
+// }
+
 /**
  * Table response element
  */
