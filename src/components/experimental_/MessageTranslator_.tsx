@@ -7,6 +7,7 @@ import { Widgetize } from '../MessageTranslator';
 import { TextResponse } from '../cactiComponents';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { composeFromString } from '../cactiComponents/tools/compose';
+import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
@@ -15,7 +16,7 @@ import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import { MultiStepContainer } from '../widgets/MultiStepContainer';
+import { AnyARecord } from 'dns';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
@@ -28,7 +29,8 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         if (typeof item === 'string' && item.trim() !== '')
           return [
             ...list,
-            composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
+            <Widget widget={{ name: 'text-response', params: { text: item } }} />,
+            // composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
 
         /* if item is an object, assume it is a container or a widget */
@@ -78,12 +80,32 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   );
 };
 
+/**
+ * This function parses the args passed to a widget,
+ * if the args are a string, it tries to parse it as an object or a comma separated list of strings
+ * if the args are an object, it returns the object
+ * if the args are neither, it returns an empty array
+ * @param args 
+ * @returns 
+ */
 const parseArgs = (args: string | object) => {
-  if (args && typeof args === 'string')
-    return JSON.parse(
-      JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
-    );
+
+  if (args && typeof args === 'string') {
+    try {
+      // try directly parse the string as an object
+      return JSON.parse(args); // function could throw exception
+    } catch (e) {
+      /* Alternatively, assume it is a comma separated list of strings */
+      return JSON.parse(
+        JSON.stringify(args.split(',').map((str) => str.trim().replaceAll(RegExp(/['"]/g), '')))
+      );
+    }
+  }
+
+  /* if the args are already an object, return it */
   if (args && typeof args === 'object') return { ...args };
+
+  /* else return an empty array as a last resort */
   return [];
 };
 
@@ -96,13 +118,6 @@ export const Widget = (props: WidgetProps) => {
   const { name, params, variant } = props.widget;
   const fnName = name.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(params);
-
-  /**
-   * Experimental: Bring in some 'direct' cacti components
-   * */
-  widgets.set('table-container', <TableResponse {...JSON.parse(params)} />);
-  widgets.set('table-response', <TableResponse {...JSON.parse(params)} />);
-  widgets.set('text-response', <TextResponse {...JSON.parse(params)} />);
 
   /**
    * Implemented Indivudual Widgets
@@ -136,6 +151,13 @@ export const Widget = (props: WidgetProps) => {
       projectName="yield-protocol"
     />
   );
+
+  /**
+   * Experimental: Bring in some 'direct' cacti components
+   * */
+  widgets.set('table-response', <TableResponse {...parsedArgs} />);
+  widgets.set('text-response', <TextResponse {...parsedArgs} />);
+  widgets.set('table-container', <TableResponse {...parsedArgs} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

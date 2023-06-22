@@ -95,6 +95,7 @@ export const MultiStepContainer = ({
   return <div>INVALID</div>;
 };
 
+
 export const UserActionTxType = ({ tx, sendStepResult, description }: UserActionTxTypeProps) => {
   const handleTxResult = (
     sendError: Error | null,
