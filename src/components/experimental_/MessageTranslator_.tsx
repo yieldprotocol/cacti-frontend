@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import { AnyARecord } from 'dns';
 import { Message } from '@/contexts/ChatContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
@@ -16,7 +17,6 @@ import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import { AnyARecord } from 'dns';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
@@ -29,7 +29,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         if (typeof item === 'string' && item.trim() !== '')
           return [
             ...list,
-            <Widget widget={{ name: 'text-response', params: { text: item } }} />,
+            <Widget key={item.slice(0,16) } widget={{ name: 'text-response', params: { text: item } }} />,
             // composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
 
@@ -85,11 +85,10 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
  * if the args are a string, it tries to parse it as an object or a comma separated list of strings
  * if the args are an object, it returns the object
  * if the args are neither, it returns an empty array
- * @param args 
- * @returns 
+ * @param args
+ * @returns
  */
 const parseArgs = (args: string | object) => {
-
   if (args && typeof args === 'string') {
     try {
       // try directly parse the string as an object

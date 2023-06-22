@@ -1,6 +1,6 @@
+import { useCallback, useEffect, useState } from 'react';
 import { SendTransaction } from '@/components/widgets/SendTransaction';
 import { useChatContext } from '@/contexts/ChatContext';
-import { useCallback, useEffect, useState } from 'react';
 import { WidgetError } from '../widgets/helpers';
 
 interface MultiStepContainerProps {
@@ -94,7 +94,6 @@ export const MultiStepContainer = ({
 
   return <div>INVALID</div>;
 };
-
 
 export const UserActionTxType = ({ tx, sendStepResult, description }: UserActionTxTypeProps) => {
   const handleTxResult = (
