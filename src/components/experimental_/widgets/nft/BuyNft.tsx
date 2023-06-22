@@ -15,12 +15,12 @@ import {
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import { NftOwner } from '@/components/CheckNftOwner';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
+import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import SubmitButton from '@/components/widgets/common/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
@@ -126,7 +126,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     retry: false,
   });
 
-  console.log(listingData)
+  console.log(listingData);
 
   const orderHash = listingData?.orders[0]?.order_hash;
   const orderExpirationDate = listingData?.orders[0]?.expiration_time;
@@ -143,10 +143,10 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     queryKey: ['fulfillment', orderHash],
     queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
     retry: false,
-    enabled: !!listingData
+    enabled: !!listingData,
   });
 
-  console.log( fulfillmentData )
+  console.log(fulfillmentData);
 
   // const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
   // const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
@@ -158,20 +158,21 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       abi: SeaportAbi,
       functionName: 'fulfillOrder',
       args: [
-        { 
-          parameters: fulfillmentData?.fulfillment_data.orders[0].parameters as Order, 
-          signature: fulfillmentData?.fulfillment_data.orders[0].signature as string
+        {
+          parameters: fulfillmentData?.fulfillment_data.orders[0].parameters as Order,
+          signature: fulfillmentData?.fulfillment_data.orders[0].signature as string,
         },
         '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
       ],
       overrides: {
-        value: BigNumber.from(fulfillmentData?.fulfillment_data.transaction.value as BigNumberish || 0),
+        value: BigNumber.from(
+          (fulfillmentData?.fulfillment_data.transaction.value as BigNumberish) || 0
+        ),
       },
       enabled: !!fulfillmentData,
     }),
     [fulfillmentData]
   );
-
 
   // // opensea buy nft function
   // const {
@@ -200,9 +201,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <ConnectFirst>
-      <HeaderResponse 
-        title={'Buy NFT'}
-      />
+      <HeaderResponse title={'Buy NFT'} />
 
       <ActionResponse
         txParams={tx}

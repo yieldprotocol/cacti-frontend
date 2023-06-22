@@ -20,6 +20,7 @@ import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/Sh
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
@@ -33,7 +34,6 @@ import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
 import { SwapWidget } from './widgets/swap/SwapWidget';
-import { BuyNFT } from './widgets/BuyNFT';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);
