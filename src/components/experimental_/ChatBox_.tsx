@@ -20,13 +20,13 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className="flex h-full justify-center">
-      <div className="flex h-full w-full flex-col pt-20">
+    <div className="flex min-h-screen justify-center">
+      <div className="flex w-full flex-col">
         {/* chat area */}
         <div className="h-full overflow-auto">{ready ? messageContentComponent : <Spinner />}</div>
 
         {/* Chat input */}
-        <div className="items-center bg-white bg-opacity-5 p-2 py-[24px]">
+        <div className="sticky bottom-0 items-center bg-white/[0.05] px-2 py-4 backdrop-blur lg:py-6">
           <MessageInput />
         </div>
       </div>

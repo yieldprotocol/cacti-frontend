@@ -15,8 +15,8 @@ interface IconBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const IconBtn = ({ children, ...rest }: IconBtnProps) => (
   <button
     className={`
-        grid h-10
-        w-10
+        grid h-9
+        w-9
         place-items-center rounded-lg
         bg-teal-400/30 text-gray-100
         duration-200 hover:cursor-pointer hover:bg-gray-800 hover:text-gray-200 disabled:cursor-not-allowed disabled:bg-teal-200/20
@@ -79,20 +79,18 @@ export const MessageInput = ({}) => {
   const isConnected = connectionStatus === ReadyState.OPEN;
 
   return (
-    <div className="grid grid-cols-12">
-      <div className="col-span-2"> </div>
-
-      <div className="col-span-8 flex items-center gap-3 rounded-lg border border-gray-300/10 p-2 duration-200 focus-within:border-teal-100/30">
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="flex items-center gap-1 rounded-lg border border-gray-300/10 p-1 duration-200 focus-within:border-teal-100/30 lg:gap-3 lg:p-2">
         <div className="text-end">
           <button
-            className="grid h-10 w-10 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
+            className="grid h-9 w-9 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
             type="button"
             onClick={toggleInteractionMode}
           >
             {interactor === 'user' ? (
-              <ChatBubbleLeftRightIcon className="h-6 w-6" />
+              <ChatBubbleLeftRightIcon className="h-5 w-5" />
             ) : (
-              <PaperClipIcon className="h-6 w-6" />
+              <PaperClipIcon className="h-5 w-5" />
             )}
           </button>
         </div>
