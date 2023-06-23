@@ -46,6 +46,7 @@
     "react-hotkeys-hook": "^4.4.0",
     "react-jazzicon": "^1.0.4",
     "react-loading-skeleton": "^3.2.0",
+    "react-markdown": "^8.0.7",
     "react-query": "^3.39.3",
     "react-textarea-autosize": "^8.4.1",
     "react-toastify": "^9.1.2",
