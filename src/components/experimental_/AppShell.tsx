@@ -74,7 +74,7 @@ function SidebarContainer({
       </Transition.Root>
 
       {/* ---------------------------------------Static sidebar for desktop */}
-      <div className="hidden border-r-[1px] border-white/20 bg-black lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
+      <div className="hidden border-r-[1px] border-white/20 bg-black/90 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto  px-2 pt-6">
           {/* <Logo /> */}
@@ -115,15 +115,13 @@ export default function AppShell({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-[#031016]">
+    <div className="relative min-h-screen bg-[#031016]">
       <SidebarContainer isOpen={sidebarOpen} setIsOpen={setSidebarOpen}>
         {SidebarContent}
       </SidebarContainer>
       <main className="flex flex-col">
         <Header setIsOpen={setSidebarOpen}>{HeaderContent}</Header>
-        <div className={`${sidebarOpen ? 'lg:pl-60' : ''} min-h-screen pt-20 lg:pl-60`}>
-          {children}
-        </div>
+        <div className={`${sidebarOpen ? 'lg:pl-60' : ''} grow lg:pl-60`}>{children}</div>
       </main>
     </div>
   );
