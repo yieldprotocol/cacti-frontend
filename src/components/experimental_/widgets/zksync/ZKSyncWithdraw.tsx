@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
@@ -62,7 +62,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   const { switchNetworkAsync } = useSwitchNetwork();
   const { chain } = useNetwork();
 
-  const handleZKSyncWithdraw = async () => {
+  const handleZKSyncWithdraw = useCallback(async () => {
     try {
       setDisabled(true);
       const isETH = tokenSymbol.toUpperCase() === 'ETH';
@@ -155,7 +155,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     } finally {
       setDisabled(false);
     }
-  };
+  }, [chain?.id, defaultLabel, switchNetworkAsync, tokenSymbol, userAmount]);
 
   return (
     <ConnectFirst>
