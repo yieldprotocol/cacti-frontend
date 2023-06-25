@@ -122,11 +122,10 @@ const Widget = ({ widget }: { widget: Widget }) => {
   widgets.set(
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
-        );
-     widgets.set(
+  );
+  widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
-
   );
 
   /* If available, return the widget in the widgets map */
