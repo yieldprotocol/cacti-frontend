@@ -112,6 +112,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
 export interface WidgetProps {
   widget: Widget;
+  children?: React.ReactNode;
 }
 
 export const Widget = (props: WidgetProps) => {

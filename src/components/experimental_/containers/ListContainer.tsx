@@ -1,3 +1,4 @@
+import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { Widget } from '../MessageTranslator_';
 
 interface ListContainerProps {
@@ -14,7 +15,7 @@ const ListContainer = ({ items, limitCols, showcaseFirst = true }: ListContainer
     <>
       {showcaseFirst && (
         <div className="pb-2">
-          <Widget key={'showcaseItem'} widget={{ ...items[0], variant: 'showcase' }} />
+          <Widget key={'showcaseItem'} widget={{ ...items[0], variant: ImageVariant.SHOWCASE }} />
         </div>
       )}
       <div
@@ -23,7 +24,7 @@ const ListContainer = ({ items, limitCols, showcaseFirst = true }: ListContainer
         } `}
       >
         {itemsToShow.map((widget, idx: number) => (
-          <Widget key={idx} widget={{ ...widget }} />
+          <Widget key={idx} widget={{ ...widget, variant : ImageVariant.DEFAULT  }} />
         ))}
       </div>
     </>

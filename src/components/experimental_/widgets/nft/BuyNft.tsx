@@ -20,6 +20,7 @@ import SubmitButton from '@/components/widgets/common/SubmitButton';
 import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
+import { Widget } from '../../MessageTranslator_';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 
 // @ts-ignore
@@ -67,22 +68,22 @@ const fetchFulfillParams = async (
     .then((res) => res.data);
 };
 
-// const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
-//   axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
-//   return axios
-//     .get(`${nftAddress}/${tokenID}`, {
-//       headers: {
-//         Accept: 'application/json',
-//         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
-//       },
-//     })
-//     .then((res) => {
-//       return res.data;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
+  axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
+  return axios
+    .get(`${nftAddress}/${tokenID}`, {
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
 //   const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
@@ -133,6 +134,8 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const notForSale = listingData?.orders.length === 0;
   const isExpired = orderExpirationDate < Date.now() / 1000;
 
+  console.log( listingData );
+
   // fetchFulfillParams possible states:
   // If listing Query failed, error is already shown, no concern to fetchFulfillParams
   // If listing Query succeeds but there's no order hash, no concern to fetchFulfillParams
@@ -144,6 +147,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     retry: false,
     enabled: !!listingData && !notForSale && !isExpired,
   });
+  
   // console.log(fulfillmentData);
 
   const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
@@ -163,28 +167,20 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
       ],
       overrides: {
-        value: BigNumber.from(
-          valueAmount || 0
-        ),
+        value: BigNumber.from(valueAmount || 0),
       },
       enabled: !!fulfillmentData,
     }),
     [fulfillmentData]
   );
 
-  // // opensea buy nft function
-  // const {
-  //   write: seaportWrite,
-  //   data: contractWriteData,
-  //   isError: isWriteError,
-  // } = useContractWrite(writeConfig);
+  const {
+    data: nftData,
+    error,
+    isLoading,
+  } = useQuery(['NftAsset', nftAddress, tokenId], async () => fetchNftAsset(nftAddress, tokenId));
 
-  // // tx states
-  // const {
-  //   data: txData,
-  //   isLoading: isTxPending,
-  //   isSuccess,
-  // } = useWaitForTransaction({ hash: contractWriteData?.hash });
+  console.log( nftData )
 
   // useEffect(() => {
   //   if (txData) {
@@ -199,19 +195,32 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <ConnectFirst>
-      <HeaderResponse text={'Buy NFT'} projectName={'Opensea Seaport'} />
+      <HeaderResponse text={`Buy ${nftData?.name} NFT` } projectName={'Opensea Seaport'} />
 
-      {/* <ImageResponse
-      /> */}
+      <Widget
+        widget={{
+          name: 'nft-asset-container',
+          params: {
+            network: 'ethereum-mainnet',
+            address: nftAddress,
+            tokenId: tokenId,
+            collectionName: nftData?.collectionName,
+            name: nftData?.name,
+            previewImageUrl: nftData?.smallPreviewImageUrl,
+            variant: 'showcase',
+          },
+        }}
+      />
 
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
-        label={ notForSale ? 'Item not for sale': 'Purchase NFT'}
+        label={notForSale ? 'Item not for sale' : 'Purchase NFT'}
         disabled={isExpired || notForSale}
         // stepper?: boolean | undefined;
         // onSuccess = {() => refetchBal() }
       />
+
     </ConnectFirst>
 
     /* <div className="mb-2 flex flex-col items-center justify-center gap-1">

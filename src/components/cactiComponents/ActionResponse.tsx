@@ -58,7 +58,7 @@ export const ActionResponse = ({
   // onSuccess,
   label: label_,
   disabled,
-  
+
   stepper,
 }: // assertCallParams
 // altAction,
@@ -76,7 +76,6 @@ export const ActionResponse = ({
 }) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
-
   const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } =
     useSubmitTx(txParams);
 

@@ -1,4 +1,9 @@
+import axios from 'axios';
+import { useQuery } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
+import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
+import { useAsset } from '@center-inc/react';
 
 interface NftAssetProps {
   network: string;
@@ -9,7 +14,7 @@ interface NftAssetProps {
   previewImageUrl: string;
   price: string | undefined;
 
-  variant?: boolean; // widget variant
+  variant?: ImageVariant; // widget variant
 }
 
 interface NftAssetTraitsContainerProps {
@@ -21,6 +26,24 @@ interface NftAssetTraitValueContainerProps {
   trait: string;
   value: string;
 }
+
+const fetchNftAsset = async (nftAddress: string, tokenId: string, network:string=ETHEREUM_NETWORK ) => {
+  return axios
+    .get(`https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`, {
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
+      },
+    })
+    .then((res) => {
+      console.log( res.data )
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+};
 
 export const NftAsset = ({
   network,
@@ -34,6 +57,26 @@ export const NftAsset = ({
 }: NftAssetProps) => {
   const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
 
+  const asset = useAsset( {
+    network: network as any,
+    address,
+    tokenId
+  });
+
+  console.log('ASSET:', asset);
+
+  const {
+    data: nftData,
+    error,
+    isLoading,
+  } = useQuery(['NftAsset', address, tokenId], async () =>
+    fetchNftAsset(address, tokenId.toString(), network),
+    // {enabled: variant === ImageVariant.SHOWCASE }
+  );
+
+  variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
+  // const {} = nftData;
+
   return (
     <ImageResponse
       actionLabel={network}
@@ -44,8 +87,14 @@ export const NftAsset = ({
       title={name}
       subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
-      showcase={variant}
-    />
+      variant={variant}
+    >
+      {variant === ImageVariant.SHOWCASE && <div>{
+        nftData?.traits?.map((trait: any) => {
+          {trait }
+        })
+      }</div>}
+    </ImageResponse>
   );
 };
 

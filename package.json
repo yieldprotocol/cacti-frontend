@@ -21,7 +21,7 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
-    "@center-inc/react": "^1.1.7",
+    "@center-inc/react": "^1.1.13",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.14",
     "@next/font": "13.1.2",
