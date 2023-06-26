@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Decimalish, TroveAdjustmentParams } from '@liquity/lib-base';
 import { EthersLiquity } from '@liquity/lib-ethers';
 import { UnsignedTransaction } from 'ethers/lib/utils.js';
 import {
@@ -26,9 +27,11 @@ const LiquityAdjust = ({
   const signer = useSigner();
 
   const handleInput = (amount: string | undefined) => {
-    if (!amount) return 0;
-    const cleaned = cleanValue(amount, 18) || '0';
-    return isNaN(+cleaned) ? 0 : +cleaned;
+    if (!amount) return undefined;
+    const cleaned = cleanValue(amount, 18);
+    if (!cleaned) return undefined;
+    const num = +cleaned;
+    return isNaN(num) || num === 0 ? undefined : +cleaned;
   };
 
   const borrowLUSD = handleInput(borrowAmount);
@@ -45,16 +48,15 @@ const LiquityAdjust = ({
       if (!signer) return;
 
       const liquity = await EthersLiquity.connect(signer);
+      const validParams = {} as TroveAdjustmentParams<Decimalish>;
 
-      const { rawPopulatedTransaction: params } = isBorrow
-        ? await liquity.populate.adjustTrove({
-            borrowLUSD,
-            depositCollateral: _depositCollateral,
-          })
-        : await liquity.populate.adjustTrove({
-            repayLUSD,
-            withdrawCollateral: _withdrawCollateral,
-          });
+      if (borrowLUSD) validParams.borrowLUSD = borrowLUSD;
+      if (repayLUSD) validParams.repayLUSD = repayLUSD;
+      if (_depositCollateral) validParams.depositCollateral = _depositCollateral;
+      if (_withdrawCollateral) validParams.withdrawCollateral = _withdrawCollateral;
+
+      const { rawPopulatedTransaction: params } = await liquity.populate.adjustTrove(validParams);
+      setSendParams(params);
 
       setLabel(
         isBorrow
@@ -73,12 +75,10 @@ const LiquityAdjust = ({
         projectName="Liquity"
         altUrl={`https://www.liquity.org/`}
       />
-      <DoubleLineResponse
-        tokenSymbol={'LUSD'}
-        tokenValueInUsd={1}
-        amount={borrowLUSD}
-        amountValueInUsd={borrowLUSD}
-      />
+      {borrowAmount && <DoubleLineResponse tokenSymbol={'LUSD'} amount={borrowLUSD} />}
+      {repayAmount && <DoubleLineResponse tokenSymbol={'LUSD'} amount={repayLUSD} />}
+      {depositCollateral && <DoubleLineResponse tokenSymbol={'ETH'} amount={borrowLUSD} />}
+      {withdrawCollateral && <DoubleLineResponse tokenSymbol={'ETH'} amount={_depositCollateral} />}
       <ListResponse
         title="Breakdown"
         data={[
