@@ -157,9 +157,11 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="w-full p-4">
-        <div className={`text-xs ${getStatusColor(connectionStatus)}`}>
-          <div className="flex gap-1">
+      <div className="flex w-full h-full p-4">
+
+        <div className={`flex flex-coltext-xs ${getStatusColor(connectionStatus)} justify-between`}>
+          <div />
+          <div className="flex gap-2">
             <span className="animate-pulse">●</span>
             <span>
               {connectionStatus === ReadyState.OPEN
