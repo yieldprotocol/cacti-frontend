@@ -11,6 +11,8 @@ import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
+import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
@@ -112,6 +114,15 @@ const Widget = ({ widget }: { widget: Widget }) => {
     />
   );
 
+  widgets.set(
+    'zksync-deposit',
+    <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
+  );
+
+  widgets.set(
+    'zksync-withdraw',
+    <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
+  );
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />

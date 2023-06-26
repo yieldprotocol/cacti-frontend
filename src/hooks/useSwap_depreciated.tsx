@@ -80,14 +80,14 @@ const useSwap = (tokenInSymbol: string, tokenOutSymbol: string, amountIn: BigNum
   };
 
   const contract = useContract({
-    address: SWAP_ROUTER_02_ADDRESSES(chainId),
+    address: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
     abi: SwapRouter02Abi,
     signerOrProvider: signer,
   });
 
   const value = tokenInisETH ? amountIn : 0;
   const { config: swapConfig, error: prepareError } = usePrepareContractWrite({
-    address: SWAP_ROUTER_02_ADDRESSES(chainId),
+    address: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
     args: [params],

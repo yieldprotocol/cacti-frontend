@@ -17,7 +17,7 @@ export const formatToEther = (amount: string) => utils.formatEther(amount);
 export const formatToWei = (amount: string) => utils.parseEther(amount).toString();
 
 export const findProjectByName = (name: string): Project => {
-  // Project/Protocol list from Defillama - https://api.llama.fi/protocols
+  // Project/Protocol list derived from Defillama - https://api.llama.fi/protocols
   const found = projectListJson.find(
     (project) =>
       project.name.toLowerCase() == name.toLowerCase() ||
@@ -26,8 +26,10 @@ export const findProjectByName = (name: string): Project => {
   );
   if (!found) throw new Error(`No project found for name ${name}`);
 
+  if (!found.id) throw new Error(`No ID found for project ${name}`);
+
   return {
-    id: found.slug,
+    id: found.id,
     name: found.name,
     /* optionals */
     url: found.url,
