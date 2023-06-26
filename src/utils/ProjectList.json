@@ -71,7 +71,7 @@
     "twitter": "opensea",
     "parentProtocol": "parent#opensea",
     "slug": "opensea-seaport"
-  }
+  },
   {
     "id": "zksync",
     "name": "zkSync",
