@@ -87,17 +87,11 @@ const LiquityAdjust = ({
       <ListResponse
         title="Breakdown"
         data={[
-          'New Collateralization Ratio',
-          'something',
-          ...(isBorrow
-            ? [
-                ['Borrow Amount', borrowLUSD],
-                ['Deposit Collateral', _depositCollateral],
-              ]
-            : [
-                ['Repay Amount', repayLUSD],
-                ['Withdraw Collateral', _withdrawCollateral],
-              ]),
+          ['New Collateralization Ratio', 'something'],
+          isBorrow ? ['LUSD to Borrow', borrowLUSD] : ['LUSD to Repay', repayLUSD],
+          isBorrow
+            ? ['ETH to Deposit', _depositCollateral]
+            : ['ETH to Withdraw', _withdrawCollateral],
         ]}
         collapsible
       />
