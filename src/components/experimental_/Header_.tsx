@@ -39,9 +39,9 @@ const Header = () => {
   const { s: threadId } = router.query;
 
   return (
-    <div className="flex h-full w-full items-center justify-end">
+    <div className="flex h-full w-full items-center justify-between">
       {threadId ? (
-        <div className="space-y-2">
+        <div className="space-y-2 text-white/70 ">
           <div className="flex items-center gap-2">
             {threadId}
             <PrimaryActions />
