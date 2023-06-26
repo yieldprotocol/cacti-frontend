@@ -8,6 +8,7 @@ import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { FeedbackButton } from './FeedbackButton_';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
+import LiquityClose from './widgets/liquity/close/LiquityClose';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
@@ -127,6 +128,7 @@ const Widget = ({ widget }: { widget: Widget }) => {
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
+  widgets.set('liquity-close', <LiquityClose />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
