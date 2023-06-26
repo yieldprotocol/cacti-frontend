@@ -82,116 +82,92 @@ const Sidebar = () => {
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
 
-      {sidebarOpen && (
-        <div
-          className="
-      border-r-1 
-      flex  
-      h-full  
-      w-full 
-      transform 
-      flex-col 
-      items-start
-      justify-between
-      border-[1px] 
-       border-white  
-       border-opacity-10 
-       bg-[#031016] 
-       p-2
-        text-white/70 transition duration-500 ease-in-out sm:w-64
-        xl:translate-x-0
-        "
-        >
-          <div className="w-full p-4">
-            <div className="flex w-full items-center gap-2">
-              <MenuButton action={toggleSidebar} />
-
-              <div
-                className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-                onClick={() => reset()}
-              >
-                <div className="flex w-full justify-center text-xs text-white/70 ">
-                  <div>New Chat</div>
-                </div>
-              </div>
-            </div>
-
-            <ChatList />
-
-            <div className="mt-8 text-xs ">More</div>
-            <div className="py-4">
-              <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
-              <MoreItem
-                icon={<Cog8ToothIcon />}
-                label="Settings"
-                action={() => console.log('settings')}
-              />
-              {/* <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" /> */}
-              <MoreItem
-                icon={<DocumentIcon />}
-                label="Documentation"
-                action={() =>
-                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
-                }
-              />
-              <MoreItem
-                icon={<GithubIcon />}
-                label="Github"
-                action={() =>
-                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
-                }
-              />
-              <MoreItem
-                icon={<DiscordIcon />}
-                label="Discord"
-                action={() =>
-                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
-                }
-              />
-              <MoreItem
-                icon={<TwitterIcon />}
-                label="Twitter"
-                action={() =>
-                  navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
-                }
-              />
-            </div>
-
-            <div className="mt-8 flex items-center justify-between">
-              <div className="text-xs ">Developer </div>
-              {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
-            </div>
-            <div className="py-4">
-              <MoreItem
-                icon={<WrenchIcon />}
-                label="Open DevTools (alt-D) "
-                action={() => changeSetting(Setting.DEVELOPER_TOOLS, !developerTools)}
-              />
-              <MoreItem
-                icon={<ArrowTopRightOnSquareIcon />}
-                label="StoryBook"
-                action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
-              />
-              <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
-            </div>
-          </div>
-
-          <div className="w-full p-4">
-            <div className={`text-xs ${getStatusColor(connectionStatus)}`}>
-              <div className="flex gap-1">
-                <span className="animate-pulse">●</span>
-                <span>
-                  {connectionStatus === ReadyState.OPEN
-                    ? 'Ready'
-                    : connectionStatus === ReadyState.CLOSED
-                    ? 'Disconnected'
-                    : 'Wallet Not Connected'}
-                </span>
-              </div>
+      <div className="w-full p-4">
+        <div className="flex w-full items-center gap-2">
+          <div
+            className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
+            onClick={() => reset()}
+          >
+            <div className="flex w-full justify-center text-xs text-white/70 ">
+              <div>New Chat</div>
             </div>
           </div>
         </div>
-      )}
+
+        <ChatList />
+
+        <div className="mt-8 text-xs ">More</div>
+        <div className="py-4">
+          <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
+          <MoreItem
+            icon={<Cog8ToothIcon />}
+            label="Settings"
+            action={() => console.log('settings')}
+          />
+          {/* <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" /> */}
+          <MoreItem
+            icon={<DocumentIcon />}
+            label="Documentation"
+            action={() =>
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+            }
+          />
+          <MoreItem
+            icon={<GithubIcon />}
+            label="Github"
+            action={() =>
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+            }
+          />
+          <MoreItem
+            icon={<DiscordIcon />}
+            label="Discord"
+            action={() =>
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+            }
+          />
+          <MoreItem
+            icon={<TwitterIcon />}
+            label="Twitter"
+            action={() =>
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
+            }
+          />
+        </div>
+
+        <div className="mt-8 flex items-center justify-between">
+          <div className="text-xs ">Developer </div>
+          {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
+        </div>
+        <div className="py-4">
+          <MoreItem
+            icon={<WrenchIcon />}
+            label="Open DevTools (alt-D) "
+            action={() => changeSetting(Setting.DEVELOPER_TOOLS, !developerTools)}
+          />
+          <MoreItem
+            icon={<ArrowTopRightOnSquareIcon />}
+            label="StoryBook"
+            action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
+          />
+          <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
+        </div>
+      </div>
+
+      <div className="w-full p-4">
+        <div className={`text-xs ${getStatusColor(connectionStatus)}`}>
+          <div className="flex gap-1">
+            <span className="animate-pulse">●</span>
+            <span>
+              {connectionStatus === ReadyState.OPEN
+                ? 'Ready'
+                : connectionStatus === ReadyState.CLOSED
+                ? 'Disconnected'
+                : 'Wallet Not Connected'}
+            </span>
+          </div>
+        </div>
+      </div>
 
       {!sidebarOpen && (
         <div className="absolute left-4 top-4 p-2">
