@@ -85,13 +85,13 @@ const Sidebar = () => {
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
 
-      <div className="w-full p-4">
+      <div className="w-full p-4 text-white/70 ">
         <div className="flex w-full items-center gap-2">
           <div
             className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
             onClick={() => reset()}
           >
-            <div className="flex w-full justify-center text-xs text-white/70 ">
+            <div className="flex w-full justify-center text-xs ">
               <div>New Chat</div>
             </div>
           </div>
@@ -157,9 +157,12 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="w-full p-4">
-        <div className={`text-xs ${getStatusColor(connectionStatus)}`}>
-          <div className="flex gap-1">
+      <div className="flex h-full w-full p-4">
+        <div
+          className={`flex flex-col text-xs ${getStatusColor(connectionStatus)} justify-between`}
+        >
+          <div />
+          <div className="flex gap-2">
             <span className="animate-pulse">●</span>
             <span>
               {connectionStatus === ReadyState.OPEN

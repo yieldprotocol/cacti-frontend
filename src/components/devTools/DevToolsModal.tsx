@@ -19,7 +19,7 @@ interface Props {
 export const DevToolsModal = ({ openState, handleClose }: Props) => {
   return (
     <Transition.Root show={openState} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-[1000]" onClose={handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
