@@ -11,9 +11,9 @@ const TagItem = (props: { tag: string }) => {
 };
 
 export enum ImageVariant {
-  DEFAULT='default',
-  SHOWCASE='showcase',
-  COMPACT='compact',
+  DEFAULT = 'default',
+  SHOWCASE = 'showcase',
+  COMPACT = 'compact',
 }
 
 type ImageResponseProps = {
@@ -56,18 +56,12 @@ export const ImageResponse = (props: ImageResponseProps) => {
 
   return (
     <ResponseWrap>
-
       {variant === ImageVariant.SHOWCASE && (
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Image src={props.image} alt={props.title} />
           </div>
-          <div>
-            {props.children && <div> {props.children} </div>}
-
-            
-
-          </div>
+          <div>{props.children && <div> {props.children} </div>}</div>
         </div>
       )}
 
@@ -110,16 +104,13 @@ export const ImageResponse = (props: ImageResponseProps) => {
       )}
 
       {variant === ImageVariant.COMPACT && (
-        <div className='group relative w-full h-full'> 
-        <div  className='fixed'>
-        <Image src={props.image} alt={props.title} />
-        </div>
-        <div className="text-white/50 text-xs group-hover:text-white absolute ">
-          somehting
+        <div className="group relative h-full w-full">
+          <div className="fixed">
+            <Image src={props.image} alt={props.title} />
           </div>
+          <div className="absolute text-xs text-white/50 group-hover:text-white ">somehting</div>
         </div>
       )}
-
     </ResponseWrap>
   );
 };

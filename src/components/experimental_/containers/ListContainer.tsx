@@ -24,7 +24,7 @@ const ListContainer = ({ items, limitCols, showcaseFirst = true }: ListContainer
         } `}
       >
         {itemsToShow.map((widget, idx: number) => (
-          <Widget key={idx} widget={{ ...widget, variant : ImageVariant.DEFAULT  }} />
+          <Widget key={idx} widget={{ ...widget, variant: ImageVariant.DEFAULT }} />
         ))}
       </div>
     </>

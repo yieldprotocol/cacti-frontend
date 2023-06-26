@@ -1,9 +1,9 @@
+import { useAsset } from '@center-inc/react';
 import axios from 'axios';
 import { useQuery } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
-import { useAsset } from '@center-inc/react';
 
 interface NftAssetProps {
   network: string;
@@ -27,7 +27,11 @@ interface NftAssetTraitValueContainerProps {
   value: string;
 }
 
-const fetchNftAsset = async (nftAddress: string, tokenId: string, network:string=ETHEREUM_NETWORK ) => {
+const fetchNftAsset = async (
+  nftAddress: string,
+  tokenId: string,
+  network: string = ETHEREUM_NETWORK
+) => {
   return axios
     .get(`https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`, {
       headers: {
@@ -36,13 +40,12 @@ const fetchNftAsset = async (nftAddress: string, tokenId: string, network:string
       },
     })
     .then((res) => {
-      console.log( res.data )
+      console.log(res.data);
       return res.data;
     })
     .catch((err) => {
       console.log(err);
     });
-
 };
 
 export const NftAsset = ({
@@ -57,10 +60,10 @@ export const NftAsset = ({
 }: NftAssetProps) => {
   const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
 
-  const asset = useAsset( {
+  const asset = useAsset({
     network: network as any,
     address,
-    tokenId
+    tokenId,
   });
 
   console.log('ASSET:', asset);
@@ -69,8 +72,9 @@ export const NftAsset = ({
     data: nftData,
     error,
     isLoading,
-  } = useQuery(['NftAsset', address, tokenId], async () =>
-    fetchNftAsset(address, tokenId.toString(), network),
+  } = useQuery(
+    ['NftAsset', address, tokenId],
+    async () => fetchNftAsset(address, tokenId.toString(), network)
     // {enabled: variant === ImageVariant.SHOWCASE }
   );
 
@@ -89,11 +93,15 @@ export const NftAsset = ({
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
     >
-      {variant === ImageVariant.SHOWCASE && <div>{
-        nftData?.traits?.map((trait: any) => {
-          {trait }
-        })
-      }</div>}
+      {variant === ImageVariant.SHOWCASE && (
+        <div>
+          {nftData?.traits?.map((trait: any) => {
+            {
+              trait;
+            }
+          })}
+        </div>
+      )}
     </ImageResponse>
   );
 };

@@ -221,7 +221,7 @@ export const ActionResponse = ({
     approvalTransacting,
     submitTx,
     isSuccess,
-    disabled
+    disabled,
     // approveTx
   ]);
 

@@ -40,9 +40,7 @@ export default function App({
       />
       <QueryClientProvider client={queryClient}>
         <ConnectionWrapperDynamic session={session}>
-          <CenterProvider 
-            apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY} 
-          >
+          <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
             <ChatContextDynamic>
               <Component {...pageProps} />
             </ChatContextDynamic>

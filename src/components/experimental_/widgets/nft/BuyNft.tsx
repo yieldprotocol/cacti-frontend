@@ -134,7 +134,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const notForSale = listingData?.orders.length === 0;
   const isExpired = orderExpirationDate < Date.now() / 1000;
 
-  console.log( listingData );
+  console.log(listingData);
 
   // fetchFulfillParams possible states:
   // If listing Query failed, error is already shown, no concern to fetchFulfillParams
@@ -147,7 +147,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     retry: false,
     enabled: !!listingData && !notForSale && !isExpired,
   });
-  
+
   // console.log(fulfillmentData);
 
   const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
@@ -180,7 +180,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     isLoading,
   } = useQuery(['NftAsset', nftAddress, tokenId], async () => fetchNftAsset(nftAddress, tokenId));
 
-  console.log( nftData )
+  console.log(nftData);
 
   // useEffect(() => {
   //   if (txData) {
@@ -195,7 +195,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
 
   return (
     <ConnectFirst>
-      <HeaderResponse text={`Buy ${nftData?.name} NFT` } projectName={'Opensea Seaport'} />
+      <HeaderResponse text={`Buy ${nftData?.name} NFT`} projectName={'Opensea Seaport'} />
 
       <Widget
         widget={{
@@ -220,7 +220,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         // stepper?: boolean | undefined;
         // onSuccess = {() => refetchBal() }
       />
-
     </ConnectFirst>
 
     /* <div className="mb-2 flex flex-col items-center justify-center gap-1">
