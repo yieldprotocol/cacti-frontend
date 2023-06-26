@@ -46,20 +46,15 @@ const LiquityAdjust = ({
 
       const liquity = await EthersLiquity.connect(signer);
 
-      // handle repay
-      const { rawPopulatedTransaction: repayParams } = await liquity.populate.adjustTrove({
-        repayLUSD,
-        withdrawCollateral: _withdrawCollateral,
-      });
-
-      // handle borrow
-      const { rawPopulatedTransaction: borrowParams } = await liquity.populate.adjustTrove({
-        borrowLUSD,
-        depositCollateral: _depositCollateral,
-      });
-
-      // assess if borrow or repay
-      const params = isBorrow ? borrowParams : repayParams;
+      const { rawPopulatedTransaction: params } = isBorrow
+        ? await liquity.populate.adjustTrove({
+            borrowLUSD,
+            depositCollateral: _depositCollateral,
+          })
+        : await liquity.populate.adjustTrove({
+            repayLUSD,
+            withdrawCollateral: _withdrawCollateral,
+          });
 
       setLabel(
         isBorrow
