@@ -115,7 +115,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
 
   const tx = useMemo(
     (): TxBasicParams => ({
-      address: SWAP_ROUTER_02_ADDRESSES(chainId),
+      address: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
       abi: SwapRouter02Abi,
       functionName: 'exactInputSingle',
       args: [params],
