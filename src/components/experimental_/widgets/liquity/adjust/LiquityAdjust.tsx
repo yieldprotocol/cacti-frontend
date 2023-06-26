@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Decimalish, TroveAdjustmentParams } from '@liquity/lib-base';
 import { EthersLiquity } from '@liquity/lib-ethers';
+import { validateAndParseAddress } from '@uniswap/sdk-core';
 import { UnsignedTransaction } from 'ethers/lib/utils.js';
 import {
   ActionResponse,
@@ -38,9 +39,9 @@ const LiquityAdjust = ({
   const repayLUSD = handleInput(repayAmount);
   const _withdrawCollateral = handleInput(withdrawCollateral);
   const _depositCollateral = handleInput(depositCollateral);
-  const isBorrow = !!borrowLUSD || !!_depositCollateral;
-  const [label, setLabel] = useState<string>();
 
+  const [validLiquityParams, setValidLiquityParams] = useState<TroveAdjustmentParams<Decimalish>>();
+  const [label, setLabel] = useState<string>();
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
 
   useEffect(() => {
@@ -65,22 +66,23 @@ const LiquityAdjust = ({
         validParams.withdrawCollateral = 0; // TODO handle more gracefully to identify what user actually wants to do
       }
 
+      setValidLiquityParams(validParams);
       const { rawPopulatedTransaction: params } = await liquity.populate.adjustTrove(validParams);
       setSendParams(params);
 
-      // handle repay label
+      // handle labels for each param
       const labels: { [action: string]: string } = {};
+
       if (repayLUSD) labels.repayLUSD = `Repay ${repayLUSD} ${'LUSD'}`;
       if (_withdrawCollateral)
         labels.withdrawCollateral = `Withdraw ${_withdrawCollateral} ${'ETH'}`;
       if (borrowLUSD) labels.borrowLUSD = `Borrow ${borrowLUSD} ${'LUSD'}`;
       if (_depositCollateral) labels.depositCollateral = `Deposit ${_depositCollateral} ${'ETH'}`;
-      const label = Object.values(labels).join(' and ');
 
+      const label = Object.values(labels).join(' and ');
       setLabel(label);
-      setSendParams(params);
     })();
-  }, [_depositCollateral, _withdrawCollateral, borrowLUSD, isBorrow, repayLUSD, signer]);
+  }, [_depositCollateral, _withdrawCollateral, borrowLUSD, repayLUSD, signer]);
 
   return (
     <>
@@ -89,18 +91,26 @@ const LiquityAdjust = ({
         projectName="Liquity"
         altUrl={`https://www.liquity.org/`}
       />
-      {borrowAmount && <DoubleLineResponse tokenSymbol={'LUSD'} amount={borrowLUSD} />}
-      {repayAmount && <DoubleLineResponse tokenSymbol={'LUSD'} amount={repayLUSD} />}
-      {depositCollateral && <DoubleLineResponse tokenSymbol={'ETH'} amount={borrowLUSD} />}
-      {withdrawCollateral && <DoubleLineResponse tokenSymbol={'ETH'} amount={_depositCollateral} />}
+      {validLiquityParams?.borrowLUSD && (
+        <DoubleLineResponse tokenSymbol={'LUSD'} amount={validLiquityParams.borrowLUSD} />
+      )}
+      {validLiquityParams?.repayLUSD && (
+        <DoubleLineResponse tokenSymbol={'LUSD'} amount={validLiquityParams.repayLUSD} />
+      )}
+      {validLiquityParams?.depositCollateral && (
+        <DoubleLineResponse tokenSymbol={'ETH'} amount={validLiquityParams.depositCollateral} />
+      )}
+      {validLiquityParams?.withdrawCollateral && (
+        <DoubleLineResponse tokenSymbol={'ETH'} amount={validLiquityParams?.withdrawCollateral} />
+      )}
       <ListResponse
         title="Breakdown"
         data={[
           ['New Collateralization Ratio', 'something'],
-          isBorrow ? ['LUSD to Borrow', borrowLUSD] : ['LUSD to Repay', repayLUSD],
-          isBorrow
-            ? ['ETH to Deposit', _depositCollateral]
-            : ['ETH to Withdraw', _withdrawCollateral],
+          ['Borrow LUSD', validLiquityParams?.borrowLUSD],
+          ['Repay LUSD', validLiquityParams?.repayLUSD],
+          ['Deposit ETH', validLiquityParams?.depositCollateral],
+          ['Withdraw ETH', validLiquityParams?.withdrawCollateral],
         ]}
         collapsible
       />
