@@ -108,7 +108,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     (): ApprovalBasicParams => ({
       tokenAddress: tokenIn?.address!,
       approvalAmount: amountIn,
-      spender: SWAP_ROUTER_02_ADDRESSES(chainId),
+      spender: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
     }),
     [amountIn, chainId, tokenIn?.address]
   );
