@@ -17,17 +17,12 @@ export enum ImageVariant {
 }
 
 type ImageResponseProps = {
-  
   image?: string;
   imageTags?: string[];
-  
   title?: string;
   subTitle?: string;
-  
   imageLink?: string;
-
   description?: string;
-
   variant?: ImageVariant;
   children?: React.ReactNode;
 };
@@ -57,7 +52,7 @@ export const ImageResponse = (props: ImageResponseProps) => {
 
   const Title = () => (
     <ResponseTitle>
-      <div className="">
+      <div>
         {props.title}
         <div className="text-xs text-white/50">{props.subTitle}</div>
       </div>
@@ -78,7 +73,8 @@ export const ImageResponse = (props: ImageResponseProps) => {
           <div>
             <Image src={props.image} alt={props.title} />
           </div>
-          <div className="p2">
+
+          <div>
             {props.title && (
               <Title />
             )}
@@ -92,6 +88,7 @@ export const ImageResponse = (props: ImageResponseProps) => {
             {props.description && <div> {props.description} </div>}
             {props.children && <div> {props.children} </div>}
           </div>
+
         </div>
       )}
 
@@ -110,13 +107,6 @@ export const ImageResponse = (props: ImageResponseProps) => {
           )}
           {props.description && <div> {props.description} </div>}
           {props.children && <div> {props.children} </div>}
-
-          {/* {(props.actionLabel || props.actionValue) && ( // if has actionLbel or actionValue
-            <div className="flex justify-between pt-4">
-              <div>{props.actionLabel}</div>
-              <div>{props.actionValue}</div>
-            </div>
-          )} */}
         </div>
       )}
 
