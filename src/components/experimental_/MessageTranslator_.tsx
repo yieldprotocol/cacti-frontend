@@ -7,6 +7,7 @@ import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { composeFromString } from '../cactiComponents/tools/compose';
 import { FeedbackButton } from './FeedbackButton_';
+import LiquityAdjust from './widgets/liquity/adjust/LiquityAdjust';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
@@ -126,6 +127,15 @@ const Widget = ({ widget }: { widget: Widget }) => {
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
+  );
+  widgets.set(
+    'liquity-adjust',
+    <LiquityAdjust
+      borrowAmount={parsedArgs[0]}
+      repayAmount={parsedArgs[1]}
+      depositCollateral={parsedArgs[2]}
+      withdrawCollateral={parsedArgs[3]}
+    />
   );
 
   /* If available, return the widget in the widgets map */
