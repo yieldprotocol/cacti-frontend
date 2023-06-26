@@ -73,7 +73,6 @@ export const ImageResponse = (props: ImageResponseProps) => {
           <div>
             <Image src={props.image} alt={props.title} />
           </div>
-
           <div>
             {props.title && (
               <Title />
@@ -88,7 +87,6 @@ export const ImageResponse = (props: ImageResponseProps) => {
             {props.description && <div> {props.description} </div>}
             {props.children && <div> {props.children} </div>}
           </div>
-
         </div>
       )}
 

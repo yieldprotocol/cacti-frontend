@@ -92,17 +92,17 @@ export const NftAsset = ({
       subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
-    />
-    //   {variant === ImageVariant.SHOWCASE && (
-    //     <div>
-    //       {nftData?.traits?.map((trait: any) => {
-    //         {
-    //           trait;
-    //         }
-    //       })}
-    //     </div>
-    //   )}
-    // </ImageResponse>
+    >
+      {variant === ImageVariant.SHOWCASE && (
+        <div>
+          {nftData?.traits?.map((trait: any) => {
+            {
+              trait;
+            }
+          })}
+        </div>
+      )}
+    </ImageResponse>
   );
 };
 
