@@ -17,17 +17,18 @@ export enum ImageVariant {
 }
 
 type ImageResponseProps = {
-  actionLabel?: string;
-  actionValue?: string;
-  description?: string;
+  
   image?: string;
   imageTags?: string[];
+  
   title?: string;
-  imageLink?: string;
   subTitle?: string;
+  
+  imageLink?: string;
+
+  description?: string;
 
   variant?: ImageVariant;
-
   children?: React.ReactNode;
 };
 
@@ -54,36 +55,52 @@ export const ImageResponse = (props: ImageResponseProps) => {
   const tagList = props.imageTags || [];
   const variant = props.variant || ImageVariant.DEFAULT;
 
+  const Title = () => (
+    <ResponseTitle>
+      <div className="">
+        {props.title}
+        <div className="text-xs text-white/50">{props.subTitle}</div>
+      </div>
+
+      {props.imageLink && ( // if has external link
+        <div onClick={() => navigateToExternalUrl(props.imageLink!)}>
+          <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
+        </div>
+      )}
+    </ResponseTitle>
+  );
+
   return (
+
     <ResponseWrap>
-      {variant === ImageVariant.SHOWCASE && (
+      {variant === ImageVariant.SHOWCASE && ( // Showcase Item (horizontal orientation)
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Image src={props.image} alt={props.title} />
           </div>
-          <div>{props.children && <div> {props.children} </div>}</div>
+          <div className="p2">
+            {props.title && (
+              <Title />
+            )}
+            {tagList.length > 1 && ( // if has tags
+              <div className="space-x-2 space-y-1 py-2 ">
+                {tagList.map((tag: string) => (
+                  <TagItem tag={tag} key={tag} />
+                ))}
+              </div>
+            )}
+            {props.description && <div> {props.description} </div>}
+            {props.children && <div> {props.children} </div>}
+          </div>
         </div>
       )}
 
-      {variant === ImageVariant.DEFAULT && (
+      {variant === ImageVariant.DEFAULT && ( // default Image (vertical orientation)
         <div>
           {props.title && ( // if has title
-            <ResponseTitle>
-              <div className="">
-                {props.title}
-                <div className="text-xs text-white/50">{props.subTitle}</div>
-              </div>
-
-              {props.imageLink && ( // if has external link
-                <div onClick={() => navigateToExternalUrl(props.imageLink!)}>
-                  <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
-                </div>
-              )}
-            </ResponseTitle>
+            <Title />
           )}
-
           <Image src={props.image} alt={props.title} />
-
           {tagList.length > 1 && ( // if has tags
             <div className="space-x-2 space-y-1 py-2 ">
               {tagList.map((tag: string) => (
@@ -91,19 +108,19 @@ export const ImageResponse = (props: ImageResponseProps) => {
               ))}
             </div>
           )}
-
           {props.description && <div> {props.description} </div>}
+          {props.children && <div> {props.children} </div>}
 
-          {(props.actionLabel || props.actionValue) && ( // if has actionLbel or actionValue
+          {/* {(props.actionLabel || props.actionValue) && ( // if has actionLbel or actionValue
             <div className="flex justify-between pt-4">
               <div>{props.actionLabel}</div>
               <div>{props.actionValue}</div>
             </div>
-          )}
+          )} */}
         </div>
       )}
 
-      {variant === ImageVariant.COMPACT && (
+      {variant === ImageVariant.COMPACT && ( // simply just the image, with overlay on hover
         <div className="group relative h-full w-full">
           <div className="fixed">
             <Image src={props.image} alt={props.title} />

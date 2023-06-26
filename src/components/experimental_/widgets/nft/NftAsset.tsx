@@ -83,8 +83,8 @@ export const NftAsset = ({
 
   return (
     <ImageResponse
-      actionLabel={network}
-      actionValue={listPrice}
+      // actionLabel={network}
+      // actionValue={listPrice}
       // description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       image={previewImageUrl}
       // imageTags={['some tag', 'Another tag']}
@@ -92,17 +92,17 @@ export const NftAsset = ({
       subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
-    >
-      {variant === ImageVariant.SHOWCASE && (
-        <div>
-          {nftData?.traits?.map((trait: any) => {
-            {
-              trait;
-            }
-          })}
-        </div>
-      )}
-    </ImageResponse>
+    />
+    //   {variant === ImageVariant.SHOWCASE && (
+    //     <div>
+    //       {nftData?.traits?.map((trait: any) => {
+    //         {
+    //           trait;
+    //         }
+    //       })}
+    //     </div>
+    //   )}
+    // </ImageResponse>
   );
 };
 
