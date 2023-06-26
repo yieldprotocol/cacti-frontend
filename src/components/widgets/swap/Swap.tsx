@@ -89,7 +89,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
   };
 
   const { config: swapConfig } = usePrepareContractWrite({
-    address: SWAP_ROUTER_02_ADDRESSES(chainId),
+    address: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
     abi: SwapRouter02Abi,
     functionName: 'exactInputSingle',
     args: [params],
@@ -101,7 +101,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
   const { hasBalance, hasAllowance } = useTokenApproval(
     tokenIn?.address as `0x${string}`,
     amountIn,
-    SWAP_ROUTER_02_ADDRESSES(chainId)
+    SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`
   );
 
   const { isSuccess, isError, isLoading, submitTx, isPrepared, error, hash, isPendingConfirm } =
@@ -158,7 +158,7 @@ const Swap = ({ tokenInSymbol, tokenOutSymbol, amountIn }: SwapProps) => {
           {...{
             token: tokenIn!,
             amount: amountIn,
-            spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId),
+            spenderAddress: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
           }}
         />
       ) : (
