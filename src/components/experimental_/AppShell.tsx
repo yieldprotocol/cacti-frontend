@@ -33,7 +33,9 @@ function SidebarContainer({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
+            
             <div className="fixed inset-0 bg-black/10 backdrop-blur-sm" />
+
           </Transition.Child>
 
           <div className="fixed inset-0 flex">
@@ -74,7 +76,7 @@ function SidebarContainer({
       </Transition.Root>
 
       {/* ---------------------------------------Static sidebar for desktop */}
-      <div className="hidden border-r-[1px] border-white/20 bg-black/90 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
+      <div className="hidden border-r-[1px] border-white/20 bg-black/30 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto  px-2 pt-6">
           {/* <Logo /> */}

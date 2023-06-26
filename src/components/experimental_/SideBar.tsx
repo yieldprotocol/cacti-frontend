@@ -96,7 +96,7 @@ const Sidebar = () => {
 
         <ChatList />
 
-        <div className="mt-8 text-xs ">More</div>
+        <div className="mt-8 text-xs text-white/70 ">More</div>
         <div className="py-4">
           <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
           <MoreItem
@@ -135,7 +135,7 @@ const Sidebar = () => {
           />
         </div>
 
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-8 flex items-center justify-between text-white/70">
           <div className="text-xs ">Developer </div>
           {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
         </div>
