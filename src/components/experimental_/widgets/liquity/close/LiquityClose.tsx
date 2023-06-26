@@ -9,7 +9,6 @@ import {
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import useSigner from '@/hooks/useSigner';
-import { cleanValue } from '@/utils';
 
 interface LiquityCloseData {
   collateral: string;
@@ -44,12 +43,7 @@ const LiquityClose = () => {
         projectName="Liquity"
         altUrl={`https://www.liquity.org/`}
       />
-      <SingleLineResponse
-        tokenSymbol={'LUSD'}
-        tokenValueInUsd={1} // Provide the actual USD value for the borrow token
-        amount={data?.debt} // Set the amount to 0 as it is not applicable for closing a trove
-        amountValueInUsd={data?.debt} // Set the amount value to 0 as it is not applicable for closing a trove
-      />
+      <SingleLineResponse tokenSymbol={'LUSD'} />
       <ListResponse
         title="Breakdown"
         data={[
