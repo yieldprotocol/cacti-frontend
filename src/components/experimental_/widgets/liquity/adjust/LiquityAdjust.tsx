@@ -107,11 +107,17 @@ const LiquityAdjust = ({
         title="Breakdown"
         data={[
           ['New Collateralization Ratio', 'something'],
-          ['Borrow LUSD', validLiquityParams?.borrowLUSD],
-          ['Repay LUSD', validLiquityParams?.repayLUSD],
-          ['Deposit ETH', validLiquityParams?.depositCollateral],
-          ['Withdraw ETH', validLiquityParams?.withdrawCollateral],
-        ]}
+          validLiquityParams?.borrowLUSD && ['Borrow LUSD', validLiquityParams?.borrowLUSD],
+          validLiquityParams?.repayLUSD && ['Repay LUSD', validLiquityParams?.repayLUSD],
+          validLiquityParams?.depositCollateral && [
+            'Deposit ETH',
+            validLiquityParams?.depositCollateral,
+          ],
+          validLiquityParams?.withdrawCollateral && [
+            'Withdraw ETH',
+            validLiquityParams?.withdrawCollateral,
+          ],
+        ].filter(Boolean)}
         collapsible
       />
       <ActionResponse
