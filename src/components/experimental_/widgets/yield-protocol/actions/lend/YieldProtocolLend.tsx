@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 import {
   ActionResponse,
@@ -51,13 +51,21 @@ const YieldProtocolLend = ({
   const { value: amount } = useInput(inputAmount, tokenInSymbol);
 
   /***************INPUTS******************************************/
-
-  const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
-  const [txParams, setTxParams] = useState<TxBasicParams>();
-  const [data, setData] = useState<YieldLendRes>();
-
   // Yield Protocol specific spender handling
   const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+
+  const approvalParams = useMemo((): ApprovalBasicParams | undefined => {
+    if (!tokenIn || !amount || !ladle) return undefined;
+
+    return {
+      tokenAddress: tokenIn.address,
+      spender: ladle,
+      approvalAmount: amount,
+    };
+  }, [amount, ladle, tokenIn]);
+
+  const [txParams, setTxParams] = useState<TxBasicParams>();
+  const [data, setData] = useState<YieldLendRes>();
 
   // set tx params (specific to yield protocol)
   useEffect(() => {
@@ -65,13 +73,6 @@ const YieldProtocolLend = ({
       if (!tokenIn) return console.error('tokenIn is undefined');
       if (!amount) return console.error('amount is undefined');
       if (!ladle) return console.error('ladle is undefined');
-
-      const approvalParams: ApprovalBasicParams = {
-        tokenAddress: tokenIn.address,
-        spender: ladle,
-        approvalAmount: amount,
-      };
-      setApprovalParams(approvalParams);
 
       const baseAddress = tokenIn.address;
       const seriesEntities = SERIES_ENTITIES.get(chainId);
@@ -86,7 +87,7 @@ const YieldProtocolLend = ({
       const poolAddress = seriesEntity?.poolAddress;
       if (!poolAddress) return;
 
-      const lendCallData = lend(address, amount!, baseAddress, poolAddress, tokenInIsETH);
+      const lendCallData = lend(address, amount, baseAddress, poolAddress, tokenInIsETH);
 
       setTxParams(lendCallData ? await getTxParams(lendCallData, ladle) : undefined);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
@@ -109,9 +110,9 @@ const YieldProtocolLend = ({
       <HeaderResponse text={label} projectName={projectName} />
       <SingleLineResponse
         tokenSymbol={tokenInSymbol}
-        tokenValueInUsd={100}
+        tokenValueInUsd={100} // TODO handle actual
         amount={amount}
-        amountValueInUsd={100}
+        amountValueInUsd={100} // TODO handle actual
       />
       <ListResponse
         title="Breakdown"
