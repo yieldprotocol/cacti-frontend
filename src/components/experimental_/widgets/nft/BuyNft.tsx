@@ -69,9 +69,8 @@ const fetchFulfillParams = async (
 };
 
 const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
-  axios.defaults.baseURL = `https://api.center.dev/v1/${ETHEREUM_NETWORK}`;
   return axios
-    .get(`${nftAddress}/${tokenID}`, {
+    .get(`$https://api.center.dev/v1/${ETHEREUM_NETWORK}/${nftAddress}/${tokenID}`, {
       headers: {
         Accept: 'application/json',
         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
