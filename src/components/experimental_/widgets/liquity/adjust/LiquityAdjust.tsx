@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Decimalish, TroveAdjustmentParams } from '@liquity/lib-base';
 import { EthersLiquity } from '@liquity/lib-ethers';
-import { validateAndParseAddress } from '@uniswap/sdk-core';
 import { UnsignedTransaction } from 'ethers/lib/utils.js';
 import {
   ActionResponse,
