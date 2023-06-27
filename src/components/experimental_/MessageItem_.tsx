@@ -36,6 +36,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
     <div className={`flex w-full flex-col`}>
       {actor === 'bot' && <MessageTranslator message={message} />}
       {actor === 'system' && <SystemMessage message={payload} />}
+      {actor === 'function' && <SystemMessage message={payload} />}
       {isUser && (
         <UserMessage
           {...{
