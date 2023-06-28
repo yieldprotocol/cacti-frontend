@@ -7,7 +7,7 @@ import Cactus3 from './CactiImages/Cactus3';
 import cactiImage from './CactiImages/cacti.png';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
-  return <div className="flex flex-col gap-y-5">{children}</div>;
+  return <div className="flex flex-col items-center gap-y-5 ">{children}</div>;
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
@@ -15,12 +15,11 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
   return (
     <div
       className={`
-      max-w-[250px] rounded-lg border-[1px] border-white
-      border-opacity-10 p-4 text-center text-sm text-white
-      text-opacity-70 md:p-2 ${onClickClasses}`}
+      max-w-[250px] rounded-lg border-[1px] border-white/5 p-4 text-center text-sm
+      text-white text-opacity-70 md:p-2 ${onClickClasses} center w-full`}
       onClick={onClick}
     >
-      <p className="flex min-h-[48px] items-center justify-center">{children}</p>
+      <p className="m-0 flex min-h-[48px] items-center justify-center">{children}</p>
     </div>
   );
 };
@@ -32,10 +31,10 @@ const WelcomeBoxSubtitle = ({ children }: { children: ReactNode }) => {
 const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
-    <div className="grid h-full place-items-center">
+    <div className="h-full place-items-center ">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 pb-4">
         <Image src={cactiImage} alt="CactiChat" className="mx-auto" width={400} height={300} />
-        <div className="flex justify-center gap-x-5">
+        <div className="grid grid-cols-1 gap-5 px-2 sm:grid-cols-3">
           <WelcomeColumn>
             <Cactus1 className="h-16" />
             <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>

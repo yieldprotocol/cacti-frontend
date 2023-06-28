@@ -12,7 +12,9 @@ import axios from 'axios';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
+import { goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
@@ -45,15 +47,8 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
   } as Chain;
 
   const { chains, provider } = configureChains(
-    [mainnetFork],
-    [
-      jsonRpcProvider({
-        priority: 0,
-        rpc: (chain) => ({
-          http: forkUrl,
-        }),
-      }),
-    ]
+    [mainnetFork, goerli, zkSyncTestnet],
+    [publicProvider()]
   );
 
   const { connectors } = getDefaultWallets({

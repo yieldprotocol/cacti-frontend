@@ -36,7 +36,7 @@ const Avatar = ({ actor }: ActorProps) => {
           <ClipboardDocumentListIcon className="h-4 w-4" />
         </div>
       ) : (
-        <div className="center h-full w-full bg-white bg-opacity-10 ">
+        <div className="center h-full w-full">
           <CactusAvatar color={'#ffffff70'} />
         </div>
         // <img src={botAvatar} alt="bot avatar" />

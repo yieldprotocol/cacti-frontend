@@ -39,28 +39,22 @@ const Header = () => {
   const { s: threadId } = router.query;
 
   return (
-    // <div
-    //   className={`fixed right-0 inline-flex w-full items-center p-4  ${
-    //     threadId ? 'bg-white bg-opacity-5 ' : ''
-    //   } `}
-    // >
-    <div className={`fixed right-0 inline-flex w-full items-center p-4`}>
-      <div className={`ml-[250px] flex justify-between px-4 py-2 text-white/70 `}>
+    <div className="flex h-full w-full items-center justify-between gap-2 lg:pl-[15rem]">
+      <div className="space-y-2 text-white/70">
         {threadId ? (
-          <div className="space-y-2">
+          <>
             <div className="flex items-center gap-2">
               {threadId}
               <PrimaryActions />
               <SecondaryActions />
             </div>
             <div className="text-xs text-white/30"> Last edit: yesterday </div>
-          </div>
+          </>
         ) : null}
-
-        <div className="fixed right-0 top-0 z-10 mr-4 mt-4 inline-flex gap-3">
-          <CustomConnectButton />
-          {/* <SettingsDropdown /> */}
-        </div>
+      </div>
+      <div className="">
+        <CustomConnectButton />
+        {/* <SettingsDropdown /> */}
       </div>
     </div>
   );
