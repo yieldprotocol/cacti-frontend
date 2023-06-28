@@ -40,7 +40,7 @@ export const MessageList = () => {
   return (
     <div className="h-full">
       {messages.map((message, i) => {
-        if (!showDebugMessages && message.actor == 'system') {
+        if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
           return <React.Fragment key={message.messageId} />;
         }
         return (

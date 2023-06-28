@@ -93,7 +93,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   return (
     <SharedStateContextProvider>
-      <div className={`grid-gap-2 mb-8 grid grid-cols-12 py-3 `}>
+      <div className={`grid-gap-2 mb-8 grid grid-cols-12 pb-3`}>
         <div className="col-span-2 py-4">
           <div className="float-right">
             <Avatar actor="bot" />
@@ -185,7 +185,7 @@ export const Widget = (props: WidgetProps) => {
       return <>{Widgetize(props.widget)}</>;
     } catch (e) {
       return (
-        <div className="inline-block bg-slate-500 p-5 text-white">
+        <div className="inline-block bg-slate-500 text-white">
           Widget not implemented for <code>{`${fnName}(${params})`}</code>
         </div>
       );
