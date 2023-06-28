@@ -13,6 +13,7 @@ import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
+import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
@@ -175,6 +176,7 @@ export const Widget = (props: WidgetProps) => {
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
+  widgets.set('liquity-close', <LiquityClose />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
