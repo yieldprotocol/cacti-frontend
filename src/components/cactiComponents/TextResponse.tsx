@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
@@ -11,15 +10,15 @@ import { ResponseTitle, ResponseWrap } from './helpers/layout';
  */
 export const TextResponse = (props: any) => {
   return (
-    <ResponseWrap>
+    <ResponseWrap classNameExtra="border-none">
       {props.title && !props.collapsible && (
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
-          <div className="p-2 text-white text-opacity-70">{props.text}</div>
+          <div className=" text-white text-opacity-70">{props.text}</div>
         </>
       )}
 
-      {!props.title && <div className="p-2 text-base text-white text-opacity-70">{props.text}</div>}
+      {!props.title && <div className=" text-base text-white text-opacity-70">{props.text}</div>}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
@@ -32,7 +31,7 @@ export const TextResponse = (props: any) => {
                 </ResponseTitle>
               </Disclosure.Button>
 
-              <Disclosure.Panel as="div" className="p-2 text-white text-opacity-70">
+              <Disclosure.Panel as="div" className=" text-white text-opacity-70">
                 {props.text}
               </Disclosure.Panel>
             </>

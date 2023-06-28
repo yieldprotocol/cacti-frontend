@@ -20,8 +20,10 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
   const signer = useSigner();
   const { data: borrowToken } = useToken('LUSD');
   const { data: collateralToken } = useToken('ETH');
-  const borrowLUSD = +(cleanValue(borrowAmount.toString(), borrowToken?.decimals) || 0);
-  const depositCollateral = +(cleanValue(collateralAmount.toString(), borrowToken?.decimals) || 0);
+  const borrowCleaned = cleanValue(borrowAmount, borrowToken?.decimals);
+  const collateralCleaned = cleanValue(collateralAmount, collateralToken?.decimals);
+  const borrowLUSD = isNaN(+borrowCleaned!) ? 0 : +borrowCleaned!;
+  const depositCollateral = isNaN(+collateralCleaned!) ? 0 : +collateralCleaned!;
 
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
 

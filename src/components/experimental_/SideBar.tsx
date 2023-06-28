@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
+import { navigateToExternalUrl } from '@/utils';
 import { DevToolsModal } from '../devTools/DevToolsModal';
 import ChatList from './ChatList';
 
@@ -74,10 +75,6 @@ const Sidebar = () => {
     window.location.assign(paramString ? `/?${paramString}` : '/');
   };
 
-  const toExternalUrl = (url: URL) => {
-    window.open(url, '_blank');
-  };
-
   return (
     <>
       <DevToolsModal
@@ -112,28 +109,28 @@ const Sidebar = () => {
             icon={<DocumentIcon />}
             label="Documentation"
             action={() =>
-              toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
             }
           />
           <MoreItem
             icon={<GithubIcon />}
             label="Github"
             action={() =>
-              toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
             }
           />
           <MoreItem
             icon={<DiscordIcon />}
             label="Discord"
             action={() =>
-              toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
             }
           />
           <MoreItem
             icon={<TwitterIcon />}
             label="Twitter"
             action={() =>
-              toExternalUrl(new URL('https://github.com/yieldprotocol/chatweb3-backend'))
+              navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')
             }
           />
         </div>
@@ -151,7 +148,7 @@ const Sidebar = () => {
           <MoreItem
             icon={<ArrowTopRightOnSquareIcon />}
             label="StoryBook"
-            action={() => toExternalUrl(new URL('https://cacti-storybook.netlify.app/'))}
+            action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
           />
           <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
         </div>
