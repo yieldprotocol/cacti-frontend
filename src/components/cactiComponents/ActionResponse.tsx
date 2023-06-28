@@ -48,6 +48,18 @@ type Action = {
   fn: (overrideConfig?: undefined) => any;
 };
 
+export type ActionResponseProps = {
+  txParams: TxBasicParams | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+  sendParams?: UnsignedTransaction | undefined;
+  label?: string;
+  disabled?: boolean;
+  stepper?: boolean;
+  onSuccess?: () => JSX.Element | string;
+  // assertCallParams?: AssertCallBasicParams;
+  // altAction?: () => Promise<any>;
+};
+
 /**
  * Action Response
  * Includes: Label, action, state, preparedContractWrite
@@ -56,25 +68,10 @@ export const ActionResponse = ({
   txParams,
   approvalParams,
   sendParams,
-  // onSuccess,
   label: label_,
   disabled,
-
   stepper,
-}: // assertCallParams
-// altAction,
-{
-  txParams: TxBasicParams | undefined;
-  approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: UnsignedTransaction | undefined;
-  label?: string;
-  disabled?: boolean;
-  stepper?: boolean;
-
-  onSuccess?: () => JSX.Element | string;
-  // assertCallParams?: AssertCallBasicParams;
-  // altAction?: () => Promise<any>;
-}) => {
+}: ActionResponseProps) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 

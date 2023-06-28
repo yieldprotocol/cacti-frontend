@@ -1,12 +1,16 @@
 import { createElement } from 'react';
-import * as cactiComponents from '@/components/cactiComponents';
-import { CactiResponse } from '..';
+
 import { ResponseRow } from '../helpers/layout';
+
+import { CactiResponse, CactiResponseProps } from '@/components/cactiComponents';
+import * as cactiComponents from '@/components/cactiComponents';
+
+import { cactiComponentMap } from '@/components/cactiComponents';
 
 type CactiStringComponent = {
   response: CactiResponse;
-  props?: any;
-  children?: any;
+  props?: CactiResponseProps;
+  children?: React.ReactNode;
 };
 
 /**
@@ -14,7 +18,7 @@ type CactiStringComponent = {
  * @param inputString string `[{"componentType":"TextResponses", "props": {"text":"Hello World" } }]`
  * @returns React.ReactElement
  */
-export const composeFromString = (inputString: string): React.ReactElement => {
+export const composeFromString = (inputString: string): JSX.Element => {
   try {
     // Parse the array of strings describing each component.
     const parsedItems = JSON.parse(inputString) as CactiStringComponent[];
@@ -22,13 +26,13 @@ export const composeFromString = (inputString: string): React.ReactElement => {
     // Create a component for each component desciption in the array
     const components = parsedItems.map((parsedItem: CactiStringComponent) => {
       // Case 1: If we have a component that matches a cactiComponent type, create a component with it
-      if (cactiComponents[parsedItem.response]) {
-        return createElement(cactiComponents[parsedItem.response], parsedItem.props);
+      if (cactiComponentMap.has(parsedItem.response)) {
+        return createElement(cactiComponentMap.get(parsedItem.response)!, parsedItem.props);
       }
       // Case 2: If we have a nested array of components, create single line of components including all those elements
       if (Array.isArray(parsedItem)) {
-        const singleLineOfComponents = parsedItem.map((item) => {
-          return createElement(cactiComponents[item.response as CactiResponse], {
+        const singleLineOfComponents = parsedItem.map((item: CactiStringComponent) => {
+          return createElement(cactiComponentMap.get(item.response)!, {
             ...item.props,
           });
         });
