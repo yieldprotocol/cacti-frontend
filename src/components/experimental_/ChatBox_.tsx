@@ -20,7 +20,7 @@ const ChatBox = () => {
   useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-full w-full flex-col gap-3">
       {/* chat area */}
       <div className="flex grow items-center justify-center overflow-auto pt-5">
         {ready ? messageContentComponent : <Spinner />}
@@ -30,6 +30,9 @@ const ChatBox = () => {
       <div className="fixed inset-x-0 bottom-0 flex w-full items-center bg-white/[0.05] px-2 py-4 backdrop-blur-xl lg:py-6">
         <div className="hidden lg:block lg:w-[15rem]" />
         <MessageInput />
+      </div>
+      <div className="w-full py-4 lg:py-6">
+        <div className="h-14" />
       </div>
     </div>
   );

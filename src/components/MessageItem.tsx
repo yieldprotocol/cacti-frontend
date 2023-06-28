@@ -53,6 +53,8 @@ export const MessageItem = ({ message }: { message: Message }) => {
           <MessageTranslator message={payload} />
         ) : actor === 'system' ? (
           <SystemMessage message={payload} />
+        ) : actor === 'function' ? (
+          <SystemMessage message={payload} />
         ) : (
           <UserMessage
             {...{
