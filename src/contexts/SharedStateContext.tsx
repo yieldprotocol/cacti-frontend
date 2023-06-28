@@ -1,13 +1,13 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from 'react';
 
-export interface ListItem {
-  name: string;
-  params: string;
-}
+// export interface ListItem {
+//   name: string;
+//   params: string;
+// }
 
 type SharedStateContextType = {
-  items: ListItem[];
-  setItems: Dispatch<SetStateAction<ListItem[]>>;
+  items: Widget[];
+  setItems: Dispatch<SetStateAction<Widget[]>>;
   prefix: string;
   setPrefix: Dispatch<SetStateAction<string>>;
   suffix: string;
@@ -17,7 +17,7 @@ type SharedStateContextType = {
 };
 
 const initialState = {
-  items: [] as ListItem[],
+  items: [] as Widget[],
   setItems: () => {
     throw new Error('setItems must be used within SharedStateContext');
   },

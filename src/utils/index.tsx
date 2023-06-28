@@ -83,5 +83,9 @@ export const cleanValue = (input: string | undefined, decimals: number = 18) => 
 export const abbreviateHash = (addr: string, buffer: number = 4) =>
   `${addr?.substring(0, buffer)}...${addr?.substring(addr.length - buffer)}`;
 
+export const navigateToExternalUrl = (url: URL | string) => {
+  const url_ = new URL(url);
+  window.open(url_, '_blank');
+};
 export const toTitleCase = (str: string) =>
   str.replace(/\w\S*/g, (txt: string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());

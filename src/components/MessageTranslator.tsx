@@ -13,11 +13,7 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
-import {
-  ListItem,
-  SharedStateContextProvider,
-  useSharedStateContext,
-} from '@/contexts/SharedStateContext';
+import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
@@ -65,7 +61,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 export const Widgetize = (widget: Widget) => {
-  const { fnName: fn, args } = widget;
+  const { name: fn, params: args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
   // The Widgetize function is called recursively. Do not put any hooks here,
@@ -179,11 +175,11 @@ export const Widgetize = (widget: Widget) => {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
+            asset={Widgetize({ name: asset.name, params: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+                {Widgetize({ name: name, params: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -198,15 +194,15 @@ export const Widgetize = (widget: Widget) => {
         return (
           <NftCollectionAssetsContainer
             collection={Widgetize({
-              fnName: collection.name,
-              args: JSON.stringify(collection.params),
+              name: collection.name,
+              params: JSON.stringify(collection.params),
             })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+                    {Widgetize({ name: name, params: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -214,6 +210,7 @@ export const Widgetize = (widget: Widget) => {
           </NftCollectionAssetsContainer>
         );
       }
+
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
         return <NftCollectionTraitsContainer {...params} />;
@@ -222,6 +219,7 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
+
       case 'yield-container': {
         const params = JSON.parse(args);
 
@@ -235,6 +233,7 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <StreamingListContainer {...params} />;
       }
+
       case 'table-container': {
         const params = JSON.parse(args);
         const headers = params.headers;
@@ -258,7 +257,7 @@ export const Widgetize = (widget: Widget) => {
                 };
                 return (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
+                    {Widgetize({ name: name, params: JSON.stringify(rowArgs) })}
                   </Fragment>
                 );
               })}
@@ -266,6 +265,7 @@ export const Widgetize = (widget: Widget) => {
           </table>
         );
       }
+
       case 'tx-payload-for-sending-container': {
         const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
           JSON.parse(args);
@@ -289,6 +289,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'multistep-payload-container': {
         const {
           status,
@@ -351,10 +352,10 @@ export const Widgetize = (widget: Widget) => {
 };
 
 interface ListContainerProps {
-  items: ListItem[];
+  items: Widget[];
 }
 interface ListItemContainerProps {
-  item: ListItem;
+  item: Widget;
 }
 
 const ListContainer = ({ items }: ListContainerProps) => {
@@ -363,7 +364,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
       <Grid>
         {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
           <Fragment key={`i${i}`}>
-            {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+            {Widgetize({ name: name, params: JSON.stringify(params) })}
           </Fragment>
         )) || ''}
       </Grid>
@@ -373,7 +374,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
 
 interface StreamingListContainerProps {
   operation: string;
-  item: ListItem | null;
+  item: Widget | null;
   prefix: string | null;
   suffix: string | null;
   isThinking: boolean | null;
