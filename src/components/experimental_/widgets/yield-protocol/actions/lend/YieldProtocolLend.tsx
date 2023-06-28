@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 import {
   ActionResponse,
@@ -17,6 +17,7 @@ import { toTitleCase } from '@/utils';
 import { SERIES_ENTITIES } from '../../config/seriesEntities';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { getTxParams } from '../../helpers';
+import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
 import lend from './helpers';
 
@@ -43,9 +44,10 @@ const YieldProtocolLend = ({
 }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
-  const { address } = useAccount();
+  const { address: account } = useAccount();
+  const { lend } = useYieldProtocol();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
-  const { data: tokenOut, isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
+  const { data: tokenInToUse } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const label = `
         ${toTitleCase(action)} ${inputAmount} ${tokenInSymbol} on ${toTitleCase(projectName)}`;
   const { value: amount } = useInput(inputAmount, tokenInSymbol);
@@ -70,13 +72,14 @@ const YieldProtocolLend = ({
   // set tx params (specific to yield protocol)
   useEffect(() => {
     (async () => {
-      if (!tokenIn) return console.error('tokenIn is undefined');
+      if (!tokenInToUse) return console.error('tokenInToUse is undefined');
       if (!amount) return console.error('amount is undefined');
-      if (!ladle) return console.error('ladle is undefined');
 
-      const baseAddress = tokenIn.address;
+      console.log('inhereeeeeeeeeeeeeeeeeeee');
+
+      const baseAddress = tokenInToUse.address;
       const seriesEntities = SERIES_ENTITIES.get(chainId);
-      if (!seriesEntities) return;
+      if (!seriesEntities) return console.error('seriesEntities is undefined');
 
       const relevantSeriesEntities = Array.from(seriesEntities.values());
 
@@ -85,14 +88,21 @@ const YieldProtocolLend = ({
       ); // Find the first relevant series using base address (TODO not kosher)
 
       const poolAddress = seriesEntity?.poolAddress;
-      if (!poolAddress) return;
+      if (!poolAddress) return console.error('poolAddress is undefined');
 
-      const lendCallData = lend(address, amount, baseAddress, poolAddress, tokenInIsETH);
+      const txParams = await lend({
+        account,
+        input: amount,
+        baseAddress,
+        poolAddress,
+        isEthBase: tokenInIsETH,
+      });
+      console.log('🦄 ~ file: YieldProtocolLend.tsx:100 ~ txParams:', txParams);
 
-      setTxParams(lendCallData ? await getTxParams(lendCallData, ladle) : undefined);
+      setTxParams(txParams);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
     })();
-  }, [address, amount, chainId, ladle, tokenIn, tokenInIsETH]);
+  }, [account, amount, chainId, lend, tokenInIsETH, tokenInToUse]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out

@@ -26,6 +26,7 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
+  console.log('🦄 ~ file: ConnectionWrapper.tsx:29 ~ ConnectionWrapper ~ forkUrl:', forkUrl);
 
   const {
     settings: { experimentalUi },
