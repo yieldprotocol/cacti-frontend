@@ -7,7 +7,6 @@ import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { TextResponse } from '../cactiComponents';
 import { TableResponse } from '../cactiComponents/TableResponse';
-import { composeFromString } from '../cactiComponents/tools/compose';
 import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
@@ -64,7 +63,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
               key={item.slice(0, 16)}
               widget={{ name: 'textresponse', params: { text: item } }}
             />,
-            // composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
 
         /* if item is an object, assume it is a container or a widget */
