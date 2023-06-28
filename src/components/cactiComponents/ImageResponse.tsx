@@ -69,11 +69,11 @@ export const ImageResponse = (props: ImageResponseProps) => {
 
     <ResponseWrap>
       {variant === ImageVariant.SHOWCASE && ( // Showcase Item (horizontal orientation)
-        <div className="grid grid-cols-2 gap-2">
-          <div>
+        <div className="flex gap-4">
+          <div className="flex flex-shrink">
             <Image src={props.image} alt={props.title} />
           </div>
-          <div>
+          <div className="flex flex-col flex-grow">
             {props.title && (
               <Title />
             )}
@@ -91,7 +91,7 @@ export const ImageResponse = (props: ImageResponseProps) => {
       )}
 
       {variant === ImageVariant.DEFAULT && ( // default Image (vertical orientation)
-        <div>
+        <div >
           {props.title && ( // if has title
             <Title />
           )}

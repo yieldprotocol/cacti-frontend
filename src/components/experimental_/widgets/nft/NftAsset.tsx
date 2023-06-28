@@ -56,7 +56,6 @@ export const NftAsset = ({
   collectionName,
   name,
   previewImageUrl,
-  price,
   variant,
 }: NftAssetProps) => {
 
@@ -66,7 +65,6 @@ export const NftAsset = ({
   //   address,
   //   tokenId,
   // });
-
   // console.log('ASSET:', asset);
 
   const {
@@ -80,7 +78,6 @@ export const NftAsset = ({
   );
 
   variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
-  // const {} = nftData;
 
   nftData && console.log(nftData)
 
