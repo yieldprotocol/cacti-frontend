@@ -34,7 +34,7 @@ const fetchNftAsset = async (
 ) => {
   return axios
     .get(`https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`, {
-    // .get(`https://api.center.dev/v2/${network}/${nftAddress}/nft/${tokenId}/metadata`,{
+      // .get(`https://api.center.dev/v2/${network}/${nftAddress}/nft/${tokenId}/metadata`,{
       headers: {
         Accept: 'application/json',
         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'test',
@@ -58,7 +58,6 @@ export const NftAsset = ({
   previewImageUrl,
   variant,
 }: NftAssetProps) => {
-
   // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
   // const asset = useAsset({
   //   network: network as any,
@@ -79,7 +78,7 @@ export const NftAsset = ({
 
   variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
 
-  nftData && console.log(nftData)
+  nftData && console.log(nftData);
 
   return (
     <ImageResponse
