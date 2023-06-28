@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { ethers } from 'ethers';
-import { useChainId } from 'wagmi';
+import { Address, useChainId } from 'wagmi';
 import { Token } from '@/types';
 import { findTokenByAddress, findTokenBySymbol } from '@/utils';
 
-const useToken = (tokenSymbol?: string, tokenAddress?: string) => {
+const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
   const chainId = useChainId();
 
   const getTokenIsETH = (tokenSymbol?: string, tokenAddress?: string) =>

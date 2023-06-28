@@ -2526,6 +2526,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ethersproject/bignumber@npm:5.0.15":
+  version: 5.0.15
+  resolution: "@ethersproject/bignumber@npm:5.0.15"
+  dependencies:
+    "@ethersproject/bytes": ^5.0.9
+    "@ethersproject/logger": ^5.0.8
+    bn.js: ^4.4.0
+  checksum: 849dce7f93fb931d50ca0ff58b6e22c752a9dbdcb48abb999a4c906cbe2095571151e100b87f81c4eb3bf2dbf39a6899e07ce0b103de9c835b726b4b52b24d9b
+  languageName: node
+  linkType: hard
+
 "@ethersproject/bignumber@npm:5.7.0, @ethersproject/bignumber@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/bignumber@npm:5.7.0"
@@ -2537,7 +2548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/bytes@npm:5.7.0, @ethersproject/bytes@npm:^5.7.0":
+"@ethersproject/bytes@npm:5.7.0, @ethersproject/bytes@npm:^5.0.9, @ethersproject/bytes@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/bytes@npm:5.7.0"
   dependencies:
@@ -2641,7 +2652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/logger@npm:5.7.0, @ethersproject/logger@npm:^5.7.0":
+"@ethersproject/logger@npm:5.7.0, @ethersproject/logger@npm:^5.0.8, @ethersproject/logger@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/logger@npm:5.7.0"
   checksum: 075ab2f605f1fd0813f2e39c3308f77b44a67732b36e712d9bc085f22a84aac4da4f71b39bee50fe78da3e1c812673fadc41180c9970fe5e486e91ea17befe0d
@@ -3385,6 +3396,25 @@ __metadata:
   version: 1.0.2
   resolution: "@ledgerhq/connect-kit-loader@npm:1.0.2"
   checksum: 38475ee5a80b733fee571a8e882e7d309e0e28ef4776adb122bb4be010c54ca966c3946c1cbc78ae0d6abec62cd9ea6c7fbe4879041fe43d173bb287362fa34f
+  languageName: node
+  linkType: hard
+
+"@liquity/lib-base@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@liquity/lib-base@npm:3.0.0"
+  dependencies:
+    "@ethersproject/bignumber": 5.0.15
+  checksum: 214d0276c1bcb43d5425c430fa4b0250365b46a0e4ea91e1171bbaaf317d4d34e0f8edf1e2990f5044d9fffc29f47d56f89e18d7fc753f9312ee002fa96748d1
+  languageName: node
+  linkType: hard
+
+"@liquity/lib-ethers@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@liquity/lib-ethers@npm:3.4.0"
+  peerDependencies:
+    "@liquity/lib-base": ^3.0.0
+    ethers: ^5.3.0
+  checksum: 320c7d9febf62857417c92a34fa78291acc69caa184d6f31175daf058a2a7d9abf73dc8b1217f3f6d5613eaaa6aadfb57869be479bfce2dc9435bd1afe3710ad
   languageName: node
   linkType: hard
 
@@ -7997,7 +8027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bn.js@npm:^4.0.0, bn.js@npm:^4.1.0, bn.js@npm:^4.11.9":
+"bn.js@npm:^4.0.0, bn.js@npm:^4.1.0, bn.js@npm:^4.11.9, bn.js@npm:^4.4.0":
   version: 4.12.0
   resolution: "bn.js@npm:4.12.0"
   checksum: 39afb4f15f4ea537b55eaf1446c896af28ac948fdcf47171961475724d1bb65118cca49fa6e3d67706e4790955ec0e74de584e45c8f1ef89f46c812bee5b5a12
@@ -8579,6 +8609,8 @@ __metadata:
     "@center-inc/react": ^1.1.7
     "@headlessui/react": ^1.7.7
     "@heroicons/react": ^2.0.14
+    "@liquity/lib-base": ^3.0.0
+    "@liquity/lib-ethers": ^3.4.0
     "@next/font": 13.1.2
     "@rainbow-me/rainbowkit": ^0.8.1
     "@storybook/addon-essentials": ^7.0.12
@@ -8601,6 +8633,7 @@ __metadata:
     autoprefixer: ^10.4.14
     axios: ^1.3.4
     copy-to-clipboard: ^3.3.3
+    date-fns: ^2.30.0
     dotenv: ^16.0.3
     eslint: 8.32.0
     eslint-config-next: 13.1.2
@@ -9295,6 +9328,15 @@ __metadata:
   version: 1.0.8
   resolution: "damerau-levenshtein@npm:1.0.8"
   checksum: d240b7757544460ae0586a341a53110ab0a61126570ef2d8c731e3eab3f0cb6e488e2609e6a69b46727635de49be20b071688698744417ff1b6c1d7ccd03e0de
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.30.0":
+  version: 2.30.0
+  resolution: "date-fns@npm:2.30.0"
+  dependencies:
+    "@babel/runtime": ^7.21.0
+  checksum: f7be01523282e9bb06c0cd2693d34f245247a29098527d4420628966a2d9aad154bd0e90a6b1cf66d37adcb769cd108cf8a7bd49d76db0fb119af5cdd13644f4
   languageName: node
   linkType: hard
 

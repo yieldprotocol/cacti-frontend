@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { BigNumber, CallOverrides, Overrides, PayableOverrides, ethers } from 'ethers';
+import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
-  useContractWrite,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -15,6 +14,7 @@ export type TxBasicParams = {
   functionName?: string;
   args?: any[];
   overrides?: PayableOverrides | Overrides | CallOverrides;
+  enabled?: boolean;
 };
 
 /**
@@ -25,61 +25,49 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
 
 /**
  * @description Prepares and Submits an arbitrary transaction request and returns relevant tx states and tx data
- * 
+ *
  * @param params the transaction parameters prepare and submit
- * @param sendParams the send ETH transaction parameters to prepare and submit
-
+ * @param sendParams the send transaction parameters to prepare and submit
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
  */
-const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: () => void) => {
+const useSubmitTx = (
+  params?: TxBasicParams,
+  sendParams?: UnsignedTransaction,
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  const [error, setError] = useState<string>();
+  const handleError = (error: Error) => {
+    console.log(error.message);
+    if (onError) onError();
+    setError(error.message);
+  };
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
   /* prepare a write transaction */
   const { config: writeConfig } = usePrepareContractWrite(params);
+
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
-  const sendParams =
-    params && params.functionName !== SEND_ETH_FNNAME
-      ? undefined
-      : {
-          request: {
-            to: params?.address as string,
-            value: params?.args ? params.args[0] : BigNumber.from(0),
-          },
-        };
-  const { config: sendConfig } = usePrepareSendTransaction(sendParams); //sendParams
+  const { config: sendConfig } = usePrepareSendTransaction({
+    request: { ...(writeConfig.request ?? sendParams) },
+    enabled: !!(writeConfig.request ?? sendParams),
+    onError: handleError,
+  });
 
   /* usePrepped data to run write or send transactions */
-  const writeTx = useContractWrite(writeConfig);
-  const sendTx = useSendTransaction(sendConfig);
-
-  /* 'Combined results'  - Alhtough it will effectively be one or the other */
-  const [data, setData] = useState<any>();
-  const [isWaitingOnUser, setIsWaitingOnUser] = useState<boolean>();
-  const [transact, setTransact] = useState<any>();
-  const [isError, setIsError] = useState<any>();
-
-  useEffect(() => {
-    const { data: writeData, isLoading: isWaitingOnUser, write, isError: writeError } = writeTx;
-
-    const {
-      data: sendData,
-      isLoading: isWaitingOnUserSend,
-      sendTransaction,
-      isError: sendError,
-    } = sendTx;
-
-    setData(writeData || sendData);
-    setIsWaitingOnUser(isWaitingOnUser || isWaitingOnUserSend);
-    setTransact(write || sendTransaction);
-    setIsError(writeError || sendError);
-  }, [writeTx, sendTx]);
+  const {
+    data,
+    isLoading: isWaitingOnUser,
+    sendTransactionAsync,
+    isError,
+  } = useSendTransaction(sendConfig);
 
   /* Use the TX hash to wait for the transaction to be mined */
   const {
     data: receipt,
-    error,
+    error: transactError,
     isLoading: isTransacting,
     isSuccess,
     status,
@@ -92,22 +80,22 @@ const useSubmitTx = (params?: TxBasicParams, onSuccess?: () => void, onError?: (
   /* DEVELOPER logging */
   useEffect(() => {
     if (receipt?.status === 0) {
-      toast.error(`Transaction Error: ${error?.message}`);
+      toast.error(`Transaction Error: ${transactError?.message}`);
     }
     if (receipt?.status === 1) {
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
-  }, [receipt, status]);
+  }, [receipt?.status, receipt?.transactionHash, transactError?.message]);
 
   /* Return the transaction data and states */
   return {
-    submitTx: transact,
+    submitTx: sendTransactionAsync,
 
     receipt,
     hash: data?.hash,
 
-    isWaitingOnUser: isWaitingOnUser,
-    isError: isError,
+    isWaitingOnUser,
+    isError,
 
     isTransacting,
     isSuccess,

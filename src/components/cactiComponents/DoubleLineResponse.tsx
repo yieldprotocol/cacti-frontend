@@ -39,13 +39,13 @@ export const DoubleLineResponse = (props: any) => {
     <ResponseWrap>
       <div>
         {token && (
-          <div className="p-2">
+          <div className="px-2">
             {/* Main values */}
             <div className="flex items-center justify-between">
               <div>
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
-              <div className="text-xl text-white/90 ">
+              <div className="text-xl text-white/70 ">
                 {amount ? amount : <Skeleton width={50} />}
               </div>
             </div>

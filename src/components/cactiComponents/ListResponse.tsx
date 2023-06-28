@@ -5,7 +5,7 @@ import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   return (
-    <div className="flex justify-between py-[4px] text-sm font-thin text-white/70">
+    <div className="flex justify-between py-[2px] text-sm font-extralight text-white/70">
       <div>{dataRow[0]}</div>
       <div>{dataRow[1]}</div>
     </div>
