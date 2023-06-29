@@ -1,16 +1,30 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import { BoltIcon, ExclamationTriangleIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
+import SettingsContext from '@/contexts/SettingsContext';
+import Cactus1 from './experimental_/CactiImages/Cactus1';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col">{children}</div>;
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
+  const {
+    settings: { experimentalUi },
+  } = useContext(SettingsContext);
+
   const onClickClasses = onClick ? 'cursor-pointer hover:bg-gray-500' : '';
   return (
     <div
-      className={`my-4 max-w-[250px]  rounded-lg bg-gray-600 p-4 text-center text-white md:p-2 ${onClickClasses}`}
+      className={`
+      my-4 max-w-[250px]  rounded-lg text-white 
+
+      ${
+        experimentalUi
+          ? 'border-[1px] border-white border-opacity-10 text-opacity-70'
+          : 'bg-gray-600'
+      } 
+      p-4 text-center  md:p-2 ${onClickClasses}`}
       onClick={onClick}
     >
       <p className="flex min-h-[48px] items-center justify-center">{children}</p>
@@ -25,11 +39,11 @@ const WelcomeBoxSubtitle = ({ children }: { children: ReactNode }) => {
 const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
-    <div className="mt-4 md:mt-2 md:px-6">
-      <h1 className="md:pd-0 mb-8 py-5 text-center text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
-        ChatWeb3
+    <div className="mt-4 w-[90%] text-center md:mt-2 md:px-6">
+      <h1 className=" md:pd-0 mb-8 text-4xl font-bold text-white md:mb-2 md:pb-2 md:pt-0">
+        🌵 Cacti Chat
       </h1>
-      <div className="flex h-full w-full justify-center gap-x-8">
+      <div className="flex h-full  justify-center gap-x-8 ">
         <WelcomeColumn>
           <BoltIcon className="mt-3 h-12 text-gray-300" />
           <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>

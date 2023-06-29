@@ -6,6 +6,7 @@ import { ResetButton } from '../ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
+import { ExperimentalUiToggle } from './ExperimentalUiToggle';
 import ForkButton from './ForkButton';
 import { MintButton } from './MintButton';
 import { SessionInfo } from './SessionInfo';
@@ -18,7 +19,7 @@ interface Props {
 export const DevToolsModal = ({ openState, handleClose }: Props) => {
   return (
     <Transition.Root show={openState} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-[1000]" onClose={handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -42,13 +43,13 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-500 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 md:max-w-[75%] lg:max-w-[75%]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-gray-500 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6 md:max-w-[75%] lg:max-w-[75%]">
                 <div className="space-y-4 p-4">
                   <div className="flex justify-between">
                     <Dialog.Title as="h2" className="text-lg font-bold leading-6 text-gray-200">
                       Development Toolbox
                     </Dialog.Title>
-                    <div className="absolute top-0 right-0 pt-4 pr-4">
+                    <div className="absolute right-0 top-0 pr-4 pt-4">
                       <button
                         type="button"
                         className="rounded-md text-gray-200 hover:text-gray-400 focus:outline-none"
@@ -78,7 +79,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
 
                       <div className="mt-4 space-y-8 p-4">
                         <DebugMessageToggle />
-
+                        <ExperimentalUiToggle />
                         <ResetButton />
                       </div>
 

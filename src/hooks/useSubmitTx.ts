@@ -15,7 +15,6 @@ const useSubmitTx = (
   onError?: () => void
 ) => {
   const signer = useSigner();
-
   const [hash, setHash] = useState<`0x${string}`>();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isPrepared, setIsPrepared] = useState<boolean>(false);

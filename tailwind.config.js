@@ -21,6 +21,9 @@ module.exports = {
       width: {
         '40px': '40px',
       },
+      fontFamily: {
+        sans: ['Inter, sans-serif', { fontFeatureSettings: '"zero", "lnum", "pnum"' }],
+      },
     },
   },
   plugins: [],
