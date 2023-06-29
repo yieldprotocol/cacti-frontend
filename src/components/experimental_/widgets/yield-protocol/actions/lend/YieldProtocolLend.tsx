@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { UnsignedTransaction } from 'ethers';
 import { useAccount } from 'wagmi';
 import {
   ActionResponse,
@@ -16,10 +17,8 @@ import useToken from '@/hooks/useToken';
 import { toTitleCase } from '@/utils';
 import { SERIES_ENTITIES } from '../../config/seriesEntities';
 import contractAddresses, { ContractNames } from '../../contracts/config';
-import { getTxParams } from '../../helpers';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
-import lend from './helpers';
 
 // arbitrary protocol operation custom data
 interface YieldLendRes {
@@ -66,7 +65,7 @@ const YieldProtocolLend = ({
     };
   }, [amount, ladle, tokenIn]);
 
-  const [txParams, setTxParams] = useState<TxBasicParams>();
+  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
   const [data, setData] = useState<YieldLendRes>();
 
   // set tx params (specific to yield protocol)
@@ -74,8 +73,6 @@ const YieldProtocolLend = ({
     (async () => {
       if (!tokenInToUse) return console.error('tokenInToUse is undefined');
       if (!amount) return console.error('amount is undefined');
-
-      console.log('inhereeeeeeeeeeeeeeeeeeee');
 
       const baseAddress = tokenInToUse.address;
       const seriesEntities = SERIES_ENTITIES.get(chainId);
@@ -90,16 +87,16 @@ const YieldProtocolLend = ({
       const poolAddress = seriesEntity?.poolAddress;
       if (!poolAddress) return console.error('poolAddress is undefined');
 
-      const txParams = await lend({
+      const sendParams = await lend({
         account,
         input: amount,
         baseAddress,
         poolAddress,
         isEthBase: tokenInIsETH,
       });
-      console.log('🦄 ~ file: YieldProtocolLend.tsx:100 ~ txParams:', txParams);
+      console.log('🦄 ~ file: YieldProtocolLend.tsx:97 ~ sendParams:', sendParams);
 
-      setTxParams(txParams);
+      setSendParams(sendParams?.request);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
     })();
   }, [account, amount, chainId, lend, tokenInIsETH, tokenInToUse]);
@@ -132,7 +129,12 @@ const YieldProtocolLend = ({
         ]}
         collapsible
       />
-      <ActionResponse label={label} approvalParams={approvalParams} txParams={txParams} />
+      <ActionResponse
+        label={label}
+        approvalParams={approvalParams}
+        sendParams={sendParams}
+        txParams={undefined}
+      />
     </>
   );
 };

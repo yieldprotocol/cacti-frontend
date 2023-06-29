@@ -48,8 +48,6 @@ const useSubmitTx = (
    * */
   /* prepare a write transaction */
   const { config: writeConfig, error: prepareError } = usePrepareContractWrite(params);
-  console.log('🦄 ~ file: useSubmitTx.tsx:51 ~ writeConfig:', writeConfig);
-  console.log('🦄 ~ file: useSubmitTx.tsx:51 ~ prepareError:', prepareError);
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig } = usePrepareSendTransaction({

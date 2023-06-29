@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'ethers';
 import { Address, useContract } from 'wagmi';
-import { getContract } from 'wagmi/actions';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
+import { PrepareWriteContractResult, getContract, prepareWriteContract } from 'wagmi/actions';
 import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
-import ladleAbi from '../contracts/abis/Ladle.json';
-import poolAbi from '../contracts/abis/Pool.json';
-import wrapEtherModuleAbi from '../contracts/abis/WrapEtherModule.json';
+import ladleAbi from '../contracts/abis/Ladle';
+import poolAbi from '../contracts/abis/Pool';
+import wrapEtherModuleAbi from '../contracts/abis/WrapEtherModule';
 import contractAddresses, { ContractNames } from '../contracts/config';
 import { LadleActions, ModuleActions, RoutedActions } from '../operations';
 
@@ -68,10 +67,10 @@ const useYieldProtocol = () => {
    * Encode all function calls to ladle.batch()
    * @param calls array of ICallData objects
    * @param ladleAddress ladle contract address
-   * @returns {Promise<TxBasicParams | undefined>}
+   * @returns {Promise<PrepareWriteContractResult | undefined>}
    */
-  const getTxParams = useCallback(
-    async (calls: ICallData[]): Promise<TxBasicParams | undefined> => {
+  const getSendParams = useCallback(
+    async (calls: ICallData[]): Promise<PrepareWriteContractResult | undefined> => {
       if (!ladle) {
         console.error('Ladle contract not found');
         return undefined;
@@ -114,23 +113,19 @@ const useYieldProtocol = () => {
       /* calculate the eth value sent */
       const batchValue = await getCallValue(calls);
 
-      return {
+      const prepped = await prepareWriteContract({
+        abi: ladleAbi,
         address: ladle.address,
-        abi: [
-          {
-            inputs: [{ internalType: 'bytes[]', name: 'calls', type: 'bytes[]' }],
-            name: 'batch',
-            outputs: [{ internalType: 'bytes[]', name: 'results', type: 'bytes[]' }],
-            stateMutability: 'payable',
-            type: 'function',
-          },
-        ],
-        functionName: LadleActions.Fn.BATCH,
-        args: encodedCalls,
+        signer,
+        functionName: 'batch',
+        args: [encodedCalls as `0x${string}`[]],
         overrides: { value: batchValue },
-      } as TxBasicParams;
+        chainId,
+      });
+
+      return prepped;
     },
-    [getCallValue, ladle]
+    [ladle, getCallValue, signer, chainId]
   );
 
   /**
@@ -151,7 +146,7 @@ const useYieldProtocol = () => {
       return [
         {
           operation: LadleActions.Fn.MODULE,
-          fnName: ModuleActions.Fn.WRAP_ETHER_MODULE,
+          fnName: 'wrap',
           args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
           targetContract: wrapEtherModule,
           ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
@@ -211,9 +206,9 @@ const useYieldProtocol = () => {
   const lend = useCallback(
     async ({ account, input, baseAddress, poolAddress, isEthBase }: LendProps) => {
       const lendCallData = _lend({ account, input, baseAddress, poolAddress, isEthBase });
-      return lendCallData ? await getTxParams(lendCallData) : undefined;
+      return lendCallData ? await getSendParams(lendCallData) : undefined;
     },
-    [_lend, getTxParams]
+    [_lend, getSendParams]
   );
 
   const _borrow = useCallback(
@@ -288,9 +283,9 @@ const useYieldProtocol = () => {
         isEthBase,
         isEthCollateral,
       });
-      return borrowCallData ? await getTxParams(borrowCallData) : undefined;
+      return borrowCallData ? await getSendParams(borrowCallData) : undefined;
     },
-    [_borrow, getTxParams]
+    [_borrow, getSendParams]
   );
 
   return { lend, borrow };
