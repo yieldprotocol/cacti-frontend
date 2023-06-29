@@ -35,7 +35,6 @@ const meta: Meta<typeof ImageResponse> = {
       default: 'mockImage',
       control: 'text',
     },
-
   },
 };
 

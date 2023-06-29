@@ -1,11 +1,8 @@
 import { createElement } from 'react';
-
-import { ResponseRow } from '../helpers/layout';
-
 import { CactiResponse, CactiResponseProps } from '@/components/cactiComponents';
 import * as cactiComponents from '@/components/cactiComponents';
-
 import { cactiComponentMap } from '@/components/cactiComponents';
+import { ResponseRow } from '../helpers/layout';
 
 type CactiStringComponent = {
   response: CactiResponse;

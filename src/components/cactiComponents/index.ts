@@ -21,11 +21,7 @@ export enum CactiResponse {
   // InlineChip = 'InlineChip',
 }
 
-export type CactiResponseProps = ( 
-  ImageResponseProps | 
-  ActionResponseProps |
-  any
-  )
+export type CactiResponseProps = ImageResponseProps | ActionResponseProps | any;
 
 export const cactiComponentMap = new Map<string, FunctionComponent<CactiResponseProps>>([
   [CactiResponse.TextResponse as const, TextResponse],
@@ -38,8 +34,8 @@ export const cactiComponentMap = new Map<string, FunctionComponent<CactiResponse
   [CactiResponse.IconResponse as const, IconResponse],
 
   [CactiResponse.ActionResponse as const, ActionResponse],
-  [CactiResponse.ImageResponse as const, ImageResponse ],
-])
+  [CactiResponse.ImageResponse as const, ImageResponse],
+]);
 
 export {
   TextResponse,

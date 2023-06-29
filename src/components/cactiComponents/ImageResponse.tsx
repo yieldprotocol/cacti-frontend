@@ -17,7 +17,7 @@ export interface ImageResponseProps {
   description?: string;
   variant?: ImageVariant;
   children?: React.ReactNode;
-};
+}
 
 const TagItem = (props: { tag: string }) => {
   return (
