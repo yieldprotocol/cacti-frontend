@@ -94,7 +94,6 @@ const YieldProtocolLend = ({
         poolAddress,
         isEthBase: tokenInIsETH,
       });
-      console.log('🦄 ~ file: YieldProtocolLend.tsx:97 ~ sendParams:', sendParams);
 
       setSendParams(sendParams?.request);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
