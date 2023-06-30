@@ -53,7 +53,8 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
   );
 
   const { connectors } = getDefaultWallets({
-    appName: 'chatweb3 app',
+    appName: 'cacti app',
+    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
     chains,
   });
 
