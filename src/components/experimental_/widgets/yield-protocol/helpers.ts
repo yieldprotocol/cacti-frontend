@@ -25,8 +25,10 @@ export interface ICallData {
 export const getSendParams = async (calls: ICallData[], signer: Signer, chainId: number) => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
-  if (!ladleAddress)
-    return console.error('Ladle address not found; possibly on an unsupported chain');
+  if (!ladleAddress) {
+    console.error('Ladle address not found; possibly on an unsupported chain');
+    return undefined;
+  }
 
   const ladle = getContract({
     address: ladleAddress,
