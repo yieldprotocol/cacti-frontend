@@ -43,7 +43,6 @@ const YieldProtocolLend = ({
 }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
-  const { address: account } = useAccount();
   const { lend } = useYieldProtocol();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { data: tokenInToUse } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
@@ -88,17 +87,16 @@ const YieldProtocolLend = ({
       if (!poolAddress) return console.error('poolAddress is undefined');
 
       const sendParams = await lend({
-        account,
-        input: amount,
-        baseAddress,
+        tokenInAddress: tokenInToUse.address,
+        amount,
         poolAddress,
         isEthBase: tokenInIsETH,
       });
 
-      setSendParams(sendParams?.request);
+      setSendParams(sendParams);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
     })();
-  }, [account, amount, chainId, lend, tokenInIsETH, tokenInToUse]);
+  }, [amount, chainId, lend, tokenInIsETH, tokenInToUse]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out

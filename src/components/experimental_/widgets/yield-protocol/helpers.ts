@@ -1,7 +1,6 @@
-import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'ethers';
+import { BigNumber, BigNumberish, Contract, PayableOverrides, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
-import { getContract } from 'wagmi/actions';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
+import { PrepareWriteContractResult, getContract, prepareWriteContract } from 'wagmi/actions';
 import ladleAbi from './contracts/abis/Ladle';
 import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule';
 import contractAddresses, { ContractNames } from './contracts/config';
@@ -19,18 +18,21 @@ export interface ICallData {
 /**
  * Encode all function calls to ladle.batch()
  * @param calls array of ICallData objects
- * @param ladleAddress ladle contract address
- * @returns {Promise<TxBasicParams | undefined>}
+ * @param signer ethers signer
+ * @param chainId chainId
+ * @returns {Promise<Request$1 | undefined>} returns a "prepared request" (wagmi's prepareWriteContract result's request property)
  */
-export const getTxParams = async (
-  calls: ICallData[],
-  ladleAddress: string
-): Promise<TxBasicParams | undefined> => {
-  const ladle = getContract({ address: ladleAddress, abi: ladleAbi });
-  if (!ladle) {
-    console.error('Ladle contract not found');
-    return undefined;
-  }
+export const getSendParams = async (calls: ICallData[], signer: Signer, chainId: number) => {
+  const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+
+  if (!ladleAddress)
+    return console.error('Ladle address not found; possibly on an unsupported chain');
+
+  const ladle = getContract({
+    address: ladleAddress,
+    abi: ladleAbi,
+    signerOrProvider: signer,
+  });
 
   /* filter out any ignored calls */
   const filteredCalls = calls.filter((c) => !c.ignoreIf);
@@ -64,13 +66,24 @@ export const getTxParams = async (
   /* calculate the eth value sent */
   const batchValue = await getCallValue(calls);
 
-  return {
-    address: ladleAddress,
-    abi: ladleAbi,
-    functionName: LadleActions.Fn.BATCH,
-    args: encodedCalls,
-    overrides: { value: batchValue },
-  } as TxBasicParams;
+  let prepped: PrepareWriteContractResult | undefined;
+
+  try {
+    prepped = await prepareWriteContract({
+      abi: ladleAbi,
+      address: ladle.address,
+      signer,
+      functionName: 'batch',
+      args: [encodedCalls as `0x${string}`[]],
+      overrides: { value: batchValue },
+      chainId,
+    });
+  } catch (e) {
+    prepped = undefined;
+    console.log('🦄 ~ file: helpers.ts:85 ~ e:', e);
+  }
+
+  return prepped ? prepped.request : undefined;
 };
 
 const getCallValue = async (calls: ICallData[]) =>
@@ -89,23 +102,26 @@ const getCallValue = async (calls: ICallData[]) =>
  * @param chainId chainId to use (defaults to mainnet for now)
  * @returns
  */
-export const getWrapEthCallData = (to: Address, value: BigNumber, chainId = 1): ICallData[] => {
+export const getWrapEthCallData = (
+  to: Address,
+  value: BigNumber,
+  signer: Signer,
+  chainId = 1
+): ICallData[] => {
   const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
+  if (!address)
+    throw new Error('Wrap Ether Module address not found; possibly on an unsupported chain');
 
   const targetContract = getContract({
-    address: address!,
+    address: address,
     abi: wrapEtherModuleAbi,
+    signerOrProvider: signer,
   });
-
-  if (!targetContract) {
-    console.error('WrapEtherModule contract not found');
-    return [];
-  }
 
   return [
     {
       operation: LadleActions.Fn.MODULE,
-      fnName: ModuleActions.Fn.WRAP_ETHER_MODULE,
+      fnName: 'wrap',
       args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
       targetContract,
       ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
