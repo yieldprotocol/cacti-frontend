@@ -73,12 +73,12 @@ export const ImageResponse = ({
     <ResponseWrap>
       {variant_ === ImageVariant.SHOWCASE && ( // Showcase Item (horizontal orientation)
         <div className="flex gap-4">
-          <div className="flex flex-shrink">
+          <div className="flex flex-shrink min-w-fit">
             <Image src={image} alt={title} />
           </div>
           <div className="flex flex-grow flex-col">
             {title && <Title />}
-            {tagList.length > 1 && ( // if has tags
+            {tagList.length > 0 && ( // if has tags
               <div className="space-x-2 space-y-1 py-2 ">
                 {tagList.map((tag: string) => (
                   <TagItem tag={tag} key={tag} />
@@ -97,7 +97,7 @@ export const ImageResponse = ({
             <Title />
           )}
           <Image src={image} alt={title} />
-          {tagList.length > 1 && ( // if has tags
+          {tagList.length > 0 && ( // if has tags
             <div className="space-x-2 space-y-1 py-2 ">
               {tagList.map((tag: string) => (
                 <TagItem tag={tag} key={tag} />

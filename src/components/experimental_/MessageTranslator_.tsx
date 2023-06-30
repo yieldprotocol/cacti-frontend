@@ -150,6 +150,7 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
   widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
 
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(

@@ -195,7 +195,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   return (
     <ConnectFirst>
       <HeaderResponse text={`Buy ${nftData?.name} NFT`} projectName={'Opensea Seaport'} />
-
       <Widget
         widget={{
           name: 'nft-asset-container',
@@ -210,7 +209,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
           },
         }}
       />
-
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}

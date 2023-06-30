@@ -1,6 +1,6 @@
+import { useQuery } from 'react-query';
 import { useAsset } from '@center-inc/react';
 import axios from 'axios';
-import { useQuery } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
@@ -9,10 +9,9 @@ interface NftAssetProps {
   network: string;
   address: string;
   tokenId: string | number;
-  collectionName: string;
-  name: string;
-  previewImageUrl: string;
-  price: string | undefined;
+  collectionName?: string;
+  name?: string;
+  previewImageUrl?: string;
 
   variant?: ImageVariant; // widget variant
 }
@@ -59,12 +58,6 @@ export const NftAsset = ({
   variant,
 }: NftAssetProps) => {
   // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
-  // const asset = useAsset({
-  //   network: network as any,
-  //   address,
-  //   tokenId,
-  // });
-  // console.log('ASSET:', asset);
 
   const {
     data: nftData,
@@ -72,21 +65,19 @@ export const NftAsset = ({
     isLoading,
   } = useQuery(
     ['NftAsset', address, tokenId],
-    async () => fetchNftAsset(address, tokenId.toString(), network)
-    // {enabled: variant === ImageVariant.SHOWCASE }
+    async () => fetchNftAsset(address, tokenId.toString(), network),
+    { enabled: (collectionName && name && previewImageUrl ) ? false : true}, // only fetch if we don't have the basic data from props
   );
 
-  variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
-
-  nftData && console.log(nftData);
+  // variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
 
   return (
     <ImageResponse
-      description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      description={nftData?.description}
       image={previewImageUrl}
       imageTags={['some tag', 'Another tag']}
       title={name}
-      subTitle={collectionName}
+      subTitle={collectionName || nftData?.collection?.name}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
     >
