@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { UnsignedTransaction } from 'ethers';
-import { useAccount } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
