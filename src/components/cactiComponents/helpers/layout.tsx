@@ -1,7 +1,15 @@
+import { ReactNode } from 'react';
+
 /**
  * Grid Element for displaying a block of cacti Responses
  */
-export const ResponseGrid = (props: any) => <div>{props.children}</div>;
+interface ResponseGridProps {
+  className?: string;
+  children: ReactNode;
+}
+export const ResponseGrid = ({ className, children }: ResponseGridProps) => (
+  <div className={className ?? ''}>{children}</div>
+);
 
 /**
  * Simple Row Element for displaying a single line of responses
