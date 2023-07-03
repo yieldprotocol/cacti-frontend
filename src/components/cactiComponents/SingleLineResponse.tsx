@@ -13,6 +13,7 @@ interface SingleLineResponseProps {
   token?: Token;
   tokenSymbol?: string;
   value?: string;
+  className?: string;
   children?: ReactNode;
 }
 export const SingleLineResponse = (props: SingleLineResponseProps) => {
@@ -20,7 +21,7 @@ export const SingleLineResponse = (props: SingleLineResponseProps) => {
 
   return (
     <ResponseWrap>
-      <div>
+      <div className={props.className ?? ''}>
         {token && (
           <div className="flex items-center justify-between p-2">
             <InlineChip label={token?.symbol} image={token?.logoURI} />
@@ -29,6 +30,7 @@ export const SingleLineResponse = (props: SingleLineResponseProps) => {
             </div>
           </div>
         )}
+        {props.children}
       </div>
     </ResponseWrap>
   );

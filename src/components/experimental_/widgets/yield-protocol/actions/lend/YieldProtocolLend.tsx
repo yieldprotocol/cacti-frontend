@@ -1,27 +1,42 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UnsignedTransaction } from 'ethers';
+import request from 'graphql-request';
+import useSWR from 'swr';
+import { Address } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
-  ListResponse,
   SingleLineResponse,
   TextResponse,
 } from '@/components/cactiComponents';
+import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import { toTitleCase } from '@/utils';
-import { SERIES_ENTITIES } from '../../config/seriesEntities';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
 
-// arbitrary protocol operation custom data
-interface YieldLendRes {
-  maturity_: string; // formatted maturity date
+interface YieldGraphResSeriesEntity {
+  maturity: number;
+  id: string;
+  fyToken: {
+    pools: {
+      id: string; // pool address
+    }[];
+  };
+}
+
+interface YieldSeriesEntity extends YieldGraphResSeriesEntity {
+  maturity_: string;
+  sendParams: UnsignedTransaction | undefined;
+}
+
+interface YieldGraphRes {
+  seriesEntities: YieldGraphResSeriesEntity[];
 }
 
 // should be generalized and only needed as reference once for all components
@@ -52,50 +67,85 @@ const YieldProtocolLend = ({
   /***************INPUTS******************************************/
   // Yield Protocol specific spender handling
   const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+  const query = useMemo(() => {
+    return `
+  {
+    seriesEntities(
+      where: {baseAsset_contains_nocase: "${tokenInToUse?.address}",
+      matured: false}
+    ) {
+      id
+      maturity
+    }
+  } 
+  `;
+  }, [tokenInToUse?.address]);
 
-  const approvalParams = useMemo((): ApprovalBasicParams | undefined => {
-    if (!tokenIn || !amount || !ladle) return undefined;
+  // get series entities from the graph
+  const { data: graphResSeriesEntities } = useSWR(
+    ['/yield-protocol/seriesEntities', ladle],
+    () =>
+      request<YieldGraphRes>(
+        // only mainnet for now
+        `https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`,
+        query
+      ),
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
-    return {
-      tokenAddress: tokenIn.address,
-      spender: ladle,
-      approvalAmount: amount,
-    };
-  }, [amount, ladle, tokenIn]);
+  const [data, setData] = useState<{ seriesEntities: YieldSeriesEntity[] | undefined }>();
 
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
-  const [data, setData] = useState<YieldLendRes>();
+  // all series entities use the same approval params
+  const approvalParams = useMemo<ApprovalBasicParams>(
+    () => ({
+      tokenAddress: tokenInToUse?.address!,
+      spender: ladle!,
+      approvalAmount: amount!,
+    }),
+    [amount, ladle, tokenInToUse?.address]
+  );
 
-  // set tx params (specific to yield protocol)
-  useEffect(() => {
-    (async () => {
-      if (!tokenInToUse) return console.error('tokenInToUse is undefined');
-      if (!amount) return console.error('amount is undefined');
+  const getSendParams = useCallback(
+    async (seriesEntity: YieldGraphResSeriesEntity) => {
+      const poolAddress = seriesEntity.fyToken?.pools[0].id;
+      if (!poolAddress) {
+        console.error(`No pool found for series entity ${seriesEntity.id}`);
+        return undefined;
+      }
 
-      const baseAddress = tokenInToUse.address;
-      const seriesEntities = SERIES_ENTITIES.get(chainId);
-      if (!seriesEntities) return console.error('seriesEntities is undefined');
-
-      const relevantSeriesEntities = Array.from(seriesEntities.values());
-
-      const seriesEntity = relevantSeriesEntities.find(
-        (s) => s.baseAddress.toLowerCase() === baseAddress.toLowerCase()
-      ); // Find the first relevant series using base address (TODO not kosher)
-
-      const poolAddress = seriesEntity?.poolAddress;
-      if (!poolAddress) return console.error('poolAddress is undefined');
-
-      const sendParams = await lend({
-        tokenInAddress: tokenInToUse.address,
-        amount,
-        poolAddress,
+      return await lend({
+        tokenInAddress: tokenInToUse?.address!,
+        amount: amount!,
+        poolAddress: poolAddress as Address,
         isEthBase: tokenInIsETH,
       });
+    },
+    [amount, lend, tokenInIsETH, tokenInToUse]
+  );
 
-      setSendParams(sendParams);
-      setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
+  useEffect(() => {
+    // get the series entities using the graph
+    (async () => {
+      const _seriesEntities = graphResSeriesEntities?.seriesEntities;
+      if (!_seriesEntities) return console.error('No series entities found');
+
+      const seriesEntities = await Promise.all(
+        _seriesEntities.map(async (s): Promise<YieldSeriesEntity> => {
+          const maturity_ = nameFromMaturity(s.maturity);
+          const sendParams = await getSendParams(s);
+          return {
+            ...s,
+            maturity_,
+            sendParams,
+          };
+        })
+      );
+
+      setData({ seriesEntities });
     })();
-  }, [amount, chainId, lend, tokenInIsETH, tokenInToUse]);
+  }, [getSendParams, graphResSeriesEntities?.seriesEntities]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out
@@ -111,27 +161,47 @@ const YieldProtocolLend = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <SingleLineResponse
-        tokenSymbol={tokenInSymbol}
-        tokenValueInUsd={100} // TODO handle actual
-        amount={amount}
-        amountValueInUsd={100} // TODO handle actual
-      />
-      <ListResponse
-        title="Breakdown"
-        data={[
-          ['Maturity', data?.maturity_],
-          ['Slippage', 'Some slippage %'],
-        ]}
-        collapsible
-      />
-      <ActionResponse
-        label={label}
-        approvalParams={approvalParams}
-        sendParams={sendParams}
-        txParams={undefined}
-      />
+      <ResponseGrid>
+        {data?.seriesEntities &&
+          data.seriesEntities.map((seriesEntity) => {
+            return (
+              <SingleItem
+                key={seriesEntity.id}
+                tokenInSymbol={tokenInSymbol}
+                label={`${seriesEntity.maturity_}`}
+                approvalParams={approvalParams}
+                sendParams={seriesEntity.sendParams}
+              />
+            );
+          })}
+      </ResponseGrid>
     </>
+  );
+};
+
+const SingleItem = ({
+  tokenInSymbol,
+  label,
+  approvalParams,
+  sendParams,
+}: {
+  tokenInSymbol: string;
+  label: string;
+  approvalParams: ApprovalBasicParams | undefined;
+  sendParams: UnsignedTransaction | undefined;
+}) => {
+  return (
+    <SingleLineResponse tokenSymbol={tokenInSymbol} className="flex justify-between">
+      <div className="my-auto flex justify-center px-2">
+        <ResponseTitle>{label}</ResponseTitle>
+        <ActionResponse
+          label={label}
+          approvalParams={approvalParams}
+          sendParams={sendParams}
+          txParams={undefined}
+        />
+      </div>
+    </SingleLineResponse>
   );
 };
 

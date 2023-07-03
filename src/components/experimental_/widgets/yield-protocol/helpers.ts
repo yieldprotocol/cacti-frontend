@@ -1,4 +1,12 @@
-import { BigNumber, BigNumberish, Contract, PayableOverrides, Signer, ethers } from 'ethers';
+import {
+  BigNumber,
+  BigNumberish,
+  Contract,
+  PayableOverrides,
+  Signer,
+  UnsignedTransaction,
+  ethers,
+} from 'ethers';
 import { Address } from 'wagmi';
 import { PrepareWriteContractResult, getContract, prepareWriteContract } from 'wagmi/actions';
 import ladleAbi from './contracts/abis/Ladle';
@@ -85,7 +93,7 @@ export const getSendParams = async (calls: ICallData[], signer: Signer, chainId:
     console.log('🦄 ~ file: helpers.ts:85 ~ e:', e);
   }
 
-  return prepped ? prepped.request : undefined;
+  return prepped ? (prepped.request as UnsignedTransaction) : undefined;
 };
 
 const getCallValue = async (calls: ICallData[]) =>
