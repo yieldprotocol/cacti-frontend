@@ -90,7 +90,7 @@ const YieldProtocolLend = ({
 
   // get series entities from the graph
   const { data: graphResSeriesEntities } = useSWR(
-    ['/yield-protocol/seriesEntities', ladle, query],
+    ['/yield-protocol/seriesEntities', query],
     () =>
       request<YieldGraphRes>(
         // only mainnet for now
