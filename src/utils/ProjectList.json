@@ -62,5 +62,12 @@
     "description": "zkSync is an L2 scaling solution for Ethereum",
     "url": "https://zksync.io/",
     "logo": "https://zksync.io/favicon.ico"
+  },
+  {
+    "id": "yield-protocol",
+    "name": "Yield Protocol",
+    "description": "Yield is a fixed-rate borrowing and lending protocol built on Ethereum",
+    "url": "https://yieldprotocol.com/",
+    "logo": "https://d33wubrfki0l68.cloudfront.net/6402e6bd28aafed79ac082896171779ee35ffaac/2800e/logo.svg"
   }
 ]
