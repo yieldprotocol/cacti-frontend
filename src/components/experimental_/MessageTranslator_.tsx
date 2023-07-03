@@ -12,6 +12,7 @@ import Uniswap from './widgets/uniswap/Uniswap';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
+import DepositVault from './widgets/4626vault/DepositIntoVault';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
   const {
@@ -120,6 +121,11 @@ const Widget = ({ widget }: { widget: Widget }) => {
   widgets.set(
     'redeem-sdai',
     <RedeemDSR  shares={parsedArgs[0]}/>
+  );
+
+  widgets.set(
+    'deposit-vault',
+    <DepositVault depositAmount={parsedArgs[0]} depositToken={parsedArgs[1]} depositVault={parsedArgs[2]} />
   );
 
   /* If available, return the widget in the widgets map */
