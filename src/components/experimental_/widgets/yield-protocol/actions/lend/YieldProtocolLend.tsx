@@ -20,23 +20,29 @@ import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
 
-interface YieldGraphResSeriesEntity {
+export interface YieldGraphResSeriesEntity {
   maturity: number;
+  baseAsset: {
+    id: string;
+    symbol: string;
+    assetId: string;
+  };
   id: string;
   fyToken: {
     pools: {
       id: string; // pool address
       lendAPR: string;
+      borrowAPR: string;
     }[];
   };
 }
 
-interface YieldSeriesEntity extends YieldGraphResSeriesEntity {
+export interface YieldSeriesEntity extends YieldGraphResSeriesEntity {
   maturity_: string;
   sendParams: UnsignedTransaction | undefined;
 }
 
-interface YieldGraphRes {
+export interface YieldGraphRes {
   seriesEntities: YieldGraphResSeriesEntity[];
 }
 
@@ -48,6 +54,31 @@ interface InputProps {
   action: string;
   projectName: string;
 }
+
+export const getQuery = (address: string) =>
+  `
+  {
+    seriesEntities(
+      where: {baseAsset_contains_nocase: "${address}",
+      matured: false}
+    ) {
+      id
+      maturity
+      baseAsset {
+        id
+        symbol
+        assetId
+      }
+      fyToken {
+        pools {
+          id
+          lendAPR
+          borrowAPR
+        }
+      }
+    }
+  } 
+  `;
 
 const YieldProtocolLend = ({
   tokenInSymbol,
@@ -68,25 +99,7 @@ const YieldProtocolLend = ({
   /***************INPUTS******************************************/
   // Yield Protocol specific spender handling
   const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
-  const query = useMemo(() => {
-    return `
-  {
-    seriesEntities(
-      where: {baseAsset_contains_nocase: "${tokenInToUse?.address}",
-      matured: false}
-    ) {
-      id
-      maturity
-      fyToken {
-        pools {
-          id
-          lendAPR
-        }
-      }
-    }
-  } 
-  `;
-  }, [tokenInToUse?.address]);
+  const query = getQuery(tokenInToUse?.address!);
 
   // get series entities from the graph
   const { data: graphResSeriesEntities } = useSWR(
@@ -170,15 +183,14 @@ const YieldProtocolLend = ({
       <HeaderResponse text={label} projectName={projectName} />
       <ResponseGrid className="grid gap-1">
         {data?.seriesEntities &&
-          data.seriesEntities.map((seriesEntity) => {
+          data.seriesEntities.map((s) => {
             return (
               <SingleItem
-                key={seriesEntity.id}
-                item={seriesEntity}
-                tokenInSymbol={tokenInSymbol}
-                label={`Lend ${seriesEntity.maturity_}`}
+                key={s.id}
+                item={s}
+                label={`Lend ${s.maturity_}`}
                 approvalParams={approvalParams}
-                sendParams={seriesEntity.sendParams}
+                sendParams={s.sendParams}
               />
             );
           })}
@@ -189,19 +201,17 @@ const YieldProtocolLend = ({
 
 const SingleItem = ({
   item,
-  tokenInSymbol,
   label,
   approvalParams,
   sendParams,
 }: {
   item: YieldSeriesEntity;
-  tokenInSymbol: string;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
   sendParams: UnsignedTransaction | undefined;
 }) => {
   return (
-    <SingleLineResponse tokenSymbol={tokenInSymbol} className="flex justify-between">
+    <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="mx-2 flex">
         <ResponseTitle>{cleanValue(item.fyToken.pools[0].lendAPR, 1)}% APY</ResponseTitle>
         <ActionResponse

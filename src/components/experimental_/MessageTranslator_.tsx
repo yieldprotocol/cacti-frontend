@@ -18,6 +18,7 @@ import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -157,6 +158,17 @@ export const Widget = (props: WidgetProps) => {
     />
   );
 
+  widgets.set(
+    'yield-protocol-borrow',
+    <YieldProtocolBorrow
+      borrowTokenSymbol={parsedArgs[0]}
+      borrowAmount={parsedArgs[1]}
+      collateralTokenSymbol={parsedArgs[2]}
+      collateralAmount={parsedArgs[3]}
+      action="lend"
+      projectName="yield-protocol"
+    />
+  );
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */

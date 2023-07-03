@@ -1,28 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
-import { readContract } from 'wagmi/actions';
-import {
-  ActionResponse,
-  HeaderResponse,
-  ListResponse,
-  SingleLineResponse,
-  TextResponse,
-} from '@/components/cactiComponents';
+import { UnsignedTransaction } from 'ethers';
+import request from 'graphql-request';
+import useSWR from 'swr';
+import { Address, useContractRead } from 'wagmi';
+import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
+import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import { toTitleCase } from '@/utils';
-import { SERIES_ENTITIES } from '../../config/seriesEntities';
+import { cleanValue, toTitleCase } from '@/utils';
+import Ladle from '../../contracts/abis/Ladle';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
+import {
+  YieldGraphRes,
+  YieldGraphResSeriesEntity,
+  YieldSeriesEntity,
+  getQuery,
+} from '../lend/YieldProtocolLend';
 
-// arbitrary protocol operation custom data
-interface YieldBorrowRes {
-  maturity_: string; // formatted maturity date
+interface YieldSeriesEntityBorrow extends YieldSeriesEntity {
+  approvalParams: ApprovalBasicParams | undefined;
 }
 
 // should be generalized and only needed as reference once for all components
@@ -31,8 +32,6 @@ interface InputProps {
   collateralTokenSymbol: string;
   borrowAmount: string;
   collateralAmount: string;
-  seriesEntityName?: string;
-
   action: string;
   projectName: string;
 }
@@ -42,15 +41,17 @@ const YieldProtocolBorrow = ({
   collateralTokenSymbol,
   borrowAmount,
   collateralAmount,
-  seriesEntityName,
   action,
   projectName,
 }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
-  const { address: account } = useAccount();
   const { data: borrowToken, isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
+  const { data: borrowTokenToUse } = useToken(borrowTokenIsEth ? 'WETH' : borrowTokenSymbol);
   const { data: collateralToken, isETH: collateralTokenIsEth } = useToken(collateralTokenSymbol);
+  const { data: collateralTokenToUse } = useToken(
+    collateralTokenIsEth ? 'WETH' : collateralTokenSymbol
+  );
   const label = `
         ${toTitleCase(
           action
@@ -62,97 +63,122 @@ const YieldProtocolBorrow = ({
 
   /***************INPUTS******************************************/
 
-  const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
-  const [txParams, setTxParams] = useState<TxBasicParams>();
-  const [data, setData] = useState<YieldBorrowRes>();
-  const [ilkId, setIlkId] = useState<string>();
+  // get cauldron address from contract addresses
+  const [data, setData] = useState<{ seriesEntities: YieldSeriesEntityBorrow[] | undefined }>();
 
   const { borrow } = useYieldProtocol();
   const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
-  const getApprovalParams = useCallback(async () => {
-    if (!_collateralAmount) return console.error('collateral amount is undefined');
-    if (!collateralToken || !ladle) return undefined;
+  // get series entities from the graph
+  const query = getQuery(borrowTokenToUse?.address!);
+  const { data: graphResSeriesEntities } = useSWR(
+    ['/yield-protocol/seriesEntities', query],
+    () =>
+      request<YieldGraphRes>(
+        // only mainnet for now
+        `https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`,
+        query
+      ),
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
-    // get the proper join address
-    const joinAddress = await readContract({
-      address: ladle,
-      chainId,
-      abi: [
-        {
-          inputs: [{ internalType: 'bytes6', name: '', type: 'bytes6' }],
-          name: 'joins',
-          outputs: [{ internalType: 'contract IJoin', name: '', type: 'address' }],
-          stateMutability: 'view',
-          type: 'function',
-        },
-      ],
-      functionName: 'joins',
-      args: [ilkId],
-    });
+  const getAssetQuery = (symbol: string) => `
+  {
+    assets(where: {symbol: "${symbol}"}) {
+      assetId
+    }
+  }
+  `;
 
-    const approvalParams: ApprovalBasicParams = {
-      tokenAddress: collateralToken.address,
-      spender: joinAddress,
-      approvalAmount: _collateralAmount,
-    };
+  const ilkQuery = getAssetQuery(collateralTokenToUse?.symbol!);
+  const { data: graphResIlk } = useSWR(
+    ['/yield-protocol/seriesEntities/ilk', ilkQuery],
+    () =>
+      request<{ assets: { assetId: string }[] }>(
+        // only mainnet for now
+        `https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`,
+        ilkQuery
+      ),
+    {
+      revalidateOnFocus: false,
+    }
+  );
+  const ilkId = graphResIlk?.assets[0]?.assetId;
+  const { data: joinAddress } = useContractRead({
+    address: ladle!,
+    abi: Ladle,
+    functionName: 'joins',
+    args: [ilkId as Address],
+    enabled: !!ilkId,
+  });
 
-    setApprovalParams(approvalParams);
-  }, [_collateralAmount, chainId, collateralToken, ilkId, ladle]);
+  const approvalParams = useMemo<ApprovalBasicParams>(
+    () => ({
+      tokenAddress: collateralToken?.address!,
+      spender: joinAddress!,
+      approvalAmount: _collateralAmount!,
+      skipApproval: collateralTokenIsEth,
+    }),
+    [_collateralAmount, collateralToken?.address, collateralTokenIsEth, joinAddress]
+  );
 
-  // set tx params (specific to yield protocol)
+  const getSendParams = useCallback(
+    async (seriesEntity: YieldGraphResSeriesEntity) =>
+      await borrow({
+        borrowAmount: _borrowAmount!,
+        collateralAmount: _collateralAmount!,
+        seriesEntityId: seriesEntity.id,
+        ilkId: ilkId!,
+        borrowTokenIsEth: borrowTokenIsEth,
+        collateralTokenIsEth: collateralTokenIsEth,
+      }),
+    [_borrowAmount, _collateralAmount, borrow, borrowTokenIsEth, collateralTokenIsEth, ilkId]
+  );
+
   useEffect(() => {
     (async () => {
-      if (!ilkId) return console.error('ilkId is undefined');
       if (!_borrowAmount) return console.error('borrow amount is undefined');
       if (!_collateralAmount) return console.error('collateral amount is undefined');
-      if (!borrowToken || !collateralToken) return;
+      if (!borrowToken) return console.error('borrow token is undefined');
+      if (!collateralToken) return console.error('collateral token is undefined');
+      if (!ilkId) {
+        console.error(`No ilk found for collateral token ${collateralToken?.symbol}`);
+        return undefined;
+      }
 
-      const baseAddress = borrowToken.address;
-      const seriesEntities = SERIES_ENTITIES.get(chainId);
-      if (!seriesEntities) return console.error('seriesEntities is undefined');
+      // get the series entities using the graph
+      (async () => {
+        const _seriesEntities = graphResSeriesEntities?.seriesEntities;
+        if (!_seriesEntities) return console.error('No series entities found');
 
-      const relevantSeriesEntities = Array.from(seriesEntities.values());
+        const seriesEntities = await Promise.all(
+          _seriesEntities.map(async (s): Promise<YieldSeriesEntityBorrow> => {
+            const maturity_ = nameFromMaturity(s.maturity);
+            const sendParams = await getSendParams(s);
+            return {
+              ...s,
+              maturity_,
+              sendParams,
+              approvalParams,
+            };
+          })
+        );
 
-      const seriesEntity = relevantSeriesEntities.find(
-        (s) => s.baseAddress.toLowerCase() === baseAddress.toLowerCase()
-      ); // Find the first relevant series using base address (TODO not kosher)
-
-      if (!seriesEntity) return console.error('seriesEntity is undefined');
-
-      const txParams = await borrow({
-        account,
-        borrowAmount: _borrowAmount,
-        collateralAmount: _collateralAmount,
-        seriesEntityId: seriesEntity.id,
-        ilkId,
-        vaultId: undefined, // vault id is blank when borrowing without a previously built vault (TODO: handle trying to supply a vault id)
-        isEthBase: borrowTokenIsEth,
-        isEthCollateral: collateralTokenIsEth,
-      });
-
-      setTxParams(txParams);
-      setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
+        setData({ seriesEntities });
+      })();
     })();
   }, [
     _borrowAmount,
     _collateralAmount,
-    account,
-    borrow,
+    approvalParams,
     borrowToken,
-    borrowTokenIsEth,
-    chainId,
     collateralToken,
-    collateralTokenIsEth,
+    getSendParams,
+    graphResSeriesEntities?.seriesEntities,
     ilkId,
   ]);
-
-  // set approval params
-  useEffect(() => {
-    (async () => {
-      await getApprovalParams();
-    })();
-  }, [getApprovalParams]);
 
   /***************INPUTS******************************************/
 
@@ -161,30 +187,47 @@ const YieldProtocolBorrow = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <SingleLineResponse
-        tokenSymbol={borrowTokenSymbol}
-        tokenValueInUsd={100} // TODO handle actual
-        amount={borrowAmount}
-        amountValueInUsd={100} // TODO handle actual
-      />
-      <SingleLineResponse
-        tokenSymbol={collateralTokenSymbol}
-        tokenValueInUsd={100} // TODO handle actual
-        amount={collateralAmount}
-        amountValueInUsd={100} // TODO handle actual
-      />
-      <ListResponse
-        title="Breakdown"
-        data={[
-          ['APR', 'some calculated apr %'],
-          ['Maturity', data?.maturity_],
-          ['Slippage', 'Some slippage %'],
-        ]}
-        collapsible
-      />
-      <ActionResponse label={label} approvalParams={approvalParams} txParams={txParams} />
+      <ResponseGrid className="grid gap-1">
+        {data?.seriesEntities &&
+          data.seriesEntities.map((s) => {
+            return (
+              <SingleItem
+                key={s.id}
+                item={s}
+                label={`Lend ${s.maturity_}`}
+                approvalParams={s.approvalParams}
+                sendParams={s.sendParams}
+              />
+            );
+          })}
+      </ResponseGrid>
     </>
   );
 };
 
+const SingleItem = ({
+  item,
+  label,
+  approvalParams,
+  sendParams,
+}: {
+  item: YieldSeriesEntity;
+  label: string;
+  approvalParams: ApprovalBasicParams | undefined;
+  sendParams: UnsignedTransaction | undefined;
+}) => {
+  return (
+    <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
+      <div className="mx-2 flex">
+        <ResponseTitle>{cleanValue(item.fyToken.pools[0].borrowAPR, 1)}% APR</ResponseTitle>
+        <ActionResponse
+          label={label}
+          approvalParams={approvalParams}
+          sendParams={sendParams}
+          txParams={undefined}
+        />
+      </div>
+    </SingleLineResponse>
+  );
+};
 export default YieldProtocolBorrow;

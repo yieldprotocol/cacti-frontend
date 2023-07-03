@@ -3,7 +3,6 @@ import { BigNumber, BigNumberish, Contract, PayableOverrides } from 'ethers';
 import { Address, useAccount } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
-import { Token } from '@/types';
 import borrowHelper from '../actions/borrow/helpers';
 import lendHelper from '../actions/lend/helpers';
 
@@ -23,19 +22,17 @@ const useYieldProtocol = () => {
 
   const borrow = useCallback(
     async ({
-      borrowToken,
-      collateralToken,
       borrowAmount,
       collateralAmount,
       seriesEntityId,
+      ilkId,
       borrowTokenIsEth,
       collateralTokenIsEth,
     }: {
-      borrowToken: Token;
-      collateralToken: Token;
       borrowAmount: BigNumber;
       collateralAmount: BigNumber;
       seriesEntityId: string;
+      ilkId: string;
       borrowTokenIsEth: boolean;
       collateralTokenIsEth: boolean;
     }) => {
@@ -43,9 +40,6 @@ const useYieldProtocol = () => {
         console.error('Signer not found');
         return undefined;
       }
-
-      // get the ilkId for the collateral token
-      const ilkId = 'blah';
 
       return borrowHelper({
         account,

@@ -16,6 +16,8 @@ interface BorrowProps {
   signer: Signer;
   chainId: number;
 }
+const BLANK_VAULT = '0x000000000000000000000000';
+const MAX_256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
 /**
  * Returns the calldata needed for the batch transaction to borrow
@@ -71,11 +73,11 @@ const _borrow = ({
     {
       operation: LadleActions.Fn.SERVE,
       args: [
-        vaultId,
+        vaultId ?? BLANK_VAULT,
         serveToAddress,
         collateralAmount,
         borrowAmount,
-        ethers.constants.MaxUint256,
+        MAX_256,
       ] as LadleActions.Args.SERVE, // TODO handle slippage more gracefully
     },
     // ...getUnwrapEthCallData(ladleAddress, isEthBase ? borrowAmount : ethers.constants.Zero),
