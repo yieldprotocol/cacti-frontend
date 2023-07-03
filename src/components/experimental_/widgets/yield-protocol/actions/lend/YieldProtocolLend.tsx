@@ -15,7 +15,7 @@ import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useAppro
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import { toTitleCase } from '@/utils';
+import { cleanValue, toTitleCase } from '@/utils';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
@@ -26,6 +26,7 @@ interface YieldGraphResSeriesEntity {
   fyToken: {
     pools: {
       id: string; // pool address
+      lendAPR: string;
     }[];
   };
 }
@@ -76,6 +77,12 @@ const YieldProtocolLend = ({
     ) {
       id
       maturity
+      fyToken {
+        pools {
+          id
+          lendAPR
+        }
+      }
     }
   } 
   `;
@@ -83,7 +90,7 @@ const YieldProtocolLend = ({
 
   // get series entities from the graph
   const { data: graphResSeriesEntities } = useSWR(
-    ['/yield-protocol/seriesEntities', ladle],
+    ['/yield-protocol/seriesEntities', ladle, query],
     () =>
       request<YieldGraphRes>(
         // only mainnet for now
@@ -161,14 +168,15 @@ const YieldProtocolLend = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <ResponseGrid>
+      <ResponseGrid className="grid gap-1">
         {data?.seriesEntities &&
           data.seriesEntities.map((seriesEntity) => {
             return (
               <SingleItem
                 key={seriesEntity.id}
+                item={seriesEntity}
                 tokenInSymbol={tokenInSymbol}
-                label={`${seriesEntity.maturity_}`}
+                label={`Lend ${seriesEntity.maturity_}`}
                 approvalParams={approvalParams}
                 sendParams={seriesEntity.sendParams}
               />
@@ -180,11 +188,13 @@ const YieldProtocolLend = ({
 };
 
 const SingleItem = ({
+  item,
   tokenInSymbol,
   label,
   approvalParams,
   sendParams,
 }: {
+  item: YieldSeriesEntity;
   tokenInSymbol: string;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
@@ -192,8 +202,8 @@ const SingleItem = ({
 }) => {
   return (
     <SingleLineResponse tokenSymbol={tokenInSymbol} className="flex justify-between">
-      <div className="my-auto flex justify-center px-2">
-        <ResponseTitle>{label}</ResponseTitle>
+      <div className="mx-2 flex">
+        <ResponseTitle>{cleanValue(item.fyToken.pools[0].lendAPR, 1)}% APY</ResponseTitle>
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
