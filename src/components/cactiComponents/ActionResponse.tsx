@@ -27,7 +27,7 @@ export enum ActionResponseState {
 const StyledButton = tw.button`
   inline-flex items-center justify-center
   height-[40px]
-  py-2 rounded-lg
+  p-2 rounded-lg
   border-[1px] border-white/10
   bg-[#2E8C87]
   text-white/70 w-full duration-200
