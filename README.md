@@ -10,6 +10,13 @@ yarn && yarn dev
 pnpm install && pnpm dev
 ```
 
+Or, if using a local backend:
+
+```sh
+npm install && npm localBackend
+# same for other package manager
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Minting on Tenderly fork
