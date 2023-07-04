@@ -16,16 +16,6 @@ interface NftAssetProps {
   variant?: ImageVariant; // widget variant
 }
 
-interface NftAssetTraitsContainerProps {
-  asset: JSX.Element;
-  children?: JSX.Element;
-}
-
-interface NftAssetTraitValueContainerProps {
-  trait: string;
-  value: string;
-}
-
 const fetchNftAsset = async (
   nftAddress: string,
   tokenId: string,
@@ -33,7 +23,7 @@ const fetchNftAsset = async (
 ) => {
   return axios
     .get(`https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`, {
-      // .get(`https://api.center.dev/v2/${network}/${nftAddress}/nft/${tokenId}/metadata`,{
+      // .get(`https://api.center.app/v2/${network}/${nftAddress}/nft/${tokenId}/metadata`,{
       headers: {
         Accept: 'application/json',
         'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'test',
@@ -66,30 +56,27 @@ export const NftAsset = ({
   } = useQuery(
     ['NftAsset', address, tokenId],
     async () => fetchNftAsset(address, tokenId.toString(), network),
-    { enabled: (collectionName && name && previewImageUrl ) ? false : true}, // only fetch if we don't have the basic data from props
+    {
+      enabled:
+        collectionName && name && previewImageUrl && !(variant === ImageVariant.SHOWCASE)
+          ? false
+          : true,
+    } // only fetch if we don't have the basic data from props 
   );
-
-  // variant === ImageVariant.SHOWCASE && console.log('NFT DATA:', nftData);
 
   return (
     <ImageResponse
       description={nftData?.description}
-      image={previewImageUrl}
-      imageTags={['some tag', 'Another tag']}
-      title={name}
-      subTitle={collectionName || nftData?.collection?.name}
+      image={nftData?.smallPreviewImageUrl || previewImageUrl}
+      imageTags={variant === ImageVariant.SHOWCASE ? [`Id: ${tokenId}`, `Network: ${network.replace('-mainnet','')}`] : []}
+      title={nftData?.name || name}
+      subTitle={nftData?.collection?.name || collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
     >
-      {variant === ImageVariant.SHOWCASE && (
-        <div>
-          {nftData?.traits?.map((trait: any) => {
-            {
-              trait;
-            }
-          })}
-        </div>
-      )}
+      {variant === ImageVariant.SHOWCASE && <div className='text-xs'>
+        {nftData?.metadata?.description}
+      </div>}
     </ImageResponse>
   );
 };

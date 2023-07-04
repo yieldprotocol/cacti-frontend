@@ -7,7 +7,18 @@ export enum ImageVariant {
   SHOWCASE = 'showcase',
   COMPACT = 'compact',
 }
-
+/**
+ * ImageResponse
+ * @param image - image url
+ * @param imageTags - list of tags
+ * @param title - title
+ * @param subTitle - subtitle
+ * @param imageLink - external link
+ * @param description - description
+ * @param variant - variant
+ * @param children - children
+ * 
+ */
 export interface ImageResponseProps {
   image?: string;
   imageTags?: string[];
@@ -76,8 +87,10 @@ export const ImageResponse = ({
           <div className="flex flex-shrink min-w-fit">
             <Image src={image} alt={title} />
           </div>
-          <div className="flex flex-grow flex-col">
+          <div className="flex flex-grow flex-col justify-between">
             {title && <Title />}
+            {description && <div> {description} </div>}
+            {children && <div> {children} </div>}
             {tagList.length > 0 && ( // if has tags
               <div className="space-x-2 space-y-1 py-2 ">
                 {tagList.map((tag: string) => (
@@ -85,8 +98,6 @@ export const ImageResponse = ({
                 ))}
               </div>
             )}
-            {description && <div> {description} </div>}
-            {children && <div> {children} </div>}
           </div>
         </div>
       )}
