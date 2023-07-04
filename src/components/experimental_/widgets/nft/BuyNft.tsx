@@ -1,26 +1,16 @@
 import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { BigNumber, BigNumberish } from 'ethers';
-import { formatEther } from 'ethers/lib/utils.js';
 // @ts-ignore TODO: fix this
 import * as JSONbigint from 'json-bigint';
-import {
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { useAccount } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import { NftOwner } from '@/components/CheckNftOwner';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
+import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-import SubmitButton from '@/components/widgets/common/SubmitButton';
-import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
-import { ETHEREUM_NETWORK } from '@/utils/constants';
-import { Widget } from '../../MessageTranslator_';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { NftAsset } from './NftAsset';
 
@@ -96,8 +86,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   const notForSale = listingData?.orders.length === 0;
   const isExpired = orderExpirationDate < Date.now() / 1000;
 
-  console.log(listingData);
-
   // fetchFulfillParams possible states:
   // If listing Query failed, error is already shown, no concern to fetchFulfillParams
   // If listing Query succeeds but there's no order hash, no concern to fetchFulfillParams
@@ -151,7 +139,12 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
           },
         }}
       /> */}
-      <NftAsset address={nftAddress} tokenId={tokenId} network='ethereum-mainnet' />
+      <NftAsset
+        address={nftAddress}
+        tokenId={tokenId}
+        network="ethereum-mainnet"
+        variant={ImageVariant.SHOWCASE}
+      />
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}

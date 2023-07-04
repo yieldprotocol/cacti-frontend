@@ -161,7 +161,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      
+
       // case 'nft-collection-container': {
       //   let params;
       //   try {

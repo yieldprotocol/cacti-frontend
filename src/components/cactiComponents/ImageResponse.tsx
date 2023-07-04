@@ -17,7 +17,7 @@ export enum ImageVariant {
  * @param description - description
  * @param variant - variant
  * @param children - children
- * 
+ *
  */
 export interface ImageResponseProps {
   image?: string;
@@ -84,7 +84,7 @@ export const ImageResponse = ({
     <ResponseWrap>
       {variant_ === ImageVariant.SHOWCASE && ( // Showcase Item (horizontal orientation)
         <div className="flex gap-4">
-          <div className="flex flex-shrink min-w-fit">
+          <div className="flex min-w-fit flex-shrink">
             <Image src={image} alt={title} />
           </div>
           <div className="flex flex-grow flex-col justify-between">

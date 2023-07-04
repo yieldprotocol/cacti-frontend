@@ -56,26 +56,30 @@ export const NftAsset = ({
     ['NftAsset', address, tokenId],
     async () => fetchNftAsset(address, tokenId.toString(), network),
     {
-      enabled:
-        name && previewImageUrl && !(variant === ImageVariant.SHOWCASE)
-          ? false
-          : true,
-    } // only fetch if we don't have the basic data from props 
+      enabled: true,
+      // name && previewImageUrl || !(variant === ImageVariant.SHOWCASE)
+      //   ? false
+      //   : true,
+    } // only fetch if we don't have the basic data from props
   );
 
   return (
     <ImageResponse
       description={nftData?.description}
       image={nftData?.smallPreviewImageUrl || previewImageUrl}
-      imageTags={variant === ImageVariant.SHOWCASE ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet','')}`] : []}
+      imageTags={
+        variant === ImageVariant.SHOWCASE
+          ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
+          : []
+      }
       title={nftData?.name || name}
-      subTitle={nftData?.collection?.name || collectionName}
+      subTitle={nftData?.collection?.name || nftData?.collectionName || collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
     >
-      {variant === ImageVariant.SHOWCASE && <div className='text-xs'>
-        {nftData?.metadata?.description}
-      </div>}
+      {variant === ImageVariant.SHOWCASE && (
+        <div className="text-xs">{nftData?.metadata?.description}</div>
+      )}
     </ImageResponse>
   );
 };
