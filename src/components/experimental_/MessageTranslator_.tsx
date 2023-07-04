@@ -6,6 +6,7 @@ import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { TextResponse } from '../cactiComponents';
+import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
@@ -148,8 +149,10 @@ export const Widget = (props: WidgetProps) => {
 
   /* Nft widgets */
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
-  widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
-
+  widgets.set(
+    'nft-collection-container',
+    <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
+  );
 
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 

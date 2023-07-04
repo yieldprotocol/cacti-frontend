@@ -22,6 +22,7 @@ import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { Widget } from '../../MessageTranslator_';
 import { ConnectFirst } from '../helpers/ConnectFirst';
+import { NftAsset } from './NftAsset';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
@@ -68,44 +69,6 @@ const fetchFulfillParams = async (
     .then((res) => res.data);
 };
 
-const fetchNftAsset = async (nftAddress: string, tokenID: string) => {
-  return axios
-    .get(`$https://api.center.dev/v1/${ETHEREUM_NETWORK}/${nftAddress}/${tokenID}`, {
-      headers: {
-        Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'keyf3d186ab56cd4148783854f3',
-      },
-    })
-    .then((res) => {
-      return res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-// const NFTMetadata = ({ tokenId, nftAddress }: { tokenId: string; nftAddress: string }) => {
-//   const { data, error, isLoading } = useQuery(['NftAsset', nftAddress, tokenId], async () =>
-//     fetchNftAsset(nftAddress, tokenId)
-//   );
-//   return (
-//     <>
-//       {data ? (
-//         <>
-//           <div className="flex justify-center">
-//             <img className="h-32 w-32 rounded-md" src={data.smallPreviewImageUrl} alt="nft image" />
-//           </div>
-//           <div>
-//             <b>{data.collectionName}</b>: #{tokenId}
-//           </div>
-//         </>
-//       ) : (
-//         <></>
-//       )}
-//     </>
-//   );
-// };
-
 export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
   // // The new owner will be the receiver
   const { address: account } = useAccount();
@@ -147,8 +110,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     enabled: !!listingData && !notForSale && !isExpired,
   });
 
-  // console.log(fulfillmentData);
-
   const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
   const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
   const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
@@ -173,49 +134,29 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     [fulfillmentData]
   );
 
-  const {
-    data: nftData,
-    error,
-    isLoading,
-  } = useQuery(['NftAsset', nftAddress, tokenId], async () => fetchNftAsset(nftAddress, tokenId));
-
-  console.log(nftData);
-
-  // useEffect(() => {
-  //   if (txData) {
-  //     addRecentTransaction({
-  //       hash: txData.transactionHash,
-  //       description: `Buy NFT with token address ${nftAddress} and id ${tokenId}`,
-  //     });
-  //   }
-
-  //   if (isSuccess) refetchBal();
-  // }, [addRecentTransaction, isSuccess, nftAddress, refetchBal, tokenId, txData]);
-
   return (
     <ConnectFirst>
-      <HeaderResponse text={`Buy ${nftData?.name} NFT`} projectName={'Opensea Seaport'} />
-      <Widget
+      <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
+      {/* <Widget
         widget={{
           name: 'nft-asset-container',
           params: {
             network: 'ethereum-mainnet',
             address: nftAddress,
             tokenId: tokenId,
-            collectionName: nftData?.collectionName,
-            name: nftData?.name,
-            previewImageUrl: nftData?.smallPreviewImageUrl,
+            // collectionName: nftData?.collectionName,
+            // name: nftData?.name,
+            // previewImageUrl: nftData?.smallPreviewImageUrl,
             variant: 'showcase',
           },
         }}
-      />
+      /> */}
+      <NftAsset address={nftAddress} tokenId={tokenId} network='ethereum-mainnet' />
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
         label={notForSale ? 'Item not for sale' : 'Purchase NFT'}
         disabled={isExpired || notForSale}
-        // stepper?: boolean | undefined;
-        // onSuccess = {() => refetchBal() }
       />
     </ConnectFirst>
 

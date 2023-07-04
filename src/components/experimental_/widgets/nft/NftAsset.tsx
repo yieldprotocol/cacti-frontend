@@ -48,7 +48,6 @@ export const NftAsset = ({
   variant,
 }: NftAssetProps) => {
   // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
-
   const {
     data: nftData,
     error,
@@ -58,7 +57,7 @@ export const NftAsset = ({
     async () => fetchNftAsset(address, tokenId.toString(), network),
     {
       enabled:
-        collectionName && name && previewImageUrl && !(variant === ImageVariant.SHOWCASE)
+        name && previewImageUrl && !(variant === ImageVariant.SHOWCASE)
           ? false
           : true,
     } // only fetch if we don't have the basic data from props 
@@ -68,7 +67,7 @@ export const NftAsset = ({
     <ImageResponse
       description={nftData?.description}
       image={nftData?.smallPreviewImageUrl || previewImageUrl}
-      imageTags={variant === ImageVariant.SHOWCASE ? [`Id: ${tokenId}`, `Network: ${network.replace('-mainnet','')}`] : []}
+      imageTags={variant === ImageVariant.SHOWCASE ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet','')}`] : []}
       title={nftData?.name || name}
       subTitle={nftData?.collection?.name || collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}

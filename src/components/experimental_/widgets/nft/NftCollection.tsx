@@ -1,13 +1,19 @@
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { useCollection } from '@center-inc/react';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
 interface NftCollectionContainerProps {
   network: string;
   address: string;
   name?: string;
-  previewImageUrl?: string;
+
   numAssets?: string | number;
+  previewImageUrl?: string;
+  
   variant?: ImageVariant; // widget variant (default, showcase, compact)
 }
 
@@ -15,8 +21,8 @@ export const NftCollection = ({
   network,
   address,
   name,
-  previewImageUrl,
   numAssets,
+  previewImageUrl,
   variant,
 }: NftCollectionContainerProps) => {
 
@@ -28,11 +34,8 @@ export const NftCollection = ({
   return (
     <>
       <ImageResponse
-        // actionLabel={network}
-        // actionValue={listPrice}
-        // description='NFT Collection'
         image={collection?.smallPreviewImageUrl || previewImageUrl}
-        imageTags={[`${(numAssets||collection?.numAssets)!.toString()} Assets`]}
+        imageTags={[`${(numAssets||collection?.numAssets|| 'Unknown')!.toString()} Assets`]}
         title={collection?.name || name}
         subTitle={collection?.symbol || collection?.name}
         imageLink={`https://center.app/${network}/collections/${address}`}
