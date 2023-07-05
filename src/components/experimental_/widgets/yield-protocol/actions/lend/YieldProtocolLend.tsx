@@ -212,8 +212,11 @@ const SingleItem = ({
 }) => {
   return (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
-      <div className="mx-2 flex">
+      <div className="">
+        <ResponseTitle>{item.maturity_}</ResponseTitle>
         <ResponseTitle>{cleanValue(item.fyToken.pools[0].lendAPR, 1)}% APY</ResponseTitle>
+      </div>
+      <div className="mx-2 my-auto">
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
