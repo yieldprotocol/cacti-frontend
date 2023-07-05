@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Dialog, Transition } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 function SidebarContainer({
   isOpen,
@@ -11,15 +11,6 @@ function SidebarContainer({
   setIsOpen: (open: boolean) => void;
   children: React.ReactNode;
 }) {
-  // const Logo = () => (
-  //     <div className="flex h-16 shrink-0 items-center">
-  //         <img
-  //             className="h-8 w-auto"
-  //             src=""
-  //             alt="Logo"
-  //         />
-  //     </div>
-  // );
   return (
     <div>
       <Transition.Root show={isOpen} as={Fragment}>

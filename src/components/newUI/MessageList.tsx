@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
-import { ChatHeader } from './ChatHeader';
 import { MessageItem } from './MessageItem';
 
 export const MessageList = () => {
@@ -33,7 +32,6 @@ export const MessageList = () => {
         if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
           return <React.Fragment key={message.messageId} />;
         }
-
         return (
           <React.Fragment key={message.messageId}>
             {message.messageId == insertBeforeMessageId && (
@@ -47,7 +45,6 @@ export const MessageList = () => {
           </React.Fragment>
         );
       })}
-
       {!insertBeforeMessageId && (
         <>
           {multiStepInProgress}

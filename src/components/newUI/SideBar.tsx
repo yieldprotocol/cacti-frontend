@@ -6,7 +6,6 @@ import {
   Cog8ToothIcon,
   DocumentIcon,
   HomeIcon,
-  LinkIcon,
   QueueListIcon,
   WrenchIcon,
 } from '@heroicons/react/24/outline';
@@ -50,7 +49,6 @@ const MenuButton = ({ action }: { action: () => void }) => {
 
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   const { connectionStatus } = useChatContext();
   const {
     settings: { developerTools },
@@ -104,7 +102,6 @@ const Sidebar = () => {
             label="Settings"
             action={() => console.log('settings')}
           />
-          {/* <MoreItem icon={<ExclamationCircleIcon />} label="Status" link="/" /> */}
           <MoreItem
             icon={<DocumentIcon />}
             label="Documentation"
@@ -137,7 +134,6 @@ const Sidebar = () => {
 
         <div className="mt-8 flex items-center justify-between text-white/70">
           <div className="text-xs ">Developer </div>
-          {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
         </div>
         <div className="py-4">
           <MoreItem

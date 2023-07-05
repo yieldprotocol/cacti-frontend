@@ -2,17 +2,6 @@ import { useRouter } from 'next/router';
 import { EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/20/solid';
 import { CustomConnectButton } from './CustomConnectButton';
 
-// const ShareButton = () => {
-//   return (
-//     <div
-//       className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-//       onClick={() => console.log('share')}
-//     >
-//       <div className="text-xs text-white/70 ">Share</div>
-//     </div>
-//   );
-// };
-
 const PrimaryActions = () => {
   return (
     <div className="flex items-center gap-2">
@@ -54,7 +43,6 @@ const Header = () => {
       </div>
       <div className="">
         <CustomConnectButton />
-        {/* <SettingsDropdown /> */}
       </div>
     </div>
   );
