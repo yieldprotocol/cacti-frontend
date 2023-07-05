@@ -54,7 +54,12 @@ const _lend = ({
   }
 
   return [
-    ...getWrapEthCallData(poolAddress, isEthBase ? input : ethers.constants.Zero, signer, chainId), // wrap eth to the pool if required
+    ...getWrapEthCallData({
+      to: poolAddress,
+      value: isEthBase ? input : ethers.constants.Zero,
+      signer,
+      chainId,
+    }), // wrap eth to the pool if required
     {
       operation: LadleActions.Fn.TRANSFER,
       args: [baseAddress, poolAddress, input] as LadleActions.Args.TRANSFER,
@@ -91,7 +96,7 @@ const lend = async ({
     signer,
     chainId,
   });
-  return lendCallData ? await getSendParams(lendCallData, signer, chainId) : undefined;
+  return lendCallData ? await getSendParams({ calls: lendCallData, signer, chainId }) : undefined;
 };
 
 export default lend;

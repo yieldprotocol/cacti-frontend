@@ -25,12 +25,18 @@ export interface ICallData {
 
 /**
  * Encode all function calls to ladle.batch()
- * @param calls array of ICallData objects
- * @param signer ethers signer
- * @param chainId chainId
+ * @params calls array of ICallData
  * @returns {Promise<UnsignedTransaction | undefined>}
  */
-export const getSendParams = async (calls: ICallData[], signer: Signer, chainId: number) => {
+export const getSendParams = async ({
+  calls,
+  signer,
+  chainId,
+}: {
+  calls: ICallData[];
+  signer: Signer;
+  chainId: number;
+}): Promise<UnsignedTransaction | undefined> => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
   if (!ladleAddress) {
@@ -112,12 +118,17 @@ const getCallValue = async (calls: ICallData[]) =>
  * @param chainId chainId to use (defaults to mainnet for now)
  * @returns
  */
-export const getWrapEthCallData = (
-  to: Address,
-  value: BigNumber,
-  signer: Signer,
-  chainId = 1
-): ICallData[] => {
+export const getWrapEthCallData = ({
+  to,
+  value,
+  signer,
+  chainId = 1,
+}: {
+  to: Address;
+  value: BigNumber;
+  signer: Signer;
+  chainId: number;
+}): ICallData[] => {
   const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
   if (!address)
     throw new Error('Wrap Ether Module address not found; possibly on an unsupported chain');

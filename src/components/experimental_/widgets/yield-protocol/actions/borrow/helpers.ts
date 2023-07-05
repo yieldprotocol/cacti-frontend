@@ -58,12 +58,12 @@ const _borrow = ({
   const serveToAddress = borrowTokenIsEth ? ladleAddress : account; // TODO handle unwrapping WETH cuz this is going to send borrowed eth to the ladle which is fubar
 
   return [
-    ...getWrapEthCallData(
-      ladleAddress,
-      collateralTokenIsEth ? collateralAmount : ethers.constants.Zero,
+    ...getWrapEthCallData({
+      to: ladleAddress,
+      value: collateralTokenIsEth ? collateralAmount : ethers.constants.Zero,
       signer,
-      chainId
-    ),
+      chainId,
+    }),
 
     /* If vault is null, build a new vault, else ignore */
     {
@@ -115,7 +115,9 @@ const borrow = async ({
     chainId,
     maxAmountToBorrow,
   });
-  return borrowCallData ? await getSendParams(borrowCallData, signer, chainId) : undefined;
+  return borrowCallData
+    ? await getSendParams({ calls: borrowCallData, signer, chainId })
+    : undefined;
 };
 
 export default borrow;
