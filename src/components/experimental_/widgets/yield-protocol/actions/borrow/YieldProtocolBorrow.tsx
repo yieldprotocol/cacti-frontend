@@ -117,15 +117,27 @@ const YieldProtocolBorrow = ({
     enabled: !!ilkId,
   });
 
-  const approvalParams = useMemo<ApprovalBasicParams>(
-    () => ({
-      tokenAddress: collateralToken?.address!,
-      spender: joinAddress!,
-      approvalAmount: _collateralAmount!,
+  const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {
+    if (!collateralTokenToUse?.address) {
+      console.error('No collateral token address');
+      return undefined;
+    }
+    if (!joinAddress) {
+      console.error('No join address');
+      return undefined;
+    }
+    if (!_collateralAmount) {
+      console.error('No collateral amount');
+      return undefined;
+    }
+
+    return {
+      tokenAddress: collateralTokenToUse?.address,
+      spender: joinAddress,
+      approvalAmount: _collateralAmount,
       skipApproval: collateralTokenIsEth,
-    }),
-    [_collateralAmount, collateralToken?.address, collateralTokenIsEth, joinAddress]
-  );
+    };
+  }, [_collateralAmount, collateralTokenIsEth, collateralTokenToUse?.address, joinAddress]);
 
   const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: BigNumber) => {
     try {
