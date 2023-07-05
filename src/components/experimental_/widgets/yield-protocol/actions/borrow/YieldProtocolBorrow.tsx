@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UnsignedTransaction } from 'ethers';
+import { UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, useContractRead } from 'wagmi';
+import { readContract } from 'wagmi/actions';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
@@ -12,6 +13,7 @@ import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import { cleanValue, toTitleCase } from '@/utils';
 import Ladle from '../../contracts/abis/Ladle';
+import Pool from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
@@ -124,17 +126,45 @@ const YieldProtocolBorrow = ({
     [_collateralAmount, collateralToken?.address, collateralTokenIsEth, joinAddress]
   );
 
+  const getMaxBorrowAmount = useCallback(
+    async (poolAddress: Address) => {
+      try {
+        return await readContract({
+          address: poolAddress,
+          abi: Pool,
+          functionName: 'buyBasePreview',
+          args: [_borrowAmount!],
+        });
+      } catch (e) {
+        console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', e);
+        return ethers.constants.MaxInt256;
+      }
+    },
+    [_borrowAmount]
+  );
+
   const getSendParams = useCallback(
-    async (seriesEntity: YieldGraphResSeriesEntity) =>
-      await borrow({
+    async (seriesEntity: YieldGraphResSeriesEntity) => {
+      const max = await getMaxBorrowAmount(seriesEntity.fyToken?.pools[0]?.id as Address);
+      return await borrow({
         borrowAmount: _borrowAmount!,
         collateralAmount: _collateralAmount!,
         seriesEntityId: seriesEntity.id,
         ilkId: ilkId!,
         borrowTokenIsEth: borrowTokenIsEth,
         collateralTokenIsEth: collateralTokenIsEth,
-      }),
-    [_borrowAmount, _collateralAmount, borrow, borrowTokenIsEth, collateralTokenIsEth, ilkId]
+        maxAmountToBorrow: max,
+      });
+    },
+    [
+      _borrowAmount,
+      _collateralAmount,
+      borrow,
+      borrowTokenIsEth,
+      collateralTokenIsEth,
+      getMaxBorrowAmount,
+      ilkId,
+    ]
   );
 
   useEffect(() => {

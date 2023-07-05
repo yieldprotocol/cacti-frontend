@@ -15,9 +15,9 @@ interface BorrowProps {
   collateralTokenIsEth: boolean;
   signer: Signer;
   chainId: number;
+  maxAmountToBorrow: BigNumber;
 }
 const BLANK_VAULT = '0x000000000000000000000000';
-const MAX_256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
 /**
  * Returns the calldata needed for the batch transaction to borrow
@@ -31,6 +31,7 @@ const MAX_256 = '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
  * @param collateralTokenIsEth
  * @param signer
  * @param chainId
+ * @param maxAmountToBorrow
  *
  * @returns {ICallData[] | undefined}
  */
@@ -45,6 +46,7 @@ const _borrow = ({
   collateralTokenIsEth,
   signer,
   chainId,
+  maxAmountToBorrow,
 }: BorrowProps): ICallData[] | undefined => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   if (!ladleAddress) {
@@ -77,7 +79,7 @@ const _borrow = ({
         serveToAddress,
         collateralAmount,
         borrowAmount,
-        MAX_256,
+        maxAmountToBorrow,
       ] as LadleActions.Args.SERVE, // TODO handle slippage more gracefully
     },
     // ...getUnwrapEthCallData(ladleAddress, isEthBase ? borrowAmount : ethers.constants.Zero),
@@ -98,6 +100,7 @@ const borrow = async ({
   collateralTokenIsEth,
   signer,
   chainId,
+  maxAmountToBorrow,
 }: BorrowProps) => {
   const borrowCallData = _borrow({
     account,
@@ -110,6 +113,7 @@ const borrow = async ({
     collateralTokenIsEth,
     signer,
     chainId,
+    maxAmountToBorrow,
   });
   return borrowCallData ? await getSendParams(borrowCallData, signer, chainId) : undefined;
 };

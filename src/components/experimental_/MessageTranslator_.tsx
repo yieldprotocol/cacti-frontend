@@ -165,7 +165,7 @@ export const Widget = (props: WidgetProps) => {
       borrowAmount={parsedArgs[1]}
       collateralTokenSymbol={parsedArgs[2]}
       collateralAmount={parsedArgs[3]}
-      action="lend"
+      action="borrow"
       projectName="yield-protocol"
     />
   );

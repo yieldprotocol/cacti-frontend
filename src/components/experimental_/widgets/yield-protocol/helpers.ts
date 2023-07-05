@@ -28,7 +28,7 @@ export interface ICallData {
  * @param calls array of ICallData objects
  * @param signer ethers signer
  * @param chainId chainId
- * @returns {Promise<Request$1 | undefined>} returns a "prepared request" (wagmi's prepareWriteContract result's request property)
+ * @returns {Promise<UnsignedTransaction | undefined>}
  */
 export const getSendParams = async (calls: ICallData[], signer: Signer, chainId: number) => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);

@@ -28,6 +28,7 @@ const useYieldProtocol = () => {
       ilkId,
       borrowTokenIsEth,
       collateralTokenIsEth,
+      maxAmountToBorrow,
     }: {
       borrowAmount: BigNumber;
       collateralAmount: BigNumber;
@@ -35,6 +36,7 @@ const useYieldProtocol = () => {
       ilkId: string;
       borrowTokenIsEth: boolean;
       collateralTokenIsEth: boolean;
+      maxAmountToBorrow: BigNumber;
     }) => {
       if (!signer) {
         console.error('Signer not found');
@@ -52,6 +54,7 @@ const useYieldProtocol = () => {
         collateralTokenIsEth,
         signer,
         chainId,
+        maxAmountToBorrow,
       });
     },
     [account, chainId, signer]
