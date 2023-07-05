@@ -158,7 +158,7 @@ const YieldProtocolBorrow = ({
         return undefined;
       }
 
-      const max = await getMaxBorrowAmount(
+      const maxAmountToBorrow = await getMaxBorrowAmount(
         seriesEntity.fyToken?.pools[0]?.id as Address,
         _borrowAmount
       );
@@ -167,10 +167,10 @@ const YieldProtocolBorrow = ({
         borrowAmount: _borrowAmount,
         collateralAmount: _collateralAmount,
         seriesEntityId: seriesEntity.id,
-        ilkId: ilkId!,
-        borrowTokenIsEth: borrowTokenIsEth,
-        collateralTokenIsEth: collateralTokenIsEth,
-        maxAmountToBorrow: max,
+        ilkId,
+        borrowTokenIsEth,
+        collateralTokenIsEth,
+        maxAmountToBorrow,
       });
     },
     [
