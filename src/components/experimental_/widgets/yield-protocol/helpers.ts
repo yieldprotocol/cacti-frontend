@@ -124,7 +124,7 @@ export const getWrapEthCallData = ({
   signer,
   chainId = 1,
 }: {
-  to: Address;
+  to?: Address;
   value: BigNumber;
   signer: Signer;
   chainId: number;
@@ -139,14 +139,23 @@ export const getWrapEthCallData = ({
     signerOrProvider: signer,
   });
 
-  return [
-    {
-      operation: LadleActions.Fn.MODULE,
-      fnName: 'wrap',
-      args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
-      targetContract,
-      ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
-      overrides: { value },
-    },
-  ];
+  return to
+    ? [
+        {
+          operation: LadleActions.Fn.MODULE,
+          fnName: 'wrap',
+          args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
+          targetContract,
+          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
+          overrides: { value },
+        },
+      ]
+    : [
+        {
+          operation: LadleActions.Fn.JOIN_ETHER,
+          args: ['0x303000000000'] as LadleActions.Args.JOIN_ETHER,
+          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
+          overrides: { value },
+        },
+      ];
 };

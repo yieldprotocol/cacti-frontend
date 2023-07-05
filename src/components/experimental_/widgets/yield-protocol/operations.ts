@@ -4,6 +4,7 @@ export namespace LadleActions {
   export enum Fn {
     BATCH = 'batch',
     BUILD = 'build',
+    JOIN_ETHER = 'joinEther',
     SERVE = 'serve',
     TRANSFER = 'transfer',
     ROUTE = 'route',
@@ -12,6 +13,7 @@ export namespace LadleActions {
 
   export namespace Args {
     export type BUILD = [seriesId_bytes6: string, ilkId_bytes6: string, salt_bytes8: string];
+    export type JOIN_ETHER = [etherId: string];
     export type MODULE = [targetAddress: string, encodedCall: string];
     export type ROUTE = [targetAddress: string, encodedCall: string];
     export type SERVE = [

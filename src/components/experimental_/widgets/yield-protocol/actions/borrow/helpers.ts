@@ -59,7 +59,6 @@ const _borrow = ({
 
   return [
     ...getWrapEthCallData({
-      to: ladleAddress,
       value: collateralTokenIsEth ? collateralAmount : ethers.constants.Zero,
       signer,
       chainId,
