@@ -3,6 +3,7 @@ import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
 import ChatContext from '@/contexts/ChatContext';
 import { abbreviateHash, shortenAddress } from '@/utils';
+import { useRouter } from 'next/router';
 
 export type ChatItem = {
   id: string;
@@ -10,14 +11,12 @@ export type ChatItem = {
 };
 
 const ChatItem = ({ id, selected }: ChatItem) => {
+  const router = useRouter();
+
   const onClick = selected
     ? undefined
-    : () => {
-        const q = window.location.search;
-        const params = new URLSearchParams(q);
-        params.set('s', id);
-        window.location.assign('?' + params.toString());
-      };
+    : () => router.push(id, undefined, { shallow: true })
+
   return (
     <div
       className={`flex cursor-pointer flex-row items-center gap-2 rounded-sm py-2 text-white/70 ${
@@ -33,18 +32,14 @@ const ChatItem = ({ id, selected }: ChatItem) => {
 
 const ChatList = () => {
   const { isSuccess, chats } = useQueryChats();
-
-  const q = window.location.search;
-  const params = new URLSearchParams(q);
-  const selectedId = params.get('s') ? (params.get('s') as string) : '';
-
+  const router = useRouter();
   return (
     <>
       <div className="pt-8 text-xs ">My Chats</div>
       <div className="py-4">
         {isSuccess &&
           chats?.sessions?.map((chat: any) => {
-            return <ChatItem key={chat.id} id={chat.id} selected={selectedId === chat.id} />;
+            return <ChatItem key={chat.id} id={chat.id} selected={ router.query.thread?.[0] === chat.id} />;
           }, [])}
       </div>
     </>

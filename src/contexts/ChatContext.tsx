@@ -4,6 +4,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
+import { useRouter } from 'next/router';
 
 export type Message = {
   messageId: string;
@@ -95,22 +96,27 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     shouldConnect
   );
 
-  const onOpen = () => {
-    console.log(`Connected to backend: ${backendUrl}`);
-
-    const q = window.location.search;
-    if (q) {
-      // websocket is re-establishing an existing session
-      const params = new URLSearchParams(q);
-      if (params.get('s')) {
-        // load the historical session stored within the backend
+  const router = useRouter();
+  useEffect(()=>{
+       // load the historical session stored within the backend
+       if (router.isReady && router.query.thread) {
         const payload = {
-          sessionId: params.get('s'),
+          sessionId: router.query.thread[0],
           resumeFromMessageId: resumeFromMessageId,
           insertBeforeMessageId: insertBeforeMessageId,
         };
         wsSendMessage({ actor: 'system', type: 'init', payload: payload });
       }
+  },[router])
+
+  const onOpen = () => {
+
+    console.log(`Connected to backend: ${backendUrl}`);
+
+     // set the system config to use on the backend
+    const q = window.location.search;
+    if (q) {
+      const params = new URLSearchParams(q);
       if (params.get('cfg')) {
         // set the system config to use on the backend
         const payload = {
@@ -119,6 +125,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         wsSendMessage({ actor: 'system', type: 'cfg', payload: payload });
       }
     }
+
   };
 
   /* monitor ready state and update connectionStatus accordingly */
@@ -138,16 +145,21 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+
     if (!lastMessage) return;
+
     const obj = JSON.parse(lastMessage.data);
     if (obj.type == 'uuid') {
+
       const q = window.location.search;
       const params = new URLSearchParams(q);
       params.set('s', obj.payload);
       window.history.replaceState(null, '', '?' + params.toString());
+      
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }
+
     setIsBotThinking(obj.stillThinking);
     setResumeFromMessageId(obj.messageId);
     const payload = obj.payload;

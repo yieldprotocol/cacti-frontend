@@ -1,5 +1,6 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Button } from './Button';
+import { useRouter } from 'next/router';
 
 type ResetButtonProps = {
   styleOption?: 'button' | 'iconAndText';
@@ -11,13 +12,9 @@ type ButtonStyles = {
 };
 
 export const ResetButton = (props: ResetButtonProps) => {
-  const reset = () => {
-    const q = window.location.search;
-    const params = new URLSearchParams(q);
-    params.delete('s');
-    const paramString = params.toString();
-    window.location.assign(paramString ? `/?${paramString}` : '/');
-  };
+
+  const router = useRouter();
+  const reset = () => router.push('/');
 
   const buttonStyles: ButtonStyles = {
     button: <Button onClick={reset}>Reset</Button>,

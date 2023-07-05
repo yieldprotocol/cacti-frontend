@@ -15,6 +15,7 @@ import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
 import { DevToolsModal } from '../devTools/DevToolsModal';
 import ChatList from './ChatList';
+import { useRouter } from 'next/router';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -67,13 +68,8 @@ const Sidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const reset = () => {
-    const q = window.location.search;
-    const params = new URLSearchParams(q);
-    params.delete('s');
-    const paramString = params.toString();
-    window.location.assign(paramString ? `/?${paramString}` : '/');
-  };
+  const router = useRouter()
+  const reset = () => router.push('/')
 
   return (
     <>
