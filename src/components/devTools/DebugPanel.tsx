@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/shared/Button';
 import { useChatContext } from '@/contexts/ChatContext';
 import { shortenAddress } from '@/utils';
 

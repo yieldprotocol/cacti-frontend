@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import Skeleton from '@/components/SkeletonWrap';
+import Skeleton from '@/components/shared/SkeletonWrap';
 import { findTokenBySymbol } from '@/utils';
 import { InlineChip } from './InlineChip';
 import { ResponseWrap } from './helpers/layout';

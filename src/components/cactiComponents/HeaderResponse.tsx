@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { findProjectByName, shortenAddress } from '@/utils';
 import projectList from '@/utils/ProjectList.json';
-import Avatar from '../Avatar';
+import Avatar from '../shared/Avatar';
 import { ResponseWrap } from './helpers/layout';
 
 const navigateToExternalUrl = ({ url }: { url: string | URL }) => {

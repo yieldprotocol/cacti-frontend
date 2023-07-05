@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { XCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/shared/Button';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import useForkTools from '@/hooks/useForkTools';
 
