@@ -141,12 +141,14 @@ const YieldProtocolBorrow = ({
 
   const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: BigNumber) => {
     try {
-      return await readContract({
+      const fyTokenOut = await readContract({
         address: poolAddress,
         abi: Pool,
         functionName: 'buyBasePreview',
         args: [borrowAmount],
       });
+
+      return fyTokenOut.mul(101).div(100); // 1% slippage
     } catch (e) {
       console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', 'could not read buyBasePreview');
       return ethers.constants.Zero; // TODO not kosher;
