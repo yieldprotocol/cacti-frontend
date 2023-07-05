@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UnsignedTransaction, ethers } from 'ethers';
+import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, useContractRead } from 'wagmi';
@@ -72,7 +72,7 @@ const YieldProtocolBorrow = ({
   const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
   // get series entities from the graph
-  const query = getQuery(borrowTokenToUse?.address!);
+  const query = getQuery(borrowTokenToUse?.address!); // TODO handle no or incompatible borrow token
   const { data: graphResSeriesEntities } = useSWR(
     ['/yield-protocol/seriesEntities', query],
     () =>
@@ -86,6 +86,7 @@ const YieldProtocolBorrow = ({
     }
   );
 
+  // TODO handle no or incompatible asset symbol
   const getAssetQuery = (symbol: string) => `
   {
     assets(where: {symbol: "${symbol}"}) {
@@ -126,29 +127,45 @@ const YieldProtocolBorrow = ({
     [_collateralAmount, collateralToken?.address, collateralTokenIsEth, joinAddress]
   );
 
-  const getMaxBorrowAmount = useCallback(
-    async (poolAddress: Address) => {
-      try {
-        return await readContract({
-          address: poolAddress,
-          abi: Pool,
-          functionName: 'buyBasePreview',
-          args: [_borrowAmount!],
-        });
-      } catch (e) {
-        console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', e);
-        return ethers.constants.MaxInt256;
-      }
-    },
-    [_borrowAmount]
-  );
+  const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: BigNumber) => {
+    try {
+      return await readContract({
+        address: poolAddress,
+        abi: Pool,
+        functionName: 'buyBasePreview',
+        args: [borrowAmount],
+      });
+    } catch (e) {
+      console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', 'could not read buyBasePreview');
+      return ethers.constants.Zero; // TODO not kosher;
+    }
+  }, []);
 
   const getSendParams = useCallback(
     async (seriesEntity: YieldGraphResSeriesEntity) => {
-      const max = await getMaxBorrowAmount(seriesEntity.fyToken?.pools[0]?.id as Address);
+      if (!_borrowAmount) {
+        console.error('No borrow amount');
+        return undefined;
+      }
+
+      if (!_collateralAmount) {
+        console.error('No collateral amount');
+        return undefined;
+      }
+
+      if (!ilkId) {
+        console.error(`No ilkId for ${collateralTokenSymbol}}`);
+        return undefined;
+      }
+
+      const max = await getMaxBorrowAmount(
+        seriesEntity.fyToken?.pools[0]?.id as Address,
+        _borrowAmount
+      );
+
       return await borrow({
-        borrowAmount: _borrowAmount!,
-        collateralAmount: _collateralAmount!,
+        borrowAmount: _borrowAmount,
+        collateralAmount: _collateralAmount,
         seriesEntityId: seriesEntity.id,
         ilkId: ilkId!,
         borrowTokenIsEth: borrowTokenIsEth,
@@ -162,6 +179,7 @@ const YieldProtocolBorrow = ({
       borrow,
       borrowTokenIsEth,
       collateralTokenIsEth,
+      collateralTokenSymbol,
       getMaxBorrowAmount,
       ilkId,
     ]
@@ -169,15 +187,6 @@ const YieldProtocolBorrow = ({
 
   useEffect(() => {
     (async () => {
-      if (!_borrowAmount) return console.error('borrow amount is undefined');
-      if (!_collateralAmount) return console.error('collateral amount is undefined');
-      if (!borrowToken) return console.error('borrow token is undefined');
-      if (!collateralToken) return console.error('collateral token is undefined');
-      if (!ilkId) {
-        console.error(`No ilk found for collateral token ${collateralToken?.symbol}`);
-        return undefined;
-      }
-
       // get the series entities using the graph
       (async () => {
         const _seriesEntities = graphResSeriesEntities?.seriesEntities;
@@ -199,16 +208,7 @@ const YieldProtocolBorrow = ({
         setData({ seriesEntities });
       })();
     })();
-  }, [
-    _borrowAmount,
-    _collateralAmount,
-    approvalParams,
-    borrowToken,
-    collateralToken,
-    getSendParams,
-    graphResSeriesEntities?.seriesEntities,
-    ilkId,
-  ]);
+  }, [approvalParams, getSendParams, graphResSeriesEntities?.seriesEntities]);
 
   /***************INPUTS******************************************/
 
@@ -224,7 +224,7 @@ const YieldProtocolBorrow = ({
               <SingleItem
                 key={s.id}
                 item={s}
-                label={`Lend ${s.maturity_}`}
+                label={`Borrow ${s.maturity_}`}
                 approvalParams={s.approvalParams}
                 sendParams={s.sendParams}
               />
