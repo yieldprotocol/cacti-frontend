@@ -6,9 +6,9 @@ export interface ChatSession {
   created: string;
 }
 export interface Chats {
-  sessions: ChatSession[];
+  sessions: ChatSession[] | undefined;
 }
 export const useQueryChats = () => {
-  const { data: chats, ...rest } = useQuery(['chats'], async () => fetchChats());
-  return { chats: chats as Chats, ...rest };
+  const { data: chats, ...rest } = useQuery<Chats>(['chats'], async () => fetchChats());
+  return { chats, ...rest };
 };
