@@ -7,6 +7,7 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
+import useBalance from '@/hooks/useBalance';
 import useApproval from './useApproval';
 
 export type TxBasicParams = {
@@ -39,6 +40,7 @@ const useSubmitTx = (
   onError?: () => void,
   hasAllowance?: boolean
 ) => {
+  const { refetch: refetchEthBal } = useBalance();
   const [error, setError] = useState<string>();
   const handleError = (error: Error) => {
     console.log(error.message);
@@ -75,7 +77,10 @@ const useSubmitTx = (
     status,
   } = useWaitForTransaction({
     hash: data?.hash,
-    onSuccess,
+    onSuccess: () => {
+      if (onSuccess) onSuccess();
+      refetchEthBal();
+    },
     onError,
   });
 
