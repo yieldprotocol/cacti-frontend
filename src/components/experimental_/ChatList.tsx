@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { Popover, Transition } from '@headlessui/react';
 import { CheckIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
-import { abbreviateHash } from '@/utils';
 import useThread from '@/hooks/useThread';
+import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
@@ -15,10 +15,10 @@ export type ChatItem = {
 const ChatMenu = ({ id, selected }: ChatItem) => {
   return (
     <div className={`${selected ? 'opacity-100' : 'opacity-0'}`}>
-      <Popover className='relative'>
+      <Popover className="relative">
         {({ open }) => (
           <>
-            <Popover.Button >
+            <Popover.Button>
               <div className=" h-4 w-4 text-white/70">
                 <EllipsisVerticalIcon />
               </div>
@@ -35,12 +35,12 @@ const ChatMenu = ({ id, selected }: ChatItem) => {
             >
               <Popover.Panel className="absolute z-[10000] ">
                 {/* <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"> */}
-                  <div className="relative grid lg:grid-cols-2">
-                    <a href="/analytics">Analytics</a>
-                    <a href="/engagement">Engagement</a>
-                    <a href="/security">Security</a>
-                    <a href="/integrations">Integrations</a>
-                  </div>
+                <div className="relative grid lg:grid-cols-2">
+                  <a href="/analytics">Analytics</a>
+                  <a href="/engagement">Engagement</a>
+                  <a href="/security">Security</a>
+                  <a href="/integrations">Integrations</a>
+                </div>
                 {/* </div> */}
               </Popover.Panel>
             </Transition>
@@ -52,8 +52,7 @@ const ChatMenu = ({ id, selected }: ChatItem) => {
 };
 
 const ChatItem = ({ id, selected }: ChatItem) => {
-
-  const { threadName } = useThread( id );
+  const { threadName } = useThread(id);
 
   return (
     <div
@@ -68,11 +67,11 @@ const ChatItem = ({ id, selected }: ChatItem) => {
         href={`/${id}`}
       >
         <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
-        <div className="text-xs"> { threadName !== id ? threadName :  abbreviateHash(id, 4)}</div>
+        <div className="text-xs"> {threadName !== id ? threadName : abbreviateHash(id, 4)}</div>
       </Link>
       <ChatMenu id={id} selected={selected} />
     </div>
-  ); 
+  );
 };
 
 const ChatList = () => {
