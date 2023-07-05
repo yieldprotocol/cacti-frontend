@@ -98,24 +98,20 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const router = useRouter();
   useEffect(() => {
-
-    // Clear the messages if there is no thread
-    !router.query.thread && router.isReady && readyState == ReadyState.OPEN && setMessages([]);
-
     // load the historical session stored within the backend
-    if (router.isReady && router.query.thread && readyState == ReadyState.OPEN) {
-      setMessages([{ messageId: '', actor: '', payload: '', feedback: '' }]);
+    if (router.isReady && router.query.id) {
       const payload = {
-        sessionId: router.query.thread[0],
-        resumeFromMessageId: resumeFromMessageId,
-        insertBeforeMessageId: insertBeforeMessageId,
+        sessionId: router.query.id,
+        resumeFromMessageId,
+        insertBeforeMessageId,
       };
       wsSendMessage({ actor: 'system', type: 'init', payload: payload });
     }
-  }, [router, readyState]);
+  }, [insertBeforeMessageId, resumeFromMessageId, router.isReady, router.query.id, wsSendMessage]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
+
     // set the system config to use on the backend
     const q = window.location.search;
     if (q) {
@@ -150,7 +146,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (!lastMessage) return;
 
     const obj = JSON.parse(lastMessage.data);
-
     if (obj.type == 'uuid') {
       const q = window.location.search;
       const params = new URLSearchParams(q);
