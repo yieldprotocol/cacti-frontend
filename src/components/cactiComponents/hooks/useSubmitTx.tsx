@@ -7,6 +7,7 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
+import useApproval from './useApproval';
 
 export type TxBasicParams = {
   address?: `0x${string}`;
@@ -35,7 +36,8 @@ const useSubmitTx = (
   params?: TxBasicParams,
   sendParams?: UnsignedTransaction,
   onSuccess?: () => void,
-  onError?: () => void
+  onError?: () => void,
+  hasAllowance?: boolean
 ) => {
   const [error, setError] = useState<string>();
   const handleError = (error: Error) => {
@@ -52,7 +54,7 @@ const useSubmitTx = (
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig } = usePrepareSendTransaction({
     request: { ...(writeConfig.request ?? sendParams) },
-    enabled: !!(writeConfig.request ?? sendParams),
+    enabled: hasAllowance,
     onError: handleError,
   });
 

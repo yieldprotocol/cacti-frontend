@@ -77,9 +77,22 @@ export const ActionResponse = ({
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
+  /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
+  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
+    approvalParams || {
+      tokenAddress: AddressZero,
+      spender: AddressZero,
+      approvalAmount: BigNumber.from(0),
+      skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
+    }
+  );
+
   const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
     txParams,
-    sendParams
+    sendParams,
+    () => null,
+    () => null,
+    hasAllowance
   );
 
   // const { data: nativeBalance } = useBalance();
@@ -91,16 +104,6 @@ export const ActionResponse = ({
   const [label, setLabel] = useState<string | undefined>();
   const [state, setState] = useState(ActionResponseState.LOADING);
   const [action, setAction] = useState<Action>();
-
-  /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
-  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
-    approvalParams || {
-      tokenAddress: AddressZero,
-      spender: AddressZero,
-      approvalAmount: BigNumber.from(0),
-      skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
-    }
-  );
 
   /**
    *
