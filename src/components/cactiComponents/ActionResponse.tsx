@@ -96,7 +96,12 @@ export const ActionResponse = ({
   );
 
   // const { data: nativeBalance } = useBalance();
-  const { data: balance } = useBalance(approvalParams?.tokenAddress);
+  const { data: balance } = useBalance(
+    approvalParams?.tokenAddress,
+    undefined,
+    undefined,
+    approvalParams?.skipApproval
+  ); // TODO figure out better way to infer if eth
 
   const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
 

@@ -11,14 +11,15 @@ import erc1155ABI from '@/abi/erc1155ABI.json';
 const useBalance = (
   tokenAddress?: `0x${string}`,
   compareAmount?: BigNumber,
-  erc1155TokenId?: string
+  erc1155TokenId?: string,
+  isEth?: boolean
 ) => {
   const { address: account } = useAccount();
 
   /* erc20 or eth if zero or no address is specified */
   const { data, isLoading } = useBalanceWagmi({
     address: account,
-    token: tokenAddress === AddressZero ? undefined : tokenAddress,
+    token: isEth || tokenAddress === AddressZero ? undefined : tokenAddress,
     enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
   });
 
