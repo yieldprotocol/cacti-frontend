@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
+import { useRouter } from 'next/router';
 import {
   ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
@@ -15,7 +16,6 @@ import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
 import { DevToolsModal } from '../devTools/DevToolsModal';
 import ChatList from './ChatList';
-import { useRouter } from 'next/router';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -68,8 +68,8 @@ const Sidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const router = useRouter()
-  const reset = () => router.push('/')
+  const router = useRouter();
+  const reset = () => router.push('/');
 
   return (
     <>
@@ -132,7 +132,7 @@ const Sidebar = () => {
         </div>
 
         <div className="mt-8 flex items-center justify-between">
-          <div className="text-xs ">Developer </div>
+          <div className="text-xs ">Developer</div>
           {/* <div className="w-3 h-3 "><ChevronDownIcon /></div>  */}
         </div>
         <div className="py-4">
