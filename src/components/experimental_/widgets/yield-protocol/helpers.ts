@@ -159,3 +159,17 @@ export const getWrapEthCallData = ({
         },
       ];
 };
+
+export const getUnwrapEthCallData = ({
+  value,
+  to,
+}: {
+  value: BigNumber;
+  to: Address;
+}): ICallData[] => [
+  {
+    operation: LadleActions.Fn.EXIT_ETHER,
+    args: [to] as LadleActions.Args.EXIT_ETHER,
+    ignoreIf: value.eq(ethers.constants.Zero),
+  },
+];

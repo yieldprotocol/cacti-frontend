@@ -38,6 +38,10 @@ const useYieldProtocol = () => {
       collateralTokenIsEth: boolean;
       maxAmountToBorrow: BigNumber;
     }) => {
+      if (!account) {
+        console.error('Account not found');
+        return undefined;
+      }
       if (!signer) {
         console.error('Signer not found');
         return undefined;

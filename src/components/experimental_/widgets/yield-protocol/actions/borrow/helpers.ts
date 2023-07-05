@@ -1,11 +1,11 @@
 import { BigNumber, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import contractAddresses, { ContractNames } from '../../contracts/config';
-import { ICallData, getSendParams, getWrapEthCallData } from '../../helpers';
+import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
 import { LadleActions } from '../../operations';
 
 interface BorrowProps {
-  account: Address | undefined;
+  account: Address;
   borrowAmount: BigNumber;
   collateralAmount: BigNumber;
   seriesEntityId: string;
@@ -81,7 +81,10 @@ const _borrow = ({
         maxAmountToBorrow,
       ] as LadleActions.Args.SERVE, // TODO handle slippage more gracefully
     },
-    // ...getUnwrapEthCallData(ladleAddress, isEthBase ? borrowAmount : ethers.constants.Zero),
+    ...getUnwrapEthCallData({
+      to: account,
+      value: borrowTokenIsEth ? borrowAmount : ethers.constants.Zero,
+    }),
   ];
 };
 
