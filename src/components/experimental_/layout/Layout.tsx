@@ -1,10 +1,12 @@
 import { Fragment, ReactNode, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Dialog, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import ChatHeader from '../ChatHeader';
-import CustomConnectButton from '../CustomConnectButton';
 import Header from './Header_';
-import Sidebar from './SideBar';
+
+const SidebarDynamic = dynamic(() => import('@/components/experimental_/layout/SideBar'), {
+  ssr: false,
+});
 
 const SidebarContainer = ({
   isOpen,
@@ -104,7 +106,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="relative min-h-screen bg-[#031016]">
       <SidebarContainer isOpen={sidebarOpen} setIsOpen={setSidebarOpen}>
-        <Sidebar />
+        <SidebarDynamic />
       </SidebarContainer>
       <main className="flex flex-col">
         <HeaderContainer setIsOpen={setSidebarOpen}>
