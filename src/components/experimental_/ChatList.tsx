@@ -24,15 +24,13 @@ const ChatItem = ({ id, selected }: ChatItem) => {
 };
 
 const ChatList = () => {
-  const {
-    chats: { sessions },
-  } = useQueryChats();
+  const { chats } = useQueryChats();
   const router = useRouter();
   return (
     <>
       <div className="pt-8 text-xs ">My Chats</div>
       <div className="py-4">
-        {sessions.map((chat) => (
+        {chats?.sessions?.map((chat) => (
           <ChatItem key={chat.id} id={chat.id} selected={router.query.thread?.[0] === chat.id} />
         ))}
       </div>

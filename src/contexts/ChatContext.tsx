@@ -99,7 +99,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   useEffect(()=>{
        // load the historical session stored within the backend
-       if (router.isReady && router.query.thread) {
+       if (router.isReady && router.query.thread && readyState == ReadyState.OPEN) {
+        setMessages([]);
         const payload = {
           sessionId: router.query.thread[0],
           resumeFromMessageId: resumeFromMessageId,
@@ -107,12 +108,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         };
         wsSendMessage({ actor: 'system', type: 'init', payload: payload });
       }
-  },[router])
+  },[router, readyState])
 
   const onOpen = () => {
-
     console.log(`Connected to backend: ${backendUrl}`);
-
      // set the system config to use on the backend
     const q = window.location.search;
     if (q) {
@@ -125,7 +124,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         wsSendMessage({ actor: 'system', type: 'cfg', payload: payload });
       }
     }
-
   };
 
   /* monitor ready state and update connectionStatus accordingly */
@@ -149,13 +147,13 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (!lastMessage) return;
 
     const obj = JSON.parse(lastMessage.data);
+    
     if (obj.type == 'uuid') {
-
       const q = window.location.search;
       const params = new URLSearchParams(q);
       params.set('s', obj.payload);
-      window.history.replaceState(null, '', '?' + params.toString());
-      
+      console.log( params )
+      window.history.replaceState(null, '', '?' + params.toString());    
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }

@@ -2,17 +2,6 @@ import { useRouter } from 'next/router';
 import { EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/20/solid';
 import { CustomConnectButton } from './CustomConnectButton';
 
-// const ShareButton = () => {
-//   return (
-//     <div
-//       className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-//       onClick={() => console.log('share')}
-//     >
-//       <div className="text-xs text-white/70 ">Share</div>
-//     </div>
-//   );
-// };
-
 const PrimaryActions = () => {
   return (
     <div className="flex items-center gap-2">
@@ -36,15 +25,15 @@ const SecondaryActions = () => {
 
 const Header = () => {
   const router = useRouter();
-  const { s: threadId } = router.query;
+  const { thread } = router.query;
 
   return (
     <div className="flex h-full w-full items-center justify-between gap-2 lg:pl-[15rem]">
       <div className="space-y-2 text-white/70">
-        {threadId ? (
+        {thread ? (
           <>
             <div className="flex items-center gap-2">
-              {threadId}
+              {thread}
               <PrimaryActions />
               <SecondaryActions />
             </div>
@@ -54,7 +43,6 @@ const Header = () => {
       </div>
       <div className="">
         <CustomConnectButton />
-        {/* <SettingsDropdown /> */}
       </div>
     </div>
   );
