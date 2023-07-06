@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQueryChats } from '@/api/queries';
 import { useChatContext } from '@/contexts/ChatContext';
