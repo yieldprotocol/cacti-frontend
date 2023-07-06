@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { ShareIcon } from '@heroicons/react/24/outline';
 import useThread from '@/hooks/useThread';
@@ -35,11 +35,11 @@ const ChatHeader = () => {
   console.log('THREAD name:', threadName);
   console.log('THREAD  id:', threadId);
 
-  const submitNameChange = () => {
+  const submitNameChange = useCallback(() => {
     console.log('submitNameChange', inputText);
     inputText && inputText !== '' && setThreadName(inputText);
-    inputText === '' && setThreadName(threadId!);
-  };
+    inputText === '' && setThreadName(threadId);
+  }, [inputText, setThreadName, threadId]);
 
   const handleTextClick = () => {
     setText('');
