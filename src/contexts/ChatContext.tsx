@@ -2,9 +2,9 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
-import { useRouter } from 'next/router';
 
 export type Message = {
   messageId: string;
@@ -97,22 +97,26 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const router = useRouter();
-  useEffect(()=>{
-       // load the historical session stored within the backend
-       if (router.isReady && router.query.thread && readyState == ReadyState.OPEN) {
-        setMessages([{ messageId: '', actor: '', payload: '', feedback: ''}]);
-        const payload = {
-          sessionId: router.query.thread[0],
-          resumeFromMessageId: resumeFromMessageId,
-          insertBeforeMessageId: insertBeforeMessageId,
-        };
-        wsSendMessage({ actor: 'system', type: 'init', payload: payload });
-      }
-  },[router, readyState])
+  useEffect(() => {
+
+    // Clear the messages if there is no thread
+    !router.query.thread && router.isReady && readyState == ReadyState.OPEN && setMessages([]);
+
+    // load the historical session stored within the backend
+    if (router.isReady && router.query.thread && readyState == ReadyState.OPEN) {
+      setMessages([{ messageId: '', actor: '', payload: '', feedback: '' }]);
+      const payload = {
+        sessionId: router.query.thread[0],
+        resumeFromMessageId: resumeFromMessageId,
+        insertBeforeMessageId: insertBeforeMessageId,
+      };
+      wsSendMessage({ actor: 'system', type: 'init', payload: payload });
+    }
+  }, [router, readyState]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
-     // set the system config to use on the backend
+    // set the system config to use on the backend
     const q = window.location.search;
     if (q) {
       const params = new URLSearchParams(q);
@@ -143,17 +147,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-
     if (!lastMessage) return;
 
     const obj = JSON.parse(lastMessage.data);
-    
+
     if (obj.type == 'uuid') {
       const q = window.location.search;
       const params = new URLSearchParams(q);
       params.set('s', obj.payload);
-      console.log( params )
-      window.history.replaceState(null, '', '?' + params.toString());    
+      console.log(params);
+      window.history.replaceState(null, '', '?' + params.toString());
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }
