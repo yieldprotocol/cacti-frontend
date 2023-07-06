@@ -100,7 +100,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(()=>{
        // load the historical session stored within the backend
        if (router.isReady && router.query.thread && readyState == ReadyState.OPEN) {
-        setMessages([]);
+        setMessages([{ messageId: '', actor: '', payload: '', feedback: ''}]);
         const payload = {
           sessionId: router.query.thread[0],
           resumeFromMessageId: resumeFromMessageId,
