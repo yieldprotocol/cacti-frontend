@@ -9,10 +9,11 @@ import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
-  selected: boolean;
 };
 
-const ChatMenu = ({ id, selected }: ChatItem) => {
+const ChatMenu = ({ id }: ChatItem) => {
+  const { query } = useRouter();
+  const selected = query.id === id;
   return (
     <div className={`${selected ? 'opacity-100' : 'opacity-0'}`}>
       <Popover className="relative">
@@ -51,8 +52,10 @@ const ChatMenu = ({ id, selected }: ChatItem) => {
   );
 };
 
-const ChatItem = ({ id, selected }: ChatItem) => {
+const ChatItem = ({ id }: ChatItem) => {
   const { threadName } = useThread(id);
+  const { query } = useRouter();
+  const selected = query.id === id;
 
   return (
     <div
@@ -69,20 +72,19 @@ const ChatItem = ({ id, selected }: ChatItem) => {
         <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
         <div className="text-xs"> {threadName !== id ? threadName : abbreviateHash(id, 4)}</div>
       </Link>
-      <ChatMenu id={id} selected={selected} />
+      <ChatMenu id={id} />
     </div>
   );
 };
 
 const ChatList = () => {
   const { chats } = useQueryChats();
-  const router = useRouter();
   return (
     <>
       <div className="pt-8 text-xs ">My Chats</div>
       <div className="py-4">
         {chats?.sessions?.map((chat) => (
-          <ChatItem key={chat.id} id={chat.id} selected={router.query.id === chat.id} />
+          <ChatItem key={chat.id} id={chat.id} />
         ))}
       </div>
     </>
