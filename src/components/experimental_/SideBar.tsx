@@ -16,6 +16,7 @@ import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
 import { DevToolsModal } from '../devTools/DevToolsModal';
 import ChatList from './ChatList';
+import Link from 'next/link';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -80,14 +81,14 @@ const Sidebar = () => {
 
       <div className="w-full p-4 text-white/70 ">
         <div className="flex w-full items-center gap-2">
-          <div
+          <Link
             className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-            onClick={() => reset()}
+            href={`/`}
           >
             <div className="flex w-full justify-center text-xs ">
               <div>New Chat</div>
             </div>
-          </div>
+          </Link>
         </div>
 
         <ChatList />
