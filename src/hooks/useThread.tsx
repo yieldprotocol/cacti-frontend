@@ -5,13 +5,13 @@ import useCachedState from './useCachedState';
  * @param threadId? - optional threadId to use instead of the one from the router
  */
 const useThread = (threadId?: string) => {
-  
-    const router = useRouter();
-  const { thread } = router.query;
-  const threadId_ = threadId || thread?.[0];
+  const router = useRouter();
+  const { id } = router.query;
+  const threadId_ = (id ?? threadId) as string;
 
   const threadName = window.localStorage.getItem(`thread-${threadId_}`);
-  const setThreadName = (newName: string) => newName && window.localStorage.setItem(`thread-${threadId_}`, newName);
+  const setThreadName = (newName: string) =>
+    newName && window.localStorage.setItem(`thread-${threadId_}`, newName);
 
   return {
     threadId: threadId_,
