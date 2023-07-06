@@ -14,11 +14,11 @@ const DynamicChatHeader = dynamic(() => import('@/components/experimental_/ChatH
 
 const Header = () => {
   const router = useRouter();
-  const { thread } = router.query;
+  const { id } = router.query;
 
   return (
     <div className="mt-4 flex h-full w-full items-center justify-between gap-2 lg:pl-[15rem] ">
-      <div className="0 space-y-2 py-2">{thread ? <DynamicChatHeader /> : null}</div>
+      <div className="0 space-y-2 py-2">{id ? <DynamicChatHeader /> : null}</div>
       <div className="">
         <DynamicConnectButton />
       </div>
