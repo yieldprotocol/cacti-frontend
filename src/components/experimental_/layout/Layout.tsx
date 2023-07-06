@@ -2,6 +2,8 @@ import { Fragment, ReactNode, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import ChatHeader from '../ChatHeader';
+import CustomConnectButton from '../CustomConnectButton';
+import Header from './Header_';
 import Sidebar from './SideBar';
 
 const SidebarContainer = ({
@@ -77,7 +79,7 @@ const SidebarContainer = ({
     </div>
   );
 };
-const Header = ({
+const HeaderContainer = ({
   setIsOpen,
   children,
 }: {
@@ -105,9 +107,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Sidebar />
       </SidebarContainer>
       <main className="flex flex-col">
-        <Header setIsOpen={setSidebarOpen}>
-          <ChatHeader />
-        </Header>
+        <HeaderContainer setIsOpen={setSidebarOpen}>
+          <Header />
+        </HeaderContainer>
         <div className={`${sidebarOpen ? 'lg:pl-60' : ''} grow lg:pl-60`}>{children}</div>
       </main>
     </div>
