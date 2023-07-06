@@ -14,7 +14,7 @@ const useThread = (threadId: string) => {
 
   return {
     threadId: threadId_,
-    threadName: threadName || threadId_,
+    threadName,
     setThreadName,
   };
 };
