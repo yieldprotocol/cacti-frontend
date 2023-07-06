@@ -1,5 +1,9 @@
-import ChatBox from '@/components/experimental_/ChatBox_';
+import dynamic from 'next/dynamic';
 
-export const Chat = () => <ChatBox />;
+const ChatBoxDynamic = dynamic(() => import('@/components/experimental_/ChatBox_'), {
+  ssr: false,
+});
+
+export const Chat = () => <ChatBoxDynamic />;
 
 export default Chat;
