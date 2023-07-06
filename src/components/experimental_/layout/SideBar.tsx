@@ -1,14 +1,11 @@
 import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import {
-  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   Cog8ToothIcon,
   DocumentIcon,
   HomeIcon,
-  LinkIcon,
   QueueListIcon,
   WrenchIcon,
 } from '@heroicons/react/24/outline';
@@ -68,9 +65,6 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-  const router = useRouter();
-  const reset = () => router.push('/');
 
   return (
     <>
@@ -147,7 +141,6 @@ const Sidebar = () => {
             label="StoryBook"
             action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
           />
-          <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
         </div>
       </div>
 
