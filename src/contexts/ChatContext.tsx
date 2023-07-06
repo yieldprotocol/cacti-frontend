@@ -99,7 +99,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   useEffect(() => {
     // load the historical session stored within the backend
-    if (router.isReady && router.query.id) {
+    if (router.query.id) {
       const payload = {
         sessionId: router.query.id,
         resumeFromMessageId,
@@ -107,7 +107,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       };
       wsSendMessage({ actor: 'system', type: 'init', payload: payload });
     }
-  }, [insertBeforeMessageId, resumeFromMessageId, router.isReady, router.query.id, wsSendMessage]);
+  }, [insertBeforeMessageId, resumeFromMessageId, router.query.id, wsSendMessage]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
