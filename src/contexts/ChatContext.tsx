@@ -100,6 +100,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // load the historical session stored within the backend
     if (router.query.id) {
+      // need to clear the messages when we switch sessions
+      setMessages([]);
       const payload = {
         sessionId: router.query.id,
         resumeFromMessageId,
