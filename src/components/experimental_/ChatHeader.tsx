@@ -24,8 +24,7 @@ const PrimaryActions = () => {
   );
 };
 
-export const ChatHeader = () => {
-
+const ChatHeader = () => {
   const { threadId, threadName, setThreadName } = useThread();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -113,14 +112,14 @@ export const ChatHeader = () => {
               </span>
             </div>
           ) : (
-
             // <ShareButton />
             <PrimaryActions />
           )}
         </div>
         <div className="text-xs text-white/30"> Last edit: yesterday </div>
       </div>
-
     </div>
   );
 };
+
+export default ChatHeader;

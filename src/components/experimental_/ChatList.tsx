@@ -64,7 +64,7 @@ const ChatItem = ({ id, selected }: ChatItem) => {
         className={`flex w-full cursor-pointer flex-row items-center gap-2 rounded-sm px-2 ${
           selected ? 'text-white' : ''
         } `}
-        href={`/${id}`}
+        href={`/chats/${id}`}
       >
         <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
         <div className="text-xs"> {threadName !== id ? threadName : abbreviateHash(id, 4)}</div>
@@ -82,7 +82,7 @@ const ChatList = () => {
       <div className="pt-8 text-xs ">My Chats</div>
       <div className="py-4">
         {chats?.sessions?.map((chat) => (
-          <ChatItem key={chat.id} id={chat.id} selected={router.query.thread?.[0] === chat.id} />
+          <ChatItem key={chat.id} id={chat.id} selected={router.query.id === chat.id} />
         ))}
       </div>
     </>

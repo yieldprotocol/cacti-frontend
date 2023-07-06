@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
+import Layout from '@/components/experimental_/layout/Layout';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
@@ -42,7 +43,9 @@ export default function App({
         <ConnectionWrapperDynamic session={session}>
           <CenterProvider>
             <ChatContextDynamic>
-              <Component {...pageProps} />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
             </ChatContextDynamic>
           </CenterProvider>
         </ConnectionWrapperDynamic>

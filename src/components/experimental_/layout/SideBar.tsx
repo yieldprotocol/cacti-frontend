@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   ArrowPathIcon,
@@ -14,9 +15,8 @@ import {
 import { useChatContext } from '@/contexts/ChatContext';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
-import { DevToolsModal } from '../devTools/DevToolsModal';
-import ChatList from './ChatList';
-import Link from 'next/link';
+import { DevToolsModal } from '../../devTools/DevToolsModal';
+import ChatList from '../ChatList';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {

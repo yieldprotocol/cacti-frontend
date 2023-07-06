@@ -1,8 +1,10 @@
-import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Fragment, ReactNode, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import ChatHeader from '../ChatHeader';
+import Sidebar from './SideBar';
 
-function SidebarContainer({
+const SidebarContainer = ({
   isOpen,
   setIsOpen: setOpen,
   children,
@@ -10,16 +12,7 @@ function SidebarContainer({
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   children: React.ReactNode;
-}) {
-  // const Logo = () => (
-  //     <div className="flex h-16 shrink-0 items-center">
-  //         <img
-  //             className="h-8 w-auto"
-  //             src=""
-  //             alt="Logo"
-  //         />
-  //     </div>
-  // );
+}) => {
   return (
     <div>
       <Transition.Root show={isOpen} as={Fragment}>
@@ -83,8 +76,8 @@ function SidebarContainer({
       </div>
     </div>
   );
-}
-export const Header = ({
+};
+const Header = ({
   setIsOpen,
   children,
 }: {
@@ -104,25 +97,21 @@ export const Header = ({
   </div>
 );
 
-export default function AppShell({
-  SidebarContent,
-  HeaderContent,
-  children,
-}: {
-  SidebarContent: React.ReactNode;
-  children: React.ReactNode;
-  HeaderContent: React.ReactNode;
-}) {
+const Layout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="relative min-h-screen bg-[#031016]">
       <SidebarContainer isOpen={sidebarOpen} setIsOpen={setSidebarOpen}>
-        {SidebarContent}
+        <Sidebar />
       </SidebarContainer>
       <main className="flex flex-col">
-        <Header setIsOpen={setSidebarOpen}>{HeaderContent}</Header>
+        <Header setIsOpen={setSidebarOpen}>
+          <ChatHeader />
+        </Header>
         <div className={`${sidebarOpen ? 'lg:pl-60' : ''} grow lg:pl-60`}>{children}</div>
       </main>
     </div>
   );
-}
+};
+
+export default Layout;
