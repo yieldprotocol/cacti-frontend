@@ -96,20 +96,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     shouldConnect
   );
 
-  const router = useRouter();
+  const { query } = useRouter();
   useEffect(() => {
     // load the historical session stored within the backend
-    if (router.query.id) {
+    if (query.id) {
       // need to clear the messages when we switch sessions
       setMessages([]);
-      const payload = {
-        sessionId: router.query.id,
-        resumeFromMessageId,
-        insertBeforeMessageId,
-      };
-      wsSendMessage({ actor: 'system', type: 'init', payload: payload });
+      wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId: query.id } });
     }
-  }, [insertBeforeMessageId, resumeFromMessageId, router.query.id, wsSendMessage]);
+  }, [query.id, wsSendMessage]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
