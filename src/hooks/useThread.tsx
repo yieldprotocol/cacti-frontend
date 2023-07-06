@@ -4,7 +4,7 @@ import useCachedState from './useCachedState';
 /**
  * @param threadId? - optional threadId to use instead of the one from the router
  */
-const useThread = (threadId: string) => {
+const useThread = (threadId?: string) => {
   const { query } = useRouter();
   const threadId_ = threadId || query.id?.toString();
 
