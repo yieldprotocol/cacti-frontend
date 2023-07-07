@@ -70,7 +70,7 @@ const ChatItem = ({ id }: ChatItem) => {
         href={`/chats/${id}`}
       >
         <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
-        <div className="text-xs"> {threadName ?? abbreviateHash(id, 4)}</div>
+        <div className="text-xs"> {threadName !== id ? threadName  : abbreviateHash(id, 4)}</div>
       </Link>
       <ChatMenu id={id} />
     </div>
