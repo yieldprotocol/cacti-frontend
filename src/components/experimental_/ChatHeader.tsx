@@ -38,7 +38,7 @@ const ChatHeader = () => {
   const submitNameChange = useCallback(() => {
     console.log('submitNameChange', inputText);
     inputText && inputText !== '' && setThreadName(inputText);
-    inputText === '' && setThreadName(threadId);
+    inputText === '' && setThreadName(threadId!);
   }, [inputText, setThreadName, threadId]);
 
   const handleTextClick = () => {
@@ -52,7 +52,7 @@ const ChatHeader = () => {
       // cancel edit
       if (e.key === 'Escape') {
         setIsEditing(false);
-        setText(threadName);
+        setText(threadName!);
       }
       // submit edit
       if (e.key === 'Enter') {
@@ -89,7 +89,7 @@ const ChatHeader = () => {
                   setText(e.target.value);
                 }}
                 onBlur={() => {
-                  setText(threadName);
+                  setText(threadName!);
                   setIsEditing(false);
                 }}
                 onFocus={() => setIsEditing(true)}
