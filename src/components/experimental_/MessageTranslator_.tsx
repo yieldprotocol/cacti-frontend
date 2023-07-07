@@ -53,6 +53,7 @@ import RedeemDSR from './widgets/dsr/RedeemDSR';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
+  
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
   const [widgetGroup, setWidgetGroup] = useState<JSX.Element[]>([]);
 
@@ -80,7 +81,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* handle if a multistep container is passed */
-          if (item.name === 'display-multistep-list-container')
+          if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* if item has a function name, assume its a widget */
@@ -192,7 +193,7 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set(
     'savings-dai-deposit',
-    <DepositDSR  depositAmount={parsedArgs[0]} />);
+    <DepositDSR depositAmount={parsedArgs[0]} />);
 
   widgets.set(
     'redeem-sdai',
@@ -206,8 +207,11 @@ export const Widget = (props: WidgetProps) => {
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
+
     return widgets.get(fnName)!;
+
   } else {
+
     /* Else, 'try' to get the widget from the previous implementation */
     try {
       return <>{Widgetize(props.widget)}</>;
