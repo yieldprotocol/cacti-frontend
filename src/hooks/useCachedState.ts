@@ -6,7 +6,6 @@ const useCachedState = (
   initialValue?: string,
   append?: string
 ): [string, (value: any) => void, () => void] => {
-  
   const getValue = () => {
     try {
       if (typeof window !== 'undefined') {
