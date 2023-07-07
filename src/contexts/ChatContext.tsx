@@ -98,9 +98,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const { query } = useRouter();
   useEffect(() => {
-    // load the historical session stored within the backend
+    // load the historical chat stored within the backend
     if (query.id) {
-      // need to clear the messages when we switch sessions
+      // need to clear the messages when we switch chats
       setMessages([]);
       wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId: query.id } });
     }
