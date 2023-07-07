@@ -77,7 +77,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* handle if a multistep container is passed */
-          if (item.name === 'display-multistep-list-container')
+          if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* if item has a function name, assume its a widget */
