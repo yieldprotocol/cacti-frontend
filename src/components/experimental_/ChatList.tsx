@@ -37,10 +37,9 @@ const ChatMenu = ({ id }: ChatItem) => {
               <Popover.Panel className="absolute z-[10000] ">
                 {/* <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"> */}
                 <div className="relative grid lg:grid-cols-2">
-                  <a href="/analytics">Analytics</a>
-                  <a href="/engagement">Engagement</a>
-                  <a href="/security">Security</a>
-                  <a href="/integrations">Integrations</a>
+                 Share 
+                 Delete
+                 
                 </div>
                 {/* </div> */}
               </Popover.Panel>
