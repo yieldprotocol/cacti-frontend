@@ -48,6 +48,18 @@ type Action = {
   fn: (overrideConfig?: undefined) => any;
 };
 
+export type ActionResponseProps = {
+  txParams: TxBasicParams | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+  sendParams?: UnsignedTransaction | undefined;
+  label?: string;
+  disabled?: boolean;
+  stepper?: boolean;
+  onSuccess?: () => JSX.Element | string;
+  // assertCallParams?: AssertCallBasicParams;
+  // altAction?: () => Promise<any>;
+};
+
 /**
  * Action Response
  * Includes: Label, action, state, preparedContractWrite
@@ -56,24 +68,10 @@ export const ActionResponse = ({
   txParams,
   approvalParams,
   sendParams,
-  // onSuccess,
   label: label_,
   disabled,
   stepper,
-}: // assertCallParams
-// altAction,
-{
-  txParams: TxBasicParams | undefined;
-  approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: UnsignedTransaction | undefined;
-  label?: string;
-  disabled?: boolean;
-  stepper?: boolean;
-
-  onSuccess?: () => JSX.Element | string;
-  // assertCallParams?: AssertCallBasicParams;
-  // altAction?: () => Promise<any>;
-}) => {
+}: ActionResponseProps) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
@@ -170,7 +168,8 @@ export const ActionResponse = ({
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx && !error) {
         console.log('Building TX: Has balance and allowance.');
-        setLabel('Validating the transaction...');
+        // if the button is disabled, the label is controlled by the parent widget
+        !disabled ? setLabel('Validating the transaction...') : setLabel(defaultLabel);
         setState(ActionResponseState.LOADING);
       }
 
@@ -224,7 +223,7 @@ export const ActionResponse = ({
     submitTx,
     defaultLabel,
     isSuccess,
-
+    disabled,
     // approveTx
   ]);
 

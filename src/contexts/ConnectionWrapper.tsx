@@ -64,7 +64,7 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
   });
 
   const getSiweMessageOptions: GetSiweMessageOptions = () => ({
-    statement: 'Sign me in to wc3 app',
+    statement: 'Sign me in to Cacti',
   });
 
   const getCustomNonce = async () => {

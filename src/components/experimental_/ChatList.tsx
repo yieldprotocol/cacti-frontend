@@ -81,7 +81,7 @@ const ChatList = () => {
   const { chats } = useQueryChats();
   return (
     <>
-      <div className="pt-8 text-xs ">My Chats</div>
+      <div className="pt-8 text-xs text-white/70 ">My Chats</div>
       <div className="py-4">
         {chats?.sessions?.map((chat) => (
           <ChatItem key={chat.id} id={chat.id} />
