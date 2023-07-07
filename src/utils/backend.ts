@@ -13,10 +13,10 @@ interface BackendHost {
 
 const BACKEND_HOST_BY_ENV_TAG: { [key in EnvTag]: BackendHost } = {
   // chatweb3-backend-dev on GCP Cloud Run (runs up-to-date master)
-  [EnvTag.Dev]: { secure: true, host: 'chatweb3-backend-dev-go3k2a3aca-ue.a.run.app' },
+  [EnvTag.Dev]: { secure: true, host: 'cacti-backend-dev-go3k2a3aca-ue.a.run.app' },
 
   // chatweb3-backend-prod on GCP Cloud Run
-  [EnvTag.Prod]: { secure: true, host: 'chatweb3-backend-prod-go3k2a3aca-ue.a.run.app' },
+  [EnvTag.Prod]: { secure: true, host: 'cacti-backend-prod-go3k2a3aca-ue.a.run.app' },
 
   // locally running backend
   [EnvTag.Local]: { secure: false, host: 'localhost:9999' },

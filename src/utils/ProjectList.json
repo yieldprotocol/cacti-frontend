@@ -1,6 +1,6 @@
 [
   {
-    "id": "114",
+    "id": "compound",
     "name": "Compound",
     "address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
     "symbol": "COMP",
@@ -23,7 +23,7 @@
     "slug": "compound"
   },
   {
-    "id": "111",
+    "id": "aave-v2",
     "name": "AAVE V2",
     "address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
     "symbol": "AAVE",
@@ -46,6 +46,7 @@
     "slug": "aave-v2"
   },
   {
+    "id": "uniswap",
     "name": "Uniswap",
     "symbol": "UNI",
     "url": "https://app.uniswap.org/#/swap",
@@ -54,5 +55,28 @@
     "logo": "https://icons.llama.fi/uniswap.png",
     "parentProtocol": "Uniswap",
     "slug": "uniswap"
+  },
+
+  {
+    "id": "2258",
+    "name": "Opensea Seaport",
+    "address": null,
+    "symbol": "-",
+    "url": "https://opensea.io/",
+    "description": "OpenSea is the world's first and largest web3 marketplace for NFTs and crypto collectibles.",
+    "chain": "Ethereum",
+    "logo": "https://icons.llama.fi/opensea-seaport.png",
+    "category": "NFT Marketplace",
+    "chains": ["Ethereum"],
+    "twitter": "opensea",
+    "parentProtocol": "parent#opensea",
+    "slug": "opensea-seaport"
+  },
+  {
+    "id": "zksync",
+    "name": "zkSync",
+    "description": "zkSync is an L2 scaling solution for Ethereum",
+    "url": "https://zksync.io/",
+    "logo": "https://zksync.io/favicon.ico"
   }
 ]

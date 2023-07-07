@@ -1,11 +1,11 @@
-import { Reducer, useCallback, useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BigNumber, CallOverrides, Overrides, PayableOverrides } from 'ethers';
+import { BigNumber, UnsignedTransaction } from 'ethers';
 import tw from 'tailwind-styled-components';
-import { useAccount, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
@@ -45,7 +45,19 @@ const stylingByState = {
 
 type Action = {
   name: string;
-  fn: ((overrideConfig?: undefined) => void | Promise<void>) | undefined;
+  fn: (overrideConfig?: undefined) => any;
+};
+
+export type ActionResponseProps = {
+  txParams: TxBasicParams | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+  sendParams?: UnsignedTransaction | undefined;
+  label?: string;
+  disabled?: boolean;
+  stepper?: boolean;
+  onSuccess?: () => JSX.Element | string;
+  // assertCallParams?: AssertCallBasicParams;
+  // altAction?: () => Promise<any>;
 };
 
 /**
@@ -55,29 +67,18 @@ type Action = {
 export const ActionResponse = ({
   txParams,
   approvalParams,
-  // onSuccess,
+  sendParams,
   label: label_,
   disabled,
   stepper,
-}: // assertCallParams
-// altAction,
-{
-  txParams: TxBasicParams | undefined;
-  approvalParams: ApprovalBasicParams | undefined;
-
-  label?: string;
-  disabled?: boolean;
-  stepper?: boolean;
-
-  onSuccess?: () => JSX.Element | string;
-  // assertCallParams?: AssertCallBasicParams;
-  // altAction?: () => Promise<any>;
-}) => {
+}: ActionResponseProps) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } =
-    useSubmitTx(txParams);
+  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
+    txParams,
+    sendParams
+  );
 
   // const { data: nativeBalance } = useBalance();
   const { data: balance } = useBalance(approvalParams?.tokenAddress);
@@ -136,7 +137,7 @@ export const ActionResponse = ({
     /* -------- APPROVAL FLOW --------- */
     if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
-      if (true) {
+      if (approveTx) {
         setAction({ name: 'approve', fn: approveTx });
         console.log('READY FOR APPROVAL: Has balance.');
         setLabel(`A token approval is required`);
@@ -167,7 +168,8 @@ export const ActionResponse = ({
       /* case tx/approval success, waiting for tx-building */
       if (!submitTx && !error) {
         console.log('Building TX: Has balance and allowance.');
-        setLabel('Validating the transaction...');
+        // if the button is disabled, the label is controlled by the parent widget
+        !disabled ? setLabel('Validating the transaction...') : setLabel(defaultLabel);
         setState(ActionResponseState.LOADING);
       }
 
@@ -219,8 +221,9 @@ export const ActionResponse = ({
     approvalWaitingOnUser,
     approvalTransacting,
     submitTx,
+    defaultLabel,
     isSuccess,
-
+    disabled,
     // approveTx
   ]);
 

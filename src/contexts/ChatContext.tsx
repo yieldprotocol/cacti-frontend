@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useSession } from 'next-auth/react';
@@ -75,6 +76,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
 
   const { status } = useSession();
+  const queryClient = useQueryClient();
 
   const shouldConnect = status === 'authenticated';
   const backendUrl = getBackendWebsocketUrl();
@@ -143,6 +145,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       const params = new URLSearchParams(q);
       params.set('s', obj.payload);
       window.history.replaceState(null, '', '?' + params.toString());
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }
     setIsBotThinking(obj.stillThinking);

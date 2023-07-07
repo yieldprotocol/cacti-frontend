@@ -25,31 +25,14 @@ const meta: Meta<typeof ImageResponse> = {
       default: mockTags,
       control: 'text',
     },
-    imageUrl: {
-      description: 'Custom Image to display instead of the one associated with the project name.',
+    image: {
+      description: 'Custom Image e project name.',
       default: mockImage,
       control: 'text',
     },
     imageLink: {
       description: 'External Link to image resource',
       default: 'mockImage',
-      control: 'text',
-    },
-    actionLabel: {
-      description: 'Action Label to add eg. Price',
-      default: 'Price',
-      control: 'text',
-    },
-
-    actionValue: {
-      description: 'Value of action item eg. Price value',
-      default: '0.02ETH',
-      control: 'text',
-    },
-
-    action: {
-      description: 'tx Action ',
-      default: undefined,
       control: 'text',
     },
   },
@@ -64,8 +47,6 @@ export const Primary: Story = {
     description: mockText,
     image: mockImage,
     imageTags: mockTags,
-    actionLabel: 'Price',
-    actionValue: '0.5 ETH',
   },
 };
 
