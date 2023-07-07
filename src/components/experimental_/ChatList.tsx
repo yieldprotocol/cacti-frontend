@@ -67,7 +67,7 @@ const ChatItem = ({ id }: ChatItem) => {
         className={`flex w-full cursor-pointer flex-row items-center gap-2 rounded-sm px-2 ${
           selected ? 'text-white' : ''
         } `}
-        href={`/chats/${id}`}
+        href={`/chat/${id}`}
       >
         <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
         <div className="text-xs"> {threadName !== id ? threadName : abbreviateHash(id, 4)}</div>
