@@ -40,7 +40,7 @@ const ChatList = () => {
 
   return (
     <>
-      <div className="pt-8 text-xs ">My Chats</div>
+      <div className="pt-8 text-xs text-white/70 ">My Chats</div>
       <div className="py-4">
         {isSuccess &&
           chats?.sessions?.map((chat: any) => {

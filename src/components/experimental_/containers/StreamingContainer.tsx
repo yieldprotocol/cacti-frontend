@@ -1,8 +1,6 @@
 import { Fragment, useEffect } from 'react';
-import { composeFromString } from '@/components/cactiComponents/tools/compose';
 import { useSharedStateContext } from '@/contexts/SharedStateContext';
-import { BotThinking } from '../BotThinking';
-import MessageTranslator, { Widget } from '../MessageTranslator_';
+import { Widget } from '../MessageTranslator_';
 import ListContainer from './ListContainer';
 
 export interface StreamingContainerProps {
@@ -56,7 +54,6 @@ export const StreamingContainer = ({
       <Fragment>
         <div className="flex flex-row">
           <Widget widget={{ name: 'TextResponse', params: { text: prefix } }} />
-          {/* {composeFromString(`[{"response":"TextResponse","props":{"text":"${prefix}"}}]`)} */}
         </div>
         <div className="text-white">
           <ListContainer items={items} showcaseFirst={false} />

@@ -11,16 +11,6 @@ const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   );
 };
 
-const ListTitle = ({ title }: { title: string }) => {
-  return (
-    <div className="text-sm text-white text-opacity-70 ">
-      <div>{title}</div>
-    </div>
-  );
-};
-
-const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70';
-
 /**
  * List response element
  *

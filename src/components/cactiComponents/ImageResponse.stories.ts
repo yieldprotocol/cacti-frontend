@@ -35,23 +35,6 @@ const meta: Meta<typeof ImageResponse> = {
       default: 'mockImage',
       control: 'text',
     },
-    actionLabel: {
-      description: 'Action Label to add eg. Price',
-      default: 'Price',
-      control: 'text',
-    },
-
-    actionValue: {
-      description: 'Value of action item eg. Price value',
-      default: '0.02ETH',
-      control: 'text',
-    },
-
-    // actionLabel: {
-    //   description: 'tx Action ',
-    //   default: undefined,
-    //   control: 'text',
-    // },
   },
 };
 
@@ -64,8 +47,6 @@ export const Primary: Story = {
     description: mockText,
     image: mockImage,
     imageTags: mockTags,
-    actionLabel: 'Price',
-    actionValue: '0.5 ETH',
   },
 };
 
