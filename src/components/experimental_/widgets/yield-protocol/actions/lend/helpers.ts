@@ -21,7 +21,6 @@ interface LendProps {
  * @param input
  * @param poolAddress
  * @param baseAddress
- * @param poolAddress
  * @param isEthBase
  * @param signer
  * @param chainId

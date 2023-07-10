@@ -4,6 +4,7 @@ import { Address, useAccount } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
 import borrowHelper from '../actions/borrow/helpers';
+import lendCloseHelper from '../actions/lend-close/helpers';
 import lendHelper from '../actions/lend/helpers';
 
 export interface ICallData {
@@ -94,7 +95,43 @@ const useYieldProtocol = () => {
     [account, chainId, signer]
   );
 
-  return { lend, borrow };
+  const lendClose = useCallback(
+    async ({
+      amount,
+      fyTokenAddress,
+      poolAddress,
+      seriesEntityId,
+      seriesEntityIsMature,
+      isEthBase,
+    }: {
+      amount: BigNumber;
+      fyTokenAddress: Address;
+      poolAddress: Address;
+      seriesEntityId: string;
+      seriesEntityIsMature: boolean;
+      isEthBase: boolean;
+    }) => {
+      if (!signer) {
+        console.error('Signer not found');
+        return undefined;
+      }
+
+      return await lendCloseHelper({
+        account,
+        amount,
+        fyTokenAddress,
+        poolAddress,
+        seriesEntityId,
+        seriesEntityIsMature,
+        isEthBase,
+        signer,
+        chainId,
+      });
+    },
+    [account, chainId, signer]
+  );
+
+  return { lend, borrow, lendClose };
 };
 
 export default useYieldProtocol;

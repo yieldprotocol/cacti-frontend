@@ -6,6 +6,7 @@ export namespace LadleActions {
     BUILD = 'build',
     EXIT_ETHER = 'exitEther',
     JOIN_ETHER = 'joinEther',
+    REDEEM = 'redeem',
     SERVE = 'serve',
     TRANSFER = 'transfer',
     ROUTE = 'route',
@@ -17,6 +18,7 @@ export namespace LadleActions {
     export type EXIT_ETHER = [to: string];
     export type JOIN_ETHER = [etherId: string];
     export type MODULE = [targetAddress: string, encodedCall: string];
+    export type REDEEM = [seriesId: string, to: string, wad: BigNumberish];
     export type ROUTE = [targetAddress: string, encodedCall: string];
     export type SERVE = [
       vaultId: string,
@@ -32,12 +34,14 @@ export namespace LadleActions {
 export namespace RoutedActions {
   export enum Fn {
     SELL_BASE = 'sellBase',
+    SELL_FYTOKEN = 'sellFYToken',
     WRAP = 'wrap',
     UNWRAP = 'unwrap',
   }
 
   export namespace Args {
     export type SELL_BASE = [receiver: string, min: BigNumberish];
+    export type SELL_FYTOKEN = [receiver: string, min: BigNumberish];
     export type WRAP = [receiver: string];
     export type UNWRAP = [receiver: string];
   }
