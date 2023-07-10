@@ -29,7 +29,6 @@ export const NftCollection = ({
   variant,
   assetsToShow = 0,
 }: NftCollectionContainerProps) => {
-  
   const collection = useCollection({
     network: network as any,
     address,
@@ -43,9 +42,11 @@ export const NftCollection = ({
     : Array.from(new Array(assetsToShow), (_, i) => i + 1); // if assetsToShow is a number, create an array of numbers from 1 to assetsToShow
 
   /**
-   * Create the nfts assets for each tokenId to Show 
+   * Create the nfts assets for each tokenId to Show
    * */
-  const assets = assetsIdsToShow.map((id:number) => <NftAsset network={network} address={address} tokenId={id} />)
+  const assets = assetsIdsToShow.map((id: number) => (
+    <NftAsset network={network} address={address} tokenId={id} />
+  ));
 
   return (
     <>
