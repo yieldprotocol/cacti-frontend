@@ -55,12 +55,13 @@ interface InputProps {
   projectName: string;
 }
 
+const NOW = Math.round(new Date().getTime() / 1000);
 export const getQuery = (address: string) =>
   `
   {
     seriesEntities(
       where: {baseAsset_contains_nocase: "${address}",
-      matured: false}
+      maturity_gt: ${NOW}}
     ) {
       id
       maturity
