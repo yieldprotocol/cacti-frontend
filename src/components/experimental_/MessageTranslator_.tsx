@@ -155,6 +155,9 @@ export const Widget = (props: WidgetProps) => {
   );
 
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
+  
+  widgets.set('fetch-nfts', <NftCollection address={parsedArgs[0]} name={parsedArgs[1]} network={'ethereum-mainnet'} assetsToShow={6} />);
+
 
   widgets.set(
     'yield-protocol-lend',

@@ -1,10 +1,12 @@
 import { useQuery } from 'react-query';
 import { useCollection } from '@center-inc/react';
 import axios from 'axios';
-import { ImageResponse } from '@/components/cactiComponents';
+import { ImageResponse, ListResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
+import ListContainer from '../../containers/ListContainer';
+import { NftAsset } from './NftAsset';
 
 interface NftCollectionContainerProps {
   network: string;
@@ -15,6 +17,7 @@ interface NftCollectionContainerProps {
   previewImageUrl?: string;
 
   variant?: ImageVariant; // widget variant (default, showcase, compact)
+  assetsToShow?: number | number[]; // number of assets to show in the list. from 0 to num for not array DEFAULT
 }
 
 export const NftCollection = ({
@@ -24,49 +27,40 @@ export const NftCollection = ({
   numAssets,
   previewImageUrl,
   variant,
+  assetsToShow = 0,
 }: NftCollectionContainerProps) => {
+  
   const collection = useCollection({
     network: network as any,
     address,
   });
 
+  /**
+   * Get the  array of the asset ids to show:
+   * */
+  const assetsIdsToShow = Array.isArray(assetsToShow)
+    ? assetsToShow // if assetsToShow is an array, use it
+    : Array.from(new Array(assetsToShow), (_, i) => i + 1); // if assetsToShow is a number, create an array of numbers from 1 to assetsToShow
+
+  /**
+   * Create the nfts assets for each tokenId to Show 
+   * */
+  const assets = assetsIdsToShow.map((id:number) => <NftAsset network={network} address={address} tokenId={id} />)
+
   return (
     <>
-      <ImageResponse
-        image={collection?.smallPreviewImageUrl || previewImageUrl}
-        imageTags={[`${(numAssets || collection?.numAssets || 'Unknown')!.toString()} Assets`]}
-        title={collection?.name || name}
-        subTitle={collection?.symbol || collection?.name}
-        imageLink={`https://center.app/${network}/collections/${address}`}
+      <ListContainer
+        items={[
+          <ImageResponse
+            image={collection?.smallPreviewImageUrl}
+            imageTags={[`${(numAssets || collection?.numAssets || 'Unknown')!.toString()} Assets`]}
+            title={collection?.name || name}
+            subTitle={collection?.symbol || collection?.name}
+            imageLink={`https://center.app/${network}/collections/${address}`}
+          />,
+          ...assets,
+        ]}
       />
-      {/* <a  
-        href={`https://center.app/${network}/collections/${address}`}
-        className="flex flex-col items-center justify-center py-4"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <img className="h-32 w-32 rounded-md" src={previewImageUrl} alt="" />
-        <div className="mt-1 flex flex-col items-center justify-center">
-          <p className="ml-3 text-xs font-medium text-blue-300 underline">{name}</p>
-          <p className="ml-3 text-xs font-medium text-gray-200">{network}</p>
-        </div>
-      </a> */}
     </>
   );
 };
-
-// Collection with a nested list of assets
-// export const NftCollection = ({
-//   collection,
-//   children,
-// }: NftCollectionProps) => {
-
-//   return (
-//     <div>
-//       <div>This is the NFT collection:</div>
-//       <div>{collection}</div>
-//       <div>Here are some of the NFTs in the collection:</div>
-//       <div>{children}</div>
-//     </div>
-//   );
-// };
