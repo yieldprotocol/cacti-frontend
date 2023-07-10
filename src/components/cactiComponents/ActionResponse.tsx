@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BigNumber, UnsignedTransaction } from 'ethers';
+import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
 import { ActionStepper } from './ActionStepper';
@@ -95,7 +95,8 @@ export const ActionResponse = ({
     hasAllowance
   );
 
-  // const { data: nativeBalance } = useBalance();
+  const { data: ethBal } = useBalance();
+
   const { data: balance } = useBalance(
     approvalParams?.tokenAddress,
     undefined,
@@ -116,21 +117,19 @@ export const ActionResponse = ({
    *
    *  */
   useEffect(() => {
-    // // Lastl, try get value from overrides
-    // (txParams.overrides as PayableOverrides)?.value &&
-    // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
+    // check value balance if skipping approval cuz we assume user is using eth
+    if (approvalParams?.skipApproval && sendParams?.value! > ethBal!)
+      return setHasEnoughBalance(true);
 
-    if (balance && approvalParams?.tokenAddress && approvalParams?.approvalAmount) {
-      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
-    } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
-      setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
-    }
-
-    // default case, set enough balance to true
-    else {
-      setHasEnoughBalance(true);
-    }
-  }, [txParams, approvalParams, balance]);
+    // check approval token balance
+    setHasEnoughBalance(balance?.gte(approvalParams?.approvalAmount!)!);
+  }, [
+    approvalParams?.approvalAmount,
+    approvalParams?.skipApproval,
+    balance,
+    ethBal,
+    sendParams?.value,
+  ]);
 
   /**
    * BUTTON FLOW:

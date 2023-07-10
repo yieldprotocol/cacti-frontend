@@ -124,8 +124,9 @@ const YieldProtocolLend = ({
       tokenAddress: tokenInToUse?.address!,
       spender: ladle!,
       approvalAmount: amount!,
+      skipApproval: tokenInIsETH,
     }),
-    [amount, ladle, tokenInToUse?.address]
+    [amount, ladle, tokenInIsETH, tokenInToUse?.address]
   );
 
   const getSendParams = useCallback(
