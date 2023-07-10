@@ -1,49 +1,42 @@
+import { useQuery } from 'react-query';
+import { useCollection } from '@center-inc/react';
+import axios from 'axios';
 import { ImageResponse } from '@/components/cactiComponents';
+import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 
 interface NftCollectionContainerProps {
-  network?: string;
-  address?: string;
+  network: string;
+  address: string;
   name?: string;
-  previewImageUrl?: string;
+
   numAssets?: string | number;
-}
+  previewImageUrl?: string;
 
-interface NftCollectionProps {
-  collection: JSX.Element;
-  children?: JSX.Element;
-}
-
-interface NftCollectionTraitsContainerProps {
-  network: string;
-  address: string;
-  name: string;
-  traits: string[];
-}
-
-interface NftCollectionTraitValuesContainerProps {
-  network: string;
-  address: string;
-  name: string;
-  trait: string;
-  values: string[];
+  variant?: ImageVariant; // widget variant (default, showcase, compact)
 }
 
 export const NftCollection = ({
   network,
   address,
   name,
+  numAssets,
   previewImageUrl,
+  variant,
 }: NftCollectionContainerProps) => {
+  const collection = useCollection({
+    network: network as any,
+    address,
+  });
+
   return (
     <>
       <ImageResponse
-        // actionLabel={network}
-        // actionValue={listPrice}
-        // description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        image={previewImageUrl!}
-        // imageTags={['some tag', 'Another tag']}
-        title={name}
-        subTitle={network}
+        image={collection?.smallPreviewImageUrl || previewImageUrl}
+        imageTags={[`${(numAssets || collection?.numAssets || 'Unknown')!.toString()} Assets`]}
+        title={collection?.name || name}
+        subTitle={collection?.symbol || collection?.name}
         imageLink={`https://center.app/${network}/collections/${address}`}
       />
       {/* <a  

@@ -6,14 +6,15 @@ import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
 import { TextResponse } from '../cactiComponents';
+import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
-import { composeFromString } from '../cactiComponents/tools/compose';
 import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
+import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
@@ -64,7 +65,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
               key={item.slice(0, 16)}
               widget={{ name: 'textresponse', params: { text: item } }}
             />,
-            // composeFromString(`[{"response":"TextResponse","props":{"text":"${item}"}}]`),
           ];
 
         /* if item is an object, assume it is a container or a widget */
@@ -78,7 +78,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* handle if a multistep container is passed */
-          if (item.name === 'display-multistep-list-container')
+          if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* if item has a function name, assume its a widget */
@@ -116,6 +116,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
 export interface WidgetProps {
   widget: Widget;
+  children?: React.ReactNode;
 }
 
 export const Widget = (props: WidgetProps) => {
@@ -124,6 +125,9 @@ export const Widget = (props: WidgetProps) => {
   const { name, params, variant } = props.widget;
   const fnName = name.toLowerCase().replace('display-', '');
   const parsedArgs = parseArgs(params);
+
+  console.log('WIDGET: ', `${fnName}(${params})`);
+  console.log('PARSED_ARGS: ', parsedArgs);
 
   /**
    * Implemented Indivudual Widgets
@@ -146,7 +150,12 @@ export const Widget = (props: WidgetProps) => {
 
   /* Nft widgets */
   widgets.set('nft-asset-container', <NftAsset {...parsedArgs} variant={variant} />);
-  widgets.set('nft-collection-container', <NftCollection {...parsedArgs} variant={variant} />);
+  widgets.set(
+    'nft-collection-container',
+    <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
+  );
+
+  widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(
     'yield-protocol-lend',

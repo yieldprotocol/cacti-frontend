@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
+
 /**
  * Generic styled Icon Button
  */
