@@ -19,10 +19,10 @@ import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
-import WrapEth from './widgets/weth/WrapEth';
 
 /**
  * This function parses the args passed to a widget,
@@ -188,10 +188,7 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set('liquity-close', <LiquityClose />);
 
-  widgets.set(
-    'wrap-eth',
-    <WrapEth amtString={'1'} />
-  );
+  widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
