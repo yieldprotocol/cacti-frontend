@@ -22,6 +22,24 @@ interface DepositVaultParams {
   assets: string;
 }
 
+function getVaultAddress(vaultName: string, tokenIn: string): string {
+  switch (vaultName) {
+    case 'savings':
+      return '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
+    case 'yearn':
+      switch (tokenIn) {
+        case 'yearnDAI':
+          return '0xdA816459F1AB5631232FE5e97a05BBBb94970c95';
+        case 'yearnUSDC':
+          return '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE';
+        case 'yearnWETH':
+          return '0xa258C4606Ca8206D8aA700cE2143D7db854D168c';
+      }
+    default:
+      return '';
+  }
+}
+
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
 export const DepositVault = ({ depositAmount, depositToken, depositVault }: DepositVaultProps) => {
   if (depositAmount === '*' || depositAmount === '{amount}')
@@ -37,6 +55,8 @@ export const DepositVault = ({ depositAmount, depositToken, depositVault }: Depo
   const tokenOutSymbol = depositVault;
   const { data: tokenIn } = useToken(tokenInSymbol);
   const { data: tokenOut } = useToken(tokenOutSymbol);
+
+  //TODO: Get the vault address
 
   const inputCleaned = cleanValue(depositAmount.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
@@ -58,23 +78,22 @@ export const DepositVault = ({ depositAmount, depositToken, depositVault }: Depo
 
   const tx = useMemo(
     (): TxBasicParams => ({
-      address: tokenOut?.address as `0x${string}`,
+      address: getVaultAddress(depositVault, depositToken) as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'deposit',
-      args: Object.values(params) ,
+      args: Object.values(params),
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
 
   return (
     <ConnectFirst>
-
       <HeaderResponse
-        text={`Deposit ${inputCleaned} ${tokenInSymbol} in the MakerDAO DSR`}
+        text={`Deposit ${inputCleaned} ${tokenInSymbol} in the vault`}
         projectName="dsr"
       />
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on MakerDAO DSR`}
+        label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on vault`}
         txParams={tx}
         approvalParams={approval}
         // disabled={true}
