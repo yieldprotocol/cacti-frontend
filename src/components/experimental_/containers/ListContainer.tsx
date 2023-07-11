@@ -17,7 +17,7 @@ const ListContainer = ({ items, limitCols, showcaseFirst = true }: ListContainer
   };
 
   return (
-    <>
+    <div>
       {showcaseFirst && (
         <div className="pb-2">
           {isWidget(items[0]) ? (
@@ -40,7 +40,7 @@ const ListContainer = ({ items, limitCols, showcaseFirst = true }: ListContainer
           )
         )}
       </div>
-    </>
+    </div>
   );
 };
 

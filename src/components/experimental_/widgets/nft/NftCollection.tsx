@@ -45,7 +45,7 @@ export const NftCollection = ({
    * Create the nfts assets for each tokenId to Show
    * */
   const assets = assetsIdsToShow.map((id: number) => (
-    <NftAsset network={network} address={address} tokenId={id} />
+    <NftAsset network={network} address={address} tokenId={id} key={id} />
   ));
 
   return (
@@ -58,6 +58,7 @@ export const NftCollection = ({
             title={collection?.name || name}
             subTitle={collection?.symbol || collection?.name}
             imageLink={`https://center.app/${network}/collections/${address}`}
+            key={address}
           />,
           ...assets,
         ]}
