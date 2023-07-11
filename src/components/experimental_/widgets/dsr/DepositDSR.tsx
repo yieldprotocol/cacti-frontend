@@ -22,11 +22,6 @@ interface DepositDSRParams {
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
 export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
-  if (depositAmount === '*' || depositAmount === '{amount}')
-    return (
-      <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
-    );
-
   const chainId = useChainId();
   const { address: receiver } = useAccount();
 
@@ -59,14 +54,18 @@ export const DepositDSR = ({ depositAmount }: DepositDSRProps) => {
       address: tokenOut?.address as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'deposit',
-      args: Object.values(params) ,
+      args: Object.values(params),
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
 
+  if (depositAmount === '*' || depositAmount === '{amount}')
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
+    );
+
   return (
     <ConnectFirst>
-
       <HeaderResponse
         text={`Deposit ${inputCleaned} ${tokenInSymbol} in the MakerDAO DSR`}
         projectName="dsr"

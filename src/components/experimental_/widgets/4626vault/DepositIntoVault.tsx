@@ -41,12 +41,7 @@ function getVaultAddress(vaultName: string, tokenIn: string): string {
 }
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
-export const DepositVault = ({ depositToken, amount, vault }: vDepositVaultProps) => {
-  if (amount === '*' || amount === '{amount}')
-    return (
-      <TextResponse text="Please edit your query with an amount you wish to deposit" />
-    );
-
+export const DepositVault = ({ depositToken, amount, vault }: DepositVaultProps) => {
   const chainId = useChainId();
   const { address: receiver } = useAccount();
 
@@ -85,6 +80,9 @@ export const DepositVault = ({ depositToken, amount, vault }: vDepositVaultProps
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
+
+  if (amount === '*' || amount === '{amount}')
+    return <TextResponse text="Please edit your query with an amount you wish to deposit" />;
 
   return (
     <ConnectFirst>

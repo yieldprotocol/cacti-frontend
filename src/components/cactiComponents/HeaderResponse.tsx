@@ -20,7 +20,6 @@ const navigateToExternalUrl = ({ url }: { url: string | URL }) => {
 export const HeaderResponse = (props: any) => {
   const [project, setProject] = useState<any>();
 
-
   useEffect(() => {
     if (props.projectName) {
       try {

@@ -12,6 +12,9 @@ import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import DepositVault from './widgets/4626vault/DepositIntoVault';
+import DepositDSR from './widgets/dsr/DepositDSR';
+import RedeemDSR from './widgets/dsr/RedeemDSR';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
@@ -19,7 +22,6 @@ import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
-import DepositDSR from './widgets/dsr/DepositDSR';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -49,11 +51,8 @@ export const parseArgs = (args: string | object) => {
   /* else return an empty array as a last resort */
   return [];
 };
-import RedeemDSR from './widgets/dsr/RedeemDSR';
-import DepositVault from './widgets/4626vault/DepositIntoVault';
 
 export const MessageTranslator = ({ message }: { message: Message }) => {
-  
   const parsedMessage = useMemo(() => parseMessage(message.payload), [message.payload]);
   const [widgetGroup, setWidgetGroup] = useState<JSX.Element[]>([]);
 
@@ -191,27 +190,19 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set('liquity-close', <LiquityClose />);
 
-  widgets.set(
-    'savings-dai-deposit',
-    <DepositDSR depositAmount={parsedArgs[0]} />);
+  widgets.set('savings-dai-deposit', <DepositDSR depositAmount={parsedArgs[0]} />);
 
-  widgets.set(
-    'redeem-sdai',
-    <RedeemDSR  shares={parsedArgs[0]}/>
-  );
+  widgets.set('redeem-sdai', <RedeemDSR shares={parsedArgs[0]} />);
 
   widgets.set(
     'deposit-vault',
-    <DepositVault depositToken={parsedArgs[0]} amount={parsedArgs[1]}  vault={parsedArgs[2]} />
+    <DepositVault depositToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
-
     return widgets.get(fnName)!;
-
   } else {
-
     /* Else, 'try' to get the widget from the previous implementation */
     try {
       return <>{Widgetize(props.widget)}</>;

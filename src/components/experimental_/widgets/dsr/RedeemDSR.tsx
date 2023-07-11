@@ -13,8 +13,8 @@ import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface RedeemDSRProps {
   shares: string;
-//   receiver: string;
-//   owner: string;
+  //   receiver: string;
+  //   owner: string;
 }
 
 interface RedeemDSRParams {
@@ -25,11 +25,6 @@ interface RedeemDSRParams {
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
 export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
-  if (shares === '*' || shares === '{amount}')
-    return (
-      <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
-    );
-
   const chainId = useChainId();
   const { address: receiver } = useAccount();
 
@@ -45,7 +40,7 @@ export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
   const params: RedeemDSRParams = {
     assets: amountIn.toString(),
     receiver: receiver!,
-    owner: receiver!
+    owner: receiver!,
   };
 
   // Use DAI signatures for approval
@@ -63,14 +58,18 @@ export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
       address: tokenIn?.address as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'redeem',
-      args: Object.values(params) ,
+      args: Object.values(params),
     }),
     [amountIn, chainId, params, tokenOut?.address]
   );
 
+  if (shares === '*' || shares === '{amount}')
+    return (
+      <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
+    );
+
   return (
     <ConnectFirst>
-
       <HeaderResponse
         text={`Redeem ${inputCleaned} ${tokenInSymbol} in the MakerDAO DSR`}
         projectName="dsr"
