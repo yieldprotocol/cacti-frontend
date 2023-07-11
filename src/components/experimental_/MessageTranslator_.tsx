@@ -202,7 +202,7 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set(
     'deposit-vault',
-    <DepositVault depositAmount={parsedArgs[0]} depositToken={parsedArgs[1]} depositVault={parsedArgs[2]} />
+    <DepositVault depositToken={parsedArgs[0]} amount={parsedArgs[1]}  vault={parsedArgs[2]} />
   );
 
   /* If available, return the widget in the widgets map */

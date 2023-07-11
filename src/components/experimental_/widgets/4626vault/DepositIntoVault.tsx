@@ -12,9 +12,9 @@ import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface DepositVaultProps {
-  depositAmount: string;
+  amount: string;
   depositToken: string;
-  depositVault: string;
+  vault: string;
 }
 
 interface DepositVaultParams {
@@ -41,10 +41,10 @@ function getVaultAddress(vaultName: string, tokenIn: string): string {
 }
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
-export const DepositVault = ({ depositAmount, depositToken, depositVault }: DepositVaultProps) => {
-  if (depositAmount === '*' || depositAmount === '{amount}')
+export const DepositVault = ({ depositToken, amount, vault }: vDepositVaultProps) => {
+  if (amount === '*' || amount === '{amount}')
     return (
-      <TextResponse text="Please edit your query with an amount you wish to deposit in the DSR." />
+      <TextResponse text="Please edit your query with an amount you wish to deposit" />
     );
 
   const chainId = useChainId();
@@ -52,13 +52,13 @@ export const DepositVault = ({ depositAmount, depositToken, depositVault }: Depo
 
   // Here we use DAI as the tokenIn and SavingsDAI as tokenOut
   const tokenInSymbol = depositToken;
-  const tokenOutSymbol = depositVault;
+  const tokenOutSymbol = vault;
   const { data: tokenIn } = useToken(tokenInSymbol);
   const { data: tokenOut } = useToken(tokenOutSymbol);
 
   //TODO: Get the vault address
 
-  const inputCleaned = cleanValue(depositAmount.toString(), tokenIn?.decimals);
+  const inputCleaned = cleanValue(amount.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
 
   const params: DepositVaultParams = {
@@ -78,7 +78,7 @@ export const DepositVault = ({ depositAmount, depositToken, depositVault }: Depo
 
   const tx = useMemo(
     (): TxBasicParams => ({
-      address: getVaultAddress(depositVault, depositToken) as `0x${string}`,
+      address: getVaultAddress(vault, depositToken) as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'deposit',
       args: Object.values(params),
@@ -89,7 +89,7 @@ export const DepositVault = ({ depositAmount, depositToken, depositVault }: Depo
   return (
     <ConnectFirst>
       <HeaderResponse
-        text={`Deposit ${inputCleaned} ${tokenInSymbol} in the vault`}
+        text={`Deposit ${inputCleaned} ${tokenInSymbol} in the ${vault} vault`}
         projectName="dsr"
       />
       <ActionResponse
