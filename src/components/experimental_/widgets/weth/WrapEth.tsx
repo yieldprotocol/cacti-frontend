@@ -30,7 +30,7 @@ const WrapEth = ({ amtString }: any) => {
 
   return (
     <ConnectFirst>
-      <HeaderResponse text={`Wrap ${amtString} Ether ***`} projectName="weth" />
+      <HeaderResponse text={`Wrap ${amtString} Ether`} projectName="weth" />
       <ActionResponse
         label={`Wrap ${amtString || ''} ETH`}
         txParams={tx}
