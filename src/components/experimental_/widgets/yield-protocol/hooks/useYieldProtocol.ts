@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish, Contract, PayableOverrides } from 'ethers';
 import { Address, useAccount } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
+import borrowCloseHelper from '../actions/borrow-close/helpers';
 import borrowHelper from '../actions/borrow/helpers';
 import lendCloseHelper from '../actions/lend-close/helpers';
 import lendHelper from '../actions/lend/helpers';
@@ -60,6 +61,31 @@ const useYieldProtocol = () => {
         signer,
         chainId,
         maxAmountToBorrow,
+      });
+    },
+    [account, chainId, signer]
+  );
+
+  const borrowClose = useCallback(
+    async ({
+      vaultId,
+    }: {
+      vaultId: `0x${string}`; // not an address, but a hex string
+    }) => {
+      if (!account) {
+        console.error('Account not found');
+        return undefined;
+      }
+      if (!signer) {
+        console.error('Signer not found');
+        return undefined;
+      }
+
+      return borrowCloseHelper({
+        account,
+        vaultId,
+        signer,
+        chainId,
       });
     },
     [account, chainId, signer]
@@ -131,7 +157,7 @@ const useYieldProtocol = () => {
     [account, chainId, signer]
   );
 
-  return { lend, borrow, lendClose };
+  return { lend, borrow, lendClose, borrowClose };
 };
 
 export default useYieldProtocol;
