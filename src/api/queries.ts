@@ -14,7 +14,8 @@ export const useQueryChats = () => {
 };
 
 export interface ChatShareSettings {
-  visibility: string;
+  visibility?: string;
+  canEdit?: boolean;
 }
 export const useQueryShareSettings = (sessionId: string) => {
   const { data, ...rest } = useQuery(['shareSettings', sessionId], async () =>

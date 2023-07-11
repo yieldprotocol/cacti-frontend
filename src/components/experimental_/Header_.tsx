@@ -6,6 +6,7 @@ import {
   PencilIcon,
   ShareIcon,
 } from '@heroicons/react/20/solid';
+import { useSession } from 'next-auth/react';
 import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
 import { useQueryShareSettings } from '@/api/queries';
 import { CustomConnectButton } from './CustomConnectButton';
@@ -22,16 +23,25 @@ import { CustomConnectButton } from './CustomConnectButton';
 // };
 
 const PrimaryActions = ({ sessionId }: { sessionId: string }) => {
+  const { status } = useSession();
   const { isSuccess, settings } = useQueryShareSettings(sessionId);
   const visibilityMutation = useMutationUpdateShareSettings(sessionId);
   const cloneMutation = useMutationCloneSession(sessionId);
-  const toggleVisibility = () => {
+  const visibilityToggle = () => {
     const targetVisibility = settings?.visibility == 'public' ? 'private' : 'public';
     visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
   };
+  const visibilityIcon = settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />;
+  const canEdit = isSuccess && settings?.canEdit;
+  const canClone = status === 'authenticated';
   const cloneSession = () => {
-    cloneMutation.mutate({ metadata: {} });
+    if (canClone) {
+      cloneMutation.mutate({ metadata: {} });
+    } else {
+      alert('Please sign up to clone session.');
+    }
   };
+
   return (
     <div className="flex items-center gap-2">
       <div className="h-4 w-4">
@@ -40,11 +50,14 @@ const PrimaryActions = ({ sessionId }: { sessionId: string }) => {
       <button className="h-4 w-4" onClick={cloneSession}>
         <ShareIcon />
       </button>
-      {isSuccess && (
-        <button className="h-4 w-4" onClick={toggleVisibility}>
-          {settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />}
-        </button>
-      )}
+      {isSuccess &&
+        (canEdit ? (
+          <button className="h-4 w-4" onClick={visibilityToggle}>
+            {visibilityIcon}
+          </button>
+        ) : (
+          <div className="h-4 w-4">{visibilityIcon}</div>
+        ))}
     </div>
   );
 };
