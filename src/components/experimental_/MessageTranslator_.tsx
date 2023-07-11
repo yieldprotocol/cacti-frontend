@@ -22,6 +22,7 @@ import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
+import WrapEth from './widgets/weth/WrapEth';
 
 /**
  * This function parses the args passed to a widget,
@@ -186,6 +187,11 @@ export const Widget = (props: WidgetProps) => {
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
+
+  widgets.set(
+    'wrap-eth',
+    <WrapEth amtString={'1'} />
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
