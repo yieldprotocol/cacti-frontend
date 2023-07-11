@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { fy } from 'date-fns/locale';
 import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, erc20ABI, useAccount } from 'wagmi';
+import { Address, erc20ABI, readContracts, useAccount } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 import {
   ActionResponse,
@@ -17,7 +18,7 @@ import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useAppro
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import { cleanValue, toTitleCase } from '@/utils';
+import { Spinner, cleanValue, toTitleCase } from '@/utils';
 import poolAbi from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
@@ -30,6 +31,7 @@ import {
 } from '../lend/YieldProtocolLend';
 
 interface YieldSeriesEntityLendClose extends YieldSeriesEntity {
+  approvalParams: ApprovalBasicParams;
   fyTokenBalance: string; // fyToken balance (formatted)
   baseValueOfBalance: string; // estimated base value of fyToken balance (formatted)
 }
@@ -89,7 +91,7 @@ const YieldProtocolLendClose = ({
   const query = getQuery(tokenInToUse?.address!);
 
   // get series entities from the graph
-  const { data: graphResSeriesEntities } = useSWR(
+  const { data: graphResSeriesEntities, isLoading } = useSWR(
     ['/yield-protocol/seriesEntities', query],
     () =>
       request<YieldGraphRes>(
@@ -106,31 +108,48 @@ const YieldProtocolLendClose = ({
 
   // need to approve the associated series entity's fyToken
   const getApprovalParams = useCallback(
-    (fyTokenAddress: Address): ApprovalBasicParams => ({
+    ({
+      fyTokenAddress,
+      approvalAmount,
+    }: {
+      fyTokenAddress: Address;
+      approvalAmount: BigNumber;
+    }): ApprovalBasicParams => ({
       tokenAddress: fyTokenAddress,
       spender: ladle!,
-      approvalAmount: amount!,
+      approvalAmount,
     }),
-    [amount, ladle]
+    [ladle]
   );
 
   const getSendParams = useCallback(
-    async (seriesEntity: YieldGraphResSeriesEntity) => {
-      const fyTokenAddress = seriesEntity.fyToken?.id;
+    async ({
+      seriesEntity,
+      fyTokenAmount,
+    }: {
+      seriesEntity: YieldGraphResSeriesEntity;
+      fyTokenAmount: BigNumber;
+    }) => {
+      const fyTokenAddress = seriesEntity.fyToken?.id as Address | undefined;
       if (!fyTokenAddress) {
         console.error(`No fyToken found for series entity ${seriesEntity.id}`);
         return undefined;
       }
-      const poolAddress = seriesEntity.fyToken?.pools[0].id;
+      const poolAddress = seriesEntity.fyToken?.pools[0].id as Address | undefined;
       if (!poolAddress) {
         console.error(`No pool found for series entity ${seriesEntity.id}`);
         return undefined;
       }
 
+      if (!amount) {
+        console.error(`No amount found for series entity ${seriesEntity.id}`);
+        return undefined;
+      }
+
       return await lendClose({
-        amount: amount!,
-        fyTokenAddress: fyTokenAddress as Address,
-        poolAddress: poolAddress as Address,
+        fyTokenAmount,
+        fyTokenAddress,
+        poolAddress,
         seriesEntityId: seriesEntity.id,
         seriesEntityIsMature: seriesEntity.maturity < NOW,
         isEthBase: tokenInIsETH,
@@ -148,11 +167,11 @@ const YieldProtocolLendClose = ({
       const seriesEntities = await Promise.all(
         _seriesEntities.map(async (s): Promise<YieldSeriesEntityLendClose> => {
           const maturity_ = nameFromMaturity(s.maturity);
-          const fyTokenAddress = s.fyToken?.id;
-          const poolAddress = s.fyToken?.pools[0].id;
+          const fyTokenAddress = s.fyToken?.id as Address | undefined;
+          const poolAddress = s.fyToken?.pools[0].id as Address | undefined;
 
           const fyTokenBalanceRes = await readContract({
-            address: fyTokenAddress as Address,
+            address: fyTokenAddress!,
             abi: erc20ABI,
             functionName: 'balanceOf',
             args: [account as Address],
@@ -162,28 +181,48 @@ const YieldProtocolLendClose = ({
           // estimate buying base with fyToken balance if before maturity (formatted)
           // if error estimating, there is likely not enough liquidity to close the position
           let baseValueOfBalance: string;
+          // estimate the fyToken value of the inputted amount
+          let fyTokenAmount: BigNumber;
           if (s.maturity < NOW) {
             baseValueOfBalance = fyTokenBalance;
+            fyTokenAmount = amount!;
           } else {
             try {
-              const res = await readContract({
-                address: poolAddress as Address,
-                abi: poolAbi,
-                functionName: 'buyBasePreview',
-                args: [fyTokenBalanceRes],
+              const [baseValueOfBalanceRes, fyTokenAmountRes] = await readContracts({
+                contracts: [
+                  {
+                    address: poolAddress!,
+                    abi: poolAbi,
+                    functionName: 'buyBasePreview',
+                    args: [fyTokenBalanceRes],
+                  },
+                  {
+                    address: poolAddress!,
+                    abi: poolAbi,
+                    functionName: 'buyFYTokenPreview',
+                    args: [amount!],
+                  },
+                ],
               });
-              baseValueOfBalance = formatUnits(res, tokenInToUse?.decimals);
+              baseValueOfBalance = formatUnits(baseValueOfBalanceRes, tokenInToUse?.decimals);
+              fyTokenAmount = fyTokenAmountRes;
             } catch (e) {
               console.error(`Error estimating base value of fyToken balance: ${e}`);
               baseValueOfBalance = '0';
+              fyTokenAmount = ethers.constants.Zero;
             }
           }
 
-          const sendParams = await getSendParams(s);
+          const sendParams = await getSendParams({ seriesEntity: s, fyTokenAmount });
+          const approvalParams = getApprovalParams({
+            fyTokenAddress: fyTokenAddress!,
+            approvalAmount: fyTokenAmount.mul(110).div(100), // 10% buffer for moving interest: TODO figure out better way
+          });
 
           return {
             ...s,
             maturity_,
+            approvalParams,
             sendParams,
             fyTokenBalance,
             baseValueOfBalance,
@@ -193,7 +232,14 @@ const YieldProtocolLendClose = ({
 
       setData({ seriesEntities });
     })();
-  }, [account, getSendParams, graphResSeriesEntities?.seriesEntities, tokenInToUse?.decimals]);
+  }, [
+    account,
+    amount,
+    getApprovalParams,
+    getSendParams,
+    graphResSeriesEntities?.seriesEntities,
+    tokenInToUse?.decimals,
+  ]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out
@@ -209,41 +255,25 @@ const YieldProtocolLendClose = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      {data?.seriesEntities?.length ? (
-        <ResponseGrid className="grid gap-1">
-          {data?.seriesEntities &&
-            data.seriesEntities.map((s) => {
-              return (
-                <SingleItem
-                  key={s.id}
-                  item={s}
-                  label={`Close Lend ${s.maturity_}`}
-                  approvalParams={getApprovalParams(s.fyToken.id as Address)}
-                  sendParams={s.sendParams}
-                />
-              );
-            })}
-        </ResponseGrid>
-      ) : (
-        <ResponseTitle>
-          No closeable positions (likely due to liquidity constraints in Yield Protocol)
-        </ResponseTitle>
-      )}
+      <ResponseGrid className="grid gap-1">
+        {isLoading && <Spinner />}
+        {!isLoading &&
+          data?.seriesEntities?.length &&
+          data.seriesEntities.map((s) => {
+            return <SingleItem key={s.id} item={s} label={`Close Lend ${s.maturity_}`} />;
+          })}
+
+        {!isLoading && !data?.seriesEntities?.length && (
+          <ResponseTitle>
+            No closeable positions (likely due to liquidity constraints in Yield Protocol)
+          </ResponseTitle>
+        )}
+      </ResponseGrid>
     </>
   );
 };
 
-const SingleItem = ({
-  item,
-  label,
-  approvalParams,
-  sendParams,
-}: {
-  item: YieldSeriesEntityLendClose;
-  label: string;
-  approvalParams: ApprovalBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
-}) => {
+const SingleItem = ({ item, label }: { item: YieldSeriesEntityLendClose; label: string }) => {
   return +item.baseValueOfBalance > 0 && +item.fyTokenBalance > 0 ? (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
@@ -253,8 +283,8 @@ const SingleItem = ({
       <div className="mx-2 my-auto">
         <ActionResponse
           label={label}
-          approvalParams={approvalParams}
-          sendParams={sendParams}
+          approvalParams={item.approvalParams}
+          sendParams={item.sendParams}
           txParams={undefined}
         />
       </div>

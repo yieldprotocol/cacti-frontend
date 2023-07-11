@@ -97,14 +97,14 @@ const useYieldProtocol = () => {
 
   const lendClose = useCallback(
     async ({
-      amount,
+      fyTokenAmount,
       fyTokenAddress,
       poolAddress,
       seriesEntityId,
       seriesEntityIsMature,
       isEthBase,
     }: {
-      amount: BigNumber;
+      fyTokenAmount: BigNumber;
       fyTokenAddress: Address;
       poolAddress: Address;
       seriesEntityId: string;
@@ -118,7 +118,7 @@ const useYieldProtocol = () => {
 
       return await lendCloseHelper({
         account,
-        amount,
+        fyTokenAmount,
         fyTokenAddress,
         poolAddress,
         seriesEntityId,

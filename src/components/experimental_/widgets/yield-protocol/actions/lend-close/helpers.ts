@@ -8,7 +8,7 @@ import { LadleActions, RoutedActions } from '../../operations';
 
 interface LendCloseProps {
   account: Address | undefined;
-  amount: BigNumber;
+  fyTokenAmount: BigNumber;
   fyTokenAddress: Address;
   poolAddress: Address;
   seriesEntityId: string;
@@ -21,7 +21,7 @@ interface LendCloseProps {
 /**
  * Returns the calldata needed for the batch transaction to lend
  * @param account
- * @param amount
+ * @param fyTokenAmount
  * @param fyTokenAddress
  * @param poolAddress
  * @param seriesEntityId
@@ -34,7 +34,7 @@ interface LendCloseProps {
  */
 const _lendClose = async ({
   account,
-  amount,
+  fyTokenAmount,
   fyTokenAddress,
   poolAddress,
   seriesEntityId,
@@ -42,7 +42,7 @@ const _lendClose = async ({
   isEthBase,
   signer,
   chainId,
-}: LendProps): Promise<ICallData[] | undefined> => {
+}: LendCloseProps): Promise<ICallData[] | undefined> => {
   if (!signer) {
     console.error('Signer not found');
     return undefined;
@@ -64,23 +64,13 @@ const _lendClose = async ({
   const transferToAddress = seriesEntityIsMature ? fyTokenAddress : poolAddress;
   const receiverAddress = isEthBase ? ladleAddress : account;
 
-  // estimate the fyToken value of the base amount
-  const fyTokenValue = seriesEntityIsMature
-    ? amount
-    : await readContract({
-        address: poolAddress,
-        abi: poolAbi,
-        functionName: 'buyBasePreview',
-        args: [amount],
-      });
-
   // input amount with 1% slippage
-  const amountWithSlippage = amount.mul(99).div(100);
+  const amountWithSlippage = fyTokenAmount.mul(99).div(100);
 
   return [
     {
       operation: LadleActions.Fn.TRANSFER,
-      args: [fyTokenAddress, transferToAddress, fyTokenValue] as LadleActions.Args.TRANSFER,
+      args: [fyTokenAddress, transferToAddress, fyTokenAmount] as LadleActions.Args.TRANSFER,
     },
 
     /* BEFORE MATURITY */
@@ -95,7 +85,7 @@ const _lendClose = async ({
     /* AFTER MATURITY */
     {
       operation: LadleActions.Fn.REDEEM,
-      args: [seriesEntityId, receiverAddress, fyTokenValue] as LadleActions.Args.REDEEM,
+      args: [seriesEntityId, receiverAddress, fyTokenAmount] as LadleActions.Args.REDEEM,
       ignoreIf: !seriesEntityIsMature,
     },
 
@@ -110,7 +100,7 @@ const _lendClose = async ({
  */
 const lendClose = async ({
   account,
-  amount,
+  fyTokenAmount,
   fyTokenAddress,
   poolAddress,
   seriesEntityId,
@@ -121,7 +111,7 @@ const lendClose = async ({
 }: LendCloseProps) => {
   const calls = await _lendClose({
     account,
-    amount,
+    fyTokenAmount,
     fyTokenAddress,
     poolAddress,
     seriesEntityId,
