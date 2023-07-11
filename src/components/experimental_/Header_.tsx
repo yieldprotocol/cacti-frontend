@@ -6,7 +6,7 @@ import {
   PencilIcon,
   ShareIcon,
 } from '@heroicons/react/20/solid';
-import { useMutationUpdateShareSettings } from '@/api/mutations';
+import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
 import { useQueryShareSettings } from '@/api/queries';
 import { CustomConnectButton } from './CustomConnectButton';
 
@@ -23,19 +23,23 @@ import { CustomConnectButton } from './CustomConnectButton';
 
 const PrimaryActions = ({ sessionId }: { sessionId: string }) => {
   const { isSuccess, settings } = useQueryShareSettings(sessionId);
-  const mutation = useMutationUpdateShareSettings(sessionId);
+  const visibilityMutation = useMutationUpdateShareSettings(sessionId);
+  const cloneMutation = useMutationCloneSession(sessionId);
   const toggleVisibility = () => {
     const targetVisibility = settings?.visibility == 'public' ? 'private' : 'public';
-    mutation.mutate({ metadata: { visibility: targetVisibility } });
+    visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
+  };
+  const cloneSession = () => {
+    cloneMutation.mutate({ metadata: {} });
   };
   return (
     <div className="flex items-center gap-2">
       <div className="h-4 w-4">
         <PencilIcon />
       </div>
-      <div className="h-4 w-4">
+      <button className="h-4 w-4" onClick={cloneSession}>
         <ShareIcon />
-      </div>
+      </button>
       {isSuccess && (
         <button className="h-4 w-4" onClick={toggleVisibility}>
           {settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />}

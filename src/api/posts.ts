@@ -13,3 +13,14 @@ export const postUpdateShareSettings = (sessionId: string, metadata: any = {}) =
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
+
+export const postCloneSession = (sessionId: string, metadata: any = {}) => {
+  const backendUrl = getBackendApiUrl();
+  return axios
+    .post(`${backendUrl}/api/clone_session/${sessionId}`, metadata, {
+      withCredentials: true,
+      headers,
+    })
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+};
