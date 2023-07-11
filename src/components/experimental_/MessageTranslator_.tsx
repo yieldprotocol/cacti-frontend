@@ -20,6 +20,7 @@ import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
+import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -163,6 +164,16 @@ export const Widget = (props: WidgetProps) => {
       tokenInSymbol={parsedArgs[0]}
       inputAmount={parsedArgs[1]}
       action="lend"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-lend-close',
+    <YieldProtocolLendClose
+      baseTokenSymbol={parsedArgs[0]}
+      inputAmount={parsedArgs[1]}
+      action="lend-close"
       projectName="yield-protocol"
     />
   );

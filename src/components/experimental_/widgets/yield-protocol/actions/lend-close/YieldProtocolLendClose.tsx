@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BigNumber, UnsignedTransaction } from 'ethers';
+import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, erc20ABI, useAccount } from 'wagmi';
@@ -29,8 +30,8 @@ import {
 } from '../lend/YieldProtocolLend';
 
 interface YieldSeriesEntityLendClose extends YieldSeriesEntity {
-  fyTokenBalance: BigNumber;
-  baseValueOfBalance: BigNumber; // estimated base value of fyToken balance
+  fyTokenBalance: string; // fyToken balance (formatted)
+  baseValueOfBalance: string; // estimated base value of fyToken balance (formatted)
 }
 
 interface InputProps {
@@ -150,19 +151,33 @@ const YieldProtocolLendClose = ({
           const fyTokenAddress = s.fyToken?.id;
           const poolAddress = s.fyToken?.pools[0].id;
 
-          const fyTokenBalance = await readContract({
+          const fyTokenBalanceRes = await readContract({
             address: fyTokenAddress as Address,
             abi: erc20ABI,
             functionName: 'balanceOf',
             args: [account as Address],
           });
+          const fyTokenBalance = formatUnits(fyTokenBalanceRes, tokenInToUse?.decimals);
 
-          const baseValueOfBalance = await readContract({
-            address: poolAddress as Address,
-            abi: poolAbi,
-            functionName: 'buyBasePreview',
-            args: [fyTokenBalance],
-          });
+          // estimate buying base with fyToken balance if before maturity (formatted)
+          // if error estimating, there is likely not enough liquidity to close the position
+          let baseValueOfBalance: string;
+          if (s.maturity < NOW) {
+            baseValueOfBalance = fyTokenBalance;
+          } else {
+            try {
+              const res = await readContract({
+                address: poolAddress as Address,
+                abi: poolAbi,
+                functionName: 'buyBasePreview',
+                args: [fyTokenBalanceRes],
+              });
+              baseValueOfBalance = formatUnits(res, tokenInToUse?.decimals);
+            } catch (e) {
+              console.error(`Error estimating base value of fyToken balance: ${e}`);
+              baseValueOfBalance = '0';
+            }
+          }
 
           const sendParams = await getSendParams(s);
 
@@ -178,7 +193,7 @@ const YieldProtocolLendClose = ({
 
       setData({ seriesEntities });
     })();
-  }, [account, getSendParams, graphResSeriesEntities?.seriesEntities]);
+  }, [account, getSendParams, graphResSeriesEntities?.seriesEntities, tokenInToUse?.decimals]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out
@@ -194,20 +209,26 @@ const YieldProtocolLendClose = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <ResponseGrid className="grid gap-1">
-        {data?.seriesEntities &&
-          data.seriesEntities.map((s) => {
-            return (
-              <SingleItem
-                key={s.id}
-                item={s}
-                label={`Close Lend ${s.maturity_}`}
-                approvalParams={getApprovalParams(s.fyToken.id as Address)}
-                sendParams={s.sendParams}
-              />
-            );
-          })}
-      </ResponseGrid>
+      {data?.seriesEntities?.length ? (
+        <ResponseGrid className="grid gap-1">
+          {data?.seriesEntities &&
+            data.seriesEntities.map((s) => {
+              return (
+                <SingleItem
+                  key={s.id}
+                  item={s}
+                  label={`Close Lend ${s.maturity_}`}
+                  approvalParams={getApprovalParams(s.fyToken.id as Address)}
+                  sendParams={s.sendParams}
+                />
+              );
+            })}
+        </ResponseGrid>
+      ) : (
+        <ResponseTitle>
+          No closeable positions (likely due to liquidity constraints in Yield Protocol)
+        </ResponseTitle>
+      )}
     </>
   );
 };
@@ -223,7 +244,7 @@ const SingleItem = ({
   approvalParams: ApprovalBasicParams | undefined;
   sendParams: UnsignedTransaction | undefined;
 }) => {
-  return (
+  return +item.baseValueOfBalance > 0 && +item.fyTokenBalance > 0 ? (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{item.maturity_}</ResponseTitle>
@@ -238,7 +259,7 @@ const SingleItem = ({
         />
       </div>
     </SingleLineResponse>
-  );
+  ) : null;
 };
 
 export default YieldProtocolLendClose;
