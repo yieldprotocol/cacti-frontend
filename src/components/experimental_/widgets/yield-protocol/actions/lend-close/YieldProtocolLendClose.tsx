@@ -91,7 +91,7 @@ const YieldProtocolLendClose = ({
   const query = getQuery(tokenInToUse?.address!);
 
   // get series entities from the graph
-  const { data: graphResSeriesEntities, isLoading } = useSWR(
+  const { data: graphResSeriesEntities, isLoading: isLoadingSeriesEntities } = useSWR(
     ['/yield-protocol/seriesEntities', query],
     () =>
       request<YieldGraphRes>(
@@ -105,6 +105,7 @@ const YieldProtocolLendClose = ({
   );
 
   const [data, setData] = useState<{ seriesEntities: YieldSeriesEntityLendClose[] | undefined }>();
+  const [isLoading, setIsLoading] = useState(isLoadingSeriesEntities);
 
   // need to approve the associated series entity's fyToken
   const getApprovalParams = useCallback(
@@ -161,6 +162,7 @@ const YieldProtocolLendClose = ({
   useEffect(() => {
     // get the series entities using the graph
     (async () => {
+      setIsLoading(true);
       const _seriesEntities = graphResSeriesEntities?.seriesEntities;
       if (!_seriesEntities) return console.error('No series entities found');
 
@@ -230,6 +232,7 @@ const YieldProtocolLendClose = ({
         })
       );
 
+      setIsLoading(false);
       setData({ seriesEntities });
     })();
   }, [
