@@ -17,7 +17,7 @@ import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useAppro
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import { toTitleCase } from '@/utils';
+import { cleanValue, toTitleCase } from '@/utils';
 import poolAbi from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
@@ -248,7 +248,7 @@ const SingleItem = ({
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{item.maturity_}</ResponseTitle>
-        <ResponseTitle>Current Balance: {item.baseValueOfBalance}</ResponseTitle>
+        <ResponseTitle>Current Balance: {cleanValue(item.baseValueOfBalance, 2)}</ResponseTitle>
       </div>
       <div className="mx-2 my-auto">
         <ActionResponse
