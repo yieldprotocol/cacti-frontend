@@ -1,10 +1,6 @@
-import { useQuery } from 'react-query';
 import { Network, useCollection } from '@center-inc/react';
-import axios from 'axios';
-import { ImageResponse, ListResponse } from '@/components/cactiComponents';
+import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
-import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
-import { ETHEREUM_NETWORK } from '@/utils/constants';
 import ListContainer from '../../containers/ListContainer';
 import { NftAsset } from './NftAsset';
 
@@ -44,7 +40,7 @@ export const NftCollection = ({
   /**
    * Create the nfts assets for each tokenId to Show
    * */
-  const assets = assetsIdsToShow.map((id: number) => (
+  const assets = assetsIdsToShow.map((id) => (
     <NftAsset network={network} address={address} tokenId={id} key={id} />
   ));
 
@@ -53,7 +49,7 @@ export const NftCollection = ({
       <ListContainer
         items={[
           <ImageResponse
-            image={collection?.smallPreviewImageUrl}
+            image={collection?.smallPreviewImageUrl || previewImageUrl}
             imageTags={[`${(numAssets || collection?.numAssets || 'Unknown')!.toString()} Assets`]}
             title={collection?.name || name}
             subTitle={collection?.symbol || collection?.name}
