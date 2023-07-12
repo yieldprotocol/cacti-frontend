@@ -22,10 +22,8 @@ export type ApprovalBasicParams = {
   skipApproval?: boolean;
 };
 
-const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined => {
-  if (addr === AddressZero || addr === undefined) return undefined;
-  return addr;
-};
+const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
+  addr === AddressZero ? undefined : addr;
 
 const useApproval = (params: ApprovalBasicParams) => {
   /* Get the useForkSettings the settings context */
