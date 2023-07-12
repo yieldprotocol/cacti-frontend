@@ -258,8 +258,8 @@ const YieldProtocolLendClose = ({
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
-      <ResponseGrid className="grid gap-1">
-        {isLoading && <Spinner />}
+      <ResponseGrid className="grid w-full gap-1">
+        {isLoading && <Spinner className="justify-self-center text-gray-300" />}
         {!isLoading &&
           data?.seriesEntities?.length &&
           data.seriesEntities.map((s) => {
