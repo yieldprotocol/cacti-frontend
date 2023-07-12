@@ -205,8 +205,6 @@ export const Widgetize = (widget: Widget) => {
       }
       case 'nft-collection-assets-container': {
         const { collection, assets } = JSON.parse(args);
-        console.log('collection', collection);
-        console.log('assets', assets);
         return (
           <NftCollectionAssetsContainer
             collection={Widgetize({

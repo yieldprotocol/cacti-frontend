@@ -58,8 +58,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
     if (parsedMessage && parsedMessage.length) {
       const list = parsedMessage.reduce((list, item, idx) => {
         /* if item is a string (and not nothing) simply send a text response */
-        console.log('list', list, 'item', item, 'idx', idx);
-
         if (typeof item === 'string' && item.trim() !== '')
           return [
             ...list,
