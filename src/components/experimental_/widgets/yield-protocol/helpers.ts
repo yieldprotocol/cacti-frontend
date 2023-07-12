@@ -1,14 +1,6 @@
-import {
-  BigNumber,
-  BigNumberish,
-  Contract,
-  PayableOverrides,
-  Signer,
-  UnsignedTransaction,
-  ethers,
-} from 'ethers';
+import { BigNumber, BigNumberish, Contract, PayableOverrides, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
-import { PrepareWriteContractResult, getContract, prepareWriteContract } from 'wagmi/actions';
+import { getContract } from 'wagmi/actions';
 import ladleAbi from './contracts/abis/Ladle';
 import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule';
 import contractAddresses, { ContractNames } from './contracts/config';
@@ -26,7 +18,7 @@ export interface ICallData {
 /**
  * Encode all function calls to ladle.batch()
  * @params calls array of ICallData
- * @returns {Promise<UnsignedTransaction | undefined>}
+ * @returns {Promise<PopulatedTransaction | undefined>}
  */
 export const getSendParams = async ({
   calls,
@@ -36,7 +28,7 @@ export const getSendParams = async ({
   calls: ICallData[];
   signer: Signer;
   chainId: number;
-}): Promise<UnsignedTransaction | undefined> => {
+}) => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
   if (!ladleAddress) {
@@ -80,26 +72,11 @@ export const getSendParams = async ({
   });
 
   /* calculate the eth value sent */
-  const batchValue = await getCallValue(calls);
+  const value = await getCallValue(calls);
 
-  let prepped: PrepareWriteContractResult | undefined;
-
-  try {
-    prepped = await prepareWriteContract({
-      abi: ladleAbi,
-      address: ladle.address,
-      signer,
-      functionName: 'batch',
-      args: [encodedCalls as `0x${string}`[]],
-      overrides: { value: batchValue },
-      chainId,
-    });
-  } catch (e) {
-    prepped = undefined;
-    console.log('🦄 ~ file: helpers.ts:85 ~ e:', e);
-  }
-
-  return prepped ? (prepped.request as UnsignedTransaction) : undefined;
+  return await ladle.populateTransaction.batch(encodedCalls as `0x${string}`[], {
+    value,
+  });
 };
 
 const getCallValue = async (calls: ICallData[]) =>
