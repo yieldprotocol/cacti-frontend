@@ -16,6 +16,7 @@ import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
+import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
@@ -154,6 +155,8 @@ export const Widget = (props: WidgetProps) => {
     'nft-collection-container',
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
+
+  widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
 
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 

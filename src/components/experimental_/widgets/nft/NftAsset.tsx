@@ -5,7 +5,7 @@ import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 
-interface NftAssetProps {
+export interface NftAssetProps {
   network: string;
   address: string;
   tokenId: string | number;
