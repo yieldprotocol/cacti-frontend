@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline';
-import { Chats, useQueryChats } from '@/api/queries';
+import { useQueryChats } from '@/api/queries';
 import ChatContext from '@/contexts/ChatContext';
 import { abbreviateHash, shortenAddress } from '@/utils';
 
@@ -32,8 +32,7 @@ const ChatItem = ({ id, selected }: ChatItem) => {
 };
 
 const ChatList = () => {
-  //const { isSuccess, chats } = useQueryChats();
-  const { isSuccess, chats } = { isSuccess: false, chats: { sessions: [] } as Chats };
+  const { isSuccess, chats } = useQueryChats();
 
   const q = window.location.search;
   const params = new URLSearchParams(q);
