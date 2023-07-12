@@ -90,16 +90,8 @@ const useApproval = (params: ApprovalBasicParams) => {
     onSuccess: () => refetchAllowance(),
   });
 
-  /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (
-    validateAddress(tokenAddress) === undefined ||
-    validateAddress(spender) === undefined ||
-    params.skipApproval
-  )
-    return { approveTx: undefined, hasAllowance: true };
-
   return {
-    approveTx,
+    approveTx: params.skipApproval ? undefined : approveTx,
     refetchAllowance,
 
     approvalReceipt: data,
@@ -111,7 +103,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     approvalError: isError,
     approvalSuccess: isSuccess,
 
-    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 
