@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { postCloneSession, postUpdateShareSettings } from '@/api/posts';
+import { postCloneSession } from '@/api/posts';
+import { putShareSettings } from '@/api/puts';
 
 export const useMutationUpdateShareSettings = (sessionId: string) => {
   const mutationFn = ({ metadata }: { metadata: any }) => {
-    return postUpdateShareSettings(sessionId, metadata);
+    return putShareSettings(sessionId, metadata);
   };
 
   const queryClient = useQueryClient();
