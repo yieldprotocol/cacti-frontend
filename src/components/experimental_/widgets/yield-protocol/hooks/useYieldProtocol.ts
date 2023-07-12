@@ -49,7 +49,7 @@ const useYieldProtocol = () => {
         return undefined;
       }
 
-      return borrowHelper({
+      return await borrowHelper({
         account,
         borrowAmount,
         collateralAmount,
@@ -81,7 +81,7 @@ const useYieldProtocol = () => {
         return undefined;
       }
 
-      return borrowCloseHelper({
+      return await borrowCloseHelper({
         account,
         vaultId,
         signer,
