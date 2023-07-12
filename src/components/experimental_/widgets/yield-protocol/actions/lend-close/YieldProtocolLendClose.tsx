@@ -281,7 +281,9 @@ const SingleItem = ({ item, label }: { item: YieldSeriesEntityLendClose; label: 
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{item.maturity_}</ResponseTitle>
-        <ResponseTitle>Current Balance: {cleanValue(item.baseValueOfBalance, 2)}</ResponseTitle>
+        <ResponseTitle>
+          Current Balance: {cleanValue(item.baseValueOfBalance, 2)} {item.baseAsset.symbol}
+        </ResponseTitle>
       </div>
       <div className="mx-2 my-auto">
         <ActionResponse
