@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { useCollection } from '@center-inc/react';
+import { Network, useCollection } from '@center-inc/react';
 import axios from 'axios';
 import { ImageResponse, ListResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
@@ -9,7 +9,7 @@ import ListContainer from '../../containers/ListContainer';
 import { NftAsset } from './NftAsset';
 
 interface NftCollectionContainerProps {
-  network: string;
+  network: Network;
   address: string;
   name?: string;
 
@@ -30,7 +30,7 @@ export const NftCollection = ({
   assetsToShow = 0,
 }: NftCollectionContainerProps) => {
   const collection = useCollection({
-    network: network as any,
+    network,
     address,
   });
 
