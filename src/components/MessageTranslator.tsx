@@ -162,27 +162,28 @@ export const Widgetize = (widget: Widget) => {
         );
       }
 
-      // case 'nft-collection-container': {
-      //   let params;
-      //   try {
-      //     params = JSON.parse(args);
-      //   } catch (e) {
-      //     const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
-      //     params = { network, address, name, numAssets, previewImageUrl };
-      //   }
-      //   return <NftCollectionContainer {...params} />;
-      // }
-      // case 'nft-asset-container': {
-      //   let params;
-      //   try {
-      //     params = JSON.parse(args);
-      //   } catch (e) {
-      //     const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
-      //       parseArgsStripQuotes(args);
-      //     params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
-      //   }
-      //   return <NftAssetContainer {...params} />;
-      // }
+      // Re-enable this temporarily for fallback
+      case 'nft-collection-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
+          params = { network, address, name, numAssets, previewImageUrl };
+        }
+        return <NftCollectionContainer {...params} />;
+      }
+      case 'nft-asset-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
+            parseArgsStripQuotes(args);
+          params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
+        }
+        return <NftAssetContainer {...params} />;
+      }
 
       case 'nft-asset-traits-container': {
         const { asset, values } = JSON.parse(args);
@@ -204,6 +205,8 @@ export const Widgetize = (widget: Widget) => {
       }
       case 'nft-collection-assets-container': {
         const { collection, assets } = JSON.parse(args);
+        console.log('collection', collection);
+        console.log('assets', assets);
         return (
           <NftCollectionAssetsContainer
             collection={Widgetize({
