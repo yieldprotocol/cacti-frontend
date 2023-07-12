@@ -28,7 +28,7 @@ function getVaultAddress(vaultName: string, tokenIn: string): string {
       return '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
     case 'yearn':
       switch (tokenIn) {
-        case 'yearnDAI':
+        case 'DAI':
           return '0xdA816459F1AB5631232FE5e97a05BBBb94970c95';
         case 'yearnUSDC':
           return '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE';
@@ -61,19 +61,21 @@ export const DepositVault = ({ depositToken, amount, vault }: DepositVaultProps)
     receiver: receiver!,
   };
 
+  const vaultAddresss = getVaultAddress(vault, depositToken) as `0x${string}`;
+
   // Use DAI signatures for approval
   const approval = useMemo(
     (): ApprovalBasicParams => ({
       tokenAddress: tokenIn?.address!,
       approvalAmount: amountIn,
-      spender: tokenOut?.address as `0x${string}`,
+      spender: vaultAddresss,
     }),
     [amountIn, chainId, tokenIn]
   );
 
   const tx = useMemo(
     (): TxBasicParams => ({
-      address: getVaultAddress(vault, depositToken) as `0x${string}`,
+      address: vaultAddresss,
       abi: ERC4626Abi,
       functionName: 'deposit',
       args: Object.values(params),
