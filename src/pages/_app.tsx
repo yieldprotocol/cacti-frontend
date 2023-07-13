@@ -11,12 +11,19 @@ import Layout from '@/components/experimental_/layout/Layout';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 
+/*
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
 });
+*/
+import ConnectionWrapperDynamic from '@/contexts/ConnectionWrapper';
+/*
 const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
   ssr: false,
 });
+*/
+import ChatContextDynamic from '@/contexts/ChatContext';
+
 const queryClient = new QueryClient();
 
 export default function App({
