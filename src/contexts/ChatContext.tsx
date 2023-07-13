@@ -75,6 +75,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
+  const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
 
   const { status } = useSession();
   const queryClient = useQueryClient();
@@ -96,18 +97,44 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     shouldConnect
   );
 
-  const { query } = useRouter();
+  const router = useRouter();
+  const sessionId = router.query.id
+    ? typeof router.query.id === 'string'
+      ? router.query.id
+      : router.query.id?.[0]
+    : null;
+
   useEffect(() => {
-    // load the historical chat stored within the backend
-    if (query.id) {
+    // re-initialize on change
+    if (sessionId != lastInitSessionId) {
       // need to clear the messages when we switch chats
       setMessages([]);
-      wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId: query.id } });
+      setResumeFromMessageId(null);
+      setInsertBeforeMessageId(null);
+      wsSendMessage({ actor: 'system', type: 'clear', payload: {} });
+      if (sessionId) {
+        wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId } });
+      }
+      setLastInitSessionId(sessionId);
     }
-  }, [query.id, wsSendMessage]);
+  }, [sessionId, wsSendMessage]);
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
+
+    // If we reconnected, and have some expectation of where to resume from, re-initialize
+    if (
+      sessionId &&
+      sessionId == lastInitSessionId &&
+      messages.length > 0 &&
+      (resumeFromMessageId != null || insertBeforeMessageId != null)
+    ) {
+      wsSendMessage({
+        actor: 'system',
+        type: 'init',
+        payload: { sessionId, resumeFromMessageId, insertBeforeMessageId },
+      });
+    }
 
     // set the system config to use on the backend
     const q = window.location.search;
@@ -144,11 +171,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
     const obj = JSON.parse(lastMessage.data);
     if (obj.type == 'uuid') {
-      const q = window.location.search;
-      const params = new URLSearchParams(q);
-      params.set('s', obj.payload);
-      console.log(params);
-      window.history.replaceState(null, '', '?' + params.toString());
+      const newSessionId = obj.payload;
+      setLastInitSessionId(newSessionId);
+      router.replace(`/chat/${newSessionId}`);
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }

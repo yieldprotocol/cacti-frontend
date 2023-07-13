@@ -12,7 +12,7 @@ const ChatBox = () => {
   const { isLoading } = useQueryChats();
   const router = useRouter();
   const { id } = router.query;
-  const showMessageList = !!id && messages.length > 0;
+  const showMessageList = !!id || messages.length > 0;
   const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
 
   return (
