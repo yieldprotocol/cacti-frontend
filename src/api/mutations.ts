@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import { postCloneSession } from '@/api/posts';
 import { putShareSettings } from '@/api/puts';
-import { useRouter } from 'next/router';
 
 export const useMutationUpdateShareSettings = (sessionId: string) => {
   const mutationFn = ({ metadata }: { metadata: any }) => {

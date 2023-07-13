@@ -8,8 +8,13 @@ import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
 import Layout from '@/components/experimental_/layout/Layout';
-import { SettingsProvider } from '@/contexts/SettingsContext';
-import '@/styles/globals.css';
+
+/*
+const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
+  ssr: false,
+});
+*/
+import ChatContextDynamic from '@/contexts/ChatContext';
 
 /*
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
@@ -17,12 +22,8 @@ const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrap
 });
 */
 import ConnectionWrapperDynamic from '@/contexts/ConnectionWrapper';
-/*
-const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
-  ssr: false,
-});
-*/
-import ChatContextDynamic from '@/contexts/ChatContext';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import '@/styles/globals.css';
 
 const queryClient = new QueryClient();
 
