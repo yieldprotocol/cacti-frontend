@@ -17,7 +17,7 @@ const ShareButton = () => {
   );
 };
 
-const PrimaryActions = ({threadId}: {threadId: string}) => {
+const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const sessionId = threadId;
   const { status } = useSession();
   const { isSuccess, settings } = useQueryShareSettings(sessionId);
@@ -143,7 +143,7 @@ const ChatHeader = () => {
             </div>
           ) : (
             // <ShareButton />
-            threadId && <PrimaryActions {...{threadId}}/>
+            threadId && <PrimaryActions {...{ threadId }} />
           )}
         </div>
         <div className="text-xs text-white/30"> Last edit: yesterday </div>
