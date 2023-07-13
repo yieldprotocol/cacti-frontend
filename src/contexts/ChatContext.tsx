@@ -80,7 +80,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const { status } = useSession();
   const queryClient = useQueryClient();
 
-  const shouldConnect = status === 'authenticated';
+  //const shouldConnect = status === 'authenticated';
+  const shouldConnect = true; // allow logged out to view public sessions
   const backendUrl = getBackendWebsocketUrl();
   const {
     sendJsonMessage: wsSendMessage,

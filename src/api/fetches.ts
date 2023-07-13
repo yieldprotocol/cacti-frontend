@@ -10,3 +10,11 @@ export const fetchChats = () => {
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
+
+export const fetchShareSettings = (sessionId: string) => {
+  const backendUrl = getBackendApiUrl();
+  return axios
+    .get(`${backendUrl}/api/share_settings/${sessionId}`, { headers, withCredentials: true })
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+};

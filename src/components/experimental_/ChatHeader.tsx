@@ -1,6 +1,9 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ShareIcon } from '@heroicons/react/24/outline';
+import { ShareIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
+import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
+import { useQueryShareSettings } from '@/api/queries';
 import useThread from '@/hooks/useThread';
 
 const ShareButton = () => {
@@ -15,11 +18,38 @@ const ShareButton = () => {
 };
 
 const PrimaryActions = () => {
+  const { threadId: sessionId } = useThread();
+  const { status } = useSession();
+  const { isSuccess, settings } = useQueryShareSettings(sessionId);
+  const visibilityMutation = useMutationUpdateShareSettings(sessionId);
+  const cloneMutation = useMutationCloneSession(sessionId);
+  const visibilityToggle = () => {
+    const targetVisibility = settings?.visibility == 'public' ? 'private' : 'public';
+    visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
+  };
+  const visibilityIcon = settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />;
+  const canEdit = isSuccess && settings?.canEdit;
+  const canClone = status === 'authenticated';
+  const cloneSession = () => {
+    if (canClone) {
+      cloneMutation.mutate({ metadata: {} });
+    } else {
+      alert('Please sign up to clone thread.');
+    }
+  };
   return (
     <div className="flex items-center gap-2">
-      <div className="h-4 w-4">
+      <button className="h-4 w-4" onClick={cloneSession}>
         <ShareIcon />
-      </div>
+      </button>
+      {isSuccess &&
+        (canEdit ? (
+          <button className="h-4 w-4" onClick={visibilityToggle}>
+            {visibilityIcon}
+          </button>
+        ) : (
+          <div className="h-4 w-4">{visibilityIcon}</div>
+        ))}
     </div>
   );
 };
@@ -77,7 +107,7 @@ const ChatHeader = () => {
               <input
                 ref={inputRef}
                 className={`
-                    flex h-full w-full 
+                    flex h-full w-full
                     flex-col
                     bg-transparent
                     text-white/70
