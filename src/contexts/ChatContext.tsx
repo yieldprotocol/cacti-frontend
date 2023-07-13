@@ -118,7 +118,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       }
       setLastInitSessionId(sessionId);
     }
-  }, [sessionId, wsSendMessage]);
+  }, [sessionId, wsSendMessage]); // note: don't add lastInitSessionId here
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
