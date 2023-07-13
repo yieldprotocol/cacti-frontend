@@ -19,6 +19,7 @@ import { NftAsset } from './widgets/nft/NftAsset';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-close/YieldProtocolBorrowClose';
 import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
 import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
@@ -186,6 +187,15 @@ export const Widget = (props: WidgetProps) => {
       collateralTokenSymbol={parsedArgs[2]}
       collateralAmount={parsedArgs[3]}
       action="borrow"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-borrow-close',
+    <YieldProtocolBorrowClose
+      borrowTokenSymbol={parsedArgs[0]}
+      action="borrow-close"
       projectName="yield-protocol"
     />
   );

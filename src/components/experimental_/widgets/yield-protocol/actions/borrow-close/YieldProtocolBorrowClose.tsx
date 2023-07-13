@@ -1,32 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UnsignedTransaction, ethers } from 'ethers';
+import { Contract, UnsignedTransaction } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, useContractRead } from 'wagmi';
+import { Address, useAccount, useContract, useProvider } from 'wagmi';
+import { getContract, readContract } from 'wagmi/actions';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
+import useForkTools from '@/hooks/useForkTools';
 import useToken from '@/hooks/useToken';
-import { cleanValue, toTitleCase } from '@/utils';
-import Ladle from '../../contracts/abis/Ladle';
+import { toTitleCase } from '@/utils';
+import Cauldron from '../../contracts/abis/Cauldron';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
-import {
-  YieldGraphRes,
-  YieldGraphResSeriesEntity,
-  YieldSeriesEntity,
-} from '../lend/YieldProtocolLend';
-
-interface YieldSeriesEntityBorrowClose extends YieldSeriesEntity {
-  approvalParams: ApprovalBasicParams | undefined;
-}
 
 interface YieldVault {
-  id: string;
-  seriesEntity: YieldSeriesEntityBorrowClose;
+  sendParams: UnsignedTransaction | undefined;
+  approvalParams: ApprovalBasicParams | undefined;
+  id: `0x${string}`; // hex string
+  borrowToken: string;
+  collateralToken: string;
+  maturity_: string;
 }
 
 // should be generalized and only needed as reference once for all components
@@ -36,43 +33,28 @@ interface InputProps {
   projectName: string;
 }
 
-const getQuery = (address: string) =>
+export const getQuery = (address: string) =>
   `
   {
     seriesEntities(
-      where: {baseAsset_contains_nocase: "${address}"
+      where: {baseAsset_contains_nocase: "${address}"}
     ) {
       id
-      maturity
-      baseAsset {
-        id
-        symbol
-        assetId
-      }
-      fyToken {
-        id
-        pools {
-          id
-          lendAPR
-          borrowAPR
-        }
-      }
     }
   } 
   `;
 
-const YieldProtocolBorrow = ({ borrowTokenSymbol, action, projectName }: InputProps) => {
+const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
+  const { address: account } = useAccount();
   const { data: borrowToken, isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
   const { data: borrowTokenToUse } = useToken(borrowTokenIsEth ? 'WETH' : borrowTokenSymbol);
-  // get the collateral token symbol from the vault
-  const { data: collateralToken, isETH: collateralTokenIsEth } = useToken(collateralTokenSymbol);
-  const { data: collateralTokenToUse } = useToken(
-    collateralTokenIsEth ? 'WETH' : collateralTokenSymbol
-  );
+  const provider = useProvider();
   const label = `
         ${toTitleCase(action)} ${borrowTokenSymbol} borrow position on ${toTitleCase(projectName)}`;
+
+  const { forkStartBlock } = useForkTools();
 
   /***************INPUTS******************************************/
 
@@ -81,99 +63,134 @@ const YieldProtocolBorrow = ({ borrowTokenSymbol, action, projectName }: InputPr
   }>();
 
   const { borrowClose } = useYieldProtocol();
-  const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
-  // get series entities from the graph
-  const query = getQuery(borrowTokenToUse?.address!); // TODO handle no or incompatible borrow token
-  const { data: graphResSeriesEntities } = useSWR(
-    ['/yield-protocol/seriesEntities', query],
-    () =>
-      request<YieldGraphRes>(
-        // only mainnet for now
-        `https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`,
-        query
-      ),
-    {
-      revalidateOnFocus: false,
-    }
+  const getApprovalParams = useCallback(() => {
+    return undefined;
+  }, []);
+
+  // get relevant series based on borrow token address
+  const query = useMemo(() => getQuery(borrowTokenToUse?.address!), [borrowTokenToUse?.address]);
+  const { data: seriesEntityIdsRes } = useSWR<{ seriesEntities: { id: `0x${string}` }[] }>(
+    borrowTokenToUse?.address ? query : null,
+    () => request(`https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`, query),
+    { revalidateOnFocus: false }
   );
 
-  // TODO handle no or incompatible asset symbol
-  const getAssetQuery = (symbol: string) => `
-  {
-    assets(where: {symbol: "${symbol}"}) {
-      assetId
-    }
-  }
-  `;
+  const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
+  // cauldron ethers contract
+  const cauldron = useContract({
+    address: cauldronAddress!,
+    abi: Cauldron,
+    signerOrProvider: provider,
+  });
 
-  const ilkQuery = getAssetQuery(collateralTokenToUse?.symbol!);
-  const { data: graphResIlk } = useSWR(
-    ['/yield-protocol/seriesEntities/ilk', ilkQuery],
-    () =>
-      request<{ assets: { assetId: string }[] }>(
-        // only mainnet for now
-        `https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet`,
-        ilkQuery
-      ),
-    {
-      revalidateOnFocus: false,
+  const getVaults = useCallback(async () => {
+    if (!seriesEntityIdsRes) {
+      console.error('No series entity ids');
+      return;
     }
-  );
 
-  const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {}, []);
+    if (!account) {
+      console.error('No account');
+      return;
+    }
+
+    // get cauldron
+    if (!cauldron) {
+      console.error('No cauldron');
+      return;
+    }
+
+    // get relevant vaults based on series ids
+    const filter = cauldron.filters.VaultBuilt(null, account, null, null);
+    const vaults = (await cauldron.queryFilter(filter, forkStartBlock)) as unknown as {
+      args: {
+        seriesId: `0x${string}`;
+        vaultId: `0x${string}`;
+      };
+    }[];
+
+    // filter for relevant series ids
+    const filtered = vaults.filter(({ args }) =>
+      seriesEntityIdsRes.seriesEntities.map((s) => s.id).includes(args.seriesId)
+    );
+
+    // only need the vault id
+    return filtered.map(({ args }) => ({ id: args.vaultId, seriesId: args.seriesId }));
+  }, [account, cauldron, forkStartBlock, seriesEntityIdsRes]);
 
   const getSendParams = useCallback(
-    async (vault: YieldVault) => {
+    async (vaultId: `0x${string}`) => {
       return await borrowClose({
-        vaultId: vault.id,
+        vaultId,
       });
     },
-    [borrowClose, borrowTokenIsEth, collateralTokenIsEth]
+    [borrowClose]
   );
 
   useEffect(() => {
     (async () => {
-      // get the series entities using the graph
+      // get the vaults
       (async () => {
-        const _seriesEntities = graphResSeriesEntities?.seriesEntities;
-        if (!_seriesEntities) return console.error('No series entities found');
+        const _vaults = await getVaults();
 
-        const seriesEntities = await Promise.all(
-          _seriesEntities.map(async (s): Promise<YieldSeriesEntityBorrow> => {
-            const maturity_ = nameFromMaturity(s.maturity);
-            const sendParams = await getSendParams(s);
+        if (!_vaults) {
+          console.error('No vault prelim vault data');
+          return;
+        }
+
+        if (!cauldronAddress) {
+          console.error('No cauldron address');
+          return;
+        }
+
+        const vaults = await Promise.all(
+          _vaults.map(async ({ id, seriesId }) => {
+            const { maturity } = await readContract({
+              address: cauldronAddress,
+              abi: Cauldron,
+              functionName: 'series',
+              args: [seriesId],
+            });
+
+            const approvalParams = getApprovalParams();
+            const sendParams = await getSendParams(id);
+            console.log(
+              '🦄 ~ file: YieldProtocolBorrowClose.tsx:158 ~ _vaults.map ~ sendParams:',
+              sendParams
+            );
             return {
-              ...s,
-              maturity_,
-              sendParams,
+              id,
               approvalParams,
+              sendParams,
+              borrowToken: borrowTokenSymbol,
+              collateralToken: '',
+              maturity_: nameFromMaturity(maturity),
             };
           })
         );
+        console.log('🦄 ~ file: YieldProtocolBorrowClose.tsx:166 ~ vaults:', vaults);
 
-        setData({ seriesEntities });
+        setData({ vaults });
       })();
     })();
-  }, [approvalParams, getSendParams, graphResSeriesEntities?.seriesEntities]);
+  }, [borrowTokenSymbol, cauldronAddress, getApprovalParams, getSendParams, getVaults]);
 
   /***************INPUTS******************************************/
-
-  // TODO handle generic weird inputs
 
   return (
     <>
       <HeaderResponse text={label} projectName={projectName} />
       <ResponseGrid className="grid gap-1">
-        {data?.seriesEntities &&
-          data.seriesEntities.map((s) => {
+        {data?.vaults &&
+          data.vaults.map((v) => {
             return (
               <SingleItem
-                key={s.id}
-                item={s}
-                label={`Borrow ${s.maturity_}`}
-                approvalParams={s.approvalParams}
-                sendParams={s.sendParams}
+                key={v.id}
+                item={v}
+                label={`Close Borrow ${v.maturity_}`}
+                approvalParams={v.approvalParams}
+                sendParams={v.sendParams}
               />
             );
           })}
@@ -188,15 +205,14 @@ const SingleItem = ({
   approvalParams,
   sendParams,
 }: {
-  item: YieldSeriesEntity;
+  item: YieldVault;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
   sendParams: UnsignedTransaction | undefined;
 }) => {
   return (
-    <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
+    <SingleLineResponse tokenSymbol={item.id} className="flex justify-between">
       <div className="mx-2 flex">
-        <ResponseTitle>{cleanValue(item.fyToken.pools[0].borrowAPR, 1)}% APR</ResponseTitle>
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
@@ -207,4 +223,4 @@ const SingleItem = ({
     </SingleLineResponse>
   );
 };
-export default YieldProtocolBorrow;
+export default YieldProtocolBorrowClose;

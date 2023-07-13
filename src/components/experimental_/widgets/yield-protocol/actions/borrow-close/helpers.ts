@@ -12,7 +12,7 @@ export const WETH = '0x303000000000';
 
 interface BorrowCloseProps {
   account: Address;
-  vaultId: string;
+  vaultId: `0x${string}`;
   signer: Signer;
   chainId: number;
 }
@@ -21,8 +21,6 @@ interface BorrowCloseProps {
  * Returns the calldata needed for the batch transaction to close a vault (close borrow position)
  * @param account
  * @param vaultId
- * @param borrowTokenIsEth
- * @param collateralTokenIsEth
  * @param signer
  * @param chainId
  *
@@ -49,6 +47,7 @@ const _borrowClose = async ({
   const cauldron = getContract({
     address: cauldronAddress,
     abi: cauldronAbi,
+    signerOrProvider: signer,
   });
 
   // get the accrued art directly from contract; can't multicall this using wagmi for now
@@ -58,13 +57,13 @@ const _borrowClose = async ({
         address: cauldronAddress,
         abi: cauldronAbi,
         functionName: 'balances',
-        args: [vaultId as Address],
+        args: [vaultId],
       },
       {
         address: cauldronAddress,
         abi: cauldronAbi,
         functionName: 'vaults',
-        args: [vaultId as Address],
+        args: [vaultId],
       },
     ],
   });

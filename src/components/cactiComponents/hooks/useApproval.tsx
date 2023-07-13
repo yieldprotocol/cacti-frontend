@@ -48,9 +48,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     address: validateAddress(tokenAddress),
     abi: erc20ABI,
     functionName: 'allowance',
-    args: [account!, spender!],
-    scopeKey: `allowance_${tokenAddress}`,
-    cacheTime: 20_000,
+    args: [account!, spender],
     enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined, and not skip approval
   });
 
@@ -85,7 +83,7 @@ const useApproval = (params: ApprovalBasicParams) => {
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
-    onSuccess: () => refetchAllowance(),
+    onSuccess: async () => await refetchAllowance(),
   });
 
   return {
