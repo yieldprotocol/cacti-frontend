@@ -10,20 +10,18 @@ import { Session } from 'next-auth';
 import Layout from '@/components/experimental_/layout/Layout';
 
 /*
+// disabled dynamic because this causes the query.id useEffect hook to fire twice
 const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
   ssr: false,
 });
 */
-import ChatContextDynamic from '@/contexts/ChatContext';
+import ChatContext from '@/contexts/ChatContext';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import '@/styles/globals.css';
 
-/*
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
 });
-*/
-import ConnectionWrapperDynamic from '@/contexts/ConnectionWrapper';
-import { SettingsProvider } from '@/contexts/SettingsContext';
-import '@/styles/globals.css';
 
 const queryClient = new QueryClient();
 
@@ -48,15 +46,15 @@ export default function App({
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <ConnectionWrapperDynamic session={session}>
-          <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
-            <ChatContextDynamic>
+        <ChatContext>
+          <ConnectionWrapperDynamic session={session}>
+            <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </ChatContextDynamic>
-          </CenterProvider>
-        </ConnectionWrapperDynamic>
+            </CenterProvider>
+          </ConnectionWrapperDynamic>
+        </ChatContext>
       </QueryClientProvider>
     </SettingsProvider>
   );

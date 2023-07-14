@@ -3,7 +3,6 @@ import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
@@ -77,10 +76,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
 
-  const { status } = useSession();
   const queryClient = useQueryClient();
 
-  //const shouldConnect = status === 'authenticated';
   const shouldConnect = true; // allow logged out to view public sessions
   const backendUrl = getBackendWebsocketUrl();
   const {
