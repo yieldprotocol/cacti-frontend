@@ -1,18 +1,15 @@
 import { BigNumber, Signer, ethers } from 'ethers';
-import { Address, readContracts } from 'wagmi';
-import { getContract } from 'wagmi/actions';
-import cauldronAbi from '../../contracts/abis/Cauldron';
-import ladleAbi from '../../contracts/abis/Ladle';
-import poolAbi from '../../contracts/abis/Pool';
+import { Address } from 'wagmi';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
+import { Vault } from '../../hooks/useVault';
 import { LadleActions } from '../../operations';
 
 export const WETH = '0x303000000000';
 
 interface BorrowCloseProps {
   account: Address;
-  vaultId: `0x${string}`;
+  vault: Vault;
   signer: Signer;
   chainId: number;
 }
@@ -20,18 +17,30 @@ interface BorrowCloseProps {
 /**
  * Returns the calldata needed for the batch transaction to close a vault (close borrow position)
  * @param account
- * @param vaultId
+ * @param vault
  * @param signer
  * @param chainId
  *
  * @returns {ICallData[] | undefined}
  */
-const _borrowClose = async ({
+const _borrowClose = ({
   account,
-  vaultId,
+  vault,
   signer,
   chainId,
-}: BorrowCloseProps): Promise<ICallData[] | undefined> => {
+}: BorrowCloseProps): ICallData[] | undefined => {
+  const {
+    id: vaultId,
+    ink: collateralAmount,
+    ink: debtAmount,
+    baseId,
+    baseAddress,
+    ilkId,
+    art,
+    accruedArt,
+    seriesEntity: { isMature, maxBaseIn },
+    associatedJoinAddress,
+  } = vault;
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   if (!ladleAddress) {
     console.error('Ladle address not found; possibly on an unsupported chain');
@@ -43,67 +52,7 @@ const _borrowClose = async ({
     return undefined;
   }
 
-  // get cauldron
-  const cauldron = getContract({
-    address: cauldronAddress,
-    abi: cauldronAbi,
-    signerOrProvider: signer,
-  });
-
-  // get the accrued art directly from contract; can't multicall this using wagmi for now
-  const [{ art, ink: collateralAmount }, { seriesId, ilkId }] = await readContracts({
-    contracts: [
-      {
-        address: cauldronAddress,
-        abi: cauldronAbi,
-        functionName: 'balances',
-        args: [vaultId],
-      },
-      {
-        address: cauldronAddress,
-        abi: cauldronAbi,
-        functionName: 'vaults',
-        args: [vaultId],
-      },
-    ],
-  });
-
-  const [{ baseId, maturity }, poolAddress] = await readContracts({
-    contracts: [
-      { address: cauldronAddress, abi: cauldronAbi, functionName: 'series', args: [seriesId] },
-      { address: ladleAddress, abi: ladleAbi, functionName: 'pools', args: [seriesId] },
-    ],
-  });
-
-  const seriesEntityIsMature = maturity <= Math.floor(Date.now() / 1000);
-  const [baseAddress, joinAddress, maxBaseIn] = await readContracts({
-    contracts: [
-      {
-        address: cauldronAddress,
-        abi: cauldronAbi,
-        functionName: 'assets',
-        args: [baseId],
-      },
-      {
-        address: ladleAddress,
-        abi: ladleAbi,
-        functionName: 'joins',
-        args: [baseId],
-      },
-      {
-        address: poolAddress,
-        abi: poolAbi,
-        functionName: 'maxBaseIn',
-      },
-    ],
-  });
-
-  const debtAmount = (await cauldron.callStatic.debtFromBase(
-    seriesId,
-    art
-  )) as unknown as BigNumber; // TODO make more kosher
-
-  const amountToTransfer = seriesEntityIsMature ? debtAmount.mul(10001).div(10000) : art; // After maturity + 0.1% for increases during tx time
+  const amountToTransfer = isMature ? debtAmount.mul(10001).div(10000) : art; // After maturity + 0.1% for increases during tx time
 
   const tradeIsPossible = debtAmount.gt(maxBaseIn);
 
@@ -115,7 +64,7 @@ const _borrowClose = async ({
     ...(borrowTokenIsEth
       ? getWrapEthCallData({
           value: amountToTransfer,
-          to: seriesEntityIsMature ? ladleAddress : joinAddress,
+          to: isMature ? ladleAddress : associatedJoinAddress,
           signer,
           chainId,
         })
@@ -123,7 +72,7 @@ const _borrowClose = async ({
 
     {
       operation: LadleActions.Fn.TRANSFER,
-      args: [baseAddress, joinAddress, amountToTransfer] as LadleActions.Args.TRANSFER,
+      args: [baseAddress, associatedJoinAddress, amountToTransfer] as LadleActions.Args.TRANSFER,
       ignoreIf: borrowTokenIsEth,
     },
 
@@ -136,7 +85,7 @@ const _borrowClose = async ({
         collateralAmount,
         debtAmount,
       ] as LadleActions.Args.REPAY_VAULT,
-      ignoreIf: seriesEntityIsMature || !tradeIsPossible,
+      ignoreIf: isMature || !tradeIsPossible,
     },
 
     /* edge case in pool low liquidity situations wheere the repay amount is greater than the max base into the pool (debt is repaid at 1:1 with fyToken, so there's a penalty) */
@@ -148,7 +97,7 @@ const _borrowClose = async ({
         collateralAmount,
         debtAmount.mul(-1),
       ] as LadleActions.Args.CLOSE,
-      ignoreIf: seriesEntityIsMature || tradeIsPossible,
+      ignoreIf: isMature || tradeIsPossible,
     },
 
     /* AFTER MATURITY */
@@ -160,7 +109,7 @@ const _borrowClose = async ({
         collateralAmount,
         BigNumber.from(debtAmount).mul(-1),
       ] as LadleActions.Args.CLOSE,
-      ignoreIf: !seriesEntityIsMature || tradeIsPossible,
+      ignoreIf: !isMature || tradeIsPossible,
     },
 
     ...getUnwrapEthCallData({
@@ -173,10 +122,10 @@ const _borrowClose = async ({
 /**
  * Returns the send params for closing a borrow position
  */
-const borrowClose = async ({ account, vaultId, signer, chainId }: BorrowCloseProps) => {
-  const calls = await _borrowClose({
+const borrowClose = async ({ account, vault, signer, chainId }: BorrowCloseProps) => {
+  const calls = _borrowClose({
     account,
-    vaultId,
+    vault,
     signer,
     chainId,
   });

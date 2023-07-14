@@ -7,6 +7,7 @@ import borrowCloseHelper from '../actions/borrow-close/helpers';
 import borrowHelper from '../actions/borrow/helpers';
 import lendCloseHelper from '../actions/lend-close/helpers';
 import lendHelper from '../actions/lend/helpers';
+import { YieldVault } from './useVault';
 
 export interface ICallData {
   args: (string | BigNumberish | boolean)[];
@@ -68,9 +69,9 @@ const useYieldProtocol = () => {
 
   const borrowClose = useCallback(
     async ({
-      vaultId,
+      vault,
     }: {
-      vaultId: `0x${string}`; // not an address, but a hex string
+      vault: YieldVault; // not an address, but a hex string
     }) => {
       if (!account) {
         console.error('Account not found');
@@ -83,7 +84,7 @@ const useYieldProtocol = () => {
 
       return await borrowCloseHelper({
         account,
-        vaultId,
+        vault,
         signer,
         chainId,
       });

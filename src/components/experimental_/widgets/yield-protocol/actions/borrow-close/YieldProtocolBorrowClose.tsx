@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Contract, UnsignedTransaction } from 'ethers';
+import Skeleton from 'react-loading-skeleton';
+import { UnsignedTransaction } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, useAccount, useContract, useProvider } from 'wagmi';
-import { getContract, readContract } from 'wagmi/actions';
+import { useAccount, useContract, useProvider } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
-import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
+import { ResponseGrid } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
@@ -14,17 +14,8 @@ import useToken from '@/hooks/useToken';
 import { toTitleCase } from '@/utils';
 import Cauldron from '../../contracts/abis/Cauldron';
 import contractAddresses, { ContractNames } from '../../contracts/config';
+import useVault from '../../hooks/useVault';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
-import { nameFromMaturity } from '../../utils';
-
-interface YieldVault {
-  sendParams: UnsignedTransaction | undefined;
-  approvalParams: ApprovalBasicParams | undefined;
-  id: `0x${string}`; // hex string
-  borrowToken: string;
-  collateralToken: string;
-  maturity_: string;
-}
 
 // should be generalized and only needed as reference once for all components
 interface InputProps {
@@ -53,20 +44,19 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
   const provider = useProvider();
   const label = `
         ${toTitleCase(action)} ${borrowTokenSymbol} borrow position on ${toTitleCase(projectName)}`;
-
   const { forkStartBlock } = useForkTools();
 
   /***************INPUTS******************************************/
 
   const [data, setData] = useState<{
-    vaults: YieldVault[] | undefined;
+    vaults:
+      | {
+          id: `0x${string}`;
+        }[]
+      | undefined;
   }>();
 
   const { borrowClose } = useYieldProtocol();
-
-  const getApprovalParams = useCallback(() => {
-    return undefined;
-  }, []);
 
   // get relevant series based on borrow token address
   const query = useMemo(() => getQuery(borrowTokenToUse?.address!), [borrowTokenToUse?.address]);
@@ -119,62 +109,21 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
     return filtered.map(({ args }) => ({ id: args.vaultId, seriesId: args.seriesId }));
   }, [account, cauldron, forkStartBlock, seriesEntityIdsRes]);
 
-  const getSendParams = useCallback(
-    async (vaultId: `0x${string}`) => {
-      return await borrowClose({
-        vaultId,
-      });
-    },
-    [borrowClose]
-  );
-
   useEffect(() => {
     (async () => {
       // get the vaults
       (async () => {
-        const _vaults = await getVaults();
+        const vaults = await getVaults();
 
-        if (!_vaults) {
+        if (!vaults) {
           console.error('No vault prelim vault data');
           return;
         }
 
-        if (!cauldronAddress) {
-          console.error('No cauldron address');
-          return;
-        }
-
-        const vaults = await Promise.all(
-          _vaults.map(async ({ id, seriesId }) => {
-            const { maturity } = await readContract({
-              address: cauldronAddress,
-              abi: Cauldron,
-              functionName: 'series',
-              args: [seriesId],
-            });
-
-            const approvalParams = getApprovalParams();
-            const sendParams = await getSendParams(id);
-            console.log(
-              '🦄 ~ file: YieldProtocolBorrowClose.tsx:158 ~ _vaults.map ~ sendParams:',
-              sendParams
-            );
-            return {
-              id,
-              approvalParams,
-              sendParams,
-              borrowToken: borrowTokenSymbol,
-              collateralToken: '',
-              maturity_: nameFromMaturity(maturity),
-            };
-          })
-        );
-        console.log('🦄 ~ file: YieldProtocolBorrowClose.tsx:166 ~ vaults:', vaults);
-
         setData({ vaults });
       })();
     })();
-  }, [borrowTokenSymbol, cauldronAddress, getApprovalParams, getSendParams, getVaults]);
+  }, [getVaults]);
 
   /***************INPUTS******************************************/
 
@@ -184,43 +133,73 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
       <ResponseGrid className="grid gap-1">
         {data?.vaults &&
           data.vaults.map((v) => {
-            return (
-              <SingleItem
-                key={v.id}
-                item={v}
-                label={`Close Borrow ${v.maturity_}`}
-                approvalParams={v.approvalParams}
-                sendParams={v.sendParams}
-              />
-            );
+            return <SingleVault key={v.id} vaultId={v.id} />;
           })}
       </ResponseGrid>
     </>
   );
 };
 
-const SingleItem = ({
-  item,
-  label,
-  approvalParams,
-  sendParams,
-}: {
-  item: YieldVault;
-  label: string;
-  approvalParams: ApprovalBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
-}) => {
-  return (
-    <SingleLineResponse tokenSymbol={item.id} className="flex justify-between">
-      <div className="mx-2 flex">
-        <ActionResponse
-          label={label}
-          approvalParams={approvalParams}
-          sendParams={sendParams}
-          txParams={undefined}
-        />
-      </div>
-    </SingleLineResponse>
+const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
+  const chainId = useChainId();
+  const { borrowClose } = useYieldProtocol();
+  const { data: vault, isLoading } = useVault({ vaultId });
+  const { data: borrowToken, isETH: borrowTokenIsEth } = useToken(vault?.borrowToken.symbol);
+  const { data: borrowTokenToUse } = useToken(
+    borrowTokenIsEth ? 'WETH' : vault?.borrowToken.symbol
+  );
+  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const label = `Close Borrow ${vault?.seriesEntity.maturity_}`;
+
+  const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+
+  const approvalParams = useMemo((): ApprovalBasicParams | undefined => {
+    if (!ladleAddress) {
+      console.error('No ladle address');
+      return;
+    }
+
+    if (!vault?.accruedArt) return undefined;
+    return {
+      spender: ladleAddress,
+      approvalAmount: vault?.accruedArt.mul(101).div(100), // 1% buffer
+      tokenAddress: borrowTokenToUse?.address!,
+      skipApproval: borrowTokenIsEth,
+    };
+  }, [borrowTokenIsEth, borrowTokenToUse?.address, ladleAddress, vault?.accruedArt]);
+
+  const getSendParams = useCallback(async () => {
+    if (!vault) {
+      console.error('no vault within vault item');
+      return;
+    }
+
+    return await borrowClose({
+      vault,
+    });
+  }, [borrowClose, vault]);
+
+  useEffect(() => {
+    (async () => {
+      setSendParams(await getSendParams());
+    })();
+  });
+
+  return isLoading ? (
+    <Skeleton />
+  ) : (
+    vault && (
+      <SingleLineResponse tokenSymbol={vault.borrowToken.symbol} className="flex justify-between">
+        <div className="mx-2 flex">
+          <ActionResponse
+            label={label}
+            approvalParams={approvalParams}
+            sendParams={sendParams}
+            txParams={undefined}
+          />
+        </div>
+      </SingleLineResponse>
+    )
   );
 };
 export default YieldProtocolBorrowClose;
