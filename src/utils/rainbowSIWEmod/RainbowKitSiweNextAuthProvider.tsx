@@ -41,9 +41,21 @@ export function RainbowKitSiweNextAuthProvider({
   const { data: session, status } = useSession();
   const { address: account } = useAccount();
 
+  const signoutSequence = async () => {
+    // signout on frontend first, so that we don't end up in situation
+    // where frontend is signed in but backend is signed out, which will
+    // be confusing to the user
+    await signOut({ redirect: false });
+    if (getSignoutCallback) {
+      await getSignoutCallback();
+    }
+  };
+
   /* force logout if account changes */
   useEffect(() => {
-    if (session && session.user?.name !== account) signOut({ redirect: false });
+    if (session && session.user?.name !== account) {
+      signoutSequence();
+    }
   }, [account, session]);
 
   const adapter = useMemo(
@@ -82,15 +94,7 @@ export function RainbowKitSiweNextAuthProvider({
           return nonce;
         },
 
-        signOut: async () => {
-          // signout on frontend first, so that we don't end up in situation
-          // where frontend is signed in but backend is signed out, which will
-          // be confusing to the user
-          await signOut({ redirect: false });
-          if (getSignoutCallback) {
-            await getSignoutCallback();
-          }
-        },
+        signOut: signoutSequence,
 
         verify: async ({ message, signature }) => {
           const messageJson = JSON.stringify(message);
