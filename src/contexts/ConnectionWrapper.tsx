@@ -9,8 +9,6 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -20,7 +18,7 @@ import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
 
-const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
+const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -110,7 +108,6 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <SessionProvider refetchInterval={0} session={pageProps?.session}>
         {useSiwe && (
           <RainbowKitSiweNextAuthProvider
             getCustomNonce={getCustomNonce}
@@ -146,7 +143,6 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
             {children}
           </RainbowKitProvider>
         )}
-      </SessionProvider>
     </WagmiConfig>
   );
 };

@@ -4,6 +4,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { getBackendWebsocketUrl } from '@/utils/backend';
+import { useSession } from 'next-auth/react';
 
 export type Message = {
   messageId: string;
@@ -75,10 +76,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
+  const [lastAuthStatus, setLastAuthStatus] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
-  const shouldConnect = true; // allow logged out to view public sessions
+  const { status } = useSession();
+  // shouldConnect allows logged out to view public sessions, but we want to
+  // enforce a disconnect and reconnect when the auth status changes, so
+  // we use the latest cookie state
+  const shouldConnect = status == lastAuthStatus;
   const backendUrl = getBackendWebsocketUrl();
   const {
     sendJsonMessage: wsSendMessage,
@@ -104,8 +110,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // re-initialize on change
+    if (status === "loading") {
+      return;
+    }
+    let needsReset = false;
+    if (status != lastAuthStatus) {
+      setLastAuthStatus(status);
+      needsReset = true;
+    }
     if (sessionId != lastInitSessionId) {
-      // need to clear the messages when we switch chats
+      setLastInitSessionId(sessionId);
+      needsReset = true;
+    }
+    if (needsReset) {
       setMessages([]);
       setResumeFromMessageId(null);
       setInsertBeforeMessageId(null);
@@ -113,9 +130,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       if (sessionId) {
         wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId } });
       }
-      setLastInitSessionId(sessionId);
     }
-  }, [sessionId, wsSendMessage]); // note: don't add lastInitSessionId here
+  }, [status, sessionId, wsSendMessage]); // note: don't add lastAuthStatus, lastInitSessionId here
 
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
