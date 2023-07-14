@@ -43,7 +43,15 @@ export function RainbowKitSiweNextAuthProvider({
 
   /* force logout if account changes */
   useEffect(() => {
-    if (session && session.user?.name !== account) signOut({ redirect: false });
+    if (session && session.user?.name !== account) {
+      // signout on frontend first, so that we don't end up in situation
+      // where frontend is signed in but backend is signed out, which will
+      // be confusing to the user
+      signOut({ redirect: false });
+      if (getSignoutCallback) {
+        getSignoutCallback();
+      }
+    }
   }, [account, session]);
 
   const adapter = useMemo(
