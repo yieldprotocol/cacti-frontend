@@ -108,6 +108,12 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       : router.query.id?.[0]
     : null;
 
+  const resetMessages = () => {
+    setMessages([]);
+    setResumeFromMessageId(null);
+    setInsertBeforeMessageId(null);
+  };
+
   useEffect(() => {
     // re-initialize on change
     if (status === 'loading') {
@@ -125,9 +131,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       needsReset = true;
     }
     if (needsReset) {
-      setMessages([]);
-      setResumeFromMessageId(null);
-      setInsertBeforeMessageId(null);
+      resetMessages();
       wsSendMessage({ actor: 'system', type: 'clear', payload: {} });
       if (sessionId) {
         wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId } });
@@ -186,7 +190,10 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     if (!lastMessage) return;
 
     const obj = JSON.parse(lastMessage.data);
-    if (obj.type == 'uuid') {
+    if (obj.type == 'clear') {
+      resetMessages();
+      return;
+    } else if (obj.type == 'uuid') {
       const newSessionId = obj.payload;
       setLastInitSessionId(newSessionId);
       router.replace(`/chat/${newSessionId}`);
