@@ -17,8 +17,11 @@ import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
+import { useQueryClient } from 'react-query';
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
+  const queryClient = useQueryClient();
+
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -73,6 +76,14 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     return nonce;
   };
 
+  const invalidateQueries = () => {
+    // set timeout to allow cookie response to first be set prior to refetching
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['shareSettings'] });
+    }, 1000);
+  }
+
   const getSigninCallback = async (message: string, signature: string) => {
     const backendUrl = getBackendApiUrl();
     const result = await axios.post(
@@ -83,12 +94,14 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
       },
       { withCredentials: true }
     );
+    invalidateQueries();
     return !!result.data;
   };
 
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
+    invalidateQueries();
   };
 
   const CustomAvatar: AvatarComponent = ({
