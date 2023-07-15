@@ -83,7 +83,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const { status } = useSession();
   // shouldConnect can be true for logged out to view public sessions, but we want to
   // enforce a disconnect and reconnect when the auth status changes, so
-  // that the websocket will end up use the latest cookie state
+  // that the websocket will end up using the latest cookie state
   const shouldConnect = status == lastAuthStatus;
   const backendUrl = getBackendWebsocketUrl();
   const {
