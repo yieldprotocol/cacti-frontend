@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
-import { getBackendWebsocketUrl } from '@/utils/backend';
 import { useSession } from 'next-auth/react';
+import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
   messageId: string;
@@ -110,7 +110,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // re-initialize on change
-    if (status === "loading") {
+    if (status === 'loading') {
       return;
     }
     let needsReset = false;

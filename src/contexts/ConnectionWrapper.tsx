@@ -1,5 +1,6 @@
 import { ReactNode, useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useQueryClient } from 'react-query';
 import { AppProps } from 'next/app';
 import {
   AvatarComponent,
@@ -17,7 +18,6 @@ import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
-import { useQueryClient } from 'react-query';
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   const queryClient = useQueryClient();
@@ -82,7 +82,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       queryClient.invalidateQueries({ queryKey: ['shareSettings'] });
     }, 1000);
-  }
+  };
 
   const getSigninCallback = async (message: string, signature: string) => {
     const backendUrl = getBackendApiUrl();
@@ -121,28 +121,13 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-        {useSiwe && (
-          <RainbowKitSiweNextAuthProvider
-            getCustomNonce={getCustomNonce}
-            getSiweMessageOptions={getSiweMessageOptions}
-            getSigninCallback={getSigninCallback}
-            getSignoutCallback={getSignoutCallback}
-          >
-            <RainbowKitProvider
-              chains={chains}
-              theme={
-                experimentalUi
-                  ? darkTheme({ accentColor: '#1f2937' })
-                  : lightTheme({ accentColor: '#1f2937' })
-              }
-              showRecentTransactions={true}
-            >
-              {children}
-            </RainbowKitProvider>
-          </RainbowKitSiweNextAuthProvider>
-        )}
-
-        {!useSiwe && (
+      {useSiwe && (
+        <RainbowKitSiweNextAuthProvider
+          getCustomNonce={getCustomNonce}
+          getSiweMessageOptions={getSiweMessageOptions}
+          getSigninCallback={getSigninCallback}
+          getSignoutCallback={getSignoutCallback}
+        >
           <RainbowKitProvider
             chains={chains}
             theme={
@@ -151,11 +136,26 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
                 : lightTheme({ accentColor: '#1f2937' })
             }
             showRecentTransactions={true}
-            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
-        )}
+        </RainbowKitSiweNextAuthProvider>
+      )}
+
+      {!useSiwe && (
+        <RainbowKitProvider
+          chains={chains}
+          theme={
+            experimentalUi
+              ? darkTheme({ accentColor: '#1f2937' })
+              : lightTheme({ accentColor: '#1f2937' })
+          }
+          showRecentTransactions={true}
+          avatar={CustomAvatar}
+        >
+          {children}
+        </RainbowKitProvider>
+      )}
     </WagmiConfig>
   );
 };
