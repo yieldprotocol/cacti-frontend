@@ -81,9 +81,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
   const { status } = useSession();
-  // shouldConnect allows logged out to view public sessions, but we want to
+  // shouldConnect can be true for logged out to view public sessions, but we want to
   // enforce a disconnect and reconnect when the auth status changes, so
-  // we use the latest cookie state
+  // that the websocket will end up use the latest cookie state
   const shouldConnect = status == lastAuthStatus;
   const backendUrl = getBackendWebsocketUrl();
   const {
@@ -114,6 +114,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     let needsReset = false;
+    // check both changes below in one pass because the hook might not
+    // fire again if both things change at the same time
     if (status != lastAuthStatus) {
       setLastAuthStatus(status);
       needsReset = true;
