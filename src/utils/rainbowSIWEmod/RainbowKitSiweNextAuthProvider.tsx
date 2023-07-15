@@ -42,13 +42,12 @@ export function RainbowKitSiweNextAuthProvider({
   const { address: account } = useAccount();
 
   const signoutSequence = async () => {
-    // signout on frontend first, so that we don't end up in situation
-    // where frontend is signed in but backend is signed out, which will
-    // be confusing to the user
-    await signOut({ redirect: false });
+    // signout on backend first, to ensure session cookies get cleared
+    // prior to any frontend hooks firing
     if (getSignoutCallback) {
       await getSignoutCallback();
     }
+    await signOut({ redirect: false });
   };
 
   /* force logout if account changes */
@@ -99,7 +98,9 @@ export function RainbowKitSiweNextAuthProvider({
         verify: async ({ message, signature }) => {
           const messageJson = JSON.stringify(message);
           // signin on backend first, so that any issues there will not lead to
-          // an inconsistent signin state with frontend
+          // an inconsistent signin state with frontend. also, this ensures
+          // session cookies are set by backend prior to any frontend hooks
+          // firing
           if (getSigninCallback) {
             const result = await getSigninCallback(messageJson, signature);
             if (!result) {

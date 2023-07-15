@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
 import Layout from '@/components/experimental_/layout/Layout';
 
 /*
@@ -46,15 +47,17 @@ export default function App({
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <ChatContext>
-          <ConnectionWrapperDynamic session={session}>
-            <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </CenterProvider>
-          </ConnectionWrapperDynamic>
-        </ChatContext>
+        <SessionProvider refetchInterval={0} session={session}>
+          <ChatContext>
+            <ConnectionWrapperDynamic>
+              <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </CenterProvider>
+            </ConnectionWrapperDynamic>
+          </ChatContext>
+        </SessionProvider>
       </QueryClientProvider>
     </SettingsProvider>
   );
