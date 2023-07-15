@@ -76,14 +76,6 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     return nonce;
   };
 
-  const invalidateQueries = () => {
-    // set timeout to allow cookie response to first be set prior to refetching
-    setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ['chats'] });
-      queryClient.invalidateQueries({ queryKey: ['shareSettings'] });
-    }, 1000);
-  };
-
   const getSigninCallback = async (message: string, signature: string) => {
     const backendUrl = getBackendApiUrl();
     const result = await axios.post(
@@ -94,14 +86,12 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
       },
       { withCredentials: true }
     );
-    invalidateQueries();
     return !!result.data;
   };
 
   const getSignoutCallback = async () => {
     const backendUrl = getBackendApiUrl();
     await axios.post(`${backendUrl}/logout`, {}, { withCredentials: true });
-    invalidateQueries();
   };
 
   const CustomAvatar: AvatarComponent = ({

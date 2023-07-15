@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query';
 import { fetchChats, fetchShareSettings } from '@/api/fetches';
+import { useSession } from 'next-auth/react';
 
 export interface ChatSession {
   id: string;
@@ -9,7 +10,9 @@ export interface Chats {
   sessions: ChatSession[] | undefined;
 }
 export const useQueryChats = () => {
-  const { data: chats, ...rest } = useQuery<Chats>(['chats'], async () => fetchChats());
+  const { data: sessionData } = useSession();
+  const userId = sessionData?.user?.name || '';
+  const { data: chats, ...rest } = useQuery<Chats>(['chats', userId], async () => fetchChats());
   return { chats, ...rest };
 };
 
@@ -18,8 +21,10 @@ export interface ChatShareSettings {
   canEdit?: boolean;
 }
 export const useQueryShareSettings = (sessionId: string) => {
-  const { data, ...rest } = useQuery(['shareSettings', sessionId], async () =>
+  const { data: sessionData } = useSession();
+  const userId = sessionData?.user?.name || '';
+  const { data: settings, ...rest } = useQuery<ChatShareSettings>(['shareSettings', sessionId, userId], async () =>
     fetchShareSettings(sessionId)
   );
-  return { settings: data as ChatShareSettings, ...rest };
+  return { settings, ...rest };
 };
