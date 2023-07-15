@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 import { postCloneSession } from '@/api/posts';
 import { putShareSettings } from '@/api/puts';
 
@@ -20,14 +21,15 @@ export const useMutationCloneSession = (sessionId: string) => {
   const mutationFn = ({ metadata }: { metadata: any }) => {
     return postCloneSession(sessionId, metadata);
   };
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   return useMutation(mutationFn, {
     onSuccess: (data, variables, context): void => {
       if (data) {
-        const q = window.location.search;
-        const params = new URLSearchParams(q);
-        params.set('s', data);
-        window.location.assign('?' + params.toString());
+        const newSessionId = data;
+        router.push(`/chat/${newSessionId}`);
+        queryClient.invalidateQueries({ queryKey: ['chats'] });
       }
     },
   });

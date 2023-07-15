@@ -2,7 +2,7 @@ import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Avatar from '../Avatar';
 
-export const CustomConnectButton = () => {
+const CustomConnectButton = () => {
   return (
     <ConnectButton.Custom>
       {({
@@ -103,3 +103,5 @@ export const CustomConnectButton = () => {
     </ConnectButton.Custom>
   );
 };
+
+export default CustomConnectButton;
