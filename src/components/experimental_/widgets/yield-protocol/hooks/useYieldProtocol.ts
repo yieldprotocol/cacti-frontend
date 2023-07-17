@@ -71,8 +71,11 @@ const useYieldProtocol = () => {
     async ({
       vault,
     }: {
-      vault: YieldVault; // not an address, but a hex string
+      vault: YieldVault | undefined; // not an address, but a hex string
     }) => {
+      if (!vault) {
+        console.error('Vault not found');
+      }
       if (!account) {
         console.error('Account not found');
         return undefined;
