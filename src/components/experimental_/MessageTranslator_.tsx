@@ -13,6 +13,7 @@ import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
+import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
@@ -197,6 +198,10 @@ export const Widget = (props: WidgetProps) => {
   widgets.set(
     'deposit-vault',
     <DepositVault depositToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
+  );
+  widgets.set(
+    'withdraw-vault',
+    <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
 
   /* If available, return the widget in the widgets map */
