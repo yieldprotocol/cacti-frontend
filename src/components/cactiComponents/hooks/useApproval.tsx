@@ -20,6 +20,7 @@ export type ApprovalBasicParams = {
   tokenAddress: `0x${string}`;
   spender: `0x${string}`;
   skipApproval?: boolean;
+  skipBalanceCheck?: boolean; // TODO make this more robust
 };
 
 const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
@@ -53,7 +54,6 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
-  const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
     address: validateAddress(tokenAddress),
     abi: erc20ABI,
@@ -62,24 +62,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
   });
 
-  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
-
-  const approveTx = async () => {
-    setTxPending(true);
-    try {
-      if (isForkedEnv) {
-        const tx = await contract?.approve(spender!, amountToUse);
-        setHash(tx?.hash as `0x${string}`);
-      } else {
-        const tx = await approvalWriteAsync?.();
-        setHash(tx?.hash);
-      }
-    } catch (error) {
-      console.log('user rejected approval');
-      setTxPending(false);
-    }
-    setTxPending(false);
-  };
+  const { writeAsync } = useContractWrite(tokenConfig);
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash,
@@ -87,7 +70,7 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   return {
-    approveTx: params.skipApproval ? undefined : approveTx,
+    approveTx: params.skipApproval ? undefined : writeAsync,
     refetchAllowance,
 
     approvalReceipt: data,

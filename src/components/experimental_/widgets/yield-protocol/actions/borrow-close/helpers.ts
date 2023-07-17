@@ -1,4 +1,4 @@
-import { BigNumber, Signer, ethers } from 'ethers';
+import { Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
@@ -36,9 +36,9 @@ const _borrowClose = ({
     baseId,
     baseAddress,
     ilkId,
-    art,
     seriesEntity,
     associatedJoinAddress,
+    poolAddress,
   } = vault || {};
 
   const isMature = seriesEntity?.isMature;
@@ -61,16 +61,19 @@ const _borrowClose = ({
     return undefined;
   }
 
-  const amountToTransfer = isMature ? debtAmount.mul(10001).div(10000) : art; // After maturity + 0.1% for increases during tx time
+  const amountToTransfer = isMature ? debtAmount.mul(10001).div(10000) : debtAmount; // After maturity + 0.1% for increases during tx time
 
   if (!maxBaseIn) {
     console.error('maxBaseIn not found');
   }
   const tradeIsPossible = maxBaseIn ? debtAmount.gt(maxBaseIn) : true;
 
+  const transferToAddress = !tradeIsPossible || isMature ? associatedJoinAddress : poolAddress;
   const borrowTokenIsEth = baseId === WETH;
   const collateralTokenIsEth = ilkId === WETH;
   const removeCollateralToAddress = collateralTokenIsEth ? ladleAddress : account;
+  const collateralToRemove = collateralAmount?.mul(-1);
+  const debtToRepay = debtAmount?.mul(-1);
 
   if (!amountToTransfer) {
     console.error('amountToTransfer not found');
@@ -85,7 +88,7 @@ const _borrowClose = ({
     ...(borrowTokenIsEth
       ? getWrapEthCallData({
           value: amountToTransfer,
-          to: isMature ? ladleAddress : associatedJoinAddress,
+          to: isMature ? ladleAddress : transferToAddress,
           signer,
           chainId,
         })
@@ -93,7 +96,7 @@ const _borrowClose = ({
 
     {
       operation: LadleActions.Fn.TRANSFER,
-      args: [baseAddress, associatedJoinAddress, amountToTransfer] as LadleActions.Args.TRANSFER,
+      args: [baseAddress, transferToAddress, amountToTransfer] as LadleActions.Args.TRANSFER,
       ignoreIf: borrowTokenIsEth,
     },
 
@@ -104,19 +107,19 @@ const _borrowClose = ({
         vaultId,
         removeCollateralToAddress,
         collateralAmount,
-        debtAmount.mul(2), // TODO: check if this is correct and kosher
+        debtAmount, // TODO: check if this is correct and kosher
       ] as LadleActions.Args.REPAY_VAULT,
       ignoreIf: isMature || !tradeIsPossible,
     },
 
-    /* edge case in pool low liquidity situations wheere the repay amount is greater than the max base into the pool (debt is repaid at 1:1 with fyToken, so there's a penalty) */
+    /* edge case in pool low liquidity situations where the repay amount is greater than the max base into the pool (debt is repaid at 1:1 with fyToken, so there's a penalty) */
     {
       operation: LadleActions.Fn.CLOSE,
       args: [
         vaultId,
         removeCollateralToAddress,
-        collateralAmount,
-        debtAmount.mul(-1),
+        collateralToRemove,
+        debtToRepay,
       ] as LadleActions.Args.CLOSE,
       ignoreIf: isMature || tradeIsPossible,
     },
@@ -127,15 +130,15 @@ const _borrowClose = ({
       args: [
         vaultId,
         removeCollateralToAddress,
-        collateralAmount,
-        BigNumber.from(debtAmount).mul(-1),
+        collateralToRemove,
+        debtToRepay,
       ] as LadleActions.Args.CLOSE,
       ignoreIf: !isMature || tradeIsPossible,
     },
 
     ...getUnwrapEthCallData({
       to: account,
-      value: collateralTokenIsEth ? collateralAmount : ethers.constants.Zero,
+      value: collateralTokenIsEth ? ethers.constants.One : ethers.constants.Zero,
     }),
   ];
 };

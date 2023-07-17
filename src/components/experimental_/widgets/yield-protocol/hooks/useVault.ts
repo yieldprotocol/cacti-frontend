@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
@@ -27,6 +28,7 @@ export interface YieldVault {
   baseId: `0x${string}` | undefined;
   baseAddress: Address | undefined;
   decimals: number | undefined;
+  poolAddress: Address | undefined;
   seriesEntity: {
     id: `0x${string}` | undefined;
     fyTokenAddress: `0x${string}` | undefined;
@@ -43,7 +45,6 @@ export interface YieldVault {
 
 const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
   const signer = useSigner();
-  console.log('🦄 ~ file: useVault.ts:46 ~ useVault ~ vaultId:', vaultId);
   const chainId = useChainId();
   const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
@@ -125,39 +126,61 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
 
   // get accrued art using swr
   const { data: accruedArt } = useSWR(['accruedArt', chainId, vaultId], async () => {
-    const accruedArt = (await cauldron?.callStatic.debtFromBase(
+    const accruedArt = (await cauldron?.callStatic.debtToBase(
       seriesId!,
       art!
     )) as unknown as BigNumber; // TODO make more kosher
     return accruedArt;
   });
 
-  const data: YieldVault = {
-    id: vaultId,
-    owner,
-    ink,
-    art,
-    art_: art ? formatUnits(art, decimals) : undefined,
-    accruedArt,
-    accruedArt_: accruedArt ? formatUnits(accruedArt, decimals) : undefined,
-    ink_: ink ? formatUnits(ink, collateralToken?.decimals) : undefined,
-    ilkId,
-    baseId,
-    baseAddress,
-    borrowToken,
-    collateralToken,
-    associatedJoinAddress,
-    decimals,
-    seriesId,
-    seriesEntity: {
-      id: seriesId,
+  const data = useMemo<YieldVault>(
+    () => ({
+      id: vaultId,
+      owner,
+      ink,
+      art,
+      art_: art ? formatUnits(art, decimals) : undefined,
+      accruedArt,
+      accruedArt_: accruedArt ? formatUnits(accruedArt, decimals) : undefined,
+      ink_: ink ? formatUnits(ink, collateralToken?.decimals) : undefined,
+      ilkId,
+      baseId,
+      baseAddress,
+      borrowToken,
+      collateralToken,
+      associatedJoinAddress,
+      decimals,
+      seriesId,
+      poolAddress,
+      seriesEntity: {
+        id: seriesId,
+        fyTokenAddress,
+        maturity,
+        maturity_: maturity ? nameFromMaturity(maturity) : undefined,
+        isMature: maturity ? maturity <= Math.floor(Date.now() / 1000) : undefined,
+        maxBaseIn,
+      },
+    }),
+    [
+      accruedArt,
+      art,
+      associatedJoinAddress,
+      baseAddress,
+      baseId,
+      borrowToken,
+      collateralToken,
+      decimals,
       fyTokenAddress,
+      ilkId,
+      ink,
       maturity,
-      maturity_: maturity ? nameFromMaturity(maturity) : undefined,
-      isMature: maturity ? maturity <= Math.floor(Date.now() / 1000) : undefined,
       maxBaseIn,
-    },
-  };
+      owner,
+      poolAddress,
+      seriesId,
+      vaultId,
+    ]
+  );
 
   // TODO error handling
   return {

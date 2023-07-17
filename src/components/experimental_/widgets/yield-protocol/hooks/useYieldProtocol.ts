@@ -68,14 +68,7 @@ const useYieldProtocol = () => {
   );
 
   const borrowClose = useCallback(
-    async ({
-      vault,
-    }: {
-      vault: YieldVault | undefined; // not an address, but a hex string
-    }) => {
-      if (!vault) {
-        console.error('Vault not found');
-      }
+    async ({ vault }: { vault: YieldVault }) => {
       if (!account) {
         console.error('Account not found');
         return undefined;
