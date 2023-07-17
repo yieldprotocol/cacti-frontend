@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Disclosure } from '@headlessui/react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { Disclosure, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const ListRow = ({ dataRow }: { dataRow: string[] }) => {
@@ -12,16 +11,6 @@ const ListRow = ({ dataRow }: { dataRow: string[] }) => {
   );
 };
 
-const ListTitle = ({ title }: { title: string }) => {
-  return (
-    <div className="text-sm text-white text-opacity-70 ">
-      <div>{title}</div>
-    </div>
-  );
-};
-
-const listStyle = 'py-[8px] px-[24px] text-sm text-white text-opacity-70';
-
 /**
  * List response element
  *
@@ -32,27 +21,34 @@ export const ListResponse = (props: any) => {
   const rows = props.data.map((dataRow: any, i: number) => (
     <ListRow dataRow={dataRow} key={i + dataRow[0]} />
   ));
-
   return (
     <ResponseWrap>
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
           {({ open }) => (
             <>
-              <Disclosure.Button as="div">
-                <div className="rounded-[8px] hover:bg-white hover:bg-opacity-5">
-                  <ResponseTitle>
-                    {props.title}
-                    <div className="w-[16px] stroke-2">
-                      {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                    </div>
-                  </ResponseTitle>
-                </div>
+              <Disclosure.Button
+                as="div"
+                className="flex items-center justify-between rounded-lg pr-2 hover:bg-white hover:bg-opacity-5"
+              >
+                <ResponseTitle>{props.title}</ResponseTitle>
+                <ChevronDownIcon
+                  className={`${open ? '' : '-rotate-90'} w-4 duration-500 ease-out`}
+                />
               </Disclosure.Button>
-
-              <Disclosure.Panel as="div" className="p-2">
-                {rows}
-              </Disclosure.Panel>
+              <Transition
+                show={open}
+                enter="transition-all duration-500 ease-in overflow-hidden"
+                enterFrom="h-0"
+                enterTo="h-auto"
+                leave="transition-all duration-500 ease-in overflow-hidden"
+                leaveFrom="h-auto"
+                leaveTo="h-0"
+              >
+                <Disclosure.Panel as="div" className="p-2">
+                  {rows}
+                </Disclosure.Panel>
+              </Transition>
             </>
           )}
         </Disclosure>

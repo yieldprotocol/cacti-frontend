@@ -1,26 +1,42 @@
+import { useQuery } from 'react-query';
+import { useAsset } from '@center-inc/react';
+import axios from 'axios';
 import { ImageResponse } from '@/components/cactiComponents';
+import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 
-interface NftAssetProps {
+export interface NftAssetProps {
   network: string;
   address: string;
   tokenId: string | number;
-  collectionName: string;
-  name: string;
-  previewImageUrl: string;
-  price: string | undefined;
+  collectionName?: string;
+  name?: string;
+  previewImageUrl?: string;
 
-  variant?: boolean; // widget variant
+  variant?: ImageVariant; // widget variant
 }
 
-interface NftAssetTraitsContainerProps {
-  asset: JSX.Element;
-  children?: JSX.Element;
-}
-
-interface NftAssetTraitValueContainerProps {
-  trait: string;
-  value: string;
-}
+const fetchNftAsset = async (
+  nftAddress: string,
+  tokenId: string,
+  network: string = ETHEREUM_NETWORK
+) => {
+  return axios
+    .get(`https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`, {
+      // .get(`https://api.center.app/v2/${network}/${nftAddress}/nft/${tokenId}/metadata`,{
+      headers: {
+        Accept: 'application/json',
+        'X-API-Key': process.env.NEXT_PUBLIC_CENTER_APP_KEY || 'test',
+      },
+    })
+    .then((res) => {
+      console.log(res.data);
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 export const NftAsset = ({
   network,
@@ -29,23 +45,42 @@ export const NftAsset = ({
   collectionName,
   name,
   previewImageUrl,
-  price,
   variant,
 }: NftAssetProps) => {
-  const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
+  // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
+  const {
+    data: nftData,
+    error,
+    isLoading,
+  } = useQuery(
+    ['NftAsset', address, tokenId],
+    async () => fetchNftAsset(address, tokenId.toString(), network),
+    {
+      enabled: true,
+      // name && previewImageUrl || !(variant === ImageVariant.SHOWCASE)
+      //   ? false
+      //   : true,
+    } // only fetch if we don't have the basic data from props
+  );
 
   return (
     <ImageResponse
-      actionLabel={network}
-      actionValue={listPrice}
-      // description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-      image={previewImageUrl}
-      // imageTags={['some tag', 'Another tag']}
-      title={name}
-      subTitle={collectionName}
+      description={nftData?.description}
+      image={nftData?.smallPreviewImageUrl || previewImageUrl}
+      imageTags={
+        variant === ImageVariant.SHOWCASE
+          ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
+          : []
+      }
+      title={nftData?.name || name}
+      subTitle={nftData?.collection?.name || nftData?.collectionName || collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
-      showcase={variant}
-    />
+      variant={variant}
+    >
+      {variant === ImageVariant.SHOWCASE && (
+        <div className="text-xs">{nftData?.metadata?.description}</div>
+      )}
+    </ImageResponse>
   );
 };
 

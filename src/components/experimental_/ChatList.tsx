@@ -1,51 +1,86 @@
-import { useContext, useEffect, useState } from 'react';
-import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { Fragment } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { Popover, Transition } from '@headlessui/react';
+import { CheckIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
-import ChatContext from '@/contexts/ChatContext';
-import { abbreviateHash, shortenAddress } from '@/utils';
+import useThread from '@/hooks/useThread';
+import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
-  selected: boolean;
 };
 
-const ChatItem = ({ id, selected }: ChatItem) => {
-  const onClick = selected
-    ? undefined
-    : () => {
-        const q = window.location.search;
-        const params = new URLSearchParams(q);
-        params.set('s', id);
-        window.location.assign('?' + params.toString());
-      };
+const ChatMenu = ({ id }: ChatItem) => {
+  const { query } = useRouter();
+  const selected = query.id === id;
+  return (
+    <div className={`${selected ? 'opacity-100' : 'opacity-0'}`}>
+      <Popover className="relative">
+        {({ open }) => (
+          <>
+            <Popover.Button>
+              <div className=" h-4 w-4 text-white/70">
+                <EllipsisVerticalIcon />
+              </div>
+            </Popover.Button>
+
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <Popover.Panel className="absolute z-[10000] ">
+                {/* <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"> */}
+                <div className="relative grid lg:grid-cols-2">Share Delete</div>
+                {/* </div> */}
+              </Popover.Panel>
+            </Transition>
+          </>
+        )}
+      </Popover>
+    </div>
+  );
+};
+
+const ChatItem = ({ id }: ChatItem) => {
+  const { threadName } = useThread(id);
+  const { query } = useRouter();
+  const selected = query.id === id;
+
   return (
     <div
-      className={`flex cursor-pointer flex-row items-center gap-2 rounded-sm py-2 text-white/70 ${
+      className={`flex w-full items-center gap-2 rounded-sm py-1 pr-2 ${
         selected ? 'bg-white/5' : 'hover:bg-white/10 hover:text-white'
-      } `}
-      onClick={onClick}
+      }`}
     >
-      <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
-      <div className="text-xs"> {abbreviateHash(id, 4)}</div>
+      <Link
+        className={`flex w-full cursor-pointer flex-row items-center gap-2 rounded-sm px-2 ${
+          selected ? 'text-white' : ''
+        } `}
+        href={`/chat/${id}`}
+      >
+        <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
+        <div className="text-xs"> {threadName !== id ? threadName : abbreviateHash(id, 4)}</div>
+      </Link>
+      <ChatMenu id={id} />
     </div>
   );
 };
 
 const ChatList = () => {
-  const { isSuccess, chats } = useQueryChats();
-
-  const q = window.location.search;
-  const params = new URLSearchParams(q);
-  const selectedId = params.get('s') ? (params.get('s') as string) : '';
-
+  const { chats } = useQueryChats();
   return (
     <>
-      <div className="pt-8 text-xs ">My Chats</div>
+      <div className="pt-8 text-xs text-white/70 ">My Chats</div>
       <div className="py-4">
-        {isSuccess &&
-          chats?.sessions?.map((chat: any) => {
-            return <ChatItem key={chat.id} id={chat.id} selected={selectedId === chat.id} />;
-          }, [])}
+        {chats?.sessions?.map((chat) => (
+          <ChatItem key={chat.id} id={chat.id} />
+        ))}
       </div>
     </>
   );
