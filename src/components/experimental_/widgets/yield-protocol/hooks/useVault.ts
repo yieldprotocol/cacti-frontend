@@ -2,8 +2,7 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, erc20ABI, useContract } from 'wagmi';
-import { multicall } from 'wagmi/actions';
+import { Address, erc20ABI, useContract, useContractReads } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
@@ -16,34 +15,35 @@ import { nameFromMaturity } from '../utils';
 
 export interface YieldVault {
   id: `0x${string}`;
-  owner: Address;
-  ink: BigNumber;
-  art: BigNumber;
-  ink_: string;
-  art_: string;
-  accruedArt: BigNumber;
-  accruedArt_: string;
-  seriesId: `0x${string}`;
-  ilkId: `0x${string}`;
-  baseId: `0x${string}`;
-  baseAddress: Address;
-  decimals: number;
+  owner: Address | undefined;
+  ink: BigNumber | undefined;
+  art: BigNumber | undefined;
+  ink_: string | undefined;
+  art_: string | undefined;
+  accruedArt: BigNumber | undefined;
+  accruedArt_: string | undefined;
+  seriesId: `0x${string}` | undefined;
+  ilkId: `0x${string}` | undefined;
+  baseId: `0x${string}` | undefined;
+  baseAddress: Address | undefined;
+  decimals: number | undefined;
   seriesEntity: {
-    id: `0x${string}`;
-    fyTokenAddress: `0x${string}`;
-    maturity: number;
-    maturity_: string; // formatted
+    id: `0x${string}` | undefined;
+    fyTokenAddress: `0x${string}` | undefined;
+    maturity: number | undefined;
+    maturity_: string | undefined; // formatted
 
-    isMature: boolean;
-    maxBaseIn: BigNumber;
+    isMature: boolean | undefined;
+    maxBaseIn: BigNumber | undefined;
   };
-  borrowToken?: Token;
-  collateralToken?: Token;
-  associatedJoinAddress: Address;
+  borrowToken: Token | undefined;
+  collateralToken: Token | undefined;
+  associatedJoinAddress: Address | undefined;
 }
 
 const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
   const signer = useSigner();
+  console.log('🦄 ~ file: useVault.ts:46 ~ useVault ~ vaultId:', vaultId);
   const chainId = useChainId();
   const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
@@ -53,120 +53,117 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     signerOrProvider: signer,
   });
 
-  const { getToken } = useToken();
-
-  // using multicall cuz no types on `useContractReads` hook from wagmi in this wagmi version
-  const getVault = async (): Promise<YieldVault> => {
-    const [{ art, ink }, { owner, ilkId, seriesId }] = await multicall({
-      contracts: [
-        {
-          address: cauldronAddress!,
-          abi: Cauldron,
-          functionName: 'balances',
-          args: [vaultId],
-        },
-        {
-          address: cauldronAddress!,
-          abi: Cauldron,
-          functionName: 'vaults',
-          args: [vaultId],
-        },
-      ],
-    });
-
-    const [{ fyToken: fyTokenAddress, baseId, maturity }, poolAddress] = await multicall({
-      contracts: [
-        { address: cauldronAddress!, abi: Cauldron, functionName: 'series', args: [seriesId] },
-        { address: ladleAddress!, abi: Ladle, functionName: 'pools', args: [seriesId] },
-      ],
-    });
-
-    const [baseAddress, associatedJoinAddress, maxBaseIn, decimals] = await multicall({
-      contracts: [
-        {
-          address: cauldronAddress!,
-          abi: Cauldron,
-          functionName: 'assets',
-          args: [baseId],
-        },
-        {
-          address: ladleAddress!,
-          abi: Ladle,
-          functionName: 'joins',
-          args: [baseId],
-        },
-        {
-          address: poolAddress,
-          abi: Pool,
-          functionName: 'maxBaseIn',
-        },
-        {
-          address: fyTokenAddress,
-          abi: erc20ABI,
-          functionName: 'decimals',
-        },
-      ],
-    });
-
-    const accruedArt = (await cauldron?.callStatic.debtFromBase(
-      seriesId,
-      art
-    )) as unknown as BigNumber; // TODO make more kosher
-
-    // get ilk address
-    const query = `{
-        assets(where: {assetId: "${ilkId}"}) {
-          id
-          decimals
-        }
-      }`;
-
-    const { data } = await request<{ data: { assets: { id: Address; decimals: number }[] } }>(
-      'https://api.thegraph.com/subgraphs/name/yieldprotocol/v2-mainnet',
-      query
-    );
-
-    const isMature = maturity <= Math.floor(Date.now() / 1000);
-    const ilk = getToken(undefined, data.assets[0].id);
-    const borrowToken = getToken(undefined, baseAddress);
-
-    const vault: YieldVault = {
-      id: vaultId,
-      owner,
-      ink,
-      art,
-      art_: formatUnits(art, decimals),
-      accruedArt,
-      accruedArt_: formatUnits(accruedArt, decimals),
-      ink_: formatUnits(ink, ilk?.decimals),
-      ilkId,
-      baseId,
-      baseAddress,
-      borrowToken,
-      collateralToken: ilk,
-      associatedJoinAddress,
-      decimals,
-      seriesId,
-      seriesEntity: {
-        id: seriesId,
-        fyTokenAddress,
-        maturity,
-        maturity_: nameFromMaturity(maturity),
-        isMature,
-        maxBaseIn,
+  const { data: vault, isLoading: vaultIsLoading } = useContractReads({
+    contracts: [
+      {
+        address: cauldronAddress!,
+        abi: Cauldron,
+        functionName: 'balances',
+        args: [vaultId],
       },
-    };
-
-    return vault;
-  };
-
-  // useing swr because no types on `useContractRead` hook from wagmi in this wagmi version
-  const { data, isLoading, isValidating } = useSWR(['vault', chainId, vaultId], getVault, {
-    revalidateIfStale: false,
+      {
+        address: cauldronAddress!,
+        abi: Cauldron,
+        functionName: 'vaults',
+        args: [vaultId],
+      },
+    ],
   });
 
+  const [art, ink] = (vault || [[], []])[0];
+  const _vaults = (vault || [[], []])[1]; // for some reason this is returning null, which is why there is this extra logic
+  const [owner, seriesId, ilkId] = _vaults ?? [];
+
+  const { data: seriesData, isLoading: seriesDataIsLoading } = useContractReads({
+    contracts: [
+      { address: cauldronAddress!, abi: Cauldron, functionName: 'series', args: [seriesId!] },
+      { address: ladleAddress!, abi: Ladle, functionName: 'pools', args: [seriesId!] },
+    ],
+  });
+
+  const _seriesData = seriesData || [[]];
+  const [fyTokenAddress, baseId, maturity] = _seriesData[0] ?? []; // for some reason this is returning null, which is why there is this extra logic
+  const poolAddress = _seriesData[1];
+
+  const { data: extra, isLoading: extrasIsLoading } = useContractReads({
+    contracts: [
+      {
+        address: cauldronAddress!,
+        abi: Cauldron,
+        functionName: 'assets',
+        args: [baseId!],
+      },
+      {
+        address: ladleAddress!,
+        abi: Ladle,
+        functionName: 'joins',
+        args: [baseId!],
+      },
+      {
+        address: poolAddress,
+        abi: Pool,
+        functionName: 'maxBaseIn',
+      },
+      {
+        address: fyTokenAddress,
+        abi: erc20ABI,
+        functionName: 'decimals',
+      },
+      {
+        address: cauldronAddress!,
+        abi: Cauldron,
+        functionName: 'assets',
+        args: [ilkId!],
+      },
+    ],
+  });
+
+  const [baseAddress, associatedJoinAddress, maxBaseIn, decimals, ilkAddress] = extra || [];
+
+  const { data: borrowToken } = useToken(undefined, baseAddress);
+  const { data: collateralToken } = useToken(undefined, ilkAddress);
+
+  // get accrued art using swr
+  const { data: accruedArt } = useSWR(['accruedArt', chainId, vaultId], async () => {
+    const accruedArt = (await cauldron?.callStatic.debtFromBase(
+      seriesId!,
+      art!
+    )) as unknown as BigNumber; // TODO make more kosher
+    return accruedArt;
+  });
+
+  const data: YieldVault = {
+    id: vaultId,
+    owner,
+    ink,
+    art,
+    art_: art ? formatUnits(art, decimals) : undefined,
+    accruedArt,
+    accruedArt_: accruedArt ? formatUnits(accruedArt, decimals) : undefined,
+    ink_: ink ? formatUnits(ink, collateralToken?.decimals) : undefined,
+    ilkId,
+    baseId,
+    baseAddress,
+    borrowToken,
+    collateralToken,
+    associatedJoinAddress,
+    decimals,
+    seriesId,
+    seriesEntity: {
+      id: seriesId,
+      fyTokenAddress,
+      maturity,
+      maturity_: maturity ? nameFromMaturity(maturity) : undefined,
+      isMature: maturity ? maturity <= Math.floor(Date.now() / 1000) : undefined,
+      maxBaseIn,
+    },
+  };
+
   // TODO error handling
-  return { data, isLoading: isLoading || isValidating };
+  return {
+    data,
+    isLoading: vaultIsLoading || seriesDataIsLoading || extrasIsLoading,
+  };
 };
 
 export default useVault;
