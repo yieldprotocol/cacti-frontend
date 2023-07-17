@@ -16,9 +16,11 @@ import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
+import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-close/YieldProtocolBorrowClose';
 import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
 import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
@@ -157,7 +159,19 @@ export const Widget = (props: WidgetProps) => {
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
 
+  widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
+
+  widgets.set(
+    'fetch-nfts',
+    <NftCollection
+      address={parsedArgs[0]}
+      name={parsedArgs[1]}
+      network={'ethereum-mainnet'}
+      assetsToShow={6}
+    />
+  );
 
   widgets.set(
     'yield-protocol-lend',
@@ -219,6 +233,8 @@ export const Widget = (props: WidgetProps) => {
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
+
+  widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
