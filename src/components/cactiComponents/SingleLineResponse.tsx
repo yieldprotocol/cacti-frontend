@@ -12,9 +12,10 @@ import { ResponseWrap } from './helpers/layout';
 interface SingleLineResponseProps {
   token?: Token;
   tokenSymbol?: string;
-  value?: string;
+  value?: number | string;
   className?: string;
   children?: ReactNode;
+  altImageUrl?: string;
 }
 export const SingleLineResponse = (props: SingleLineResponseProps) => {
   const { data: token } = useToken(props.tokenSymbol);

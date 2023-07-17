@@ -186,27 +186,25 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
 
   return isLoading ? (
     <Skeleton />
-  ) : (
-    vault && vault.art?.gt(ethers.constants.Zero) && vault.ink?.gt(ethers.constants.Zero) && (
-      <SingleLineResponse tokenSymbol={vault.borrowToken?.symbol} className="flex justify-between">
-        <div className="">
-          <div>
-            {cleanValue(vault.accruedArt_, 3)} {vault.borrowToken?.symbol} Debt
-          </div>
-          <div>
-            {cleanValue(vault.ink_, 2)} {vault.collateralToken?.symbol} Collateral
-          </div>
+  ) : vault && vault.art?.gt(ethers.constants.Zero) && vault.ink?.gt(ethers.constants.Zero) ? (
+    <SingleLineResponse tokenSymbol={vault.borrowToken?.symbol} className="flex justify-between">
+      <div className="">
+        <div>
+          {cleanValue(vault.accruedArt_, 3)} {vault.borrowToken?.symbol} Debt
         </div>
-        <div className="mx-2 flex">
-          <ActionResponse
-            label={label}
-            approvalParams={approvalParams}
-            sendParams={sendParams}
-            txParams={undefined}
-          />
+        <div>
+          {cleanValue(vault.ink_, 2)} {vault.collateralToken?.symbol} Collateral
         </div>
-      </SingleLineResponse>
-    )
-  );
+      </div>
+      <div className="mx-2 flex">
+        <ActionResponse
+          label={label}
+          approvalParams={approvalParams}
+          sendParams={sendParams}
+          txParams={undefined}
+        />
+      </div>
+    </SingleLineResponse>
+  ) : null;
 };
 export default YieldProtocolBorrowClose;
