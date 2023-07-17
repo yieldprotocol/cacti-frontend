@@ -111,7 +111,7 @@ export const ActionResponse = ({
 
   /**
    *
-   * Check if the acount has enough balance from the transaction: NOTE this is only
+   * Check if the acount has enough balance for the transaction
    *
    *  */
   useEffect(() => {
