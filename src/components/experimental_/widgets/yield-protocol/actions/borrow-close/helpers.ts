@@ -2,14 +2,14 @@ import { BigNumber, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
-import { Vault } from '../../hooks/useVault';
+import { YieldVault } from '../../hooks/useVault';
 import { LadleActions } from '../../operations';
 
 export const WETH = '0x303000000000';
 
 interface BorrowCloseProps {
   account: Address;
-  vault: Vault;
+  vault: YieldVault | undefined;
   signer: Signer;
   chainId: number;
 }
@@ -32,33 +32,54 @@ const _borrowClose = ({
   const {
     id: vaultId,
     ink: collateralAmount,
-    ink: debtAmount,
+    accruedArt: debtAmount,
     baseId,
     baseAddress,
     ilkId,
     art,
-    accruedArt,
-    seriesEntity: { isMature, maxBaseIn },
+    seriesEntity,
     associatedJoinAddress,
-  } = vault;
+  } = vault || {};
+
+  const isMature = seriesEntity?.isMature;
+  const maxBaseIn = seriesEntity?.maxBaseIn;
+
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   if (!ladleAddress) {
     console.error('Ladle address not found; possibly on an unsupported chain');
     return undefined;
   }
+
   const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
   if (!cauldronAddress) {
     console.error('Cauldron address not found; possibly on an unsupported chain');
     return undefined;
   }
 
+  if (!debtAmount) {
+    console.error('debtAmount not found');
+    return undefined;
+  }
+
   const amountToTransfer = isMature ? debtAmount.mul(10001).div(10000) : art; // After maturity + 0.1% for increases during tx time
 
-  const tradeIsPossible = debtAmount.gt(maxBaseIn);
+  if (!maxBaseIn) {
+    console.error('maxBaseIn not found');
+  }
+  const tradeIsPossible = maxBaseIn ? debtAmount.gt(maxBaseIn) : true;
 
   const borrowTokenIsEth = baseId === WETH;
   const collateralTokenIsEth = ilkId === WETH;
   const removeCollateralToAddress = collateralTokenIsEth ? ladleAddress : account;
+
+  if (!amountToTransfer) {
+    console.error('amountToTransfer not found');
+    return undefined;
+  }
+  if (!collateralAmount) {
+    console.error('collateralAmount not found');
+    return undefined;
+  }
 
   return [
     ...(borrowTokenIsEth
@@ -83,7 +104,7 @@ const _borrowClose = ({
         vaultId,
         removeCollateralToAddress,
         collateralAmount,
-        debtAmount,
+        debtAmount.mul(2), // TODO: check if this is correct and kosher
       ] as LadleActions.Args.REPAY_VAULT,
       ignoreIf: isMature || !tradeIsPossible,
     },
