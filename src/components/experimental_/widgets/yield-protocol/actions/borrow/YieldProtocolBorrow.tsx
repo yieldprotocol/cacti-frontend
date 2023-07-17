@@ -190,14 +190,13 @@ const YieldProtocolBorrow = ({
     [
       _borrowAmount,
       _collateralAmount,
-      borrow,
       borrowTokenIsEth,
       collateralTokenIsEth,
       collateralTokenSymbol,
       getMaxBorrowAmount,
       ilkId,
     ]
-  );
+  ); // intentionally omitting borrow cuz of infinite render issue; TODO make more kosher
 
   useEffect(() => {
     (async () => {
@@ -263,7 +262,10 @@ const SingleItem = ({
   return (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="mx-2 flex">
-        <ResponseTitle>{cleanValue(item.fyToken.pools[0].borrowAPR, 1)}% APR</ResponseTitle>
+        <div className="">
+          <ResponseTitle>{item.maturity_}</ResponseTitle>
+          <ResponseTitle>{cleanValue(item.fyToken.pools[0].borrowAPR, 1)}% APY</ResponseTitle>
+        </div>
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
