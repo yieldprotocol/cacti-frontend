@@ -6,17 +6,6 @@ import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/m
 import { useQueryShareSettings } from '@/api/queries';
 import useThread from '@/hooks/useThread';
 
-const ShareButton = () => {
-  return (
-    <div
-      className="cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-      onClick={() => console.log('share')}
-    >
-      <div className="text-xs text-white/70 ">Share</div>
-    </div>
-  );
-};
-
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const sessionId = threadId;
   const { status } = useSession();
