@@ -1,6 +1,6 @@
 import { BigNumber, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
-import { getContract, readContract } from 'wagmi/actions';
+import { getContract } from 'wagmi/actions';
 import poolAbi from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData } from '../../helpers';

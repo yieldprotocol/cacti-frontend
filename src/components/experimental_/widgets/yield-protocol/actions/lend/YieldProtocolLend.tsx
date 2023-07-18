@@ -26,10 +26,12 @@ export interface YieldGraphResSeriesEntity {
     id: string;
     symbol: string;
     assetId: string;
+    decimals: number;
   };
   id: string;
   fyToken: {
     id: string;
+    decimals: number;
     pools: {
       id: string; // pool address
       lendAPR: string;

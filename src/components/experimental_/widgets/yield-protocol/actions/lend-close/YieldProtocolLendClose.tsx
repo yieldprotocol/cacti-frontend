@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { fy } from 'date-fns/locale';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { UnsignedTransaction, ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, erc20ABI, readContracts, useAccount } from 'wagmi';
-import { readContract } from 'wagmi/actions';
+import { Address, useContractReads } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -14,6 +12,7 @@ import {
 } from '@/components/cactiComponents';
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
+import useBalance from '@/hooks/useBalance';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
@@ -23,18 +22,7 @@ import poolAbi from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
-import {
-  NOW,
-  YieldGraphRes,
-  YieldGraphResSeriesEntity,
-  YieldSeriesEntity,
-} from '../lend/YieldProtocolLend';
-
-interface YieldSeriesEntityLendClose extends YieldSeriesEntity {
-  approvalParams: ApprovalBasicParams;
-  fyTokenBalance: string; // fyToken balance (formatted)
-  baseValueOfBalance: string; // estimated base value of fyToken balance (formatted)
-}
+import { NOW, YieldGraphRes, YieldGraphResSeriesEntity } from '../lend/YieldProtocolLend';
 
 interface InputProps {
   baseTokenSymbol: string;
@@ -56,9 +44,11 @@ const getQuery = (address: string) =>
         id
         symbol
         assetId
+        decimals
       }
       fyToken {
         id
+        decimals
         pools {
           id
           lendAPR
@@ -76,22 +66,19 @@ const YieldProtocolLendClose = ({
   projectName,
 }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
-  const chainId = useChainId();
-  const { address: account } = useAccount();
-  const { lendClose } = useYieldProtocol();
-  const { data: tokenIn, isETH: tokenInIsETH } = useToken(baseTokenSymbol);
+  const { isETH: tokenInIsETH } = useToken(baseTokenSymbol);
   const { data: tokenInToUse } = useToken(tokenInIsETH ? 'WETH' : baseTokenSymbol);
   const label = `
-        ${toTitleCase(action)} ${inputAmount} ${baseTokenSymbol} on ${toTitleCase(projectName)}`;
-  const { value: amount } = useInput(inputAmount, baseTokenSymbol);
+        ${toTitleCase(action)} ${
+    inputAmount ?? 'all available'
+  } ${baseTokenSymbol.toUpperCase()} on ${toTitleCase(projectName)}`;
 
   /***************INPUTS******************************************/
   // Yield Protocol specific spender handling
-  const ladle = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   const query = getQuery(tokenInToUse?.address!);
 
   // get series entities from the graph
-  const { data: graphResSeriesEntities, isLoading: isLoadingSeriesEntities } = useSWR(
+  const { data, isLoading } = useSWR(
     ['/yield-protocol/seriesEntities', query],
     () =>
       request<YieldGraphRes>(
@@ -104,145 +91,6 @@ const YieldProtocolLendClose = ({
     }
   );
 
-  const [data, setData] = useState<{ seriesEntities: YieldSeriesEntityLendClose[] | undefined }>();
-  const [isLoading, setIsLoading] = useState(isLoadingSeriesEntities);
-
-  // need to approve the associated series entity's fyToken
-  const getApprovalParams = useCallback(
-    ({
-      fyTokenAddress,
-      approvalAmount,
-    }: {
-      fyTokenAddress: Address;
-      approvalAmount: BigNumber;
-    }): ApprovalBasicParams => ({
-      tokenAddress: fyTokenAddress,
-      spender: ladle!,
-      approvalAmount,
-    }),
-    [ladle]
-  );
-
-  const getSendParams = useCallback(
-    async ({
-      seriesEntity,
-      fyTokenAmount,
-    }: {
-      seriesEntity: YieldGraphResSeriesEntity;
-      fyTokenAmount: BigNumber;
-    }) => {
-      const fyTokenAddress = seriesEntity.fyToken?.id as Address | undefined;
-      if (!fyTokenAddress) {
-        console.error(`No fyToken found for series entity ${seriesEntity.id}`);
-        return undefined;
-      }
-      const poolAddress = seriesEntity.fyToken?.pools[0].id as Address | undefined;
-      if (!poolAddress) {
-        console.error(`No pool found for series entity ${seriesEntity.id}`);
-        return undefined;
-      }
-
-      if (!amount) {
-        console.error(`No amount found for series entity ${seriesEntity.id}`);
-        return undefined;
-      }
-
-      return await lendClose({
-        fyTokenAmount,
-        fyTokenAddress,
-        poolAddress,
-        seriesEntityId: seriesEntity.id,
-        seriesEntityIsMature: seriesEntity.maturity < NOW,
-        isEthBase: tokenInIsETH,
-      });
-    },
-    [amount, lendClose, tokenInIsETH]
-  );
-
-  useEffect(() => {
-    // get the series entities using the graph
-    (async () => {
-      setIsLoading(true);
-      const _seriesEntities = graphResSeriesEntities?.seriesEntities;
-      if (!_seriesEntities) return console.error('No series entities found');
-
-      const seriesEntities = await Promise.all(
-        _seriesEntities.map(async (s): Promise<YieldSeriesEntityLendClose> => {
-          const maturity_ = nameFromMaturity(s.maturity);
-          const fyTokenAddress = s.fyToken?.id as Address | undefined;
-          const poolAddress = s.fyToken?.pools[0].id as Address | undefined;
-
-          const fyTokenBalanceRes = await readContract({
-            address: fyTokenAddress!,
-            abi: erc20ABI,
-            functionName: 'balanceOf',
-            args: [account as Address],
-          });
-          const fyTokenBalance = formatUnits(fyTokenBalanceRes, tokenInToUse?.decimals);
-
-          // estimate buying base with fyToken balance if before maturity (formatted)
-          // if error estimating, there is likely not enough liquidity to close the position
-          let baseValueOfBalance: string;
-          // estimate the fyToken value of the inputted amount
-          let fyTokenAmount: BigNumber;
-          if (s.maturity < NOW) {
-            baseValueOfBalance = fyTokenBalance;
-            fyTokenAmount = amount!;
-          } else {
-            try {
-              const [baseValueOfBalanceRes, fyTokenAmountRes] = await readContracts({
-                contracts: [
-                  {
-                    address: poolAddress!,
-                    abi: poolAbi,
-                    functionName: 'buyBasePreview',
-                    args: [fyTokenBalanceRes],
-                  },
-                  {
-                    address: poolAddress!,
-                    abi: poolAbi,
-                    functionName: 'buyFYTokenPreview',
-                    args: [amount!],
-                  },
-                ],
-              });
-              baseValueOfBalance = formatUnits(baseValueOfBalanceRes, tokenInToUse?.decimals);
-              fyTokenAmount = fyTokenAmountRes;
-            } catch (e) {
-              console.error(`Error estimating base value of fyToken balance: ${e}`);
-              baseValueOfBalance = '0';
-              fyTokenAmount = ethers.constants.Zero;
-            }
-          }
-
-          const sendParams = await getSendParams({ seriesEntity: s, fyTokenAmount });
-          const approvalParams = getApprovalParams({
-            fyTokenAddress: fyTokenAddress!,
-            approvalAmount: fyTokenAmount.mul(110).div(100), // 10% buffer for moving interest: TODO figure out better way
-          });
-
-          return {
-            ...s,
-            maturity_,
-            approvalParams,
-            sendParams,
-            fyTokenBalance,
-            baseValueOfBalance,
-          };
-        })
-      );
-
-      setIsLoading(false);
-      setData({ seriesEntities });
-    })();
-  }, [
-    account,
-    amount,
-    getApprovalParams,
-    getSendParams,
-    graphResSeriesEntities?.seriesEntities,
-    tokenInToUse?.decimals,
-  ]);
   /***************INPUTS******************************************/
 
   // generic weird input handling; can be abstracted out
@@ -263,7 +111,7 @@ const YieldProtocolLendClose = ({
         {!isLoading &&
           data?.seriesEntities?.length &&
           data.seriesEntities.map((s) => {
-            return <SingleItem key={s.id} item={s} label={`Close Lend ${s.maturity_}`} />;
+            return <SingleItem amount={inputAmount} key={s.id} item={s} />;
           })}
 
         {!isLoading && !data?.seriesEntities?.length && (
@@ -276,20 +124,109 @@ const YieldProtocolLendClose = ({
   );
 };
 
-const SingleItem = ({ item, label }: { item: YieldSeriesEntityLendClose; label: string }) => {
-  return +item.baseValueOfBalance > 0 && +item.fyTokenBalance > 0 ? (
+const SingleItem = ({
+  amount,
+  item,
+}: {
+  amount: string | undefined;
+  item: YieldGraphResSeriesEntity;
+}) => {
+  const { lendClose } = useYieldProtocol();
+  const amountParsed = useInput(amount || '0', item.baseAsset.symbol);
+  const chainId = useChainId();
+  const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+  const fyTokenAddress = item.fyToken.id as Address;
+  const poolAddress = item.fyToken.pools[0].id as Address;
+  const { data: fyTokenBalance } = useBalance(item.fyToken.id);
+
+  // if no amount specified, use all of the available fyToken balance
+  const amountToUse =
+    !amount && fyTokenBalance ? fyTokenBalance : amountParsed.value || ethers.constants.Zero;
+  const amountToUse_ = amountToUse ? formatUnits(amountToUse, item.fyToken.decimals) : '0';
+
+  const { data } = useContractReads({
+    contracts: [
+      // estimate buying base with fyToken balance if before maturity (formatted)
+      {
+        address: poolAddress,
+        abi: poolAbi,
+        functionName: 'buyBasePreview',
+        args: [fyTokenBalance!],
+      },
+      {
+        // estimate the fyToken value of the inputted amount
+        address: poolAddress!,
+        abi: poolAbi,
+        functionName: 'buyFYTokenPreview',
+        args: [amountToUse],
+      },
+    ],
+  });
+
+  const maturity_ = nameFromMaturity(item.maturity);
+  const baseValueOfBalance = data ? data[0] : undefined;
+  const baseValueOfBalance_ = baseValueOfBalance
+    ? formatUnits(baseValueOfBalance, item.baseAsset.decimals)
+    : '0';
+  const fyTokenValueOfBase = data ? data[1] : undefined;
+
+  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+
+  // need to approve the associated series entity's fyToken
+  const approvalParams = useMemo<ApprovalBasicParams>(
+    () => ({
+      tokenAddress: fyTokenAddress,
+      spender: ladleAddress!,
+      approvalAmount: fyTokenValueOfBase
+        ? fyTokenValueOfBase.mul(101).div(100)
+        : ethers.constants.Zero, // 1% buffer for moving interest: TODO figure out better way
+    }),
+    [fyTokenAddress, fyTokenValueOfBase, ladleAddress]
+  );
+
+  const getSendParams = useCallback(async () => {
+    if (!fyTokenValueOfBase) {
+      console.error('No fyToken value of base');
+      return undefined;
+    }
+
+    return await lendClose({
+      fyTokenAmount: fyTokenValueOfBase ?? ethers.constants.Zero,
+      fyTokenAddress,
+      poolAddress,
+      seriesEntityId: item.id,
+      seriesEntityIsMature: item.maturity < NOW,
+      isEthBase: item.baseAsset.symbol === 'WETH',
+    });
+  }, [
+    fyTokenAddress,
+    fyTokenValueOfBase,
+    item.baseAsset.symbol,
+    item.id,
+    item.maturity,
+    poolAddress,
+  ]);
+
+  useEffect(() => {
+    (async () => {
+      const sendParams = await getSendParams();
+      setSendParams(sendParams);
+    })();
+  }, [getSendParams]);
+
+  return amountToUse.gt(ethers.constants.Zero) && baseValueOfBalance ? (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
-        <ResponseTitle>{item.maturity_}</ResponseTitle>
+        <ResponseTitle>{maturity_}</ResponseTitle>
         <ResponseTitle>
-          Current Balance: {cleanValue(item.baseValueOfBalance, 2)} {item.baseAsset.symbol}
+          Current Balance: {cleanValue(baseValueOfBalance_, 2)} {item.baseAsset.symbol}
         </ResponseTitle>
       </div>
       <div className="mx-2 my-auto">
         <ActionResponse
-          label={label}
-          approvalParams={item.approvalParams}
-          sendParams={item.sendParams}
+          label={`Close ${cleanValue(amountToUse_, 2)} ${item.baseAsset.symbol}`}
+          approvalParams={approvalParams}
+          sendParams={sendParams}
           txParams={undefined}
         />
       </div>
