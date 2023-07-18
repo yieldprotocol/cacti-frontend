@@ -142,7 +142,7 @@ const SingleItem = ({
 
   const { data, isLoading } = useContractReads({
     contracts: [
-      // estimate buying base with fyToken balance if before maturity (formatted)
+      // estimate the base value of the fyToken balance
       {
         address: poolAddress,
         abi: poolAbi,
@@ -150,14 +150,14 @@ const SingleItem = ({
         args: [fyTokenBalance || ethers.constants.Zero],
       },
       {
-        // estimate the fyToken value of the inputted amount; if zero, we use all the fyToken balance later
+        // estimate the fyToken value of the inputted amount; if zero, we use all of the fyToken balance later
         address: poolAddress,
         abi: poolAbi,
         functionName: 'buyBasePreview',
         args: [amountParsed.value || ethers.constants.Zero],
       },
       {
-        // estimate the fyToken value of the inputted amount; if zero, we use all the fyToken balance later
+        // estimate the max base allowed into the pool, to assess trade limits/low liquidity environments
         address: poolAddress,
         abi: poolAbi,
         functionName: 'maxBaseIn',
