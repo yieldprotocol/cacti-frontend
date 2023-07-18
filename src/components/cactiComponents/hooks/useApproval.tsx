@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
@@ -11,6 +11,7 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
+import useChainId from '@/hooks/useChainId';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -27,6 +28,7 @@ const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
   addr === AddressZero ? undefined : addr;
 
 const useApproval = (params: ApprovalBasicParams) => {
+  const chainId = useChainId();
   /* Get the useForkSettings the settings context */
   const {
     settings: { isForkedEnv },
@@ -41,7 +43,10 @@ const useApproval = (params: ApprovalBasicParams) => {
   const { approvalAmount, tokenAddress, spender } = params;
   const { data: token } = useToken(undefined, tokenAddress); // get token data from address (zero address === ETH)
   // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
-  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
+  const amountToUse = useMemo(
+    () => BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals)),
+    [approvalAmount, token?.decimals]
+  );
 
   // Get allowance amount - doesn't run if address or spender is undefined
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
@@ -58,6 +63,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
+    chainId,
     enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
   });
 
@@ -68,8 +74,13 @@ const useApproval = (params: ApprovalBasicParams) => {
     onSuccess: async () => await refetchAllowance(),
   });
 
+  const approveTx = useCallback(
+    () => (!!params.skipApproval ? undefined : writeAsync),
+    [params.skipApproval, writeAsync]
+  );
+
   return {
-    approveTx: params.skipApproval ? undefined : writeAsync,
+    approveTx,
     refetchAllowance,
 
     approvalReceipt: data,
