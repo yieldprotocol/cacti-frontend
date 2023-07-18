@@ -102,10 +102,10 @@ export const ActionResponse = ({
     approvalParams?.skipApproval
   ); // TODO figure out better way to infer if eth
 
-  const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
+  const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
 
   // button state
-  const [label, setLabel] = useState<string | undefined>();
+  const [label, setLabel] = useState<string>();
   const [state, setState] = useState(ActionResponseState.LOADING);
   const [action, setAction] = useState<Action>();
 
@@ -122,9 +122,7 @@ export const ActionResponse = ({
       return setHasEnoughBalance(true);
 
     // check approval token balance
-    balance &&
-      approvalParams?.approvalAmount &&
-      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
+    setHasEnoughBalance(!!balance?.gte(approvalParams?.approvalAmount!));
   }, [
     approvalParams?.approvalAmount,
     approvalParams?.skipApproval,
@@ -143,17 +141,21 @@ export const ActionResponse = ({
     if (!hasEnoughBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
-      setState(ActionResponseState.DISABLED);
+      return setState(ActionResponseState.DISABLED);
     }
 
     /* -------- APPROVAL FLOW --------- */
-    if (!hasAllowance && hasEnoughBalance) {
+    if (!hasAllowance) {
       // case: enough balance, but allowance not sufficient */
       if (approveTx) {
         setAction({ name: 'approve', fn: approveTx });
         console.log('READY FOR APPROVAL: Has balance.');
         setLabel(`A token approval is required`);
         setState(ActionResponseState.READY);
+      } else {
+        console.log('no approval func');
+        setLabel(`Could not build the approve tx`);
+        setState(ActionResponseState.ERROR);
       }
 
       // ACTION: user clicks approve token button
@@ -236,7 +238,6 @@ export const ActionResponse = ({
     defaultLabel,
     isSuccess,
     disabled,
-    // approveTx
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
