@@ -146,7 +146,7 @@ const YieldProtocolLend = ({
         isEthBase: tokenInIsETH,
       });
     },
-    [amount, lend, tokenInIsETH, tokenInToUse]
+    [amount, tokenInIsETH, tokenInToUse] // intentionally omitting lend cuz of infinite render issue; TODO make more kosher
   );
 
   useEffect(() => {
