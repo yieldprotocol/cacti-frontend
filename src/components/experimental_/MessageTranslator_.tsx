@@ -205,11 +205,11 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set('liquity-close', <LiquityClose />);
   
-  widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs[0]} />);
-  widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs[0]} />);
+  widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
 
-  widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs[0]} />);
-  widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs[0]} />);
+  widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
 
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
