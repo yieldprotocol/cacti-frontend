@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UnsignedTransaction, ethers } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, useContractReads } from 'wagmi';
@@ -133,7 +133,9 @@ const SingleItem = ({
   item: YieldGraphResSeriesEntity;
 }) => {
   const { lendClose } = useYieldProtocol();
-  const amountParsed = useInput(amount || '0', item.baseAsset.symbol);
+  const amountParsed = amount
+    ? parseUnits(cleanValue(amount, item.baseAsset.decimals)!, item.baseAsset.decimals)
+    : ethers.constants.Zero;
   const chainId = useChainId();
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   const fyTokenAddress = item.fyToken.id as Address;
@@ -154,13 +156,13 @@ const SingleItem = ({
         address: poolAddress,
         abi: poolAbi,
         functionName: 'buyBasePreview',
-        args: [amountParsed.value || ethers.constants.Zero],
+        args: [amountParsed],
       },
       {
         // estimate the max base allowed into the pool, to assess trade limits/low liquidity environments
         address: poolAddress,
         abi: poolAbi,
-        functionName: 'maxBaseIn',
+        functionName: 'maxBaseOut',
       },
     ],
     enabled: !!fyTokenBalance && fyTokenBalance.gt(ethers.constants.Zero),
@@ -171,28 +173,28 @@ const SingleItem = ({
   const baseValueOfBalance_ = baseValueOfBalance
     ? formatUnits(baseValueOfBalance, item.baseAsset.decimals)
     : '0';
-  const fyTokenValueOfBase = data ? data[1] : undefined;
-  const maxBaseIn = data ? data[2] : undefined;
+
   // if no amount is specified, use all the fyToken balance
-  const fyTokenValueToUse = amount ? fyTokenValueOfBase : fyTokenBalance;
+  const fyTokenValueOfBase = !amount ? fyTokenBalance : data ? data[1] : undefined;
+  const maxBaseOut = data ? data[2] : undefined;
 
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
 
   // need to approve the associated series entity's fyToken
   const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {
-    if (!fyTokenValueToUse) {
+    if (!fyTokenValueOfBase) {
       console.error('No fyToken value of base');
       return;
     }
     return {
       tokenAddress: fyTokenAddress,
       spender: ladleAddress!,
-      approvalAmount: fyTokenValueToUse,
+      approvalAmount: fyTokenValueOfBase,
     };
-  }, [fyTokenAddress, fyTokenValueToUse, ladleAddress]);
+  }, [fyTokenAddress, fyTokenValueOfBase, ladleAddress]);
 
   // use all base value of fyToken balance if no amount is specified
-  const baseAmountToUse = amount ? amountParsed.value : baseValueOfBalance;
+  const baseAmountToUse = amount ? amountParsed : baseValueOfBalance;
   // formatted
   const baseAmountToUse_ = baseAmountToUse
     ? formatUnits(baseAmountToUse, item.baseAsset.decimals)
@@ -240,14 +242,14 @@ const SingleItem = ({
       <div className="mx-2 my-auto">
         <ActionResponse
           label={
-            maxBaseIn && baseAmountToUse?.gt(maxBaseIn)
+            maxBaseOut && baseAmountToUse?.gt(maxBaseOut)
               ? `Potentially not enough liquidity to close your position`
               : `Close ${cleanValue(baseAmountToUse_, 2)} ${item.baseAsset.symbol}`
           }
           approvalParams={approvalParams}
           sendParams={sendParams}
           txParams={undefined}
-          disabled={isLoading || !fyTokenValueToUse}
+          disabled={isLoading || !fyTokenValueOfBase}
         />
       </div>
     </SingleLineResponse>
