@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import {
@@ -36,7 +36,6 @@ const useApproval = (params: ApprovalBasicParams) => {
   const { address: account } = useAccount();
 
   //local state
-  const [hash, setHash] = useState<`0x${string}`>();
   const [txPending, setTxPending] = useState(false);
 
   const { approvalAmount, tokenAddress, spender } = params;
@@ -62,10 +61,10 @@ const useApproval = (params: ApprovalBasicParams) => {
     enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
   });
 
-  const { writeAsync } = useContractWrite(tokenConfig);
+  const { writeAsync, data } = useContractWrite(tokenConfig);
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
-    hash,
+  const { isError, isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
     onSuccess: async () => await refetchAllowance(),
   });
 
@@ -74,7 +73,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     refetchAllowance,
 
     approvalReceipt: data,
-    approvalHash: hash,
+    approvalHash: data?.hash,
 
     approvalTransacting: isLoading,
     approvalWaitingOnUser: txPending,
