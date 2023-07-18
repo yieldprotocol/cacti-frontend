@@ -4,6 +4,7 @@ import { formatUnits } from 'ethers/lib/utils.js';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, useContractReads } from 'wagmi';
+import SkeletonWrap from '@/components/SkeletonWrap';
 import {
   ActionResponse,
   HeaderResponse,
@@ -139,28 +140,30 @@ const SingleItem = ({
   const poolAddress = item.fyToken.pools[0].id as Address;
   const { data: fyTokenBalance } = useBalance(item.fyToken.id);
 
-  // if no amount specified, use all of the available fyToken balance
-  const amountToUse =
-    !amount && fyTokenBalance ? fyTokenBalance : amountParsed.value || ethers.constants.Zero;
-  const amountToUse_ = amountToUse ? formatUnits(amountToUse, item.fyToken.decimals) : '0';
-
-  const { data } = useContractReads({
+  const { data, isLoading } = useContractReads({
     contracts: [
       // estimate buying base with fyToken balance if before maturity (formatted)
       {
         address: poolAddress,
         abi: poolAbi,
-        functionName: 'buyBasePreview',
-        args: [fyTokenBalance!],
+        functionName: 'sellFYTokenPreview',
+        args: [fyTokenBalance || ethers.constants.Zero],
       },
       {
-        // estimate the fyToken value of the inputted amount
-        address: poolAddress!,
+        // estimate the fyToken value of the inputted amount; if zero, we use all the fyToken balance later
+        address: poolAddress,
         abi: poolAbi,
-        functionName: 'buyFYTokenPreview',
-        args: [amountToUse],
+        functionName: 'buyBasePreview',
+        args: [amountParsed.value || ethers.constants.Zero],
+      },
+      {
+        // estimate the fyToken value of the inputted amount; if zero, we use all the fyToken balance later
+        address: poolAddress,
+        abi: poolAbi,
+        functionName: 'maxBaseIn',
       },
     ],
+    enabled: !!fyTokenBalance && fyTokenBalance.gt(ethers.constants.Zero),
   });
 
   const maturity_ = nameFromMaturity(item.maturity);
@@ -169,18 +172,31 @@ const SingleItem = ({
     ? formatUnits(baseValueOfBalance, item.baseAsset.decimals)
     : '0';
   const fyTokenValueOfBase = data ? data[1] : undefined;
+  const maxBaseIn = data ? data[2] : undefined;
+  // if no amount is specified, use all the fyToken balance
+  const fyTokenValueToUse = amount ? fyTokenValueOfBase : fyTokenBalance;
 
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
 
   // need to approve the associated series entity's fyToken
-  const approvalParams = useMemo<ApprovalBasicParams>(
-    () => ({
+  const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {
+    if (!fyTokenValueToUse) {
+      console.error('No fyToken value of base');
+      return;
+    }
+    return {
       tokenAddress: fyTokenAddress,
       spender: ladleAddress!,
-      approvalAmount: fyTokenValueOfBase ?? ethers.constants.Zero,
-    }),
-    [fyTokenAddress, fyTokenValueOfBase, ladleAddress]
-  );
+      approvalAmount: fyTokenValueToUse,
+    };
+  }, [fyTokenAddress, fyTokenValueToUse, ladleAddress]);
+
+  // use all base value of fyToken balance if no amount is specified
+  const baseAmountToUse = amount ? amountParsed.value : baseValueOfBalance;
+  // formatted
+  const baseAmountToUse_ = baseAmountToUse
+    ? formatUnits(baseAmountToUse, item.baseAsset.decimals)
+    : '0';
 
   const getSendParams = useCallback(async () => {
     if (!fyTokenValueOfBase) {
@@ -189,7 +205,7 @@ const SingleItem = ({
     }
 
     return await lendClose({
-      fyTokenAmount: fyTokenValueOfBase ?? ethers.constants.Zero,
+      fyTokenAmount: fyTokenValueOfBase,
       fyTokenAddress,
       poolAddress,
       seriesEntityId: item.id,
@@ -212,20 +228,26 @@ const SingleItem = ({
     })();
   }, [getSendParams]);
 
-  return amountToUse.gt(ethers.constants.Zero) && baseValueOfBalance ? (
+  return fyTokenBalance?.gt(ethers.constants.Zero) ? (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{maturity_}</ResponseTitle>
         <ResponseTitle>
-          Current Balance: {cleanValue(baseValueOfBalance_, 2)} {item.baseAsset.symbol}
+          Current Balance: {isLoading ? <SkeletonWrap /> : cleanValue(baseValueOfBalance_, 2)}{' '}
+          {item.baseAsset.symbol}
         </ResponseTitle>
       </div>
       <div className="mx-2 my-auto">
         <ActionResponse
-          label={`Close ${cleanValue(amountToUse_, 2)} ${item.baseAsset.symbol}`}
+          label={
+            maxBaseIn && baseAmountToUse?.gt(maxBaseIn)
+              ? `Potentially not enough liquidity to close your position`
+              : `Close ${cleanValue(baseAmountToUse_, 2)} ${item.baseAsset.symbol}`
+          }
           approvalParams={approvalParams}
           sendParams={sendParams}
           txParams={undefined}
+          disabled={isLoading || !fyTokenValueToUse}
         />
       </div>
     </SingleLineResponse>
