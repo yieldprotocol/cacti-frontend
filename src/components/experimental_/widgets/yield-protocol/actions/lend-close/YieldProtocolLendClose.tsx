@@ -16,7 +16,6 @@ import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useAppro
 import useBalance from '@/hooks/useBalance';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
-import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import { Spinner, cleanValue, toTitleCase } from '@/utils';
 import poolAbi from '../../contracts/abis/Pool';
@@ -142,7 +141,7 @@ const SingleItem = ({
   const poolAddress = item.fyToken.pools[0].id as Address;
   const { data: fyTokenBalance } = useBalance(item.fyToken.id);
 
-  const { data, isLoading } = useContractReads({
+  const { data } = useContractReads({
     contracts: [
       // estimate the base value of the fyToken balance
       {
@@ -183,7 +182,7 @@ const SingleItem = ({
   // need to approve the associated series entity's fyToken
   const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {
     if (!fyTokenValueOfBase) {
-      console.error('No fyToken value of base');
+      console.error('No fyToken value of base for approval');
       return;
     }
     return {
@@ -203,7 +202,7 @@ const SingleItem = ({
   const getSendParams = useCallback(async () => {
     if (!fyTokenValueOfBase) {
       console.error('No fyToken value of base');
-      return undefined;
+      return;
     }
 
     return await lendClose({
@@ -225,17 +224,20 @@ const SingleItem = ({
 
   useEffect(() => {
     (async () => {
-      const sendParams = await getSendParams();
-      setSendParams(sendParams);
+      if (fyTokenBalance?.gt(ethers.constants.Zero)) {
+        const sendParams = await getSendParams();
+        setSendParams(sendParams);
+      }
     })();
-  }, [getSendParams]);
+  }, [fyTokenBalance, getSendParams]);
 
   return fyTokenBalance?.gt(ethers.constants.Zero) ? (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{maturity_}</ResponseTitle>
         <ResponseTitle>
-          Current Balance: {isLoading ? <SkeletonWrap /> : cleanValue(baseValueOfBalance_, 2)}{' '}
+          Current Balance:{' '}
+          {!baseValueOfBalance ? <SkeletonWrap /> : cleanValue(baseValueOfBalance_, 2)}{' '}
           {item.baseAsset.symbol}
         </ResponseTitle>
       </div>
@@ -249,7 +251,6 @@ const SingleItem = ({
           approvalParams={approvalParams}
           sendParams={sendParams}
           txParams={undefined}
-          disabled={isLoading || !fyTokenValueOfBase}
         />
       </div>
     </SingleLineResponse>
