@@ -53,6 +53,7 @@ export function RainbowKitSiweNextAuthProvider({
   /* force logout if account changes */
   useEffect(() => {
     if (session && session.user?.name !== account) {
+      console.log('detected account switch, logging out', session, account);
       signoutSequence();
     }
   }, [account, session]);
