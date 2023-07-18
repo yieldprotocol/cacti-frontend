@@ -84,6 +84,7 @@ export const ActionResponse = ({
       skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
     }
   );
+  console.log('🦄 ~ file: ActionResponse.tsx:80 ~ hasAllowance:', hasAllowance);
 
   const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
     txParams,

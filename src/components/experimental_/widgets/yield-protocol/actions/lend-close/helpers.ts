@@ -64,9 +64,6 @@ const _lendClose = async ({
   const transferToAddress = seriesEntityIsMature ? fyTokenAddress : poolAddress;
   const receiverAddress = isEthBase ? ladleAddress : account;
 
-  // input amount with 1% slippage
-  const amountWithSlippage = fyTokenAmount.mul(99).div(100);
-
   return [
     {
       operation: LadleActions.Fn.TRANSFER,
@@ -76,7 +73,7 @@ const _lendClose = async ({
     /* BEFORE MATURITY */
     {
       operation: LadleActions.Fn.ROUTE,
-      args: [receiverAddress, amountWithSlippage] as RoutedActions.Args.SELL_FYTOKEN,
+      args: [receiverAddress, ethers.constants.Zero] as RoutedActions.Args.SELL_FYTOKEN, // TODO handle slippage
       fnName: RoutedActions.Fn.SELL_FYTOKEN,
       targetContract: poolContract,
       ignoreIf: seriesEntityIsMature,

@@ -177,9 +177,7 @@ const SingleItem = ({
     () => ({
       tokenAddress: fyTokenAddress,
       spender: ladleAddress!,
-      approvalAmount: fyTokenValueOfBase
-        ? fyTokenValueOfBase.mul(101).div(100)
-        : ethers.constants.Zero, // 1% buffer for moving interest: TODO figure out better way
+      approvalAmount: fyTokenValueOfBase ?? ethers.constants.Zero,
     }),
     [fyTokenAddress, fyTokenValueOfBase, ladleAddress]
   );
