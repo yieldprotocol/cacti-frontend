@@ -122,7 +122,7 @@ export const ActionResponse = ({
       return setHasEnoughBalance(true);
 
     // check approval token balance
-    setHasEnoughBalance(!!balance?.gte(approvalParams?.approvalAmount!));
+    balance && setHasEnoughBalance(!!balance.gte(approvalParams?.approvalAmount!));
   }, [
     approvalParams?.approvalAmount,
     approvalParams?.skipApproval,
@@ -243,15 +243,14 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
+  const handleAction = async () => (action ? await action?.fn() : undefined);
+
   return (
     <div className="flex w-full justify-center">
       {address && stepper && <ActionStepper />}
       {address && !stepper && (
         <div className=" flex w-full items-center gap-4">
-          <StyledButton
-            className={`bg-teal-900 ${extraStyle}`}
-            onClick={(e) => action && action.fn?.()}
-          >
+          <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={handleAction}>
             {label || <Skeleton width={100} />}
           </StyledButton>
 

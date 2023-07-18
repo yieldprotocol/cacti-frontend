@@ -37,9 +37,6 @@ const useApproval = (params: ApprovalBasicParams) => {
   const signer = useSigner();
   const { address: account } = useAccount();
 
-  //local state
-  const [txPending, setTxPending] = useState(false);
-
   const { approvalAmount, tokenAddress, spender } = params;
   const { data: token } = useToken(undefined, tokenAddress); // get token data from address (zero address === ETH)
   // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
@@ -67,27 +64,22 @@ const useApproval = (params: ApprovalBasicParams) => {
     enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
   });
 
-  const { writeAsync, data } = useContractWrite(tokenConfig);
+  const { writeAsync, data, isLoading: approvalWaitingOnUser } = useContractWrite(tokenConfig);
 
   const { isError, isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: async () => await refetchAllowance(),
   });
 
-  const approveTx = useCallback(
-    () => (!!params.skipApproval ? undefined : writeAsync),
-    [params.skipApproval, writeAsync]
-  );
-
   return {
-    approveTx,
+    approveTx: writeAsync,
     refetchAllowance,
 
     approvalReceipt: data,
     approvalHash: data?.hash,
 
+    approvalWaitingOnUser,
     approvalTransacting: isLoading,
-    approvalWaitingOnUser: txPending,
 
     approvalError: isError,
     approvalSuccess: isSuccess,
