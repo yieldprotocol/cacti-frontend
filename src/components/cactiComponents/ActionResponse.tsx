@@ -122,7 +122,9 @@ export const ActionResponse = ({
       return setHasEnoughBalance(true);
 
     // check approval token balance
-    balance && setHasEnoughBalance(!!balance.gte(approvalParams?.approvalAmount!));
+    balance &&
+      approvalParams?.approvalAmount &&
+      setHasEnoughBalance(balance.gte(approvalParams?.approvalAmount!));
   }, [
     approvalParams?.approvalAmount,
     approvalParams?.skipApproval,
