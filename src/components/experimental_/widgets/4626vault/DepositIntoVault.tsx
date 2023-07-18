@@ -30,9 +30,9 @@ function getVaultAddress(vaultName: string, tokenIn: string): string {
       switch (tokenIn) {
         case 'DAI':
           return '0xdA816459F1AB5631232FE5e97a05BBBb94970c95';
-        case 'yearnUSDC':
+        case 'USDC':
           return '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE';
-        case 'yearnWETH':
+        case 'WETH':
           return '0xa258C4606Ca8206D8aA700cE2143D7db854D168c';
       }
     default:
