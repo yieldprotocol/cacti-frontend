@@ -22,6 +22,7 @@ export interface ChatShareSettings {
   name?: string;
   canEdit?: boolean;
 }
+
 export const useQueryShareSettings = (sessionId: string) => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
