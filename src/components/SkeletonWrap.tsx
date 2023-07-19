@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import Skeleton from 'react-loading-skeleton';
-import SettingsContext, { Setting } from '@/contexts/SettingsContext';
+import Skeleton, { SkeletonProps } from 'react-loading-skeleton';
+import SettingsContext from '@/contexts/SettingsContext';
 
-const SkeletonWrap = (props: any) => {
+const SkeletonWrap = (props: SkeletonProps) => {
   const {
     settings: { experimentalUi },
   } = useContext(SettingsContext);
