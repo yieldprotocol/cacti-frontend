@@ -1,3 +1,30 @@
+<div align="center">
+  <h1 align="center">🌵🌵🌵 Cacti 🌵🌵🌵 </h1>
+  <h2 align="center"> <b>Cacti Frontend</b> - <a href="https://github.com/yieldprotocol/cacti-backend">Cacti Backend</a></h2>
+  <p align="center">
+    Natural language interactions with web3.
+    <br />
+    <br />
+    <a href="https://twitter.com/yield">Twitter</a>
+    ·
+    <a href="https://discord.gg/JAFfDj5">Discord</a>
+    ·
+    <a href="https://github.com/yieldprotocol/cacti-backend/issues">Report a Bug</a>
+  </p>
+</div>
+
+<br />
+
+![A screenshot of Cacti.](/screenshot.jpg)
+
+## About
+
+Cacti is a natural language interface for interacting with web3. It uses OpenAI function calling capability and a small but growing library of web3 interactions (called "widget commands") to enable chat based interactions.  
+
+Cacti includes a frontend and backend repo. This is the frontend. The backend is [here](https://github.com/yieldprotocol/cacti-backend).
+
+The Cacti frontend is a web-based interface where users can seamlessly interact with integrated web3 protocols.
+
 ## Getting Started
 
 First, run the development server:
@@ -34,3 +61,7 @@ yarn mint 0x...123
 - NOTE:
   - Observered time delay for tokens to be available on L2 from L1 is around 10 minutes
   - Observered time delay for tokens to be available on L1 from L2 is around 1 hour
+
+## Contributing
+
+See the [open issues](https://github.com/yieldprotocol/cacti-backend/issues) for a list of proposed features (and known issues).
