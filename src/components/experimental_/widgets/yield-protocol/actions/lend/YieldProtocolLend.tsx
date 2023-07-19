@@ -216,7 +216,8 @@ const SingleItem = ({
   approvalParams: ApprovalBasicParams | undefined;
   sendParams: UnsignedTransaction | undefined;
 }) => {
-  return (
+  const lendAPR = item.fyToken.pools[0].lendAPR;
+  return +lendAPR > 0 ? ( // only show if there is an APR; this implicitly checks liquidity in the pool (it would be more accurate to check maxBaseOut of the pool against the user input, but wanted to minimize requests)
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
       <div className="">
         <ResponseTitle>{item.maturity_}</ResponseTitle>
@@ -231,7 +232,7 @@ const SingleItem = ({
         />
       </div>
     </SingleLineResponse>
-  );
+  ) : null;
 };
 
 export default YieldProtocolLend;
