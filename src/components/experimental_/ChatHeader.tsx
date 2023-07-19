@@ -6,6 +6,19 @@ import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/m
 import { useQueryShareSettings } from '@/api/queries';
 import useThread from '@/hooks/useThread';
 
+interface TooltipProps {
+  children: ReactNode;
+  text: string;
+}
+const Tooltip = ({ text, children }: TooltipProps) => (
+  <div className="group relative">
+    {children}
+    <span className="pointer-events-none absolute -bottom-8 left-0 w-max rounded-md bg-gray-800/50 p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100">
+      {text}
+    </span>
+  </div>
+);
+
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const sessionId = threadId;
   const { status } = useSession();
@@ -13,10 +26,15 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const visibilityMutation = useMutationUpdateShareSettings(sessionId);
   const cloneMutation = useMutationCloneSession(sessionId);
   const visibilityToggle = () => {
-    const targetVisibility = settings?.visibility == 'public' ? 'private' : 'public';
+    const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
     visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
   };
-  const visibilityIcon = settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />;
+  const visibilityIcon =
+    settings?.visibility === 'public' ? (
+      <EyeIcon className="h-4 w-4 hover:text-white" />
+    ) : (
+      <EyeSlashIcon className="h-4 w-4 hover:text-white" />
+    );
   const canEdit = isSuccess && settings?.canEdit;
   const canClone = status === 'authenticated';
   const cloneSession = () => {
@@ -28,14 +46,16 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   };
   return (
     <div className="flex items-center gap-2">
-      <button className="h-4 w-4" onClick={cloneSession}>
-        <ShareIcon />
-      </button>
+      <Tooltip text="share chat">
+        <button onClick={cloneSession}>
+          <ShareIcon className="h-4 w-4 hover:text-white" />
+        </button>
+      </Tooltip>
       {isSuccess &&
         (canEdit ? (
-          <button className="h-4 w-4" onClick={visibilityToggle}>
-            {visibilityIcon}
-          </button>
+          <Tooltip text={`make chat ${settings.visibility === 'public' ? 'private' : 'public'}`}>
+            <button onClick={visibilityToggle}>{visibilityIcon}</button>
+          </Tooltip>
         ) : (
           <div className="h-4 w-4">{visibilityIcon}</div>
         ))}
