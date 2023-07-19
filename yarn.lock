@@ -8328,7 +8328,7 @@ __metadata:
     ethers: ^5.7.2
     json-bigint: ^1.0.0
     next: 13.1.2
-    next-auth: ^4.22.1
+    next-auth: 4.22.1
     postcss: ^8.4.23
     prettier: ^2.8.3
     prettier-plugin-tailwindcss: ^0.2.1
@@ -14914,7 +14914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-auth@npm:^4.22.1":
+"next-auth@npm:4.22.1":
   version: 4.22.1
   resolution: "next-auth@npm:4.22.1"
   dependencies:
