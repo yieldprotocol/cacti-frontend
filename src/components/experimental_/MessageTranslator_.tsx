@@ -18,6 +18,7 @@ import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
+import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
@@ -194,6 +195,10 @@ export const Widget = (props: WidgetProps) => {
   widgets.set(
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
+  );
+  widgets.set(
+    'stake-sfrxeth',
+    <StakeSfrxEth receiver={parsedArgs[0]} amtString={'1'} />
   );
   widgets.set(
     'liquity-borrow',
