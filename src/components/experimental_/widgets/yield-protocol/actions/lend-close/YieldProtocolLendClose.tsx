@@ -237,7 +237,7 @@ const SingleItem = ({
         <ResponseTitle>{maturity_}</ResponseTitle>
         <ResponseTitle>
           Current Balance:{' '}
-          {!baseValueOfBalance ? <SkeletonWrap /> : cleanValue(baseValueOfBalance_, 2)}{' '}
+          {!baseValueOfBalance ? <SkeletonWrap width={10} /> : cleanValue(baseValueOfBalance_, 2)}{' '}
           {item.baseAsset.symbol}
         </ResponseTitle>
       </div>
