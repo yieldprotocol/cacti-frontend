@@ -176,17 +176,22 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     };
   }, [ladleAddress, vault]);
 
+  const activeVault = useMemo(
+    () => vault.art?.gt(ethers.constants.Zero) || vault.ink?.gt(ethers.constants.Zero),
+    [vault]
+  );
+
   useEffect(() => {
     (async () => {
-      if (!vault) return;
+      if (!activeVault) return;
       const sendParams = await borrowClose({ vault });
       setSendParams(sendParams);
     })();
-  }, [vault]); // intentionally not including borrowClose cuz of infinite render issue; TODO make more kosher
+  }, [activeVault, vault]); // intentionally not including borrowClose cuz of infinite render issue; TODO make more kosher
 
   return isLoading ? (
     <Skeleton />
-  ) : vault && vault.art?.gt(ethers.constants.Zero) && vault.ink?.gt(ethers.constants.Zero) ? (
+  ) : activeVault ? (
     <SingleLineResponse tokenSymbol={vault.borrowToken?.symbol} className="flex justify-between">
       <div className="">
         <div>
