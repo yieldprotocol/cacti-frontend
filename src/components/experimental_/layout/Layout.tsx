@@ -73,7 +73,7 @@ const SidebarContainer = ({
       {/* ---------------------------------------Static sidebar for desktop */}
       <div className="hidden border-r-[1px] border-white/20 bg-[#031016] lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto  px-2 pt-6">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto p-1">
           {/* <Logo /> */}
           <nav className="flex flex-1 flex-col">{children}</nav>
         </div>
