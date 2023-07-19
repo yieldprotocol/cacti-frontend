@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { BigNumber, ethers } from 'ethers';
 import { useAccount, useBalance as useBalanceWagmi, useContractRead } from 'wagmi';
 import erc1155ABI from '@/abi/erc1155ABI.json';
+import useChainId from '@/hooks/useChainId';
 
 /**
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
@@ -14,6 +15,7 @@ const useBalance = (
   erc1155TokenId?: string,
   isEth?: boolean
 ) => {
+  const chainId = useChainId();
   const { address: account } = useAccount();
 
   /* erc20 or eth if zero or no address is specified */
@@ -21,6 +23,7 @@ const useBalance = (
     address: account,
     token: isEth || tokenAddress === AddressZero ? undefined : tokenAddress,
     enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
+    chainId,
   });
 
   /* erc1155 */
