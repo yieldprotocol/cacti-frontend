@@ -5699,7 +5699,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/sdk-core@npm:4.0.3":
+"@uniswap/sdk-core@npm:<=4.0.3 || >4.0.6":
   version: 4.0.3
   resolution: "@uniswap/sdk-core@npm:4.0.3"
   dependencies:
@@ -8137,7 +8137,7 @@ __metadata:
     "@types/node": 18.11.18
     "@types/react": 18.0.27
     "@types/react-dom": 18.0.10
-    "@uniswap/sdk-core": 4.0.3
+    "@uniswap/sdk-core": <=4.0.3 || >4.0.6
     "@uniswap/smart-order-router": ^3.11.0
     "@uniswap/v3-periphery": ^1.4.3
     autoprefixer: ^10.4.14
