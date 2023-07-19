@@ -48,7 +48,7 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
-  const { config: tokenConfig } = usePrepareContractWrite({
+  const { config } = usePrepareContractWrite({
     address: tokenAddress,
     abi: erc20ABI,
     functionName: 'approve',
@@ -61,7 +61,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     writeAsync: approveTx,
     data,
     isLoading: approvalWaitingOnUser,
-  } = useContractWrite(tokenConfig);
+  } = useContractWrite(config);
 
   const {
     isError: approvalError,
