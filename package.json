@@ -31,7 +31,7 @@
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
-    "@uniswap/sdk-core": "^3.1.2",
+    "@uniswap/sdk-core": "<4.0.6,>4.0.6",
     "@uniswap/smart-order-router": "^3.11.0",
     "@uniswap/v3-periphery": "^1.4.3",
     "copy-to-clipboard": "^3.3.3",
