@@ -198,7 +198,7 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set(
     'stake-sfrxeth',
-    <StakeSfrxEth receiver={parsedArgs[0]} amtString={'1'} />
+    <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />
   );
   widgets.set(
     'liquity-borrow',
