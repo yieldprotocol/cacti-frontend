@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { DevToolsModal } from '../../../devTools/DevToolsModal';
 import ChatList from '../../ChatList';
+import CustomConnectButton from '../../CustomConnectButton';
 import AccountStatus from './AccountStatus';
 import MenuButton from './MenuButton';
 import MoreItems from './MoreItems';
@@ -28,6 +29,7 @@ const Sidebar = () => {
         <AccountStatus />
       </div>
       {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />}
+      <CustomConnectButton />
     </div>
   );
 };

@@ -2,8 +2,10 @@ import { ReactNode, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Header from './Header_';
-import Sidebar from './sidebar';
-import SidebarContainer from './sidebar/SidebarContainer';
+
+const DynamicSidebar = dynamic(() => import('@/components/experimental_/layout/sidebar'), {
+  ssr: false,
+});
 
 const HeaderContainer = ({
   setIsOpen,
@@ -29,7 +31,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="relative min-h-screen bg-[#031016]">
-      <Sidebar />
+      <DynamicSidebar />
       <main className="flex flex-col">
         <HeaderContainer setIsOpen={setSidebarOpen}>
           <Header />
