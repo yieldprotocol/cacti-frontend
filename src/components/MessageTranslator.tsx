@@ -81,7 +81,7 @@ export const Widgetize = (widget: Widget) => {
 
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const token = getToken(tokenSymbol);
+        // const token = getToken(tokenSymbol);
         // const amount = parseUnits(amtString, token?.decimals);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
