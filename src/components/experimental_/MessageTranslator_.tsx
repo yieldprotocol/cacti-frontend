@@ -12,13 +12,13 @@ import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
-import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
@@ -196,10 +196,7 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-  widgets.set(
-    'stake-sfrxeth',
-    <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />
-  );
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
