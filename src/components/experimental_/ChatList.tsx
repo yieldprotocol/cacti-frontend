@@ -1,11 +1,12 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Popover, Transition } from '@headlessui/react';
-import { CheckIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { Menu, Popover, Transition } from '@headlessui/react';
+import { CheckIcon, EllipsisVerticalIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
+import { useChatContext } from '@/contexts/ChatContext';
 
 export type ChatItem = {
   id: string;
@@ -13,37 +14,19 @@ export type ChatItem = {
 
 const ChatMenu = ({ id }: ChatItem) => {
   const { query } = useRouter();
-  const selected = query.id === id;
-  return (
-    <div className={`${selected ? 'opacity-100' : 'opacity-0'}`}>
-      <Popover className="relative">
-        {({ open }) => (
-          <>
-            <Popover.Button>
-              <div className=" h-4 w-4 text-white/70">
-                <EllipsisVerticalIcon />
-              </div>
-            </Popover.Button>
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="absolute z-[10000] ">
-                {/* <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"> */}
-                <div className="relative grid lg:grid-cols-2">Share Delete</div>
-                {/* </div> */}
-              </Popover.Panel>
-            </Transition>
-          </>
-        )}
-      </Popover>
-    </div>
+  const {setShowShareModal} = useChatContext();
+  const selected = query.id === id;
+  
+  return (
+    <>
+    {selected && 
+    <div className="flex items-center gap-2">
+      <button className="h-3 w-3" onClick={() => setShowShareModal(true)}>
+        <ShareIcon />
+      </button>
+    </div>}
+    </>
   );
 };
 
