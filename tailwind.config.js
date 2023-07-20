@@ -24,7 +24,10 @@ module.exports = {
       fontFamily: {
         sans: ['Inter, sans-serif', { fontFeatureSettings: '"zero", "lnum", "pnum"' }],
       },
+      colors: {
+        'gray-primary': '#031016',
+      },
     },
+    plugins: [],
   },
-  plugins: [],
 };
