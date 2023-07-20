@@ -17,19 +17,23 @@ const Sidebar = () => {
   } = useContext(SettingsContext);
 
   return (
-    <div className="flex h-screen flex-1 flex-col overflow-y-auto p-1.5 text-gray-300">
+    <div className="flex h-screen w-full flex-1 flex-col overflow-y-auto p-1.5 text-gray-300">
       <DevToolsModal
         openState={developerTools}
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
       <NewChatButton />
       <ChatList />
-      <div className="p-1.5">
-        <MoreItems />
-        <AccountStatus />
+      <div className="flex h-full w-full">
+        <div className="flex w-full flex-col self-end">
+          <div className="p-1.5">
+            <MoreItems />
+            {process.env.NODE_ENV === 'development' && <AccountStatus />}
+          </div>
+          {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />}
+          <CustomConnectButton />
+        </div>
       </div>
-      {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />}
-      <CustomConnectButton />
     </div>
   );
 };

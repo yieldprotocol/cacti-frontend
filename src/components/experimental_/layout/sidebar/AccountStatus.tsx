@@ -12,7 +12,7 @@ const AccountStatus = () => {
   const statusColor = getStatusColor(connectionStatus);
 
   return (
-    <>
+    <div>
       <div className={`flex flex-col text-xs ${statusColor} justify-between`}>
         <div />
         <div className="flex gap-2">
@@ -27,7 +27,7 @@ const AccountStatus = () => {
         </div>
       </div>
       <ConnectionStatus className={statusColor} status={connectionStatus} />
-    </>
+    </div>
   );
 };
 
