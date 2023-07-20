@@ -54,3 +54,24 @@ button:focus {
     @apply grid place-items-center;
   }
 }
+
+::-webkit-scrollbar {
+  /* Customize the scrollbar width */
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  /* Customize the scrollbar track */
+  background: #031016;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #e5e7eb;
+}
+
+::-webkit-scrollbar-thumb {
+  /* Customize the scrollbar thumb */
+  background: #d1d5db;
+  border-radius: 5px;
+}
