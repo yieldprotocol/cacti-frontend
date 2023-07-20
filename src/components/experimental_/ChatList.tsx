@@ -1,12 +1,9 @@
-import { useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
-import ChatContextProvider, { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
-import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
@@ -58,11 +55,11 @@ const ChatItem = ({ id }: ChatItem) => {
 const ChatList = () => {
   const { chats } = useQueryChats();
   return (
-    <div className="flex-1 flex-col overflow-y-auto transition-opacity duration-500">
-      <div className="overflow-hidden text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
+    <div className="">
+      <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
         My Chats
       </div>
-      <div>
+      <div className="flex-1 flex-col overflow-y-auto transition-opacity duration-500">
         {chats?.sessions?.map((chat) => (
           <ChatItem key={chat.id} id={chat.id} />
         ))}
