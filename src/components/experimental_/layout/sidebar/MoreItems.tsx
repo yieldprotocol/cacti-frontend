@@ -12,9 +12,12 @@ import { navigateToExternalUrl } from '@/utils';
 type MoreItem = { icon: ReactNode; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
   return (
-    <div className="flex cursor-pointer flex-row items-center gap-2 py-1 text-xs" onClick={action}>
-      <div className="h-4 w-4 ">{icon}</div>
-      <div className="text-xs hover:text-white"> {label}</div>
+    <div
+      className="flex cursor-pointer flex-row items-center gap-2 text-xs font-medium hover:text-white"
+      onClick={action}
+    >
+      <div className="h-4 w-4">{icon}</div>
+      <div className="text-xs hover:text-white">{label}</div>
     </div>
   );
 };
@@ -26,7 +29,7 @@ const MoreItems = () => {
   } = useContext(SettingsContext);
 
   return (
-    <div className="gap-3 py-4">
+    <div className="flex flex-col gap-3 px-2 py-4">
       <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
       <MoreItem icon={<Cog8ToothIcon />} label="Settings" action={() => console.log('settings')} />
       <MoreItem

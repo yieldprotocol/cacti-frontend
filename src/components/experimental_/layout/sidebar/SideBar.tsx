@@ -23,11 +23,9 @@ const Sidebar = () => {
       />
       <NewChatButton />
       <ChatList />
-      <div className="group relative">
-        <div className="flex w-full items-center gap-2.5 rounded-md bg-gray-800 px-3 py-3 text-sm transition-colors duration-200 hover:bg-gray-800">
-          <MoreItems />
-          <AccountStatus />
-        </div>
+      <div className="p-1.5">
+        <MoreItems />
+        <AccountStatus />
       </div>
       {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />}
     </div>
