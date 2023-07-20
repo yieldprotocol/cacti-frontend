@@ -19,9 +19,8 @@ import { TransferWidget } from '@/components/widgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
-import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
-import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
@@ -84,7 +83,6 @@ export const Widgetize = (widget: Widget) => {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
         const token = getToken(tokenSymbol);
         // const amount = parseUnits(amtString, token?.decimals);
-        // const project = findProjectByName(projectName);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );

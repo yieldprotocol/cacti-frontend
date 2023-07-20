@@ -39,7 +39,7 @@ const supportedProjects = {
   },
 };
 interface YieldFarmProps {
-  project: Project;
+  project: Project|undefined;
   network: string;
   token: Token;
   amount: BigNumber;
@@ -73,8 +73,8 @@ const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
   }, [balance, allowanceAmount, amount, isApprovalSuccess, walletAddress]);
 
   // For Demo, only support depositing USDC into Compound
-  if (project.id !== 'compound' || token.symbol !== 'USDC') {
-    return <p>Unable to deposit, project/token not supported</p>;
+  if (!project || project.id !== 'compound' || token.symbol !== 'USDC') {
+    return <p> Unable to deposit, project/token not supported</p>;
   }
 
   if (!hasBalance) {
@@ -168,7 +168,7 @@ export const YieldFarmWidget = ({
       centerTitle={true}
     >
       <ConnectFirst>
-        <YieldFarm {...{ project, network, token: token!, amount }} />
+        <YieldFarm {...{ project, network, token: token!, amount }} /> 
       </ConnectFirst>
     </ActionPanel>
   );
