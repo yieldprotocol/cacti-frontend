@@ -8,9 +8,13 @@ import MenuButton from './MenuButton';
 import MoreItems from './MoreItems';
 import NewChatButton from './NewChatButton';
 
-const Sidebar = () => {
-  // this is different state then the one in the sidebar container because this only handles desktop
-  const [isOpen, setIsOpen] = useState(true);
+const Sidebar = ({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) => {
   const {
     settings: { developerTools },
     changeSetting,
@@ -30,7 +34,7 @@ const Sidebar = () => {
             <MoreItems />
             {process.env.NODE_ENV === 'development' && <AccountStatus />}
           </div>
-          {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />}
+          {/* {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />} */}
           <CustomConnectButton />
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import SidebarContainer from './SidebarContainer';
 
@@ -9,11 +8,16 @@ const SidebarInnerDynamic = dynamic(
   }
 );
 
-const Sidebar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+const Sidebar = ({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) => {
   return (
-    <SidebarContainer isOpen={sidebarOpen} setIsOpen={setSidebarOpen}>
-      <SidebarInnerDynamic />
+    <SidebarContainer isOpen={isOpen} setIsOpen={setIsOpen}>
+      <SidebarInnerDynamic isOpen={isOpen} setIsOpen={setIsOpen} />
     </SidebarContainer>
   );
 };
