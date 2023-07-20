@@ -4,8 +4,12 @@ import { useSession } from 'next-auth/react';
 import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
 import { useQueryShareSettings } from '@/api/queries';
 import useThread from '@/hooks/useThread';
+import { useChatContext } from '@/contexts/ChatContext';
+import { set } from 'date-fns';
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
+
+  const { setShowShareModal } = useChatContext();
   const sessionId = threadId;
   const { status } = useSession();
   const { isSuccess, settings } = useQueryShareSettings(sessionId);
@@ -18,26 +22,29 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const visibilityIcon = settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />;
   const canEdit = isSuccess && settings?.canEdit;
   const canClone = status === 'authenticated';
+  
   const cloneSession = () => {
+    setShowShareModal(true);
     if (canClone) {
       cloneMutation.mutate({ metadata: {} });
     } else {
       alert('Please sign up to clone thread.');
     }
   };
+
   return (
     <div className="flex items-center gap-2">
       <button className="h-4 w-4" onClick={cloneSession}>
         <ShareIcon />
       </button>
-      {isSuccess &&
+      {/* {isSuccess &&
         (canEdit ? (
           <button className="h-4 w-4" onClick={visibilityToggle}>
             {visibilityIcon}
           </button>
         ) : (
           <div className="h-4 w-4">{visibilityIcon}</div>
-        ))}
+        ))} */}
     </div>
   );
 };
