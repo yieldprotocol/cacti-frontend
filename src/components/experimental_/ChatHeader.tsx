@@ -1,5 +1,4 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import { EyeIcon, EyeSlashIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';

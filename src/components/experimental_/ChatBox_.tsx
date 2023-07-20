@@ -5,6 +5,7 @@ import { Spinner } from '@/utils';
 // Use experimental components
 import { MessageInput } from './MessageInput_';
 import { MessageList } from './MessageList_';
+import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
@@ -17,6 +18,9 @@ const ChatBox = () => {
 
   return (
     <div className="flex h-full w-full flex-col gap-3">
+      {/* chat sharing modal*/}
+      <ShareChatModal />
+
       {/* chat area */}
       <div className="flex grow items-center justify-center overflow-auto pt-5">
         {isLoading ? <Spinner /> : messageContentComponent}
