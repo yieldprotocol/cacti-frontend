@@ -19,7 +19,7 @@
 
 ## About
 
-Cacti is a natural language interface for interacting with web3. It uses OpenAI function calling capability and a small but growing library of web3 interactions (called "widget commands") to enable chat based interactions.  
+Cacti is a natural language interface for interacting with web3. It uses OpenAI function calling capability and a small but growing library of web3 interactions (called "widget commands") to enable chat based interactions.
 
 Cacti includes a frontend and backend repo. This is the frontend. The backend is [here](https://github.com/yieldprotocol/cacti-backend).
 
