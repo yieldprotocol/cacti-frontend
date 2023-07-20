@@ -11,6 +11,7 @@ import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
+import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
@@ -81,6 +82,10 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
           /* handle if a multistep container is passed */
           if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
+
+          /* handle if a single step container is passed */
+          if (item.name === 'display-tx-payload-for-sending-container')
+            return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* if item has a function name, assume its a widget */
           return [...list, <Widget key={idx} widget={item} />];
