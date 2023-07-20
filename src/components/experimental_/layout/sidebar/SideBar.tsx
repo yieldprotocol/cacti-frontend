@@ -16,7 +16,7 @@ const Sidebar = () => {
   } = useContext(SettingsContext);
 
   return (
-    <div className="flex flex-col p-1.5 text-gray-300">
+    <div className="flex h-screen flex-1 flex-col overflow-y-auto p-1.5 text-gray-300">
       <DevToolsModal
         openState={developerTools}
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
@@ -24,7 +24,7 @@ const Sidebar = () => {
       <NewChatButton />
       <ChatList />
       <div className="group relative">
-        <div className="group-ui-open:bg-gray-800 flex w-full items-center gap-2.5 rounded-md px-3 py-3 text-sm transition-colors duration-200 hover:bg-gray-800">
+        <div className="flex w-full items-center gap-2.5 rounded-md bg-gray-800 px-3 py-3 text-sm transition-colors duration-200 hover:bg-gray-800">
           <MoreItems />
           <AccountStatus />
         </div>

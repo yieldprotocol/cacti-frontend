@@ -54,7 +54,7 @@ const SidebarContainer = ({
                     </button>
                   </div>
                 </Transition.Child>
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/20 bg-black px-6 pb-2">
+                <div className="flex grow flex-col gap-y-5 border-r border-white/20 bg-black px-6 pb-2">
                   {/* <Logo /> */}
                   <nav className="flex flex-1 flex-col">{children}</nav>
                 </div>
@@ -65,12 +65,9 @@ const SidebarContainer = ({
       </Transition.Root>
 
       {/* ---------------------------------------Static sidebar for desktop */}
-      <div className="hidden border-r-[1px] border-white/20 bg-[#031016] lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
+      <div className="hidden overflow-hidden border-r-[1px] border-white/20 bg-[#031016] lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
-        <div className="flex grow flex-col gap-y-5">
-          {/* <Logo /> */}
-          <nav className="flex flex-1 flex-col">{children}</nav>
-        </div>
+        <nav>{children}</nav>
       </div>
     </div>
   );

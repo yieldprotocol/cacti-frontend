@@ -55,11 +55,11 @@ const ChatItem = ({ id }: ChatItem) => {
 const ChatList = () => {
   const { chats } = useQueryChats();
   return (
-    <div className="">
+    <div>
       <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
         My Chats
       </div>
-      <div className="flex-1 flex-col overflow-y-auto transition-opacity duration-500">
+      <div className="flex-1 flex-col transition-opacity duration-500">
         {chats?.sessions?.map((chat) => (
           <ChatItem key={chat.id} id={chat.id} />
         ))}
