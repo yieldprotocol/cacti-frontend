@@ -59,7 +59,7 @@ const CustomConnectButton = () => {
                   <Avatar actor="user" />
                   <div>
                     <div className="text-sm font-semibold text-white/70">{account.displayName}</div>
-                    <div className="font-mono text-xs font-thin text-white/70">
+                    <div className="flex justify-start font-mono text-xs font-thin text-white/70">
                       {account.displayBalance ? `${account.displayBalance}` : ''}
                     </div>
                   </div>
