@@ -24,7 +24,6 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const canClone = status === 'authenticated';
   
   const cloneSession = () => {
-    setShowShareModal(true);
     if (canClone) {
       cloneMutation.mutate({ metadata: {} });
     } else {
@@ -34,7 +33,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <button className="h-4 w-4" onClick={cloneSession}>
+      <button className="h-4 w-4" onClick={ ()=> setShowShareModal(true)}>
         <ShareIcon />
       </button>
       {/* {isSuccess &&

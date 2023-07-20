@@ -14,7 +14,6 @@ const ShareChatModal = ( props: { id? : string } ) => {
     <>
       <Transition appear show={isOpen} as={Fragment}>
 
-
         <Dialog as="div" className="relative z-10" onClose={()=> setShowShareModal(false)}>
           <Transition.Child
             as={Fragment}
