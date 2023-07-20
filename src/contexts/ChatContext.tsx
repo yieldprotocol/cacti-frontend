@@ -64,7 +64,7 @@ const initialContext = {
   setInteractor: (arg0: string) => {},
   connectionStatus: ReadyState.UNINSTANTIATED,
 
-  showShareModal: true,
+  showShareModal: false,
   setShowShareModal: (value: boolean) => {},
   shareChat: () => {},
 };
