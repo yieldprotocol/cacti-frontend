@@ -3,12 +3,10 @@ import { EyeIcon, EyeSlashIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
 import { useQueryShareSettings } from '@/api/queries';
-import useThread from '@/hooks/useThread';
 import { useChatContext } from '@/contexts/ChatContext';
-import { set } from 'date-fns';
+import useThread from '@/hooks/useThread';
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
-
   const { setShowShareModal } = useChatContext();
   const sessionId = threadId;
   const { status } = useSession();
@@ -22,7 +20,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const visibilityIcon = settings?.visibility == 'public' ? <EyeIcon /> : <EyeSlashIcon />;
   const canEdit = isSuccess && settings?.canEdit;
   const canClone = status === 'authenticated';
-  
+
   const cloneSession = () => {
     if (canClone) {
       cloneMutation.mutate({ metadata: {} });
@@ -33,7 +31,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <button className="h-4 w-4" onClick={ ()=> setShowShareModal(true)}>
+      <button className="h-4 w-4" onClick={() => setShowShareModal(true)}>
         <ShareIcon />
       </button>
       {/* {isSuccess &&

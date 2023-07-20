@@ -39,8 +39,8 @@ export type ChatContextType = {
   connectionStatus: ReadyState;
 
   showShareModal: boolean;
-  setShowShareModal: (value:boolean) => void;
-  shareChat: (id:string) => void;
+  setShowShareModal: (value: boolean) => void;
+  shareChat: (id: string) => void;
 };
 
 const initialContext = {
@@ -65,7 +65,7 @@ const initialContext = {
   connectionStatus: ReadyState.UNINSTANTIATED,
 
   showShareModal: true,
-  setShowShareModal: (value:boolean) => {},
+  setShowShareModal: (value: boolean) => {},
   shareChat: () => {},
 };
 
@@ -83,7 +83,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
-  const shareChat = (id:string) => console.log('Sharing Chat: ', id);
+  const shareChat = (id: string) => console.log('Sharing Chat: ', id);
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
@@ -364,7 +364,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         interactor,
         setInteractor,
         connectionStatus,
-        
+
         showShareModal,
         setShowShareModal,
         shareChat,
