@@ -24,7 +24,7 @@ const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className="w-full rounded-lg border-[1px] border-gray-800 bg-gray-700/50 p-3 text-center text-sm hover:opacity-80"
+            className="h-full w-full cursor-pointer rounded-lg border-[1px] border-gray-800 bg-gray-700/50 text-center text-sm hover:opacity-80"
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -53,7 +53,7 @@ const CustomConnectButton = () => {
 
               return (
                 <div
-                  className="flex h-full w-full cursor-pointer items-center gap-4"
+                  className="flex h-full w-full cursor-pointer items-center gap-4 p-3"
                   onClick={openAccountModal}
                 >
                   <Avatar actor="user" />
