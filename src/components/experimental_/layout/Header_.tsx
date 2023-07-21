@@ -9,11 +9,7 @@ const Header = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  return (
-    <div className="flex h-full w-full items-center justify-between gap-2 lg:pl-[15rem] ">
-      {id ? <DynamicChatHeader /> : null}
-    </div>
-  );
+  return <div className="h-full w-full">{id ? <DynamicChatHeader /> : null}</div>;
 };
 
 export default Header;

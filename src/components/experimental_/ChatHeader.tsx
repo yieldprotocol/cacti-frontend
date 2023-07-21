@@ -108,9 +108,9 @@ const ChatHeader = () => {
   }, [threadName, inputText, submitNameChange]);
 
   return (
-    <div className={`flex flex-grow justify-between text-white/70 `}>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+    <div className={`h-full w-full items-center text-white/70`}>
+      <div className="flex h-full flex-col gap-2">
+        <div className="flex h-full items-center gap-2">
           {isEditing ? (
             <span>
               <input
@@ -155,7 +155,7 @@ const ChatHeader = () => {
             threadId && <PrimaryActions {...{ threadId }} />
           )}
         </div>
-        <div className="text-xs text-white/30"> Last edit: yesterday </div>
+        <div className="text-xs text-white/30">Last edit: yesterday</div>
       </div>
     </div>
   );
