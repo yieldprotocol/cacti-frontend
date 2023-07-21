@@ -9,7 +9,7 @@ const Header = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  return <div className="h-full w-full">{id ? <DynamicChatHeader /> : null}</div>;
+  return id ? <DynamicChatHeader /> : null;
 };
 
 export default Header;

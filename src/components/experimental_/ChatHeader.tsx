@@ -108,55 +108,53 @@ const ChatHeader = () => {
   }, [threadName, inputText, submitNameChange]);
 
   return (
-    <div className={`h-full w-full items-center text-white/70`}>
-      <div className="flex h-full flex-col gap-2">
-        <div className="flex h-full items-center gap-2">
-          {isEditing ? (
-            <span>
-              <input
-                ref={inputRef}
-                className={`
+    <div className="flex-col items-center justify-items-start gap-2 text-white/70">
+      <div className="flex items-center gap-2">
+        {isEditing ? (
+          <span>
+            <input
+              ref={inputRef}
+              className={`
                     flex h-full w-full
                     flex-col
                     bg-transparent
                     text-white/70
                     focus:outline-none
                     `}
-                onClick={() => setIsEditing(true)}
-                onChange={(e) => {
-                  setIsEditing(true);
-                  setText(e.target.value);
-                }}
-                onBlur={() => {
-                  setText(threadName!);
-                  setIsEditing(false);
-                }}
-                onFocus={() => setIsEditing(true)}
-              />
-            </span>
-          ) : (
-            <span onClick={handleTextClick}>{threadName}</span>
-          )}
+              onClick={() => setIsEditing(true)}
+              onChange={(e) => {
+                setIsEditing(true);
+                setText(e.target.value);
+              }}
+              onBlur={() => {
+                setText(threadName!);
+                setIsEditing(false);
+              }}
+              onFocus={() => setIsEditing(true)}
+            />
+          </span>
+        ) : (
+          <span onClick={handleTextClick}>{threadName}</span>
+        )}
 
-          {isEditing ? (
-            <div className="m-auto mr-2 flex gap-2">
-              <div
-                className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
-                onClick={submitNameChange}
-              >
-                enter
-              </div>
-              <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
-                esc
-              </span>
+        {isEditing ? (
+          <div className="m-auto mr-2 flex gap-2">
+            <div
+              className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
+              onClick={submitNameChange}
+            >
+              enter
             </div>
-          ) : (
-            // <ShareButton />
-            threadId && <PrimaryActions {...{ threadId }} />
-          )}
-        </div>
-        <div className="text-xs text-white/30">Last edit: yesterday</div>
+            <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
+              esc
+            </span>
+          </div>
+        ) : (
+          // <ShareButton />
+          threadId && <PrimaryActions {...{ threadId }} />
+        )}
       </div>
+      <div className="text-xs text-white/30">Last edit: yesterday</div>
     </div>
   );
 };

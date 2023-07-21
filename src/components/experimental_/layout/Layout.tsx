@@ -16,7 +16,7 @@ const HeaderContainer = ({
   children: React.ReactNode;
   setIsOpen: (open: boolean) => void;
 }) => (
-  <div className="sticky top-0 z-40 flex h-20 shrink-0 items-center gap-x-4 bg-gray-primary shadow sm:gap-x-6 sm:p-6">
+  <div className="sticky top-0 z-40 flex items-center gap-x-4 bg-gray-tertiary sm:gap-x-6 sm:p-6">
     <button type="button" className="text-white/50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
       <span className="sr-only">Open sidebar</span>
       <Bars3Icon className="h-8 w-8" aria-hidden="true" />
