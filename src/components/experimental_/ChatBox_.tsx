@@ -18,17 +18,12 @@ const ChatBox = () => {
   return (
     <div className="flex h-full w-full flex-col gap-3">
       {/* chat area */}
-      <div className="flex grow items-center justify-center overflow-auto pt-5">
+      <div className="flex w-full grow items-center justify-center overflow-auto pt-5">
         {isLoading ? <Spinner /> : messageContentComponent}
       </div>
-
       {/* Chat input */}
-      <div className="fixed inset-x-0 bottom-0 flex w-full items-center bg-gray-primary px-2 py-4 lg:py-6">
-        <div className="hidden lg:block lg:w-[15rem]" />
+      <div className="fixed bottom-0 flex w-full items-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6">
         <MessageInput />
-      </div>
-      <div className="w-full py-4 lg:py-6">
-        <div className="h-14" />
       </div>
     </div>
   );
