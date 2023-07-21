@@ -28,14 +28,14 @@ const HeaderContainer = ({
 const Layout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex min-h-screen w-full bg-[#031016]">
+    <div className="flex h-full min-h-screen w-full bg-[#031016]">
       <DynamicSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <main className="w-full">
-        <div className="flex flex-col">
+        <div className="flex h-full w-full flex-col">
           <HeaderContainer setIsOpen={setSidebarOpen} isOpen={sidebarOpen}>
             <Header />
           </HeaderContainer>
-          {children}
+          <div className="flex h-full w-full">{children}</div>
         </div>
       </main>
     </div>
