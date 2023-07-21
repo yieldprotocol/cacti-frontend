@@ -27,14 +27,15 @@ const Sidebar = ({
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
       <NewChatButton />
-      <ChatList />
+      <div className="overflow-y-auto">
+        <ChatList />
+      </div>
       <div className="flex h-full w-full">
-        <div className="flex w-full flex-col self-end">
+        <div className="relative flex w-full flex-col self-end">
           <div className="p-1.5">
             <MoreItems />
             {process.env.NODE_ENV === 'development' && <AccountStatus />}
           </div>
-          {/* {!isOpen && <MenuButton action={() => setIsOpen(!isOpen)} />} */}
           <CustomConnectButton />
         </div>
       </div>
