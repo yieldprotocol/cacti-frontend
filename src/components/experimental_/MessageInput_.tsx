@@ -57,7 +57,7 @@ const useFocus = () => {
   return [inputRef];
 };
 
-export const MessageInput = ({}) => {
+const MessageInput = () => {
   const [messageInput, setMessageInput] = useState<string>('');
 
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
@@ -121,3 +121,5 @@ export const MessageInput = ({}) => {
     </div>
   );
 };
+
+export default MessageInput;

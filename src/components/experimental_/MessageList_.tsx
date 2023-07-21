@@ -3,7 +3,7 @@ import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
 import { MessageItem } from './MessageItem_';
 
-export const MessageList = () => {
+const MessageList = () => {
   const {
     messages,
     isBotThinking,
@@ -18,17 +18,17 @@ export const MessageList = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const multiStepInProgress = isMultiStepInProgress && (
+  const multiStepInProgress = isMultiStepInProgress ? (
     <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
       <span className="after:animate-ellipse">Multi-step workflow in progress</span>
     </div>
-  );
+  ) : null;
 
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
   return (
     <div className="h-full pt-8">
-      {messages.map((message, i) => {
+      {messages.map((message) => {
         if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
           return <React.Fragment key={message.messageId} />;
         }
@@ -47,13 +47,15 @@ export const MessageList = () => {
         );
       })}
 
-      {!insertBeforeMessageId && (
+      {!insertBeforeMessageId ? (
         <>
           {multiStepInProgress}
           {isBotThinking ? <BotThinking /> : null}
           {bottomRefDiv}
         </>
-      )}
+      ) : null}
     </div>
   );
 };
+
+export default MessageList;

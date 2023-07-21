@@ -19,8 +19,8 @@ const CustomConnectButton = () => {
         const ready = mounted && authenticationStatus !== 'loading';
         const connected =
           ready &&
-          account &&
-          chain &&
+          !!account &&
+          !!chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
@@ -37,7 +37,7 @@ const CustomConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className="h-full w-full">
+                  <button onClick={openConnectModal} type="button" className="h-full w-full p-3">
                     <div className="animate-pulse text-sm text-white/70">Connect Wallet</div>
                   </button>
                 );
@@ -45,7 +45,7 @@ const CustomConnectButton = () => {
 
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button" className="h-full w-full">
+                  <button onClick={openChainModal} type="button" className="h-full w-full p-3">
                     <div className="animate-pulse text-sm text-red-500">Wrong network</div>
                   </button>
                 );
