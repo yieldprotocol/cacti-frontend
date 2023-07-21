@@ -27,7 +27,7 @@ const Sidebar = ({
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
       />
       <NewChatButton />
-      <div className="overflow-y-auto">
+      <div className="h-full overflow-y-auto">
         <ChatList />
       </div>
       <div className="flex h-full w-full">
