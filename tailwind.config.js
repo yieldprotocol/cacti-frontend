@@ -26,6 +26,8 @@ module.exports = {
       },
       colors: {
         'gray-primary': '#031016',
+        'gray-secondary': '#0F1C22',
+        'green-primary': '#2E8C87',
       },
     },
     plugins: [],
