@@ -16,7 +16,7 @@ const ChatBox = () => {
   const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
 
   return (
-    <div className="relative flex flex-col overflow-auto">
+    <div className="relative flex h-full w-full flex-col overflow-auto">
       {/* chat area */}
       <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
         {isLoading ? <Spinner /> : messageContentComponent}

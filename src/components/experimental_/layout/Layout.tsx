@@ -29,10 +29,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="flex h-screen w-full bg-gray-primary">
-      <div className="flex h-full overflow-hidden">
-        <div className="flex">
+      <div className="flex h-full w-full overflow-hidden">
+        <div className="flex h-full w-full">
           <DynamicSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-          <main className="flex flex-col">
+          <main className="flex h-full w-full flex-col">
             <HeaderContainer setIsOpen={setSidebarOpen} isOpen={sidebarOpen}>
               <Header />
             </HeaderContainer>
