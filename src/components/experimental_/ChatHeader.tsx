@@ -8,8 +8,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
-import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
-import { useQueryShareSettings } from '@/api/queries';
+import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
+import { useQueryChatSettings } from '@/api/chats/queries';
+import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import useThread from '@/hooks/useThread';
 
 interface TooltipProps {
@@ -28,9 +29,9 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const sessionId = threadId;
   const { status } = useSession();
-  const { isSuccess, settings } = useQueryShareSettings(sessionId);
-  const visibilityMutation = useMutationUpdateShareSettings(sessionId);
-  const cloneMutation = useMutationCloneSession(sessionId);
+  const { isSuccess, settings } = useQueryChatSettings(sessionId);
+  const visibilityMutation = useMutationUpdateChatSettings(sessionId);
+  const cloneMutation = useMutationCreateSharedSession(sessionId);
   const visibilityToggle = () => {
     const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
     visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
