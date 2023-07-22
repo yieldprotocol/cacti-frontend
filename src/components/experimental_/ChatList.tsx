@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Popover, Transition } from '@headlessui/react';
 import { CheckIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
-import { useQueryChats } from '@/api/queries';
+import { useQueryChats } from '@/api/chats/queries';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
 
