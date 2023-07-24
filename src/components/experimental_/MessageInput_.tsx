@@ -79,8 +79,8 @@ const MessageInput = () => {
   const isConnected = connectionStatus === ReadyState.OPEN;
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
-      <div className="flex items-center gap-1 rounded-lg border border-gray-300/10 p-1 duration-200 focus-within:border-teal-100/30 lg:gap-3 lg:p-2">
+    <div className="mx-auto w-full max-w-4xl rounded-xl bg-black/30">
+      <div className="flex items-center gap-1 rounded-xl border border-gray-300/10 p-1 duration-200 focus-within:border-teal-100/30 lg:gap-3 lg:p-2">
         <div className="text-end">
           <button
             className="grid h-9 w-9 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
