@@ -115,8 +115,8 @@ export const ImageResponse = ({
               ))}
             </div>
           )}
-          {description && <div> {description} </div>}
-          {children && <div> {children} </div>}
+          {description && <div className="py-2" > {description} </div>}
+          {children && <div className="py-2" > {children} </div>}
         </div>
       )}
 
