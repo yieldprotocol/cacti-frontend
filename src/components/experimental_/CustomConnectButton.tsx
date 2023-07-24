@@ -24,7 +24,9 @@ const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className="h-full w-full cursor-pointer rounded-lg border-[1px] border-gray-800 bg-gray-700/50 text-center text-sm hover:opacity-80"
+            className={`h-full w-full cursor-pointer rounded-lg border-[1px] ${
+              !connected ? 'border-green-primary/10 bg-green-primary' : 'border-gray-800'
+            } bg-gray-700/50 text-center text-sm font-bold text-white hover:opacity-80`}
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -38,7 +40,7 @@ const CustomConnectButton = () => {
               if (!connected) {
                 return (
                   <button onClick={openConnectModal} type="button" className="h-full w-full p-3">
-                    <div className="animate-pulse text-sm text-white/70">Connect Wallet</div>
+                    <div className="text-sm text-white/70">Connect Wallet</div>
                   </button>
                 );
               }
@@ -46,7 +48,7 @@ const CustomConnectButton = () => {
               if (chain.unsupported) {
                 return (
                   <button onClick={openChainModal} type="button" className="h-full w-full p-3">
-                    <div className="animate-pulse text-sm text-red-500">Wrong network</div>
+                    <div className="text-sm text-red-500">Wrong network</div>
                   </button>
                 );
               }
