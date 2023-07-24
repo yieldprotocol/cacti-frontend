@@ -5,6 +5,7 @@ import { fetchChats, fetchShareSettings } from '@/api/fetches';
 export interface ChatSession {
   id: string;
   created: string;
+  name: string | null;
 }
 export interface Chats {
   sessions: ChatSession[] | undefined;
@@ -18,6 +19,7 @@ export const useQueryChats = () => {
 
 export interface ChatShareSettings {
   visibility?: string;
+  name?: string;
   canEdit?: boolean;
 }
 export const useQueryShareSettings = (sessionId: string) => {

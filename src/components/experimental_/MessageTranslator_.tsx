@@ -14,6 +14,7 @@ import ListContainer from './containers/ListContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
+import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
@@ -128,7 +129,7 @@ export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
 
   const { name, params, variant } = props.widget;
-  const fnName = name.toLowerCase().replace('display-', '');
+  const fnName = name.replace('display-', '');
   const parsedArgs = parseArgs(params);
 
   console.log('WIDGET: ', `${fnName}(${params})`);
@@ -199,6 +200,7 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
