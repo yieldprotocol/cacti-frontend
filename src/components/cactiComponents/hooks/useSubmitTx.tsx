@@ -38,7 +38,6 @@ const useSubmitTx = (
   sendParams?: UnsignedTransaction,
   onSuccess?: () => void,
   onError?: () => void,
-  hasAllowance?: boolean
 ) => {
   const { refetch: refetchEthBal } = useBalance();
   const [error, setError] = useState<string>();
@@ -47,16 +46,21 @@ const useSubmitTx = (
     if (onError) onError();
     setError(error.message);
   };
+
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
+
   /* prepare a write transaction */
-  const { config: writeConfig, error: prepareError } = usePrepareContractWrite(params);
+  const { config: writeConfig, error: prepareError } = usePrepareContractWrite({
+    ...params,
+    onError: handleError,
+  });
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig } = usePrepareSendTransaction({
     request: { ...(writeConfig.request ?? sendParams) },
-    enabled: hasAllowance,
+    enabled: true,
     onError: handleError,
   });
 

@@ -86,11 +86,10 @@ export const ActionResponse = ({
   );
 
   const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
-    txParams,
-    sendParams,
+    hasAllowance ? txParams : undefined,
+    hasAllowance ? sendParams : undefined,
     () => null,
     () => null,
-    hasAllowance
   );
 
   const { data: ethBal } = useBalance();
@@ -102,8 +101,6 @@ export const ActionResponse = ({
     approvalParams?.skipApproval
   ); // TODO figure out better way to infer if eth
 
-  const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
-
   // button state
   const [label, setLabel] = useState<string>();
   const [state, setState] = useState(ActionResponseState.LOADING);
@@ -114,6 +111,7 @@ export const ActionResponse = ({
    * Check if the acount has enough balance for the transaction
    *
    *  */
+  const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
   useEffect(() => {
     if (approvalParams?.skipBalanceCheck) return setHasEnoughBalance(true);
 
@@ -143,11 +141,11 @@ export const ActionResponse = ({
     if (!hasEnoughBalance) {
       console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
-      return setState(ActionResponseState.DISABLED);
+      setState(ActionResponseState.DISABLED);
     }
 
     /* -------- APPROVAL FLOW --------- */
-    if (!hasAllowance) {
+    if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
       if (approveTx) {
         setAction({ name: 'approve', fn: approveTx });
@@ -170,7 +168,6 @@ export const ActionResponse = ({
       }
 
       // ACTION: user confirms approval in wallet  ( or signs permit )
-
       // case: waiting for the approval transaction */
       if (approvalTransacting) {
         console.log('Waiting for approval transaction...');
