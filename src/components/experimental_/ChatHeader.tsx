@@ -108,7 +108,7 @@ const ChatHeader = () => {
   }, [threadName, inputText, submitNameChange]);
 
   return (
-    <div className="grid items-center justify-items-start gap-2 text-white/70">
+    <div className="grid items-center justify-items-start gap-2">
       <div className="flex items-center gap-2">
         {isEditing ? (
           <span>
