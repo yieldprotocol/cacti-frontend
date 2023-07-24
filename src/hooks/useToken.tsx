@@ -14,7 +14,7 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
     (tokenSymbol?: string, tokenAddress?: string) => {
       if (getTokenIsETH(tokenSymbol, tokenAddress))
         return {
-          address: ethers.constants.AddressZero,
+          address: ethers.constants.AddressZero as Address,
           symbol: 'ETH',
           decimals: 18,
           logoURI:
