@@ -21,7 +21,7 @@ const Sidebar = ({
   } = useContext(SettingsContext);
 
   return (
-    <div className="flex h-screen w-full flex-1 flex-col overflow-y-auto p-1.5 text-gray-300">
+    <div className="flex h-screen w-full flex-1 flex-col p-1.5 text-gray-300">
       <DevToolsModal
         openState={developerTools}
         handleClose={() => changeSetting(Setting.DEVELOPER_TOOLS, false)}
