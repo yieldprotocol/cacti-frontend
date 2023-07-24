@@ -99,9 +99,7 @@ const MessageInput = () => {
           <input
             type="text"
             onChange={(e) => setMessageInput(e.target.value)}
-            placeholder={
-              interactor === 'user' ? 'Enter your chat message...' : 'Enter your comment...'
-            }
+            placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
             tabIndex={0}
             value={messageInput}
             ref={inputRef}
