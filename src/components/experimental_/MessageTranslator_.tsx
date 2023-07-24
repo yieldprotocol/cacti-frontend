@@ -9,6 +9,7 @@ import { TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
+import LiquityAdjust from './widgets/liquity/adjust/LiquityAdjust';
 import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
@@ -210,6 +211,15 @@ export const Widget = (props: WidgetProps) => {
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
+  widgets.set(
+    'liquity-adjust',
+    <LiquityAdjust
+      borrowAmount={parsedArgs[0]}
+      repayAmount={parsedArgs[1]}
+      depositCollateral={parsedArgs[2]}
+      withdrawCollateral={parsedArgs[3]}
+    />
+  );
   widgets.set('liquity-close', <LiquityClose />);
   
   widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
@@ -219,6 +229,7 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
 
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+
 
 
   /* If available, return the widget in the widgets map */
