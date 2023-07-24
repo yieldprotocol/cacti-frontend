@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -55,7 +56,8 @@ export type ActionResponseProps = {
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
-  onSuccess?: () => JSX.Element | string;
+  onSuccess?: (txReceipt?: TransactionReceipt) => any;
+  onError?: (txHash?: string) => any;
   // assertCallParams?: AssertCallBasicParams;
   // altAction?: () => Promise<any>;
 };
@@ -71,11 +73,13 @@ export const ActionResponse = ({
   label: label_,
   disabled,
   stepper,
+  onSuccess,
+  onError,
 }: ActionResponseProps) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
 
-  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt } = useSubmitTx(
+  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt, hash } = useSubmitTx(
     txParams,
     sendParams
   );
@@ -178,6 +182,7 @@ export const ActionResponse = ({
         console.log('Error Building/Validating tx');
         setLabel(`Error validating the transaction.`);
         setState(ActionResponseState.ERROR);
+        onError?.(hash);
       }
 
       /* case tx/approval success, waiting for tx-building */
@@ -210,6 +215,7 @@ export const ActionResponse = ({
         console.log('TX SUCCESS');
         setLabel('Transaction Complete');
         setState(ActionResponseState.SUCCESS);
+        onSuccess?.(receipt);
       }
     }
   }, [
