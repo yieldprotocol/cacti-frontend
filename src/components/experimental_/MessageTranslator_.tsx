@@ -125,7 +125,7 @@ export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
 
   const { name, params, variant } = props.widget;
-  const fnName = name.toLowerCase().replace('display-', '');
+  const fnName = name.replace('display-', '');
   const parsedArgs = parseArgs(params);
 
   console.log('WIDGET: ', `${fnName}(${params})`);
