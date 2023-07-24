@@ -39,7 +39,7 @@ const supportedProjects = {
   },
 };
 interface YieldFarmProps {
-  project: Project|undefined;
+  project: Project | undefined;
   network: string;
   token: Token;
   amount: BigNumber;
@@ -168,7 +168,7 @@ export const YieldFarmWidget = ({
       centerTitle={true}
     >
       <ConnectFirst>
-        <YieldFarm {...{ project, network, token: token!, amount }} /> 
+        <YieldFarm {...{ project, network, token: token!, amount }} />
       </ConnectFirst>
     </ActionPanel>
   );

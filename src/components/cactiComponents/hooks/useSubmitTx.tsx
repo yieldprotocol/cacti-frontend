@@ -37,7 +37,7 @@ const useSubmitTx = (
   params?: TxBasicParams,
   sendParams?: UnsignedTransaction,
   onSuccess?: () => void,
-  onError?: () => void,
+  onError?: () => void
 ) => {
   const { refetch: refetchEthBal } = useBalance();
   const [error, setError] = useState<string>();

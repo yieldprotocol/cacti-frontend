@@ -48,7 +48,7 @@ const useApproval = (params: ApprovalBasicParams) => {
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
   const { config } = usePrepareContractWrite({
-    address: !params.skipApproval ? tokenAddress: undefined,
+    address: !params.skipApproval ? tokenAddress : undefined,
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
