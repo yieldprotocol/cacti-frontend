@@ -8,21 +8,25 @@ import { Widgetize } from '../MessageTranslator';
 import { TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
-import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
+import { MultiStepContainer } from './containers/MultiStepContainer';
+import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
 import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
+import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
+import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
+import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -84,6 +88,10 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
           if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
+          /* handle if a single step container is passed */
+          if (item.name === 'display-tx-payload-for-sending-container')
+            return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
+
           /* if item has a function name, assume its a widget */
           return [...list, <Widget key={idx} widget={item} />];
         }
@@ -126,7 +134,7 @@ export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
 
   const { name, params, variant } = props.widget;
-  const fnName = name.toLowerCase().replace('display-', '');
+  const fnName = name.replace('display-', '');
   const parsedArgs = parseArgs(params);
 
   console.log('WIDGET: ', `${fnName}(${params})`);
@@ -158,7 +166,19 @@ export const Widget = (props: WidgetProps) => {
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
 
+  widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
+
+  widgets.set(
+    'fetch-nfts',
+    <NftCollection
+      address={parsedArgs[0]}
+      name={parsedArgs[1]}
+      network={'ethereum-mainnet'}
+      assetsToShow={6}
+    />
+  );
 
   widgets.set(
     'yield-protocol-lend',
@@ -185,6 +205,7 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
@@ -203,6 +224,7 @@ export const Widget = (props: WidgetProps) => {
     'withdraw-vault',
     <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
+  widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

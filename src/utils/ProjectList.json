@@ -78,5 +78,12 @@
     "description": "zkSync is an L2 scaling solution for Ethereum",
     "url": "https://zksync.io/",
     "logo": "https://zksync.io/favicon.ico"
+  },
+  {
+    "id": "weth",
+    "name": "WETH",
+    "description": "Wrapped Ether",
+    "url": "https://weth.io/",
+    "logo": "https://etherscan.io/token/images/weth_28.png"
   }
 ]

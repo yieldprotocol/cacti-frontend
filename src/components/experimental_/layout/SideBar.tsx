@@ -1,20 +1,19 @@
 import { useContext, useState } from 'react';
 import { ReadyState } from 'react-use-websocket';
+import Link from 'next/link';
 import {
-  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   Cog8ToothIcon,
   DocumentIcon,
   HomeIcon,
-  LinkIcon,
   QueueListIcon,
   WrenchIcon,
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
-import { DevToolsModal } from '../devTools/DevToolsModal';
-import ChatList from './ChatList';
+import { DevToolsModal } from '../../devTools/DevToolsModal';
+import ChatList from '../ChatList';
 
 type MoreItem = { icon: any; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -67,14 +66,6 @@ const Sidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const reset = () => {
-    const q = window.location.search;
-    const params = new URLSearchParams(q);
-    params.delete('s');
-    const paramString = params.toString();
-    window.location.assign(paramString ? `/?${paramString}` : '/');
-  };
-
   return (
     <>
       <DevToolsModal
@@ -84,14 +75,14 @@ const Sidebar = () => {
 
       <div className="w-full p-4 text-white/70 ">
         <div className="flex w-full items-center gap-2">
-          <div
+          <Link
             className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
-            onClick={() => reset()}
+            href={`/`}
           >
             <div className="flex w-full justify-center text-xs ">
               <div>New Chat</div>
             </div>
-          </div>
+          </Link>
         </div>
 
         <ChatList />
@@ -150,7 +141,6 @@ const Sidebar = () => {
             label="StoryBook"
             action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
           />
-          <MoreItem icon={<ArrowPathIcon />} label="Reset App" action={reset} />
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import { ReactNode, useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useQueryClient } from 'react-query';
 import { AppProps } from 'next/app';
 import {
   AvatarComponent,
@@ -9,8 +10,6 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -20,7 +19,9 @@ import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
 
-const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
+const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
+  const queryClient = useQueryClient();
+
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -110,29 +111,13 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
 
   return (
     <WagmiConfig client={wagmiClient}>
-      <SessionProvider refetchInterval={0} session={pageProps?.session}>
-        {useSiwe && (
-          <RainbowKitSiweNextAuthProvider
-            getCustomNonce={getCustomNonce}
-            getSiweMessageOptions={getSiweMessageOptions}
-            getSigninCallback={getSigninCallback}
-            getSignoutCallback={getSignoutCallback}
-          >
-            <RainbowKitProvider
-              chains={chains}
-              theme={
-                experimentalUi
-                  ? darkTheme({ accentColor: '#1f2937' })
-                  : lightTheme({ accentColor: '#1f2937' })
-              }
-              showRecentTransactions={true}
-            >
-              {children}
-            </RainbowKitProvider>
-          </RainbowKitSiweNextAuthProvider>
-        )}
-
-        {!useSiwe && (
+      {useSiwe && (
+        <RainbowKitSiweNextAuthProvider
+          getCustomNonce={getCustomNonce}
+          getSiweMessageOptions={getSiweMessageOptions}
+          getSigninCallback={getSigninCallback}
+          getSignoutCallback={getSignoutCallback}
+        >
           <RainbowKitProvider
             chains={chains}
             theme={
@@ -141,12 +126,26 @@ const ConnectionWrapper = ({ children, pageProps, useSiwe = true }: any) => {
                 : lightTheme({ accentColor: '#1f2937' })
             }
             showRecentTransactions={true}
-            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
-        )}
-      </SessionProvider>
+        </RainbowKitSiweNextAuthProvider>
+      )}
+
+      {!useSiwe && (
+        <RainbowKitProvider
+          chains={chains}
+          theme={
+            experimentalUi
+              ? darkTheme({ accentColor: '#1f2937' })
+              : lightTheme({ accentColor: '#1f2937' })
+          }
+          showRecentTransactions={true}
+          avatar={CustomAvatar}
+        >
+          {children}
+        </RainbowKitProvider>
+      )}
     </WagmiConfig>
   );
 };

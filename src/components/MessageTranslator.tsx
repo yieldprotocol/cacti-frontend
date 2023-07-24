@@ -1,7 +1,4 @@
-import { Fragment, createElement, useEffect } from 'react';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { getToken } from 'next-auth/jwt';
-import { useNetwork } from 'wagmi';
+import { Fragment, useEffect } from 'react';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -18,8 +15,7 @@ import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import useToken from '@/hooks/useToken';
-import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -82,9 +78,6 @@ export const Widgetize = (widget: Widget) => {
 
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const token = getToken(tokenSymbol);
-        // const amount = parseUnits(amtString, token?.decimals);
-        // const project = findProjectByName(projectName);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
@@ -162,27 +155,28 @@ export const Widgetize = (widget: Widget) => {
         );
       }
 
-      // case 'nft-collection-container': {
-      //   let params;
-      //   try {
-      //     params = JSON.parse(args);
-      //   } catch (e) {
-      //     const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
-      //     params = { network, address, name, numAssets, previewImageUrl };
-      //   }
-      //   return <NftCollectionContainer {...params} />;
-      // }
-      // case 'nft-asset-container': {
-      //   let params;
-      //   try {
-      //     params = JSON.parse(args);
-      //   } catch (e) {
-      //     const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
-      //       parseArgsStripQuotes(args);
-      //     params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
-      //   }
-      //   return <NftAssetContainer {...params} />;
-      // }
+      // Re-enable this temporarily for fallback
+      case 'nft-collection-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, name, numAssets, previewImageUrl] = parseArgsStripQuotes(args);
+          params = { network, address, name, numAssets, previewImageUrl };
+        }
+        return <NftCollectionContainer {...params} />;
+      }
+      case 'nft-asset-container': {
+        let params;
+        try {
+          params = JSON.parse(args);
+        } catch (e) {
+          const [network, address, tokenId, collectionName, name, previewImageUrl, price] =
+            parseArgsStripQuotes(args);
+          params = { network, address, tokenId, collectionName, name, previewImageUrl, price };
+        }
+        return <NftAssetContainer {...params} />;
+      }
 
       case 'nft-asset-traits-container': {
         const { asset, values } = JSON.parse(args);
