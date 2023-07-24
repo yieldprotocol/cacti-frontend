@@ -58,7 +58,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.reduce((list, item, idx) => {     
+      const list = parsedMessage.reduce((list, item, idx) => {
         /* if item is a string (and not nothing) simply send a text response */
         if (typeof item === 'string' && item.trim() !== '')
           return [
@@ -159,12 +159,14 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
 
-  widgets.set('nft-asset-traits-container', 
-  <NftAsset {...parsedArgs?.asset?.params}> 
-    {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
+  widgets.set(
+    'nft-asset-traits-container',
+    <NftAsset {...parsedArgs?.asset?.params}>
+      {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
       console.log( trait) ) }
     </> */}
-  </NftAsset>);
+    </NftAsset>
+  );
 
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 

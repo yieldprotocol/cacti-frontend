@@ -3,8 +3,8 @@ import { useAsset } from '@center-inc/react';
 import axios from 'axios';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
-import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { InlineChip } from '@/components/cactiComponents/InlineChip';
+import { ETHEREUM_NETWORK } from '@/utils/constants';
 
 export interface NftAssetProps {
   network: string;
@@ -49,7 +49,7 @@ export const NftAsset = ({
   name,
   previewImageUrl,
   variant,
-  price
+  price,
 }: NftAssetProps) => {
   // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
   const {
@@ -85,11 +85,11 @@ export const NftAsset = ({
         <div className="text-xs">{nftData?.metadata?.description}</div>
       )}
       {price && (
-        <InlineChip 
-          className="text-xs" 
+        <InlineChip
+          className="text-xs"
           label={price !== 'unlisted' ? `Price: ${price}` : 'Not for Sale'}
           image="https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1608803028"
-          />
+        />
       )}
     </ImageResponse>
   );
