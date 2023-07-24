@@ -13,6 +13,8 @@ import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import LidoDeposit from './widgets/lido/LidoDeposit';
+import LidoWithdraw from './widgets/lido/LidoWithdraw';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
@@ -20,6 +22,8 @@ import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
+import RethDeposit from './widgets/rocketPool/rocketPoolDeposit';
+import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
@@ -207,8 +211,15 @@ export const Widget = (props: WidgetProps) => {
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
+  
+  widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
+
+  widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
 
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
