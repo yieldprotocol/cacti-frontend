@@ -86,7 +86,13 @@ const YieldProtocolLend = ({
       const poolAddress = seriesEntity?.poolAddress;
       if (!poolAddress) return;
 
-      const lendCallData = lend(address, amount!, baseAddress as `0x${string}`, poolAddress, tokenInIsETH);
+      const lendCallData = lend(
+        address,
+        amount!,
+        baseAddress as `0x${string}`,
+        poolAddress,
+        tokenInIsETH
+      );
 
       setTxParams(lendCallData ? await getTxParams(lendCallData, ladle) : undefined);
       setData({ maturity_: `${nameFromMaturity(seriesEntity.maturity, 'MMM yyyy')}` });
