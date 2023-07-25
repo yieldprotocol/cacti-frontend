@@ -87,7 +87,7 @@ export const NftAsset = ({
       {!price ? null : (
         <InlineChip
           className="text-xs"
-          label={price !== 'unlisted' ? `Price: ${price}` : 'Not for Sale'}
+          label={price !== 'unlisted' ? `${price}` : 'Not for Sale'}
           image="https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1608803028"
         />
       )}
