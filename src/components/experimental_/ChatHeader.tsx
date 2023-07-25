@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EyeIcon, EyeSlashIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
-import { useChatContext } from '@/contexts/ChatContext';
 import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
