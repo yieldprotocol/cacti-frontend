@@ -27,14 +27,18 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const sessionId = threadId;
+  
   const { status } = useSession();
   const { isSuccess, settings } = useQueryShareSettings(sessionId);
+  
   const visibilityMutation = useMutationUpdateShareSettings(sessionId);
   const cloneMutation = useMutationCloneSession(sessionId);
+  
   const visibilityToggle = () => {
     const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
     visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
   };
+
   const visibilityIcon =
     settings?.visibility === 'public' ? (
       <EyeIcon className="h-4 w-4 hover:text-white" />
@@ -62,7 +66,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
       >
         Share
       </button>
-      <div>
+      {/* <div>
         {isSuccess &&
           (canEdit ? (
             <Tooltip text={`make chat ${settings.visibility === 'public' ? 'private' : 'public'}`}>
@@ -76,7 +80,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
           ) : (
             <div className="rounded-md bg-white/10 p-2">{visibilityIcon}</div>
           ))}
-      </div>
+      </div> */}
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
