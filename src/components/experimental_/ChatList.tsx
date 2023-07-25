@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import { Menu, Popover, Transition } from '@headlessui/react';
 import { CheckIcon, EllipsisVerticalIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
+import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
-import { useChatContext } from '@/contexts/ChatContext';
 
 export type ChatItem = {
   id: string;
@@ -15,17 +15,18 @@ export type ChatItem = {
 const ChatMenu = ({ id }: ChatItem) => {
   const { query } = useRouter();
 
-  const {setShowShareModal} = useChatContext();
+  const { setShowShareModal } = useChatContext();
   const selected = query.id === id;
-  
+
   return (
     <>
-    {selected && 
-    <div className="flex items-center gap-2">
-      <button className="h-3 w-3" onClick={() => setShowShareModal(true)}>
-        <ShareIcon />
-      </button>
-    </div>}
+      {selected && (
+        <div className="flex items-center gap-2">
+          <button className="h-3 w-3" onClick={() => setShowShareModal(true)}>
+            <ShareIcon />
+          </button>
+        </div>
+      )}
     </>
   );
 };
