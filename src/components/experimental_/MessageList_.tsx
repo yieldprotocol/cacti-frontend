@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { BotThinking } from './BotThinking';
 import { MessageItem } from './MessageItem_';
+import { MultiStepProgressIndicator } from './MultiStepProgressIndicator';
 
 const MessageList = () => {
   const {
@@ -38,8 +39,11 @@ const MessageList = () => {
             {message.messageId == insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
-                {multiStepInProgress}
-                {isBotThinking ? <BotThinking /> : null}
+                <ProgressIndicators
+                  isBotThinking={isBotThinking}
+                  isMultiStepInProgress={isMultiStepInProgress}
+                  bottomRef={bottomRef}
+                />
               </>
             )}
             <MessageItem message={message} />
@@ -49,12 +53,39 @@ const MessageList = () => {
 
       {!insertBeforeMessageId ? (
         <>
-          {multiStepInProgress}
-          {isBotThinking ? <BotThinking /> : null}
+          <ProgressIndicators
+            isBotThinking={isBotThinking}
+            isMultiStepInProgress={isMultiStepInProgress}
+            bottomRef={bottomRef}
+          />
           {bottomRefDiv}
         </>
       ) : null}
     </div>
+  );
+};
+
+
+const ProgressIndicators = ({
+  isBotThinking,
+  isMultiStepInProgress,
+  bottomRef,
+}: {
+  isBotThinking: boolean;
+  isMultiStepInProgress: boolean;
+  bottomRef: React.RefObject<HTMLDivElement>;
+}) => {
+  useEffect(() => {
+    if (isMultiStepInProgress) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isMultiStepInProgress, bottomRef]);
+
+  return (
+    <>
+      {isMultiStepInProgress ? <MultiStepProgressIndicator /> : null}
+      {isBotThinking ? <BotThinking /> : null}
+    </>
   );
 };
 

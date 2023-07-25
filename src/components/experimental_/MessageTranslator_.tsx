@@ -5,19 +5,25 @@ import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
-import { TextResponse } from '../cactiComponents';
+import { ListResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
-import { MultiStepContainer } from '../widgets/MultiStepContainer';
 import { FeedbackButton } from './FeedbackButton_';
 import ListContainer from './containers/ListContainer';
+import { MultiStepContainer } from './containers/MultiStepContainer';
+import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
+import LidoDeposit from './widgets/lido/LidoDeposit';
+import LidoWithdraw from './widgets/lido/LidoWithdraw';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
 import { NftAsset } from './widgets/nft/NftAsset';
 import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
+import RethDeposit from './widgets/rocketPool/rocketPoolDeposit';
+import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
@@ -64,7 +70,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             ...list,
             <Widget
               key={item.slice(0, 16)}
-              widget={{ name: 'textresponse', params: { text: item } }}
+              widget={{ name: 'TextResponse', params: { text: item } }}
             />,
           ];
 
@@ -81,6 +87,10 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
           /* handle if a multistep container is passed */
           if (item.name === 'display-multistep-payload-container')
             return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
+
+          /* handle if a single step container is passed */
+          if (item.name === 'display-tx-payload-for-sending-container')
+            return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
 
           /* if item has a function name, assume its a widget */
           return [...list, <Widget key={idx} widget={item} />];
@@ -124,7 +134,7 @@ export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
 
   const { name, params, variant } = props.widget;
-  const fnName = name.toLowerCase().replace('display-', '');
+  const fnName = name.replace('display-', '');
   const parsedArgs = parseArgs(params);
 
   console.log('WIDGET: ', `${fnName}(${params})`);
@@ -158,6 +168,15 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
 
+  widgets.set(
+    'nft-asset-traits-container',
+    <NftAsset {...parsedArgs?.asset?.params}>
+      {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
+      console.log( trait) ) }
+    </> */}
+    </NftAsset>
+  );
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(
@@ -184,7 +203,7 @@ export const Widget = (props: WidgetProps) => {
    * Experimental: Bring in some 'direct' cacti components
    * */
   widgets.set('tableresponse', <TableResponse {...parsedArgs} />);
-  widgets.set('textresponse', <TextResponse {...parsedArgs} />);
+  widgets.set('TextResponse', <TextResponse {...parsedArgs} />);
   widgets.set('table-container', <TableResponse {...parsedArgs} />);
   widgets.set(
     'zksync-deposit',
@@ -195,11 +214,18 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
+
+  widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
+
+  widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
+  widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
 
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
