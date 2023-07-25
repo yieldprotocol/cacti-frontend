@@ -29,7 +29,7 @@ const ChatItem = ({ id }: ChatItem) => {
           selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
         }`}
       >
-      {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
+        {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
           <div

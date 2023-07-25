@@ -1,6 +1,12 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { EyeIcon, EyeSlashIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  PencilIcon,
+  ShareIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 import { useMutationCloneSession, useMutationUpdateShareSettings } from '@/api/mutations';
 import { useQueryShareSettings } from '@/api/queries';
@@ -83,7 +89,6 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 };
 
 const ChatHeader = () => {
-
   const { threadId, threadName, setThreadName } = useThread();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -166,7 +171,12 @@ const ChatHeader = () => {
             </div>
           </span>
         ) : (
-          <span onClick={handleTextClick}>{threadName}</span>
+          <div className="flex items-center gap-4">
+            <span onClick={handleTextClick}> {threadName} </span>
+            <div className="h-4 w-4 hover:text-white" onClick={() => setIsEditing(true)}>
+              <PencilIcon />{' '}
+            </div>
+          </div>
         )}
 
         <div className="flex w-full justify-items-start text-xs text-white/30">

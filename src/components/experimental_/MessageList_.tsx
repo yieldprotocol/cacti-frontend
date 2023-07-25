@@ -65,7 +65,6 @@ const MessageList = () => {
   );
 };
 
-
 const ProgressIndicators = ({
   isBotThinking,
   isMultiStepInProgress,
