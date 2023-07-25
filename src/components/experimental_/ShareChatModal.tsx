@@ -118,15 +118,13 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
                           )}
                         </div>
                         <div className="text-sm">
-                          {!newThreadId
-                            ? 'Share and Copy link'
-                            : 'Create a New Share'}
+                          {!newThreadId ? 'Share and Copy link' : 'Create a New Share'}
                         </div>
                       </div>
                     </button>
 
                     {newThreadId ? (
-                      <div className=" mt-10 text-sm text-gray-600 space-y-2">
+                      <div className=" mt-10 space-y-2 text-sm text-gray-600">
                         <div className="flex gap-4">
                           Url: {newThreadUrl}
                           <div className="h-4 w-4" onClick={() => copy(newThreadUrl!)}>

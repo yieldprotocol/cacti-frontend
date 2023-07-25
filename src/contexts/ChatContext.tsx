@@ -40,7 +40,7 @@ export type ChatContextType = {
 
   showShareModal: boolean;
   setShowShareModal: (value: boolean) => void;
-  shareChat: (id: string) => string|undefined;
+  shareChat: (id: string) => string | undefined;
 };
 
 const initialContext = {
@@ -84,7 +84,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
-  
+
   const shareChat = (id: string) => {
     console.log('Sharing Chat: ', id);
     return '12341234-2134-324234-1234';
