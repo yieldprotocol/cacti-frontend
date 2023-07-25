@@ -83,6 +83,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 };
 
 const ChatHeader = () => {
+
   const { threadId, threadName, setThreadName } = useThread();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
