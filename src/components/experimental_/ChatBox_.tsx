@@ -19,7 +19,7 @@ const ChatBox = () => {
   return (
     <div className="flex h-full w-full flex-col gap-3">
       {/* chat sharing modal*/}
-      <ShareChatModal />
+      <ShareChatModal id={id as string} />
 
       {/* chat area */}
       <div className="flex grow items-center justify-center overflow-auto pt-5">
