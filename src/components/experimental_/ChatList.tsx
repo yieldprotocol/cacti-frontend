@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 import { useChatContext } from '@/contexts/ChatContext';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useQueryChats } from '@/api/queries';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
+import { useQueryChats } from '@/api/chats/queries';
 
 export type ChatItem = {
   id: string;
 };
 
 const ChatItem = ({ id }: ChatItem) => {
+  const { setShowShareModal } = useChatContext();
   const { threadName } = useThread(id);
   const { query } = useRouter();
   const selected = query.id === id;

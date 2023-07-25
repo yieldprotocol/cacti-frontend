@@ -42,7 +42,8 @@ export const useMutationCreateSharedSession = (sessionId: string) => {
     onSuccess: (data, variables, context): void => {
       if (data) {
         const newSessionId = data;
-        router.push(`/shares/${newSessionId}`);
+        // router.push(`/shares/${newSessionId}`); 
+        return newSessionId;
         queryClient.invalidateQueries({ queryKey: ['shares'] });
       }
     },

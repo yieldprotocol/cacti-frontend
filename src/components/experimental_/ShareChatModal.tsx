@@ -43,8 +43,11 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
 
       /* If the thread has a name - rename the share to the same name */
       threadName !== id && handleEditName(threadName!);
+
     } catch (error) {
+
       console.log('Sharing Error: ', error);
+      
     }
     setIsSharing(false);
   };
