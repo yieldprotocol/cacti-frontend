@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useQueryChats } from '@/api/queries';
+import { useQueryChats } from '@/api/chats/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 // Use experimental components

@@ -1,10 +1,9 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Menu, Popover, Transition } from '@headlessui/react';
-import { CheckIcon, EllipsisVerticalIcon, ShareIcon } from '@heroicons/react/24/outline';
-import { useQueryChats } from '@/api/queries';
+import { CheckIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
+import { useQueryChats } from '@/api/chats/queries';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
 
