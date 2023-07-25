@@ -87,12 +87,12 @@ export const ImageResponse = ({
           <div className="flex min-w-fit flex-shrink">
             <Image src={image} alt={title} />
           </div>
-          <div className="flex flex-grow flex-col justify-between">
+          <div className="flex flex-grow flex-col justify-between ">
             {title && <Title />}
             {description && <div> {description} </div>}
-            {children && <div> {children} </div>}
+            {children && <div className="space-y-2 p-2"> {children} </div>}
             {tagList.length > 0 && ( // if has tags
-              <div className="space-x-2 space-y-1 py-2 ">
+              <div className="space-x-2 py-2 ">
                 {tagList.map((tag: string) => (
                   <TagItem tag={tag} key={tag} />
                 ))}
