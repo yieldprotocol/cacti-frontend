@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 // @ts-ignore TODO: fix this
 import * as JSONbigint from 'json-bigint';
 import { useAccount } from 'wagmi';
@@ -144,6 +144,9 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         tokenId={tokenId}
         network="ethereum-mainnet"
         variant={ImageVariant.SHOWCASE}
+        price={
+          valueAmount ? `${ethers.utils.formatEther(BigNumber.from(valueAmount))} ETH` : 'unlisted'
+        }
       />
       <ActionResponse
         txParams={tx}

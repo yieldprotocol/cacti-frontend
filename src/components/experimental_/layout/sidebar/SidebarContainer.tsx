@@ -64,8 +64,8 @@ const SidebarContainer = ({
         </Dialog>
       </Transition.Root>
 
-      {/* ---------------------------------------Static sidebar for desktop */}
-      <div className="hidden overflow-hidden border-r-[1px] border-white/20 bg-[#031016] lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-60 lg:flex-col">
+      {/* Static sidebar for desktop */}
+      <div className="hidden overflow-hidden border-r-[1px] border-white/20 bg-gray-primary lg:visible lg:z-50 lg:flex lg:w-60 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <nav>{children}</nav>
       </div>

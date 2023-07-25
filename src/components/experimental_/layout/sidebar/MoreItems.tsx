@@ -30,8 +30,6 @@ const MoreItems = () => {
 
   return (
     <div className="flex flex-col gap-3 px-2 py-4">
-      <MoreItem icon={<HomeIcon />} label="Home" action={() => console.log('home')} />
-      <MoreItem icon={<Cog8ToothIcon />} label="Settings" action={() => console.log('settings')} />
       <MoreItem
         icon={<DocumentIcon />}
         label="Documentation"

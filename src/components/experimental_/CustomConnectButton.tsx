@@ -19,12 +19,14 @@ const CustomConnectButton = () => {
         const ready = mounted && authenticationStatus !== 'loading';
         const connected =
           ready &&
-          account &&
-          chain &&
+          !!account &&
+          !!chain &&
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className="h-full w-full cursor-pointer rounded-lg border-[1px] border-gray-800 bg-gray-700/50 text-center text-sm hover:opacity-80"
+            className={`h-full w-full cursor-pointer rounded-lg border-[1px] ${
+              !connected ? 'border-green-primary/10 bg-green-primary' : 'border-gray-800'
+            } bg-gray-700/50 text-center text-sm font-bold text-white hover:opacity-80`}
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -37,30 +39,34 @@ const CustomConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className="h-full w-full">
-                    <div className="animate-pulse text-sm text-white/70">Connect Wallet</div>
+                  <button onClick={openConnectModal} type="button" className="h-full w-full p-3">
+                    <div className="text-sm text-white/70">Connect Wallet</div>
                   </button>
                 );
               }
 
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button" className="h-full w-full">
-                    <div className="animate-pulse text-sm text-red-500">Wrong network</div>
+                  <button onClick={openChainModal} type="button" className="h-full w-full p-3">
+                    <div className="text-sm text-red-500">Wrong network</div>
                   </button>
                 );
               }
 
               return (
                 <div
-                  className="flex h-full w-full cursor-pointer items-center gap-4 p-3"
+                  className="flex h-full w-full cursor-pointer items-center justify-between p-3"
                   onClick={openAccountModal}
                 >
-                  <Avatar actor="user" />
-                  <div>
-                    <div className="text-sm font-semibold text-white/70">{account.displayName}</div>
-                    <div className="flex justify-start font-mono text-xs font-thin text-white/70">
-                      {account.displayBalance ? `${account.displayBalance}` : ''}
+                  <div className="flex items-center gap-3">
+                    <Avatar actor="user" />
+                    <div>
+                      <div className="text-sm font-semibold text-white/70">
+                        {account.displayName}
+                      </div>
+                      <div className="flex justify-start font-mono text-xs font-thin text-white/70">
+                        {account.displayBalance ? `${account.displayBalance}` : ''}
+                      </div>
                     </div>
                   </div>
                   <div className="ml-8 h-4 w-4 text-white/30 hover:text-white/80">
