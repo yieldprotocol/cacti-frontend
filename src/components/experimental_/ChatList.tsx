@@ -4,6 +4,7 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useQueryChats } from '@/api/queries';
 import useThread from '@/hooks/useThread';
+import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
@@ -28,9 +29,9 @@ const ChatItem = ({ id }: ChatItem) => {
           selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
         }`}
       >
-        {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
+      {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
-          {threadName !== id ? threadName : id}
+          {threadName !== id ? threadName : abbreviateHash(id, 8)}
           <div
             className={`absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l ${
               selected ? 'from-gray-800/50' : 'from-[#031016] group-hover:from-gray-800/50'
