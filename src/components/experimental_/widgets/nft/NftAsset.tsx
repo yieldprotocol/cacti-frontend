@@ -16,7 +16,7 @@ export interface NftAssetProps {
 
   variant?: ImageVariant; // widget variant
 
-  price?: string | number;
+  price?: string;
 }
 
 const fetchNftAsset = async (
@@ -84,7 +84,7 @@ export const NftAsset = ({
       {variant === ImageVariant.SHOWCASE && (
         <div className="text-xs">{nftData?.metadata?.description}</div>
       )}
-      {price && (
+      {!price ? null : (
         <InlineChip
           className="text-xs"
           label={price !== 'unlisted' ? `Price: ${price}` : 'Not for Sale'}
