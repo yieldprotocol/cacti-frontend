@@ -169,7 +169,7 @@ const ChatHeader = () => {
         )}
 
         <div className="flex w-full justify-items-start text-xs text-white/30">
-          <span>Last edit: yesterday</span>
+          <span>Last edit: recently</span>
         </div>
       </div>
       {threadId && <PrimaryActions {...{ threadId }} />}
