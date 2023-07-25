@@ -5,7 +5,7 @@ import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
-import { TextResponse } from '../cactiComponents';
+import { ListResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
@@ -74,7 +74,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
             ...list,
             <Widget
               key={item.slice(0, 16)}
-              widget={{ name: 'textresponse', params: { text: item } }}
+              widget={{ name: 'TextResponse', params: { text: item } }}
             />,
           ];
 
@@ -172,6 +172,15 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
 
+  widgets.set(
+    'nft-asset-traits-container',
+    <NftAsset {...parsedArgs?.asset?.params}>
+      {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
+      console.log( trait) ) }
+    </> */}
+    </NftAsset>
+  );
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(
@@ -198,7 +207,7 @@ export const Widget = (props: WidgetProps) => {
    * Experimental: Bring in some 'direct' cacti components
    * */
   widgets.set('tableresponse', <TableResponse {...parsedArgs} />);
-  widgets.set('textresponse', <TextResponse {...parsedArgs} />);
+  widgets.set('TextResponse', <TextResponse {...parsedArgs} />);
   widgets.set('table-container', <TableResponse {...parsedArgs} />);
   widgets.set(
     'zksync-deposit',
