@@ -13,6 +13,8 @@ import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDepositETH';
+import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdrawETH';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
@@ -28,8 +30,6 @@ import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
-import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDepositETH';
-import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdrawETH';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
 
@@ -210,14 +210,11 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-  widgets.set(
-    'arbitrum-deposit-eth',
-    <ArbitrumDepositETH userAmount={parsedArgs[0]} />
-  )
+  widgets.set('arbitrum-deposit-eth', <ArbitrumDepositETH value={parsedArgs[0]} />);
   widgets.set(
     'arbitrum-withdraw-eth',
-    <ArbitrumWithdrawETH userAmount={parsedArgs[0]} />
-  )
+    <ArbitrumWithdrawETH destination={parsedArgs[0]} value={parsedArgs[1]} />
+  );
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
@@ -227,10 +224,7 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
   widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
-  widgets.set(
-    'stake-sfrxeth', 
-    <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />
-  );
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
