@@ -36,7 +36,7 @@ const MessageList = () => {
 
         return (
           <React.Fragment key={message.messageId}>
-            {message.messageId == insertBeforeMessageId && (
+            {message.messageId === insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
                 <ProgressIndicators
