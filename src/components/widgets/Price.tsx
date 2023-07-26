@@ -12,7 +12,9 @@ export const Price = (props: PriceProps) => {
     baseTokenSymbol: props.baseToken,
     quoteTokenSymbol: props.queryToken,
   });
+
   let widgetComponent = <Spinner />;
+
   if (data?.humanReadableAmount) {
     widgetComponent = (
       <p className="text-sm">{`1 ${props.baseToken} is worth ${data.humanReadableAmount} ${props.queryToken}`}</p>

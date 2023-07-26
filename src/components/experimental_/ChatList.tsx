@@ -1,51 +1,71 @@
-import { useContext, useEffect, useState } from 'react';
-import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline';
-import ChatContext from '@/contexts/ChatContext';
-import { abbreviateHash, shortenAddress } from '@/utils';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { CheckIcon } from '@heroicons/react/24/outline';
+import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useQueryChats } from '@/api/chats/queries';
+import useThread from '@/hooks/useThread';
+import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
-  selected: boolean;
 };
 
-const ChatItem = ({ id, selected }: ChatItem) => {
+const ChatItem = ({ id }: ChatItem) => {
+  const { threadName } = useThread(id);
+  const { query } = useRouter();
+  const selected = query.id === id;
+
+  const handleDelete = () => console.log('deleting');
+  const handleShare = () => console.log('sharing');
+
   return (
-    <div
-      className={`flex cursor-pointer flex-row items-center gap-2 rounded-sm py-2 ${
-        selected ? 'bg-white/5' : ''
-      } `}
-    >
-      <div className="h-4 w-4 text-green-600"> {selected ? <CheckIcon /> : <div />}</div>
-      <div className="text-xs text-white/70 hover:text-white"> {abbreviateHash(id, 4)}</div>
-    </div>
+    <Link href={`/chat/${id}`}>
+      <div
+        className={`
+        group
+        relative
+        flex w-full cursor-pointer items-center gap-2 break-all rounded-md p-2.5
+        text-gray-300 hover:bg-gray-800/50 ${
+          selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
+        }`}
+      >
+        {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
+        <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
+          {threadName !== id ? threadName : abbreviateHash(id, 8)}
+          <div
+            className={`absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l ${
+              selected ? 'from-gray-800/50' : 'from-[#031016] group-hover:from-gray-800/50'
+            } `}
+          ></div>
+        </div>
+        {selected && (
+          <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
+            <button className="p-1" onClick={handleShare}>
+              <ShareIcon className="h-4 w-4 hover:text-white" />
+            </button>
+            <button className="p-1" onClick={handleDelete}>
+              <TrashIcon className="h-4 w-4 hover:text-white" />
+            </button>
+          </div>
+        )}
+      </div>
+    </Link>
   );
 };
 
 const ChatList = () => {
-  const chatList = [
-    { id: '9e6bd877-d76f-4379-95b3-7df36c9cc8d0' },
-    { id: 'e0cfadee-4baf-43e2-a589-f2f70ca87201' },
-    { id: '0892b8fb-81e2-44e4-92f4-11cb5b63e51d' },
-  ];
-  const [selectedId, setSelectedId] = useState<string>();
-
-  useEffect(() => {
-    const q = window.location.search;
-    const params = new URLSearchParams(q);
-    if (params.get('s')) {
-      setSelectedId(params.get('s') as string);
-    }
-  }, []);
-
+  const { chats } = useQueryChats();
   return (
-    <>
-      <div className="pt-8 text-xs ">My Chats</div>
-      <div className="py-4">
-        {chatList.map((chat: any) => {
-          return <ChatItem key={chat.id} id={chat.id} selected={selectedId === chat.id} />;
-        }, [])}
+    <div>
+      <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
+        My Chats
       </div>
-    </>
+      <div className="flex-1 flex-col transition-opacity duration-500">
+        {chats?.sessions?.map((chat) => (
+          <ChatItem key={chat.id} id={chat.id} />
+        ))}
+      </div>
+    </div>
   );
 };
 

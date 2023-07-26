@@ -1,3 +1,5 @@
+import { JsxElement } from 'typescript';
+
 /**
  * Grid Element for displaying a block of cacti Responses
  */
@@ -20,15 +22,15 @@ export const ResponseRow = (props: any) => (
 export const ResponseWrap = (props: any) => (
   <div
     className={`
-    flex
-    flex-grow 
-    flex-col
-    rounded-[8px]
-    border-[1px] border-white/10
-    text-white/70 
-    ${props.classNameExtra}
     w-max-[400px]
-    px-2 py-4
+    flex 
+    flex-grow
+    flex-col
+    rounded-[8px] border-[1px]
+    border-white/10 
+    px-2
+    py-4 text-white/70
+    ${props.classNameExtra}
   `}
   >
     {props.children}
@@ -45,7 +47,11 @@ export const ResponseWrap = (props: any) => (
  *
  */
 export const ResponseTitle = (props: any) => (
-  <div className={`flex justify-between rounded-[8px] p-2 text-sm text-white text-opacity-70`}>
+  <div
+    className={`flex items-center justify-between rounded-[8px] p-2 text-sm text-white text-opacity-70  
+    ${props.classNameExtra} 
+    `}
+  >
     {props.children}
   </div>
 );

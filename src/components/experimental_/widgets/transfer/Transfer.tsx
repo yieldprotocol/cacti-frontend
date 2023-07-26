@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { erc20ABI, useEnsAddress } from 'wagmi';
+import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
@@ -59,8 +59,7 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
         label={`Transfer ${amtString || ''} ${tokenSymbol}`}
         txParams={tx}
         approvalParams={approval}
-        // stepper
-        // disabled={true}
+        sendParams={isETH && receiverAddress ? { to: receiverAddress, value: amount } : undefined}
       />
     </ConnectFirst>
   );

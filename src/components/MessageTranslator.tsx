@@ -1,7 +1,4 @@
-import { Fragment, createElement, useEffect } from 'react';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { getToken } from 'next-auth/jwt';
-import { useNetwork } from 'wagmi';
+import { Fragment, useEffect } from 'react';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -16,14 +13,9 @@ import {
 } from '@/components/widgets/NftCollectionContainer';
 import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
-import {
-  ListItem,
-  SharedStateContextProvider,
-  useSharedStateContext,
-} from '@/contexts/SharedStateContext';
+import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
-import useToken from '@/hooks/useToken';
-import { cleanValue, findProjectByName, findTokenBySymbol, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
 import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
@@ -69,7 +61,7 @@ const parseArgsStripQuotes = (args: string): any[] => {
 };
 
 export const Widgetize = (widget: Widget) => {
-  const { fnName: fn, args } = widget;
+  const { name: fn, params: args } = widget;
   const fnName = fn.toLowerCase().replace('display-', '');
   const inputString = `${fnName}(${args})`;
   // The Widgetize function is called recursively. Do not put any hooks here,
@@ -79,21 +71,18 @@ export const Widgetize = (widget: Widget) => {
 
   try {
     switch (fnName) {
-      // Transfer widget
-      case 'transfer': {
-        const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
-        return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
-      }
+      // case 'transfer': {
+      //   const [tokenSymbol, amtString, receiver] = parseArgsStripQuotes(args);
+      //   return <TransferWidget {...{ inputString, tokenSymbol, amtString, receiver }} />;
+      // }
 
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        const token = getToken(tokenSymbol);
-        // const amount = parseUnits(amtString, token?.decimals);
-        // const project = findProjectByName(projectName);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
       }
+
       case 'price': {
         const [baseToken, queryToken] = parseArgsStripQuotes(args);
         return (
@@ -108,6 +97,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-traits': {
         const [nftAddress, tokenID] = parseArgsStripQuotes(args);
         return (
@@ -120,10 +110,12 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-collection-traits': {
         const [nftCollectionAddress] = parseArgsStripQuotes(args);
         return <NftCollectionAttributes nftAddress={nftCollectionAddress} />;
       }
+
       case 'nfts-by-traits': {
         const [nftAddr, traitType, traitValue] = parseArgsStripQuotes(args);
         return (
@@ -141,6 +133,7 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
       case 'nft-search': {
         const query = args;
         return (
@@ -161,6 +154,8 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
+
+      // Re-enable this temporarily for fallback
       case 'nft-collection-container': {
         let params;
         try {
@@ -182,15 +177,16 @@ export const Widgetize = (widget: Widget) => {
         }
         return <NftAssetContainer {...params} />;
       }
+
       case 'nft-asset-traits-container': {
         const { asset, values } = JSON.parse(args);
         return (
           <NftAssetTraitsContainer
-            asset={Widgetize({ fnName: asset.name, args: JSON.stringify(asset.params) })}
+            asset={Widgetize({ name: asset.name, params: JSON.stringify(asset.params) })}
           >
             {values?.map(({ name, params }: { name: string; params: string }, i: number) => (
               <Fragment key={`i${i}`}>
-                {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+                {Widgetize({ name: name, params: JSON.stringify(params) })}
               </Fragment>
             )) || ''}
           </NftAssetTraitsContainer>
@@ -205,15 +201,15 @@ export const Widgetize = (widget: Widget) => {
         return (
           <NftCollectionAssetsContainer
             collection={Widgetize({
-              fnName: collection.name,
-              args: JSON.stringify(collection.params),
+              name: collection.name,
+              params: JSON.stringify(collection.params),
             })}
           >
             <div className="text-black">
               <Grid>
                 {assets?.map(({ name, params }: { name: string; params: string }, i: number) => (
                   <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+                    {Widgetize({ name: name, params: JSON.stringify(params) })}
                   </Fragment>
                 )) || ''}
               </Grid>
@@ -221,6 +217,7 @@ export const Widgetize = (widget: Widget) => {
           </NftCollectionAssetsContainer>
         );
       }
+
       case 'nft-collection-traits-container': {
         const params = JSON.parse(args);
         return <NftCollectionTraitsContainer {...params} />;
@@ -229,50 +226,52 @@ export const Widgetize = (widget: Widget) => {
         const params = JSON.parse(args);
         return <NftCollectionTraitValuesContainer {...params} />;
       }
+
       case 'yield-container': {
         const params = JSON.parse(args);
 
         return <YieldRowContainer {...params} />;
       }
-      case 'list-container': {
-        const params = JSON.parse(args);
-        return <ListContainer {...params} />;
-      }
-      case 'streaming-list-container': {
-        const params = JSON.parse(args);
-        return <StreamingListContainer {...params} />;
-      }
-      case 'table-container': {
-        const params = JSON.parse(args);
-        const headers = params.headers;
-        const rows = params.rows;
-        return (
-          <table className="table-auto border border-gray-500">
-            <thead className="bg-gray-800 text-left">
-              <tr className="border-b border-gray-400">
-                {headers.map(({ displayName }: { displayName: string }, i: number) => (
-                  <th className="px-2 py-1" key={`i${i}`}>
-                    {displayName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
-                const rowArgs = {
-                  headers,
-                  rowParams: params,
-                };
-                return (
-                  <Fragment key={`i${i}`}>
-                    {Widgetize({ fnName: name, args: JSON.stringify(rowArgs) })}
-                  </Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        );
-      }
+      // case 'list-container': {
+      //   const params = JSON.parse(args);
+      //   return <ListContainer {...params} />;
+      // }
+      // case 'streaming-list-container': {
+      //   const params = JSON.parse(args);
+      //   return <StreamingListContainer {...params} />;
+      // }
+      // case 'table-container': {
+      //   const params = JSON.parse(args);
+      //   const headers = params.headers;
+      //   const rows = params.rows;
+      //   return (
+      //     <table className="table-auto border border-gray-500">
+      //       <thead className="bg-gray-800 text-left">
+      //         <tr className="border-b border-gray-400">
+      //           {headers.map(({ displayName }: { displayName: string }, i: number) => (
+      //             <th className="px-2 py-1" key={`i${i}`}>
+      //               {displayName}
+      //             </th>
+      //           ))}
+      //         </tr>
+      //       </thead>
+      //       <tbody>
+      //         {rows.map(({ name, params }: { name: string; params: string }, i: number) => {
+      //           const rowArgs = {
+      //             headers,
+      //             rowParams: params,
+      //           };
+      //           return (
+      //             <Fragment key={`i${i}`}>
+      //               {Widgetize({ name: name, params: JSON.stringify(rowArgs) })}
+      //             </Fragment>
+      //           );
+      //         })}
+      //       </tbody>
+      //     </table>
+      //   );
+      // }
+
       case 'tx-payload-for-sending-container': {
         const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
           JSON.parse(args);
@@ -296,48 +295,49 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      case 'multistep-payload-container': {
-        const {
-          status,
-          workflowId,
-          workflowType,
-          stepId,
-          stepType,
-          stepNumber,
-          isFinalStep,
-          userActionType,
-          tx,
-          errorMsg,
-          description,
-        } = JSON.parse(args);
 
-        const headerText =
-          stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
+      // case 'multistep-payload-container': {
+      //   const {
+      //     status,
+      //     workflowId,
+      //     workflowType,
+      //     stepId,
+      //     stepType,
+      //     stepNumber,
+      //     isFinalStep,
+      //     userActionType,
+      //     tx,
+      //     errorMsg,
+      //     description,
+      //   } = JSON.parse(args);
 
-        return (
-          <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <MultiStepContainer
-                  {...{
-                    status,
-                    workflowId,
-                    workflowType,
-                    stepId,
-                    stepType,
-                    userActionType,
-                    stepNumber,
-                    isFinalStep,
-                    tx,
-                    errorMsg,
-                    description,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
-      }
+      //   const headerText =
+      //     stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
+
+      //   return (
+      //     <ActionPanel header={headerText} msg={inputString} key={inputString} centerTitle={true}>
+      //       <div className="flex w-[100%] justify-end">
+      //         <ConnectFirst>
+      //           <MultiStepContainer
+      //             {...{
+      //               status,
+      //               workflowId,
+      //               workflowType,
+      //               stepId,
+      //               stepType,
+      //               userActionType,
+      //               stepNumber,
+      //               isFinalStep,
+      //               tx,
+      //               errorMsg,
+      //               description,
+      //             }}
+      //           />
+      //         </ConnectFirst>
+      //       </div>
+      //     </ActionPanel>
+      //   );
+      // }
       default:
         return (
           <div className="inline-block bg-slate-500 p-5 text-white">
@@ -358,10 +358,10 @@ export const Widgetize = (widget: Widget) => {
 };
 
 interface ListContainerProps {
-  items: ListItem[];
+  items: Widget[];
 }
 interface ListItemContainerProps {
-  item: ListItem;
+  item: Widget;
 }
 
 const ListContainer = ({ items }: ListContainerProps) => {
@@ -370,7 +370,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
       <Grid>
         {items?.map(({ name, params }: { name: string; params: string }, i: number) => (
           <Fragment key={`i${i}`}>
-            {Widgetize({ fnName: name, args: JSON.stringify(params) })}
+            {Widgetize({ name: name, params: JSON.stringify(params) })}
           </Fragment>
         )) || ''}
       </Grid>
@@ -380,7 +380,7 @@ const ListContainer = ({ items }: ListContainerProps) => {
 
 interface StreamingListContainerProps {
   operation: string;
-  item: ListItem | null;
+  item: Widget | null;
   prefix: string | null;
   suffix: string | null;
   isThinking: boolean | null;
@@ -419,17 +419,8 @@ const StreamingListContainer = ({
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [
-    item,
-    newIsThinking,
-    newPrefix,
-    newSuffix,
-    operation,
-    setIsThinking,
-    setItems,
-    setPrefix,
-    setSuffix,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (operation === 'create') {
     return (

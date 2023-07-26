@@ -1,0 +1,56 @@
+import { ReactNode, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Bars3Icon } from '@heroicons/react/24/outline';
+import useThread from '@/hooks/useThread';
+import Header from './Header_';
+
+const DynamicSidebar = dynamic(() => import('@/components/experimental_/layout/sidebar/index'), {
+  ssr: false,
+});
+
+const HeaderContainer = ({
+  isOpen,
+  setIsOpen,
+  hasChat,
+  children,
+}: {
+  hasChat: boolean;
+  isOpen: boolean;
+  children: React.ReactNode;
+  setIsOpen: (open: boolean) => void;
+}) => (
+  <div
+    className={`sticky top-0 z-40 flex items-center gap-x-4 ${
+      hasChat ? 'bg-gray-secondary' : ''
+    } text-white/70 sm:gap-x-6 sm:p-6`}
+  >
+    <button type="button" className="text-white/50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
+      <span className="sr-only">Open sidebar</span>
+      <Bars3Icon className="h-8 w-8" aria-hidden="true" />
+    </button>
+    <div className="h-full w-full">{children}</div>
+  </div>
+);
+
+const Layout = ({ children }: { children: ReactNode }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { threadId } = useThread();
+
+  return (
+    <div className="flex h-screen w-full bg-gray-primary">
+      <div className="flex h-full w-full overflow-hidden">
+        <div className="flex h-full w-full">
+          <DynamicSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+          <main className="flex h-full w-full flex-col">
+            <HeaderContainer setIsOpen={setSidebarOpen} isOpen={sidebarOpen} hasChat={!!threadId}>
+              <Header />
+            </HeaderContainer>
+            {children}
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;

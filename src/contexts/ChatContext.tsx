@@ -1,6 +1,8 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
 
@@ -73,10 +75,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
+  const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
+  const [lastAuthStatus, setLastAuthStatus] = useState<string | null>(null);
+
+  const queryClient = useQueryClient();
 
   const { status } = useSession();
-
-  const shouldConnect = status === 'authenticated';
+  // shouldConnect can be true for logged out to view public sessions, but we want to
+  // enforce a disconnect and reconnect when the auth status changes, so
+  // that the websocket will end up using the latest cookie state
+  const shouldConnect = status == lastAuthStatus;
   const backendUrl = getBackendWebsocketUrl();
   const {
     sendJsonMessage: wsSendMessage,
@@ -93,22 +101,65 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     shouldConnect
   );
 
+  const router = useRouter();
+  const sessionId = router.query.id
+    ? typeof router.query.id === 'string'
+      ? router.query.id
+      : router.query.id?.[0]
+    : null;
+
+  const resetMessages = () => {
+    setMessages([]);
+    setResumeFromMessageId(null);
+    setInsertBeforeMessageId(null);
+  };
+
+  useEffect(() => {
+    // re-initialize on change
+    if (status === 'loading') {
+      return;
+    }
+    let needsReset = false;
+    // check both changes below in one pass because the hook might not
+    // fire again if both things change at the same time
+    if (status != lastAuthStatus) {
+      setLastAuthStatus(status);
+      needsReset = true;
+    }
+    if (sessionId != lastInitSessionId) {
+      setLastInitSessionId(sessionId);
+      needsReset = true;
+    }
+    if (needsReset) {
+      resetMessages();
+      wsSendMessage({ actor: 'system', type: 'clear', payload: {} });
+      if (sessionId) {
+        wsSendMessage({ actor: 'system', type: 'init', payload: { sessionId } });
+      }
+    }
+  }, [status, sessionId, wsSendMessage]); // note: don't add lastAuthStatus, lastInitSessionId here
+
   const onOpen = () => {
     console.log(`Connected to backend: ${backendUrl}`);
 
+    // If we reconnected, and have some expectation of where to resume from, re-initialize
+    if (
+      sessionId &&
+      sessionId == lastInitSessionId &&
+      messages.length > 0 &&
+      (resumeFromMessageId != null || insertBeforeMessageId != null)
+    ) {
+      wsSendMessage({
+        actor: 'system',
+        type: 'init',
+        payload: { sessionId, resumeFromMessageId, insertBeforeMessageId },
+      });
+    }
+
+    // set the system config to use on the backend
     const q = window.location.search;
     if (q) {
-      // websocket is re-establishing an existing session
       const params = new URLSearchParams(q);
-      if (params.get('s')) {
-        // load the historical session stored within the backend
-        const payload = {
-          sessionId: params.get('s'),
-          resumeFromMessageId: resumeFromMessageId,
-          insertBeforeMessageId: insertBeforeMessageId,
-        };
-        wsSendMessage({ actor: 'system', type: 'init', payload: payload });
-      }
       if (params.get('cfg')) {
         // set the system config to use on the backend
         const payload = {
@@ -137,14 +188,19 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!lastMessage) return;
+
     const obj = JSON.parse(lastMessage.data);
-    if (obj.type == 'uuid') {
-      const q = window.location.search;
-      const params = new URLSearchParams(q);
-      params.set('s', obj.payload);
-      window.history.replaceState(null, '', '?' + params.toString());
+    if (obj.type == 'clear') {
+      resetMessages();
+      return;
+    } else if (obj.type == 'uuid') {
+      const newSessionId = obj.payload;
+      setLastInitSessionId(newSessionId);
+      router.replace(`/chat/${newSessionId}`);
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
       return;
     }
+
     setIsBotThinking(obj.stillThinking);
     setResumeFromMessageId(obj.messageId);
     const payload = obj.payload;

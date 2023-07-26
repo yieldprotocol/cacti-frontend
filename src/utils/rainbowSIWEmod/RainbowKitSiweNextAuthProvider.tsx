@@ -28,7 +28,7 @@ interface RainbowKitSiweNextAuthProviderProps {
   children: ReactNode;
 }
 
-console.log(window.location.host);
+//console.log(window.location.host);
 
 export function RainbowKitSiweNextAuthProvider({
   children,
@@ -41,9 +41,21 @@ export function RainbowKitSiweNextAuthProvider({
   const { data: session, status } = useSession();
   const { address: account } = useAccount();
 
+  const signoutSequence = async () => {
+    // signout on backend first, to ensure session cookies get cleared
+    // prior to any frontend hooks firing
+    if (getSignoutCallback) {
+      await getSignoutCallback();
+    }
+    await signOut({ redirect: false });
+  };
+
   /* force logout if account changes */
   useEffect(() => {
-    if (session && session.user?.name !== account) signOut({ redirect: false });
+    if (session && session.user?.name !== account) {
+      console.log('detected account switch, logging out', session, account);
+      signoutSequence();
+    }
   }, [account, session]);
 
   const adapter = useMemo(
@@ -82,20 +94,14 @@ export function RainbowKitSiweNextAuthProvider({
           return nonce;
         },
 
-        signOut: async () => {
-          // signout on frontend first, so that we don't end up in situation
-          // where frontend is signed in but backend is signed out, which will
-          // be confusing to the user
-          await signOut({ redirect: false });
-          if (getSignoutCallback) {
-            await getSignoutCallback();
-          }
-        },
+        signOut: signoutSequence,
 
         verify: async ({ message, signature }) => {
           const messageJson = JSON.stringify(message);
           // signin on backend first, so that any issues there will not lead to
-          // an inconsistent signin state with frontend
+          // an inconsistent signin state with frontend. also, this ensures
+          // session cookies are set by backend prior to any frontend hooks
+          // firing
           if (getSigninCallback) {
             const result = await getSigninCallback(messageJson, signature);
             if (!result) {
