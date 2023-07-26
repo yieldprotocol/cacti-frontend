@@ -2,10 +2,10 @@ import { useRouter } from 'next/router';
 import { useQueryChats } from '@/api/chats/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-// Use experimental components
-import ShareChatModal from './ShareChatModal';
 import MessageInput from './MessageInput_';
 import MessageList from './MessageList_';
+// Use experimental components
+import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {

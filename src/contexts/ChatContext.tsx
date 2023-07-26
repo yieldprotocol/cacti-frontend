@@ -4,8 +4,8 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { getBackendWebsocketUrl } from '@/utils/backend';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
   messageId: string;
@@ -41,7 +41,7 @@ export type ChatContextType = {
 
   showShareModal: boolean;
   setShowShareModal: (value: boolean) => void;
-  shareChat: (id: string) => Promise<(string | undefined)>;
+  shareChat: (id: string) => Promise<string | undefined>;
 };
 
 const initialContext = {
@@ -67,7 +67,7 @@ const initialContext = {
 
   showShareModal: false,
   setShowShareModal: (value: boolean) => {},
-  shareChat: () => new Promise<string|undefined>(()=>undefined),
+  shareChat: () => new Promise<string | undefined>(() => undefined),
   //renameShare: () => void
 };
 
@@ -88,10 +88,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const shareChat = async (id: string) => {
     const shareId = useMutationCreateSharedSession(id);
-  
+
     console.log('Sharing Chat: ', shareId);
     return '123123-123123123-1231223423';
-
   };
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
