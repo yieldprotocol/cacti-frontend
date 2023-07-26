@@ -28,6 +28,8 @@ import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDepositETH';
+import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdrawETH';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
 
@@ -165,9 +167,7 @@ export const Widget = (props: WidgetProps) => {
     'nft-collection-container',
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
-
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
-
   widgets.set(
     'nft-asset-traits-container',
     <NftAsset {...parsedArgs?.asset?.params}>
@@ -176,9 +176,7 @@ export const Widget = (props: WidgetProps) => {
     </> */}
     </NftAsset>
   );
-
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
-
   widgets.set(
     'fetch-nfts',
     <NftCollection
@@ -188,7 +186,6 @@ export const Widget = (props: WidgetProps) => {
       assetsToShow={6}
     />
   );
-
   widgets.set(
     'yield-protocol-lend',
     <YieldProtocolLend
@@ -209,24 +206,31 @@ export const Widget = (props: WidgetProps) => {
     'zksync-deposit',
     <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-
   widgets.set(
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
+  widgets.set(
+    'arbitrum-deposit-eth',
+    <ArbitrumDepositETH userAmount={parsedArgs[0]} />
+  )
+  widgets.set(
+    'arbitrum-withdraw-eth',
+    <ArbitrumWithdrawETH userAmount={parsedArgs[0]} />
+  )
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
-
   widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
-
   widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
-
+  widgets.set(
+    'stake-sfrxeth', 
+    <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />
+  );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
