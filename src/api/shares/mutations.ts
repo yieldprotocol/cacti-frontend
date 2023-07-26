@@ -32,17 +32,15 @@ export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
 };
 
 export const useMutationCreateSharedSession = (sessionId: string) => {
-  const mutationFn = async ({ metadata }: { metadata: any }) => {
-    return postCreateSharedSession(sessionId, metadata);
-  };
-  const router = useRouter();
+  const mutationFn = async () => postCreateSharedSession(sessionId);
   const queryClient = useQueryClient();
+  // const router = useRouter();
 
   return useMutation(mutationFn, {
     onSuccess: (data, variables, context): void => {
       if (data) {
-        const newSessionId = data;
-        router.push(`/shares/${newSessionId}`);
+        // const newSessionId = data;
+        // router.push(`/shares/${newSessionId}`);
         queryClient.invalidateQueries({ queryKey: ['shares'] });
       }
     },
