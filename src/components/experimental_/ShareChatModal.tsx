@@ -108,7 +108,7 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
                       </div>
                     </button>
 
-                    {newThreadId ? (
+                    {newThreadId && newThreadUrl ? (
                       <div className=" mt-5 space-y-2 text-sm text-gray-600">
                         <div>Share Url:</div>
                         <CopyWrap
