@@ -44,7 +44,7 @@ export const findProjectByName = (name: string): Project => {
 
 export const Spinner = ({ className }: { className?: string }) => (
   <svg
-    className={`-ml-1 mr-3 h-4 w-4 animate-spin text-black ${className}`}
+    className={`${className ?? ''} animate-spin text-gray-100`}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"

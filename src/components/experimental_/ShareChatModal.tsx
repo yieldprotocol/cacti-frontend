@@ -91,7 +91,7 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
                       <div className="flex items-center justify-center gap-2 ">
                         <div className="h-4 w-4">
                           {isSharing ? (
-                            <Spinner className="text-white" />
+                            <Spinner className="h-4 w-4 text-white" />
                           ) : newThreadId ? (
                             <CheckCircleIcon />
                           ) : (
