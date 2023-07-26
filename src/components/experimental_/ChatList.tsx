@@ -6,6 +6,7 @@ import { useQueryChats } from '@/api/chats/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
 
 export type ChatItem = {
   id: string;
@@ -17,7 +18,9 @@ const ChatItem = ({ id }: ChatItem) => {
   const { query } = useRouter();
   const selected = query.id === id;
 
-  const handleDelete = () => console.log('deleting');
+  const { mutate } = useMutationDeleteChat(id);
+
+  const handleDelete = () => mutate();
   const handleShare = () => setShowShareModal(true);
 
   return (

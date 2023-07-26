@@ -31,8 +31,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const { setShowShareModal } = useChatContext();
 
   const { mutate } = useMutationDeleteChat(threadId);
-
-  const handleDelete = () => mutate();
+  const handleDelete = async () => mutate();
 
   return (
     <div className="flex items-center gap-2">
