@@ -1,18 +1,16 @@
 import { Fragment, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
 import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
-  LinkIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline';
-import copy from 'copy-to-clipboard';
+
+import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { Spinner } from '@/utils';
-import { useMutationCreateSharedSession } from '@/api/shares/mutations';
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import CopyWrap from '../CopyWrap';
 
 const ShareChatModal = ({ id }: { id: string | undefined }) => {
   const { threadName } = useThread(id);
@@ -25,26 +23,22 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
 
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
-  const handleEditName = (newName: string) => {};
+  const buttonStyle =
+    'w-full cursor-pointer select-none rounded-[8px] bg-green-primary p-[8px] text-center text-white transition ease-in-out active:bg-transparent';
 
   /* Reset newThreadID whenever the id changes */
   useEffect(() => {
     setNewThreadId(undefined);
   }, [id]);
 
+  const handleEditName = (newName: string) => {};
   const handleShareChat = async () => {
     setIsSharing(true);
-
     try {
       /* Share the chat and get the new thread id */
       const newId = await mutateAsync();
-      console.log(newId);
-      /* Copy the url to the clipboard */
-      copy(`${window.location.origin}/chat/${newId}`);
-
       setNewThreadId(newId!);
-      setNewThreadUrl(`${window.location.origin}/chat/${newId}`);
-
+      setNewThreadUrl(`${window.location.origin}/share/${newId}`);
       /* TODO: If the thread has a name - rename the share to the same name */
       // threadName !== id && handleEditName(threadName!);
     } catch (error) {
@@ -87,32 +81,22 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
 
                   <div className="mt-2 space-y-4 py-4 ">
                     <p className="text-sm text-gray-500">
-                      Sharing this chat will create a link to a new chat with the same messages. By
+                      Sharing this chat will create a link to a new share with the same messages. By
                       default the new chat will be uneditable.
                     </p>
-
-                    {/* <div className="flex items-center gap-2">
-                      {threadName !== threadId ? (
-                        threadName
-                      ) : (
-                        <div className="font-thin text-slate-600 text-sm"> Use default name</div>
-                      )}
-                      <div className="h-4 w-4">
-                        <PencilIcon />
-                      </div>
-                    </div> */}
                   </div>
 
                   <div className="mt-4">
                     <button
                       type="button"
-                      className=" w-full cursor-pointer select-none rounded-[8px] bg-teal-900 p-[8px] text-center text-white transition ease-in-out active:bg-transparent"
+                      className={buttonStyle}
                       onClick={() => handleShareChat()}
+                      disabled={!!newThreadId}
                     >
                       <div className="flex items-center justify-center gap-2 ">
                         <div className="h-4 w-4">
                           {isSharing ? (
-                            <Spinner />
+                            <Spinner className="text-white" />
                           ) : newThreadId ? (
                             <CheckCircleIcon />
                           ) : (
@@ -120,26 +104,22 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
                           )}
                         </div>
                         <div className="text-sm">
-                          {!newThreadId ? 'Share and Copy link' : 'Create a New Share'}
+                          {!newThreadId
+                            ? isSharing
+                              ? 'Creating a Share...'
+                              : 'Create a new Share'
+                            : 'Share created'}
                         </div>
                       </div>
                     </button>
 
                     {newThreadId ? (
                       <div className=" mt-10 space-y-2 text-sm text-gray-600">
-                        <div className="flex gap-4">
-                          Url: {newThreadUrl}
-                          <div className="h-4 w-4" onClick={() => copy(newThreadUrl!)}>
-                            <DocumentDuplicateIcon />
-                          </div>
-                        </div>
 
-                        <div className="  flex gap-4 text-sm text-gray-500">
-                          Name: {newThreadId}
-                          <div className="h-4 w-4">
-                            <PencilIcon />
-                          </div>
-                        </div>
+                        <CopyWrap text={newThreadUrl}>
+                          {newThreadUrl}
+                        </CopyWrap>
+  
                       </div>
                     ) : (
                       <div className="mt-10 text-sm text-gray-500" />
