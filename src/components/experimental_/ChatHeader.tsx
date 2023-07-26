@@ -28,33 +28,8 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 );
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
+  
   const { setShowShareModal } = useChatContext();
-  const sessionId = threadId;
-  const { status } = useSession();
-  const { isSuccess, settings } = useQueryChatSettings(sessionId);
-  const visibilityMutation = useMutationUpdateChatSettings(sessionId);
-  const cloneMutation = useMutationCreateSharedSession(sessionId);
-  const visibilityToggle = () => {
-    const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
-    visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
-  };
-  const visibilityIcon =
-    settings?.visibility === 'public' ? (
-      <EyeIcon className="h-4 w-4 hover:text-white" />
-    ) : (
-      <EyeSlashIcon className="h-4 w-4 hover:text-white" />
-    );
-
-  const canEdit = isSuccess && settings?.canEdit;
-  const canClone = status === 'authenticated';
-
-  const cloneSession = () => {
-    if (canClone) {
-      cloneMutation.mutate({ metadata: {} });
-    } else {
-      alert('Please sign up to clone thread.');
-    }
-  };
 
   const handleDelete = () => console.log('deleting chat');
 
@@ -66,21 +41,6 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
       >
         Share
       </button>
-      <div>
-        {isSuccess &&
-          (canEdit ? (
-            <Tooltip text={`make chat ${settings.visibility === 'public' ? 'private' : 'public'}`}>
-              <button
-                className="rounded-md bg-white/10 p-2 hover:ring-[1px] hover:ring-green-primary/50"
-                onClick={visibilityToggle}
-              >
-                {visibilityIcon}
-              </button>
-            </Tooltip>
-          ) : (
-            <div className="rounded-md bg-white/10 p-2">{visibilityIcon}</div>
-          ))}
-      </div>
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
@@ -99,9 +59,6 @@ const ChatHeader = () => {
   const [inputText, setText] = useState<string>();
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  console.log('THREAD name:', threadName);
-  console.log('THREAD  id:', threadId);
 
   const submitNameChange = useCallback(() => {
     console.log('submitNameChange', inputText);

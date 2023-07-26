@@ -88,8 +88,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const shareChat = async (id: string) => {
     const shareId = useMutationCreateSharedSession(id);
-
-    console.log('Sharing Chat: ', shareId);
+    console.log(shareId);
     return '123123-123123123-1231223423';
   };
 
