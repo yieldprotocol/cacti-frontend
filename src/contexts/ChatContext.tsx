@@ -4,7 +4,6 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
@@ -82,12 +81,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
 
   const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
-
-  // const shareChat = async (id: string) => {
-  //   const shareId = useMutationCreateSharedSession(id);
-  //   console.log(shareId);
-  //   return '123123-123123123-1231223423';
-  // };
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
