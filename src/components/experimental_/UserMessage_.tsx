@@ -11,7 +11,7 @@ import Avatar from '../Avatar';
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
-const iconBtnBaseStyle = 'center rounded-lg overflow-hidden w-9 h-9 text-white/70';
+const iconBtnBaseStyle = 'center rounded-lg p-2 text-white/70';
 
 const IconBtn = ({ children, ...rest }: IconBtnProps) => (
   <button className={iconBtnBaseStyle} {...rest}>
@@ -65,6 +65,7 @@ export const UserMessage = ({
     <div
       className={`
       flex
+      h-20
       w-full
       justify-between 
       ${
@@ -116,7 +117,7 @@ export const UserMessage = ({
       />
 
       {isEditing ? (
-        <div className="m-auto mr-2 flex w-full gap-2">
+        <div className="m-auto mr-2 flex gap-2">
           {inputRef.current?.value === initialText ? (
             <div className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
               esc
