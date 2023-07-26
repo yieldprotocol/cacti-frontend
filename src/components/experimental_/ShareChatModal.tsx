@@ -1,11 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import {
-  CheckCircleIcon,
-  DocumentDuplicateIcon,
-  PencilIcon,
-} from '@heroicons/react/24/outline';
-
+import { CheckCircleIcon, DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
@@ -114,12 +109,14 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
                     </button>
 
                     {newThreadId ? (
-                      <div className=" mt-10 space-y-2 text-sm text-gray-600">
-
-                        <CopyWrap text={newThreadUrl}>
-                          {newThreadUrl}
+                      <div className=" mt-5 space-y-2 text-sm text-gray-600">
+                        <div>Share Url:</div>
+                        <CopyWrap
+                          className="rounded-lg border border-opacity-0 p-2 hover:border-green-primary hover:border-opacity-100"
+                          text={newThreadUrl}
+                        >
+                          <div className="text-xs">{newThreadUrl}</div>
                         </CopyWrap>
-  
                       </div>
                     ) : (
                       <div className="mt-10 text-sm text-gray-500" />
