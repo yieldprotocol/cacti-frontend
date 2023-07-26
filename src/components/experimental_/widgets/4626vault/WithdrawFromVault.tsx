@@ -35,8 +35,6 @@ function getVaultAddress(vaultName: string, tokenIn: string): Address | undefine
         case 'WETH':
           return '0xa258C4606Ca8206D8aA700cE2143D7db854D168c';
       }
-    default:
-      return '';
   }
 }
 
