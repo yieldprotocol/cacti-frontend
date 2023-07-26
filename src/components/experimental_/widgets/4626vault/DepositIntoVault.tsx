@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { useAccount } from 'wagmi';
+import { Address, useAccount } from 'wagmi';
 import ERC4626Abi from '@/abi/erc4626ABI.json';
 import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
@@ -22,7 +22,7 @@ interface DepositVaultParams {
   assets: string;
 }
 
-function getVaultAddress(vaultName: string, tokenIn: string): string {
+function getVaultAddress(vaultName: string, tokenIn: string): Address | undefined {
   switch (vaultName) {
     case 'savings':
       return '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
@@ -35,8 +35,6 @@ function getVaultAddress(vaultName: string, tokenIn: string): string {
         case 'WETH':
           return '0xa258C4606Ca8206D8aA700cE2143D7db854D168c';
       }
-    default:
-      return '';
   }
 }
 

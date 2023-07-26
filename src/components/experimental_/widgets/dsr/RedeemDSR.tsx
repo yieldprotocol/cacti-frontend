@@ -78,7 +78,6 @@ export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
         label={`Redeem ${inputCleaned || ''} ${tokenInSymbol || ''} on MakerDAO DSR`}
         txParams={tx}
         approvalParams={approval}
-        // disabled={true}
       />
     </ConnectFirst>
   );
