@@ -64,7 +64,8 @@ export const UserMessage = ({
   return (
     <div
       className={`
-      flex 
+      flex
+      w-full
       justify-between 
       ${
         isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
@@ -85,7 +86,6 @@ export const UserMessage = ({
           {!isCommenter ? (
             <Avatar actor="user" />
           ) : (
-            // <div className="h-[16px] w-[16px] rounded-full bg-teal-500" />
             <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
           )}
         </div>
@@ -116,20 +116,23 @@ export const UserMessage = ({
       />
 
       {isEditing ? (
-        <div className="m-auto mr-2 flex gap-2">
-          <div
-            className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
-            onClick={submitRegenerate}
-          >
-            enter
-          </div>
-          <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
-            esc
-          </span>
+        <div className="m-auto mr-2 flex w-full gap-2">
+          {inputRef.current?.value === initialText ? (
+            <div className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
+              esc
+            </div>
+          ) : (
+            <div
+              className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
+              onClick={submitRegenerate}
+            >
+              enter
+            </div>
+          )}
         </div>
       ) : (
         <>
-          <div className="durtaion-200 flex items-center gap-2 opacity-0 group-hover:opacity-100">
+          <div className="durtaion-200 flex w-full items-center gap-2 opacity-0 group-hover:opacity-100">
             <IconBtn
               onClick={() => setIsEditing(true)}
               className={`${iconBtnBaseStyle} hover:bg-teal-100/10`}
