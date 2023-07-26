@@ -22,12 +22,14 @@ export interface ChatSettings {
   name?: string;
   canEdit?: boolean;
 }
-export const useQueryChatSettings = (sessionId: string) => {
+export const useQueryChatSettings = (sessionId: string | undefined) => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
   const { data: settings, ...rest } = useQuery<ChatSettings>(
     ['chatSettings', sessionId, userId],
-    async () => getChatSettings(sessionId)
+    async () => {
+      if (sessionId) return getChatSettings(sessionId);
+    }
   );
   return { settings, ...rest };
 };
