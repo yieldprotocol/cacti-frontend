@@ -10,10 +10,11 @@ import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
-  const { isLoading } = useQueryChats();
+  const { isLoading: chatsLoading } = useQueryChats();
   const router = useRouter();
   const { id } = router.query;
-  const showMessageList = !!id || messages.length > 0;
+  const isLoading = (id && messages.length === 0) || chatsLoading;
+  const showMessageList = !!id && messages.length > 0;
   const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
 
   return (
@@ -23,7 +24,7 @@ const ChatBox = () => {
 
       {/* chat area */}
       <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
-        {isLoading ? <Spinner /> : messageContentComponent}
+        {isLoading ? <Spinner className="h-8" /> : messageContentComponent}
       </div>
       {/* Chat input */}
       <div className="sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6">
