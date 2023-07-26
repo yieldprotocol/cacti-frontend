@@ -76,7 +76,7 @@ export const UserMessage = ({
       grid-gap-2 group overflow-hidden py-3
       `}
     >
-      <div className="flex w-full max-w-3xl items-start justify-start gap-2">
+      <div className="flex w-full max-w-3xl items-center justify-start gap-2">
         <div className="w-6">
           {!isCommenter ? (
             <Avatar actor="user" />
