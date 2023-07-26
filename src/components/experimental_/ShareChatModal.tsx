@@ -11,15 +11,21 @@ import copy from 'copy-to-clipboard';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { Spinner } from '@/utils';
+import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 
 const ShareChatModal = ({ id }: { id: string | undefined }) => {
   const { threadName } = useThread(id);
-  const { showShareModal: isOpen, setShowShareModal, shareChat } = useChatContext();
+  const { showShareModal: isOpen, setShowShareModal } = useChatContext();
+
+  const { mutateAsync } = useMutationCreateSharedSession(id!);
 
   const [newThreadId, setNewThreadId] = useState<string>();
   const [newThreadUrl, setNewThreadUrl] = useState<string>();
 
   const [isSharing, setIsSharing] = useState<boolean>(false);
+
+  const handleEditName = (newName: string) => {};
 
   /* Reset newThreadID whenever the id changes */
   useEffect(() => {
@@ -30,26 +36,22 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
     setIsSharing(true);
 
     try {
-      /* Wait 2 seconds to show the spinner */
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
       /* Share the chat and get the new thread id */
-      const newId = await shareChat(id!);
+      const newId = await mutateAsync();
+      console.log(newId);
+      /* Copy the url to the clipboard */
+      copy(`${window.location.origin}/chat/${newId}`);
+
       setNewThreadId(newId!);
       setNewThreadUrl(`${window.location.origin}/chat/${newId}`);
 
-      /* Copy the url to the clipboard */
-      copy(newThreadUrl!);
-
-      /* If the thread has a name - rename the share to the same name */
-      threadName !== id && handleEditName(threadName!);
+      /* TODO: If the thread has a name - rename the share to the same name */
+      // threadName !== id && handleEditName(threadName!);
     } catch (error) {
       console.log('Sharing Error: ', error);
     }
     setIsSharing(false);
   };
-
-  const handleEditName = (newName: string) => {};
 
   return (
     <>
