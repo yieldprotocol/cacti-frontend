@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
-import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
+import { useMutationDeleteChat, useMutationUpdateChatSettings } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
@@ -28,10 +28,11 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 );
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
-  
   const { setShowShareModal } = useChatContext();
 
-  const handleDelete = () => console.log('deleting chat');
+  const { mutate } = useMutationDeleteChat(threadId);
+
+  const handleDelete = () => mutate();
 
   return (
     <div className="flex items-center gap-2">
@@ -144,7 +145,7 @@ const ChatHeader = () => {
           <span>Last edit: recently</span>
         </div>
       </div>
-      {threadId && <PrimaryActions {...{ threadId }} />}
+      {threadId && <PrimaryActions threadId={threadId} />}
     </div>
   );
 };

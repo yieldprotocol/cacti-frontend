@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { deleteSharedSession, postCreateSharedSession, putSharedSession } from '@/api/shares/calls';
 
 export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
+  const mutationFn = async ({ metadata }: { metadata: any }) => {
     return putSharedSession(sharedSessionId, metadata);
   };
 
@@ -17,7 +17,7 @@ export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
 };
 
 export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
-  const mutationFn = () => {
+  const mutationFn = async () => {
     return deleteSharedSession(sharedSessionId);
   };
 
@@ -32,7 +32,7 @@ export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
 };
 
 export const useMutationCreateSharedSession = (sessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
+  const mutationFn = async ({ metadata }: { metadata: any }) => {
     return postCreateSharedSession(sessionId, metadata);
   };
   const router = useRouter();

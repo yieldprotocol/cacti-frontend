@@ -3,10 +3,7 @@ import { useRouter } from 'next/router';
 import { deleteChat, postCreateChatFromShareImport, putChatSettings } from '@/api/chats/calls';
 
 export const useMutationUpdateChatSettings = (sessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
-    return putChatSettings(sessionId, metadata);
-  };
-
+  const mutationFn = ({ metadata }: { metadata: any }) => putChatSettings(sessionId, metadata);
   const queryClient = useQueryClient();
 
   return useMutation(mutationFn, {
@@ -17,10 +14,7 @@ export const useMutationUpdateChatSettings = (sessionId: string) => {
 };
 
 export const useMutationDeleteChat = (sessionId: string) => {
-  const mutationFn = () => {
-    return deleteChat(sessionId);
-  };
-
+  const mutationFn = async () => deleteChat(sessionId);
   const queryClient = useQueryClient();
 
   return useMutation(mutationFn, {
@@ -32,9 +26,8 @@ export const useMutationDeleteChat = (sessionId: string) => {
 };
 
 export const useMutationChatImportSession = (sharedSessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
-    return postCreateChatFromShareImport(sharedSessionId, metadata);
-  };
+  const mutationFn = async ({ metadata }: { metadata: any }) =>
+    postCreateChatFromShareImport(sharedSessionId, metadata);
   const router = useRouter();
   const queryClient = useQueryClient();
 
