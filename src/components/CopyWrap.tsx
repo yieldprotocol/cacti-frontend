@@ -19,9 +19,7 @@ const CopyWrap = ({ children, text, className }: any) => {
   return (
     <button className={`flex items-center gap-2 ${className}`} onClick={(e: any) => copy_(e)}>
       {children}
-      <div className="h-5 w-5">
-        {copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />}
-      </div>
+      <div className="h-5 w-5">{copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />}</div>
     </button>
   );
 };

@@ -41,7 +41,6 @@ export type ChatContextType = {
 
   showShareModal: boolean;
   setShowShareModal: (value: boolean) => void;
-  shareChat: (id: string) => Promise<string | undefined>;
 };
 
 const initialContext = {
@@ -67,8 +66,6 @@ const initialContext = {
 
   showShareModal: false,
   setShowShareModal: (value: boolean) => {},
-  shareChat: () => new Promise<string | undefined>(() => undefined),
-  //renameShare: () => void
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -86,11 +83,11 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
 
-  const shareChat = async (id: string) => {
-    const shareId = useMutationCreateSharedSession(id);
-    console.log(shareId);
-    return '123123-123123123-1231223423';
-  };
+  // const shareChat = async (id: string) => {
+  //   const shareId = useMutationCreateSharedSession(id);
+  //   console.log(shareId);
+  //   return '123123-123123123-1231223423';
+  // };
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
@@ -374,7 +371,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
 
         showShareModal,
         setShowShareModal,
-        shareChat,
       }}
     >
       {children}

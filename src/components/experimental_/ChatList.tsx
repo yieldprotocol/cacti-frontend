@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChats } from '@/api/chats/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
-import { useMutationDeleteChat } from '@/api/chats/mutations';
 
 export type ChatItem = {
   id: string;

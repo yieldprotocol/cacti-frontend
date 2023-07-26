@@ -16,11 +16,11 @@ export const useMutationUpdateChatSettings = (sessionId: string) => {
 export const useMutationDeleteChat = (sessionId: string) => {
   const mutationFn = async () => deleteChat(sessionId);
   const queryClient = useQueryClient();
-  
+
   const router = useRouter();
 
   return useMutation(mutationFn, {
-    onMutate: ()=> router.push(`/`),
+    onMutate: () => router.push(`/`),
     onSuccess: (data, variables, context): void => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       queryClient.invalidateQueries({ queryKey: ['chatSettings', sessionId] });
