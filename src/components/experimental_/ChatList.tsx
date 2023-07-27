@@ -24,8 +24,8 @@ const ChatItem = ({ id, type }: ChatItem) => {
 
   const { mutate: deleteChat } = useMutationDeleteChat(id);
   const { mutate: deleteShare } = useMutationDeleteChat(id);
+  
   const handleDelete = () => (isShare ? deleteShare() : deleteChat());
-
   const handleShare = () => setShowShareModal(true);
 
   return (
@@ -53,12 +53,14 @@ const ChatItem = ({ id, type }: ChatItem) => {
 
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
+          
           <div
             className={`absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l ${
               selected ? 'from-gray-800/50' : 'from-[#031016] group-hover:from-gray-800/50'
             } `}
           />
         </div>
+
         {selected && (
           <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
             {!isShare ? (
