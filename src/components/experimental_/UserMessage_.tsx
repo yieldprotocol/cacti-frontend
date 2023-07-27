@@ -6,6 +6,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { VoidExpression } from 'typescript';
 import Avatar from '../Avatar';
 
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -25,23 +26,29 @@ export const UserMessage = ({
   submitEdit,
   submitRegenerate,
   submitDelete,
+  isShare = false,
 }: {
   actor: string;
   initialText: string;
   submitEdit: (text: string) => void;
   submitRegenerate: () => void;
   submitDelete: () => void;
+  isShare?: boolean;
 }) => {
   const [input, setInput] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const isCommenter = actor === 'commenter';
 
+  const setEditing = (val:boolean) => {
+    !isShare && setIsEditing(val)
+  };
+
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
       // cancel edit
       if (e.key === 'Escape') {
-        setIsEditing(false);
+        setEditing(false);
         setInput(initialText);
       }
 
@@ -52,7 +59,7 @@ export const UserMessage = ({
         }
         inputRef.current?.blur();
         setInput(input);
-        setIsEditing(false);
+        setEditing(false);
       }
     };
 
@@ -103,16 +110,16 @@ export const UserMessage = ({
         focus:outline-none
       `}
         value={input}
-        onClick={() => setIsEditing(true)}
+        onClick={() => setEditing(true)}
         onChange={(e) => {
-          setIsEditing(true);
-          setInput(e.target.value);
+          setEditing(true);
+          !isShare && setInput(e.target.value);
         }}
         onBlur={() => {
           setInput(initialText);
-          setIsEditing(false);
+          setEditing(false);
         }}
-        onFocus={() => setIsEditing(true)}
+        onFocus={() => setEditing(true)}
       />
 
       {isEditing ? (
@@ -128,27 +135,29 @@ export const UserMessage = ({
           </span>
         </div>
       ) : (
-        <>
-          <div className="durtaion-200 flex items-center gap-2 opacity-0 group-hover:opacity-100">
+        <div
+          className={`durtaion-200 flex items-center gap-2 opacity-0 group-hover:opacity-100 ${
+            isShare && 'hidden'
+          }`}
+        >
+          <IconBtn
+            onClick={() => setEditing(true)}
+            className={`${iconBtnBaseStyle} hover:bg-teal-100/10`}
+          >
+            <PencilIcon className="h-4 w-4" />
+          </IconBtn>
+          <IconBtn className={`${iconBtnBaseStyle} hover:bg-red-800/60`} onClick={submitDelete}>
+            <TrashIcon className="h-4 w-4" />
+          </IconBtn>
+          {!isCommenter && (
             <IconBtn
-              onClick={() => setIsEditing(true)}
-              className={`${iconBtnBaseStyle} hover:bg-teal-100/10`}
+              onClick={submitRegenerate}
+              className={`${iconBtnBaseStyle} hover:bg-teal-800/60`}
             >
-              <PencilIcon className="h-4 w-4" />
+              <PaperAirplaneIcon className="h-4 w-4" />
             </IconBtn>
-            <IconBtn className={`${iconBtnBaseStyle} hover:bg-red-800/60`} onClick={submitDelete}>
-              <TrashIcon className="h-4 w-4" />
-            </IconBtn>
-            {!isCommenter && (
-              <IconBtn
-                onClick={submitRegenerate}
-                className={`${iconBtnBaseStyle} hover:bg-teal-800/60`}
-              >
-                <PaperAirplaneIcon className="h-4 w-4" />
-              </IconBtn>
-            )}
-          </div>
-        </>
+          )}
+        </div>
       )}
     </div>
   );

@@ -25,6 +25,7 @@ const ChatBox = () => {
       <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
         {isLoading ? <Spinner /> : messageContentComponent}
       </div>
+
       {/* Chat input */}
       <div className="sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6">
         <MessageInput />

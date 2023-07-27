@@ -32,11 +32,13 @@ export type ChatContextType = {
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
   isMultiStepInProgress: boolean;
-  showDebugMessages: boolean;
-  setShowDebugMessages: (arg0: boolean) => void;
+
   interactor: string;
   setInteractor: (arg0: string) => void;
   connectionStatus: ReadyState;
+
+  showDebugMessages: boolean;
+  setShowDebugMessages: (arg0: boolean) => void;
 
   showShareModal: boolean;
   setShowShareModal: (value: boolean) => void;
