@@ -13,8 +13,12 @@ import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
+import DepositVault from './widgets/4626vault/DepositIntoVault';
+import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDepositETH';
 import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdrawETH';
+import DepositDSR from './widgets/dsr/DepositDSR';
+import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
@@ -225,6 +229,19 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
   widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
+
+  widgets.set('savings-dai-deposit', <DepositDSR depositAmount={parsedArgs[0]} />);
+
+  widgets.set('redeem-sdai', <RedeemDSR shares={parsedArgs[0]} />);
+
+  widgets.set(
+    'deposit-vault',
+    <DepositVault depositToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
+  );
+  widgets.set(
+    'withdraw-vault',
+    <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
+  );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
 
   /* If available, return the widget in the widgets map */
