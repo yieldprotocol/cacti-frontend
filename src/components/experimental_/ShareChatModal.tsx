@@ -19,7 +19,7 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
   const buttonStyle =
-    'w-full cursor-pointer select-none rounded-[8px] bg-green-primary p-[8px] text-center text-white transition ease-in-out active:bg-transparent';
+    'w-full cursor-pointer select-none rounded-lg bg-green-primary hover:bg-green-primary/80 p-[8px] text-center text-white transition ease-in-out ';
 
   /* Reset newThreadID whenever the id changes */
   useEffect(() => {

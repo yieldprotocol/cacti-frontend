@@ -9,6 +9,7 @@ import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
+  
   const { messages } = useChatContext();
   const { isLoading } = useQueryChats();
   const router = useRouter();

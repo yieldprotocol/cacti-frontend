@@ -39,7 +39,7 @@ const ChatItem = ({ id }: ChatItem) => {
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
         </div>
-        
+
         {selected && (
           <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
               <button className="p-1" onClick={handleShare}>
@@ -60,6 +60,7 @@ const ShareItem = ({ id }: ChatItem) => {
   
   const { query } = useRouter();
   const selected = query.id === id;
+  
   const { mutate: deleteShare } = useMutationDeleteChat(id);
   const handleDelete = () => deleteShare();
 
