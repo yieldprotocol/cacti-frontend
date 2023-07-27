@@ -4,11 +4,11 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChats } from '@/api/chats/queries';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 import { useQueryShares } from '@/api/shares/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
-import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 
 export type ChatItem = {
   id: string;
@@ -35,7 +35,7 @@ const ChatItem = ({ id }: ChatItem) => {
           selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
         }`}
       >
-        {selected ? <CheckIcon className="h-4 w-4 text-green-primary" />: <div className ='px-2'/>}
+        {selected ? <CheckIcon className="h-4 w-4 text-green-primary" /> : <div className="px-2" />}
 
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
@@ -43,9 +43,9 @@ const ChatItem = ({ id }: ChatItem) => {
 
         {selected && (
           <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
-              <button className="p-1" onClick={handleShare}>
-                <ShareIcon className="h-4 w-4 hover:text-white" />
-              </button>
+            <button className="p-1" onClick={handleShare}>
+              <ShareIcon className="h-4 w-4 hover:text-white" />
+            </button>
             <button className="p-1" onClick={handleDelete}>
               <TrashIcon className="h-4 w-4 hover:text-white" />
             </button>
@@ -56,12 +56,10 @@ const ChatItem = ({ id }: ChatItem) => {
   );
 };
 
-
-const ShareItem = ({ id }: ChatItem) => { 
-  
+const ShareItem = ({ id }: ChatItem) => {
   const { query } = useRouter();
   const selected = query.id === id;
-  
+
   const { mutate: deleteShare } = useMutationDeleteSharedSession(id);
   const handleDelete = () => deleteShare();
 
@@ -76,9 +74,13 @@ const ShareItem = ({ id }: ChatItem) => {
           selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
         }`}
       >
-        {selected ? <CheckIcon className="h-4 w-4 text-green-primary" /> : <ShareIcon className="h-3 w-3" />}
+        {selected ? (
+          <CheckIcon className="h-4 w-4 text-green-primary" />
+        ) : (
+          <ShareIcon className="h-3 w-3" />
+        )}
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
-        {abbreviateHash(id, 6)}
+          {abbreviateHash(id, 6)}
         </div>
 
         {selected && (
@@ -91,10 +93,9 @@ const ShareItem = ({ id }: ChatItem) => {
       </div>
     </Link>
   );
-}
+};
 
 const ChatList = () => {
-
   const { chats } = useQueryChats();
   const { shares } = useQueryShares();
 

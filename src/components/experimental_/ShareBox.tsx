@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReadyState } from 'react-use-websocket';
 import { useRouter } from 'next/router';
 import { useMutationChatImportSession } from '@/api/chats/mutations';
 import { useQuerySharedSession, useQueryShares } from '@/api/shares/queries';
@@ -7,12 +8,10 @@ import { Spinner } from '@/utils';
 import CustomConnectButton from './CustomConnectButton';
 import { MessageItem } from './MessageItem_';
 import { buttonStyle } from './layout/sidebar/NewChatButton';
-import { ReadyState } from 'react-use-websocket';
 
 const ShareBox = () => {
-  
   const isWalletConnected = true;
-  
+
   const router = useRouter();
   const { id } = router.query;
 
@@ -59,7 +58,10 @@ const ShareBox = () => {
             <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'} </div>
           </button>
         ) : (
-          <div> <CustomConnectButton /> </div>
+          <div>
+            {' '}
+            <CustomConnectButton />{' '}
+          </div>
         )}
       </div>
     </div>

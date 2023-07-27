@@ -40,8 +40,8 @@ export const UserMessage = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const isCommenter = actor === 'commenter';
 
-  const setEditing = (val:boolean) => {
-    !isShare && setIsEditing(val)
+  const setEditing = (val: boolean) => {
+    !isShare && setIsEditing(val);
   };
 
   useEffect(() => {

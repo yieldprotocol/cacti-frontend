@@ -16,7 +16,7 @@ export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
   });
 };
 
-export const useMutationDeleteSharedSession = (sharedSessionId: string) => {   
+export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
   const mutationFn = async () => {
     return deleteSharedSession(sharedSessionId);
   };

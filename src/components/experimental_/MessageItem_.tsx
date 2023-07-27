@@ -5,7 +5,13 @@ import MessageTranslator from './MessageTranslator_';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
 
-export const MessageItem = ({ message, isShare = false }: { message: Message, isShare?: boolean }) => {
+export const MessageItem = ({
+  message,
+  isShare = false,
+}: {
+  message: Message;
+  isShare?: boolean;
+}) => {
   const { actor, payload, messageId } = message;
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
 
@@ -45,7 +51,7 @@ export const MessageItem = ({ message, isShare = false }: { message: Message, is
             submitEdit,
             submitRegenerate,
             submitDelete,
-            isShare
+            isShare,
           }}
         />
       )}

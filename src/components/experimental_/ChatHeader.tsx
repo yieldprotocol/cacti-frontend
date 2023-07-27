@@ -1,9 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import {
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
-import { useMutationDeleteChat} from '@/api/chats/mutations';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 
