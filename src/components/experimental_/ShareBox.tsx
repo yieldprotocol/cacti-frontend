@@ -2,12 +2,17 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { useMutationChatImportSession } from '@/api/chats/mutations';
 import { useQuerySharedSession, useQueryShares } from '@/api/shares/queries';
-import { Message, useChatContext } from '@/contexts/ChatContext';
+import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
+import CustomConnectButton from './CustomConnectButton';
 import { MessageItem } from './MessageItem_';
 import { buttonStyle } from './layout/sidebar/NewChatButton';
+import { ReadyState } from 'react-use-websocket';
 
 const ShareBox = () => {
+  
+  const isWalletConnected = true;
+  
   const router = useRouter();
   const { id } = router.query;
 
@@ -48,20 +53,14 @@ const ShareBox = () => {
       <div
         className={`sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6`}
       >
-        <button
-          onClick={() => continueChat({ metadata: {} })}
-          className={buttonStyle}
-        >
-          {/* <div className="flex items-center gap-2 p-2 text-gray-300"> */}
-          {isCreatingChat ? (
-            <>
-              <Spinner className="text-gray-300" /> <div>Converting to a new chat</div>
-            </>
-          ) : (
-            <div >Continue chatting</div>
-          )}
-          {/* </div> */}
-        </button>
+        {isWalletConnected ? (
+          <button onClick={() => continueChat({ metadata: {} })} className={buttonStyle}>
+            <Spinner className={`text-gray-300 ${!isCreatingChat && 'hidden'}`} />
+            <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'} </div>
+          </button>
+        ) : (
+          <div> <CustomConnectButton /> </div>
+        )}
       </div>
     </div>
   );
