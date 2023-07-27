@@ -1,5 +1,4 @@
-import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
-import { AnyARecord } from 'dns';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Message } from '@/contexts/ChatContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
@@ -15,8 +14,10 @@ import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
 import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
-import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDepositETH';
-import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdrawETH';
+import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDeposit';
+import ArbitrumDeposit from './widgets/arbitrum/ArbitrumDeposit';
+import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdraw';
+import ArbitrumWithdraw from './widgets/arbitrum/ArbitrumWithdraw';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
@@ -214,11 +215,6 @@ export const Widget = (props: WidgetProps) => {
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-  widgets.set('arbitrum-deposit-eth', <ArbitrumDepositETH value={parsedArgs[0]} />);
-  widgets.set(
-    'arbitrum-withdraw-eth',
-    <ArbitrumWithdrawETH destination={parsedArgs[0]} value={parsedArgs[1]} />
-  );
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
@@ -243,6 +239,15 @@ export const Widget = (props: WidgetProps) => {
     <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+
+  widgets.set(
+    'arbitrum-deposit',
+    <ArbitrumDeposit tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} />
+  );
+  widgets.set(
+    'arbitrum-withdraw',
+    <ArbitrumWithdraw tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} />
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
