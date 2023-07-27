@@ -11,16 +11,14 @@ import { abbreviateHash } from '@/utils';
 
 export type ChatItem = {
   id: string;
-  type?: 'chat' | 'share';
+  isShare?: boolean;
 };
 
-const ChatItem = ({ id, type }: ChatItem) => {
+const ChatItem = ({ id, isShare }: ChatItem) => {
   const { setShowShareModal } = useChatContext();
   const { threadName } = useThread(id);
   const { query } = useRouter();
   const selected = query.id === id;
-
-  const isShare = type === 'share';
 
   const { mutate: deleteChat } = useMutationDeleteChat(id);
   const { mutate: deleteShare } = useMutationDeleteChat(id);
@@ -99,7 +97,7 @@ const ChatList = () => {
             My Shares
           </div>
           {shares?.shares?.map((chat) => (
-            <ChatItem key={chat.id} id={chat.id} type="share" />
+            <ChatItem key={chat.id} id={chat.id} isShare={true} />
           ))}
         </>
       ) : null}
