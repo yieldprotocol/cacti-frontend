@@ -8,6 +8,7 @@ import { useQueryShares } from '@/api/shares/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 
 export type ChatItem = {
   id: string;
@@ -61,7 +62,7 @@ const ShareItem = ({ id }: ChatItem) => {
   const { query } = useRouter();
   const selected = query.id === id;
   
-  const { mutate: deleteShare } = useMutationDeleteChat(id);
+  const { mutate: deleteShare } = useMutationDeleteSharedSession(id);
   const handleDelete = () => deleteShare();
 
   return (
@@ -111,7 +112,7 @@ const ChatList = () => {
       {shares?.shares?.length ? (
         <>
           <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
-            My Shares
+            My Shared Chats
           </div>
           {shares?.shares?.map((chat) => (
             <ShareItem key={chat.id} id={chat.id} />

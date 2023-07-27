@@ -16,15 +16,17 @@ export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
   });
 };
 
-export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
+export const useMutationDeleteSharedSession = (sharedSessionId: string) => {   
   const mutationFn = async () => {
     return deleteSharedSession(sharedSessionId);
   };
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation(mutationFn, {
     onSuccess: (data, variables, context): void => {
+      router.push(`/`);
       queryClient.invalidateQueries({ queryKey: ['shares'] });
       queryClient.invalidateQueries({ queryKey: ['sharedSession', sharedSessionId] });
     },
