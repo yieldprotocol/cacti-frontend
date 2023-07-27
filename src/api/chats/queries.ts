@@ -13,7 +13,11 @@ export interface Chats {
 export const useQueryChats = () => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
-  const { data: chats, ...rest } = useQuery<Chats>(['chats', userId], async () => getChatsList());
+  const { data: chats, ...rest } = useQuery<Chats>({
+    queryKey: ['chats', userId],
+    queryFn: async () => getChatsList(),
+    refetchOnWindowFocus: false,
+  });
   return { chats, ...rest };
 };
 
