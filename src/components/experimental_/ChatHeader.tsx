@@ -1,17 +1,11 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  PencilIcon,
-  ShareIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import useThread from '@/hooks/useThread';
+import SkeletonWrap from '../SkeletonWrap';
 
 interface TooltipProps {
   children: ReactNode;
@@ -91,6 +85,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 
 const ChatHeader = () => {
   const { threadId, threadName, setThreadName } = useThread();
+  const { isLoading } = useQueryChatSettings(threadId);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputText, setText] = useState<string>();
@@ -173,18 +168,26 @@ const ChatHeader = () => {
           </span>
         ) : (
           <div className="flex items-center gap-4">
-            <span onClick={handleTextClick}> {threadName} </span>
+            <span onClick={handleTextClick}>
+              {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
+            </span>
             <div className="h-4 w-4 hover:text-white" onClick={() => setIsEditing(true)}>
-              <PencilIcon />{' '}
+              <PencilIcon />
             </div>
           </div>
         )}
 
         <div className="flex w-full justify-items-start text-xs text-white/30">
-          <span>Last edit: recently</span>
+          <span>
+            {isLoading || !threadId ? (
+              <SkeletonWrap height={10} width={50} />
+            ) : (
+              'Last edit: recently'
+            )}
+          </span>
         </div>
       </div>
-      {threadId && <PrimaryActions {...{ threadId }} />}
+      <PrimaryActions {...{ threadId }} />
     </div>
   );
 };
