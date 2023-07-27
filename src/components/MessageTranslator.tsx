@@ -1,7 +1,4 @@
-import { Fragment, createElement, useEffect } from 'react';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { getToken } from 'next-auth/jwt';
-import { useNetwork } from 'wagmi';
+import { Fragment, useEffect } from 'react';
 import Grid from '@/components/Grid';
 import {
   NftAssetContainer,
@@ -81,8 +78,6 @@ export const Widgetize = (widget: Widget) => {
 
       case 'yield-farm': {
         const [projectName, network, tokenSymbol, amtString] = parseArgsStripQuotes(args);
-        // const token = getToken(tokenSymbol);
-        // const amount = parseUnits(amtString, token?.decimals);
         return (
           <YieldFarmWidget {...{ inputString, projectName, network, tokenSymbol, amtString }} />
         );
