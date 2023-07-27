@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useQueryChats } from '@/api/chats/queries';
-import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 import MessageInput from './MessageInput_';
 import MessageList from './MessageList_';
@@ -9,13 +8,10 @@ import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage_';
 
 const ChatBox = () => {
-  const { messages } = useChatContext();
-  const { isLoading: chatsLoading } = useQueryChats();
+  const { isLoading } = useQueryChats();
   const router = useRouter();
   const { id } = router.query;
-  const isLoading = (id && messages.length === 0) || chatsLoading;
-  const showMessageList = !!id && messages.length > 0;
-  const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
+  const messageContentComponent = !!id ? <MessageList /> : <WelcomeMessage />;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-auto">
@@ -24,7 +20,7 @@ const ChatBox = () => {
 
       {/* chat area */}
       <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
-        {isLoading ? <Spinner className="h-8" /> : messageContentComponent}
+        {isLoading ? <Spinner className="h-6 w-6" /> : messageContentComponent}
       </div>
       {/* Chat input */}
       <div className="sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6">
