@@ -5,6 +5,7 @@ import { useQuerySharedSession, useQueryShares } from '@/api/shares/queries';
 import { Message, useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 import { MessageItem } from './MessageItem_';
+import { buttonStyle } from './layout/sidebar/NewChatButton';
 
 const ShareBox = () => {
   const router = useRouter();
@@ -45,21 +46,21 @@ const ShareBox = () => {
         {isLoading || !isSuccess ? <Spinner /> : messageContentComponent}
       </div>
       <div
-        className={` sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6`}
+        className={`sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6`}
       >
         <button
           onClick={() => continueChat({ metadata: {} })}
-          className="rounded-lg bg-green-primary px-2 py-1 hover:bg-green-primary/80 "
+          className={buttonStyle}
         >
-          <div className="flex items-center gap-2 p-2 text-gray-300">
-            {isCreatingChat ? (
-              <>
-                <Spinner className="text-gray-300" /> <div>Converting to a new chat</div>
-              </>
-            ) : (
-              <div>Continue chatting</div>
-            )}
-          </div>
+          {/* <div className="flex items-center gap-2 p-2 text-gray-300"> */}
+          {isCreatingChat ? (
+            <>
+              <Spinner className="text-gray-300" /> <div>Converting to a new chat</div>
+            </>
+          ) : (
+            <div >Continue chatting</div>
+          )}
+          {/* </div> */}
         </button>
       </div>
     </div>
