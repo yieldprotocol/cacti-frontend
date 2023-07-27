@@ -159,7 +159,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       messages.length > 0 &&
       (resumeFromMessageId != null || insertBeforeMessageId != null)
     ) {
-      console.log( sessionId )
       wsSendMessage({
         actor: 'system',
         type: 'init',
@@ -224,7 +223,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       actor,
       feedback: obj.feedback || 'none',
     };
-
     setMessages((messages) => {
       // if beforeMessageId is specified, then we are inserting new messages before that point.
       // break up our existing message list into 2 parts, those before the insertion point,

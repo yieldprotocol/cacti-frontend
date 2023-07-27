@@ -17,10 +17,6 @@ const useThread = (threadId?: string) => {
     settingsMutation.mutate({ metadata: { name: newName } });
   };
 
-  // const threadName = window.localStorage.getItem(`thread-${threadId_}`);
-  // const setThreadName = (newName: string) =>
-  // newName && window.localStorage.setItem(`thread-${threadId_}`, newName);
-
   return {
     threadId: threadId_,
     threadName: threadName || threadId_,
