@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Erc20Bridger, EthBridger, getL2Network } from '@arbitrum/sdk';
-import { L1ToL2TransactionRequest } from '@arbitrum/sdk/dist/lib/dataEntities/transactionRequest';
+import { Erc20Bridger, getL2Network } from '@arbitrum/sdk';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import { useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
