@@ -14,7 +14,7 @@ export type ChatItem = {
   isShare?: boolean;
 };
 
-const ChatItem = ({ id, isShare }: ChatItem) => {
+const ChatItem = ({ id, isShare = false }: ChatItem) => {
   const { setShowShareModal } = useChatContext();
   const { threadName } = useThread(id);
   const { query } = useRouter();
