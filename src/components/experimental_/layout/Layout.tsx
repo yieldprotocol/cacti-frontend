@@ -23,7 +23,7 @@ const HeaderContainer = ({
     <div
       className={`sticky top-0 z-40 flex items-center gap-x-4 ${
         pathname !== '/' ? 'bg-gray-secondary' : ''
-      } text-white/70 sm:gap-x-6 sm:p-6`}
+      } p-2 text-white/70 sm:gap-x-6 md:p-6`}
     >
       <button type="button" className="text-white/50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
         <span className="sr-only">Open sidebar</span>
@@ -31,7 +31,7 @@ const HeaderContainer = ({
       </button>
 
       <div className="h-full w-full">{children}</div>
-      <div className="hidden min-w-[200px] md:block ">
+      <div className="hidden min-w-[200px] md:block">
         <CustomConnectButton />
       </div>
     </div>
