@@ -36,11 +36,14 @@ const ChatItem = ({ id }: ChatItem) => {
         }`}
       >
         {selected ? <CheckIcon className="h-4 w-4 text-green-primary" /> : <div className="px-2" />}
-
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
+          <div
+            className={`absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l ${
+              selected ? 'from-gray-secondary/50' : 'from-gray-primary group-hover:from-gray-800/50'
+            } `}
+          />
         </div>
-
         {selected && (
           <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
             <button className="p-1" onClick={handleShare}>
