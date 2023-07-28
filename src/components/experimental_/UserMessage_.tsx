@@ -140,7 +140,7 @@ export const UserMessage = ({
         </div>
       ) : (
         <div
-          className={`durtaion-200 flex items-center w-full gap-2 opacity-0 group-hover:opacity-100 ${
+          className={`durtaion-200 flex w-full items-center gap-2 opacity-0 group-hover:opacity-100 ${
             isShare && 'hidden'
           }`}
         >
