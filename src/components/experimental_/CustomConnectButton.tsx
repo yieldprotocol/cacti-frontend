@@ -24,7 +24,7 @@ const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className={`h-full w-full cursor-pointer rounded-lg border-[1px] ${
+            className={`h-12 w-full cursor-pointer rounded-lg border-[1px] ${
               !connected ? 'border-green-primary/10 bg-green-primary' : 'border-gray-800'
             } bg-gray-700/50 text-center text-sm font-bold text-white hover:opacity-80`}
             {...(!ready && {
