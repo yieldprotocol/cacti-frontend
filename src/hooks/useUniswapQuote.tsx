@@ -11,7 +11,7 @@ import useToken from './useToken';
 interface UseUniswapQuoteProps {
   baseTokenSymbol: string;
   quoteTokenSymbol: string;
-  amount?: string;
+  amount?: string; // formatted/human readable input
 }
 
 interface UseUniswapQuoteRes {
