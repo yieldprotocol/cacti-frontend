@@ -248,7 +248,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...beforeMessages, msg, ...afterMessages];
       }
     });
-  }, [lastMessage]);
+  }, [lastMessage, queryClient, router]);
 
   const sendMessage = (msg: string) => {
     setInsertBeforeMessageId(null);

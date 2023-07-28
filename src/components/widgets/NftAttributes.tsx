@@ -90,7 +90,7 @@ export const NftAttributes = ({ nftAddress, tokenID }: Props) => {
   );
   const result = useAsset({ network: ETHEREUM_NETWORK, address: nftAddress, tokenId: tokenID! });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <Spinner className="h-4" />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
 
   return (
@@ -118,7 +118,7 @@ export const NftsWithAttributes = ({ nftAddress, traitType, traitValue }: Props)
     async () => fetchNftsByAttributes(nftAddress, traitType!, traitValue!)
   );
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <Spinner className="h-4" />;
   if (isError) return <h1>{JSON.stringify(error)}</h1>;
   if (!data) return <h1 className="text-black">fetchNftsByAttributes failed</h1>;
 
