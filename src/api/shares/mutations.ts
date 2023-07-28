@@ -56,7 +56,7 @@ export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
       // if optimistic update fails, roll back to previousChats
       queryClient.setQueryData(['shares', userId], context?.previousSharedChats);
     },
-    onSuccess: (data, variables, context) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sharedChatKey });
       queryClient.invalidateQueries({ queryKey: sharedChatSettingsKey });
     },
