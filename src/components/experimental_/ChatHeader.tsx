@@ -35,9 +35,10 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
       {!isShare ? (
         <button
           onClick={() => setShowShareModal(true)}
-          className="rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
+          className="flex items-center gap-1 rounded-md bg-green-primary p-1.5 hover:bg-green-primary/80"
         >
           <ShareIcon className="hover:text-green/10 h-3 w-3" />
+          <span className="text-sm">Share</span>
         </button>
       ) : null}
 
@@ -45,7 +46,7 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
         onClick={handleDelete}
       >
-        <TrashIcon className="hover:text-red/10 h-3 w-3" />
+        <TrashIcon className="hover:text-red/10 h-4 w-4" />
       </button>
     </div>
   );
