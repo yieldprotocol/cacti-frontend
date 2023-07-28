@@ -44,7 +44,7 @@ export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
         const filteredSharedChats = previousSharedChats.shares.filter(
           (s) => s.id !== sharedSessionId
         );
-        const updated: Shares = { shares: filteredSharedChats }; // TODO need to have types before here, so we don't explicitly assign Chats
+        const updated: Shares = { shares: filteredSharedChats };
         queryClient.setQueryData(sharedChatKey, updated);
       }
 
