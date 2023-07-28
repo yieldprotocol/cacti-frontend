@@ -7,7 +7,6 @@ import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
-import CustomConnectButton from './CustomConnectButton';
 
 interface TooltipProps {
   children: ReactNode;
