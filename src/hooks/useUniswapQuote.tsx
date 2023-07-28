@@ -11,7 +11,7 @@ import useToken from './useToken';
 interface UseUniswapQuoteProps {
   baseTokenSymbol: string;
   quoteTokenSymbol: string;
-  amount?: string; // formatted/human readable input
+  amount?: string; // formatted/human readable input; if none defaults to 1 unit of base token
 }
 
 interface UseUniswapQuoteRes {
@@ -27,7 +27,7 @@ const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUnisw
   const { data: baseTokenToUse } = useToken(baseTokenIsEth ? 'WETH' : baseTokenSymbol);
   const { data: quoteTokenToUse } = useToken(quoteTokenIsEth ? 'WETH' : quoteTokenSymbol);
   const oneInput = useInput('1', baseTokenToUse?.symbol!);
-  const input = useInput(amount || '0', baseTokenToUse?.symbol!);
+  const input = useInput(amount || '1', baseTokenToUse?.symbol!);
 
   const {
     settings: { experimentalUi },
