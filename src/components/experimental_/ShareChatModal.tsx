@@ -7,7 +7,6 @@ import { Spinner } from '@/utils';
 import CopyWrap from '../CopyWrap';
 
 const ShareChatModal = ({ id }: { id: string | undefined }) => {
-
   const { showShareModal: isOpen, setShowShareModal } = useChatContext();
   const { mutateAsync } = useMutationCreateSharedSession(id!);
   const [newThreadId, setNewThreadId] = useState<string>();
