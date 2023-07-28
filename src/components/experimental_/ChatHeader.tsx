@@ -1,6 +1,10 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-
 import { useMutationDeleteChat } from '@/api/chats/mutations';
+import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
+import { useMutationDeleteChat, useMutationUpdateChatSettings } from '@/api/chats/mutations';
+import { useQueryChatSettings } from '@/api/chats/queries';
+import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useQueryChatSettings } from '@/api/chats/queries';
