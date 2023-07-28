@@ -22,22 +22,21 @@ const ShareBox = () => {
     id as string
   );
 
-  const messageContentComponent = true ? (
+  const messageContentComponent = settings?.messages.length ? (
     <div className="h-full w-full pt-8">
-      {isSuccess &&
-        settings?.messages.map((message) => {
-          if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
-            return <React.Fragment key={message.messageId} />;
-          }
-          return (
-            <React.Fragment key={message.messageId}>
-              <MessageItem message={message} isShare={true} />
-            </React.Fragment>
-          );
-        })}
+      {settings.messages.map((message) => {
+        if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
+          return <React.Fragment key={message.messageId} />;
+        }
+        return (
+          <React.Fragment key={message.messageId}>
+            <MessageItem message={message} isShare={true} />
+          </React.Fragment>
+        );
+      })}
     </div>
   ) : (
-    <div> Empty chat session </div>
+    <div>Empty chat session</div>
   );
 
   return (
