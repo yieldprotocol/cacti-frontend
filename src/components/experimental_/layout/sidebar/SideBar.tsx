@@ -32,9 +32,10 @@ const Sidebar = ({
       </div>
       <div className="relative flex w-full flex-col self-end">
         <div className="p-1.5">
-          <MoreItems />
+          <MoreItems />       
           {/* {process.env.NODE_ENV === 'development' && <AccountStatus />} */}
-          <AccountStatus />
+          <div className='p-2'><AccountStatus /></div>
+          {/* <div className="text-xs text-white/50 border-[0.5px] rounded-xl p-1 ">App version: v{process.env.APP_VERSION}</div> */}
         </div>
       </div>
     </div>
