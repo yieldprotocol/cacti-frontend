@@ -3,16 +3,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { CheckCircleIcon, DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
-import useThread from '@/hooks/useThread';
 import { Spinner } from '@/utils';
 import CopyWrap from '../CopyWrap';
 
 const ShareChatModal = ({ id }: { id: string | undefined }) => {
-  const { threadName } = useThread(id);
+
   const { showShareModal: isOpen, setShowShareModal } = useChatContext();
-
   const { mutateAsync } = useMutationCreateSharedSession(id!);
-
   const [newThreadId, setNewThreadId] = useState<string>();
   const [newThreadUrl, setNewThreadUrl] = useState<string>();
 
@@ -26,7 +23,7 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
     setNewThreadId(undefined);
   }, [id]);
 
-  const handleEditName = (newName: string) => {};
+  // TODO: const handleEditName = (newName: string) => {};
   const handleShareChat = async () => {
     setIsSharing(true);
     try {
@@ -34,8 +31,6 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
       const newId = await mutateAsync();
       setNewThreadId(newId!);
       setNewThreadUrl(`${window.location.origin}/share/${newId}`);
-      /* TODO: If the thread has a name - rename the share to the same name */
-      // threadName !== id && handleEditName(threadName!);
     } catch (error) {
       console.log('Sharing Error: ', error);
     }
