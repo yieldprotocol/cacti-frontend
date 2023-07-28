@@ -1,14 +1,13 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-
-import { useMutationDeleteChat } from '@/api/chats/mutations';
-import { useChatContext } from '@/contexts/ChatContext';
+import { useRouter } from 'next/router';
 import { PencilIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
+import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
 import CustomConnectButton from './CustomConnectButton';
-import { useRouter } from 'next/router';
-import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 
 interface TooltipProps {
   children: ReactNode;
@@ -30,31 +29,30 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 
   const { mutate: deleteChat } = useMutationDeleteChat(threadId);
   const { mutate: deleteShare } = useMutationDeleteSharedSession(threadId);
-  const handleDelete = async () => isShare ? deleteShare() : deleteChat();
+  const handleDelete = async () => (isShare ? deleteShare() : deleteChat());
 
   return (
     <div className="flex items-center gap-2">
-      {!isShare ? <button
-        onClick={() => setShowShareModal(true)}
-        className="rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
-      >
-        <ShareIcon className="hover:text-green/10 h-4 w-4" />
-      </button> : null }
+      {!isShare ? (
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
+        >
+          <ShareIcon className="hover:text-green/10 h-3 w-3" />
+        </button>
+      ) : null}
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
         onClick={handleDelete}
       >
-        <TrashIcon className="hover:text-red/10 h-4 w-4" />
+        <TrashIcon className="hover:text-red/10 h-3 w-3" />
       </button>
     </div>
   );
 };
 
 const ChatHeader = () => {
-
-   
-
   const { threadId, threadName, setThreadName } = useThread();
   const { isLoading } = useQueryChatSettings(threadId);
 
@@ -101,65 +99,58 @@ const ChatHeader = () => {
       className="flex items-center justify-between
     gap-2"
     >
-      <div className="flex">
-      <div className="flex flex-col items-center justify-start gap-2">
-        {isEditing ? (
-          <span className="flex items-center gap-2">
-            <input
-              ref={inputRef}
-              className={`h-full bg-transparent text-white/70 focus:outline-none`}
-              onClick={() => setIsEditing(true)}
-              onChange={(e) => {
-                setIsEditing(true);
-                setText(e.target.value);
-              }}
-              onBlur={() => {
-                setText(threadName ?? threadId);
-                setIsEditing(false);
-              }}
-              onFocus={() => setIsEditing(true)}
-              placeholder={threadName ?? threadId}
-            />
-            <div className="mr-2 flex gap-2">
-              {inputRef.current?.value ? (
-                <div
-                  className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
-                  onClick={submitNameChange}
-                >
-                  enter
-                </div>
-              ) : (
-                <div className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
-                  esc
-                </div>
-              )}
-            </div>
-          </span>
-        ) : (
-          <div className="flex items-center gap-4">
-            <span onClick={handleTextClick}>
-              {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
+        <div className="flex flex-col items-center justify-start gap-2">
+          {isEditing ? (
+            <span className="flex items-center gap-2">
+              <input
+                ref={inputRef}
+                className={`h-full bg-transparent text-white/70 focus:outline-none`}
+                onClick={() => setIsEditing(true)}
+                onChange={(e) => {
+                  setIsEditing(true);
+                  setText(e.target.value);
+                }}
+                onBlur={() => {
+                  setText(threadName ?? threadId);
+                  setIsEditing(false);
+                }}
+                onFocus={() => setIsEditing(true)}
+                placeholder={threadName ?? threadId}
+              />
+              <div className="mr-2 flex gap-2">
+                {inputRef.current?.value ? (
+                  <div
+                    className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
+                    onClick={submitNameChange}
+                  >
+                    enter
+                  </div>
+                ) : (
+                  <div className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
+                    esc
+                  </div>
+                )}
+              </div>
             </span>
-            {threadId && <PrimaryActions threadId={threadId} />}
+          ) : (
+            <div className="flex items-center gap-4">
+              <span onClick={handleTextClick}>
+                {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
+              </span>
+              {threadId && <PrimaryActions threadId={threadId} />}
+            </div>
+          )}
+
+          <div className="flex w-full justify-items-start text-xs text-white/30">
+            <span>
+              {isLoading || !threadId ? (
+                <SkeletonWrap height={10} width={50} />
+              ) : (
+                'Last edit: recently'
+              )}
+            </span>
           </div>
-        )}
-
-        <div className="flex w-full justify-items-start text-xs text-white/30">
-          <span>
-            {isLoading || !threadId ? (
-              <SkeletonWrap height={10} width={50} />
-            ) : (
-              'Last edit: recently'
-            )}
-          </span>
         </div>
-       
-      </div>
-      
-      </div>
-     
-
-      <div><CustomConnectButton /></div>
     </div>
   );
 };
