@@ -2,10 +2,13 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useQueryChatSettings } from '@/api/chats/queries';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
+import CustomConnectButton from './CustomConnectButton';
+import { useRouter } from 'next/router';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 
 interface TooltipProps {
   children: ReactNode;
@@ -22,18 +25,21 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const { setShowShareModal } = useChatContext();
+  const { route } = useRouter();
+  const isShare = route === '/share/[id]';
 
-  const { mutate } = useMutationDeleteChat(threadId);
-  const handleDelete = async () => mutate();
+  const { mutate: deleteChat } = useMutationDeleteChat(threadId);
+  const { mutate: deleteShare } = useMutationDeleteSharedSession(threadId);
+  const handleDelete = async () => isShare ? deleteShare() : deleteChat();
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      {!isShare ? <button
         onClick={() => setShowShareModal(true)}
-        className="rounded-md bg-green-primary px-2 py-1 hover:bg-green-primary/80"
+        className="rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
       >
-        Share
-      </button>
+        <ShareIcon className="hover:text-green/10 h-4 w-4" />
+      </button> : null }
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
@@ -46,6 +52,9 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 };
 
 const ChatHeader = () => {
+
+   
+
   const { threadId, threadName, setThreadName } = useThread();
   const { isLoading } = useQueryChatSettings(threadId);
 
@@ -92,6 +101,7 @@ const ChatHeader = () => {
       className="flex items-center justify-between
     gap-2"
     >
+      <div className="flex">
       <div className="flex flex-col items-center justify-start gap-2">
         {isEditing ? (
           <span className="flex items-center gap-2">
@@ -130,9 +140,7 @@ const ChatHeader = () => {
             <span onClick={handleTextClick}>
               {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
             </span>
-            <div className="h-4 w-4 hover:text-white" onClick={() => setIsEditing(true)}>
-              <PencilIcon />
-            </div>
+            {threadId && <PrimaryActions threadId={threadId} />}
           </div>
         )}
 
@@ -145,8 +153,13 @@ const ChatHeader = () => {
             )}
           </span>
         </div>
+       
       </div>
-      {threadId && <PrimaryActions threadId={threadId} />}
+      
+      </div>
+     
+
+      <div><CustomConnectButton /></div>
     </div>
   );
 };

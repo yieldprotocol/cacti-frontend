@@ -33,9 +33,9 @@ const Sidebar = ({
       <div className="relative flex w-full flex-col self-end">
         <div className="p-1.5">
           <MoreItems />
-          {process.env.NODE_ENV === 'development' && <AccountStatus />}
+          {/* {process.env.NODE_ENV === 'development' && <AccountStatus />} */}
+          <AccountStatus />
         </div>
-        <CustomConnectButton />
       </div>
     </div>
   );
