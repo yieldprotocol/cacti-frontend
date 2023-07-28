@@ -67,9 +67,8 @@ const MoreItems = () => {
       <MoreItem
         icon={<BugAntIcon />}
         label={`App Version: ${process.env.NEXT_PUBLIC_APP_VERSION}`}
-        action={() =>{}}
+        action={() => {}}
       />
-
     </div>
   );
 };

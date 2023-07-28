@@ -2,8 +2,8 @@ import { ReactNode, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import useThread from '@/hooks/useThread';
-import Header from './Header_';
 import CustomConnectButton from '../CustomConnectButton';
+import Header from './Header_';
 
 const DynamicSidebar = dynamic(() => import('@/components/experimental_/layout/sidebar/index'), {
   ssr: false,
@@ -25,14 +25,15 @@ const HeaderContainer = ({
       hasChat ? 'bg-gray-secondary' : ''
     } text-white/70 sm:gap-x-6 sm:p-6`}
   >
-
     <button type="button" className="text-white/50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
       <span className="sr-only">Open sidebar</span>
       <Bars3Icon className="h-8 w-8" aria-hidden="true" />
     </button>
 
     <div className="h-full w-full">{children}</div>
-    <div className="min-w-[200px] hidden md:block "><CustomConnectButton /></div>
+    <div className="hidden min-w-[200px] md:block ">
+      <CustomConnectButton />
+    </div>
   </div>
 );
 
