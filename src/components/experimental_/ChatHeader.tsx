@@ -1,9 +1,10 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
-import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
 
@@ -21,57 +22,19 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 );
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
-  const sessionId = threadId;
-  const { status } = useSession();
-  const { isSuccess, settings } = useQueryChatSettings(sessionId);
-  const visibilityMutation = useMutationUpdateChatSettings(sessionId);
-  const cloneMutation = useMutationCreateSharedSession(sessionId);
-  const visibilityToggle = () => {
-    const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
-    visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
-  };
-  const visibilityIcon =
-    settings?.visibility === 'public' ? (
-      <EyeIcon className="h-4 w-4 hover:text-white" />
-    ) : (
-      <EyeSlashIcon className="h-4 w-4 hover:text-white" />
-    );
+  const { setShowShareModal } = useChatContext();
 
-  const canEdit = isSuccess && settings?.canEdit;
-  const canClone = status === 'authenticated';
-  const cloneSession = () => {
-    if (canClone) {
-      cloneMutation.mutate({ metadata: {} });
-    } else {
-      alert('Please sign up to clone thread.');
-    }
-  };
-
-  const handleDelete = () => console.log('deleting chat');
+  const { mutate } = useMutationDeleteChat(threadId);
+  const handleDelete = async () => mutate();
 
   return (
     <div className="flex items-center gap-2">
       <button
-        onClick={cloneSession}
+        onClick={() => setShowShareModal(true)}
         className="rounded-md bg-green-primary px-2 py-1 hover:bg-green-primary/80"
       >
         Share
       </button>
-      <div>
-        {isSuccess &&
-          (canEdit ? (
-            <Tooltip text={`make chat ${settings.visibility === 'public' ? 'private' : 'public'}`}>
-              <button
-                className="rounded-md bg-white/10 p-2 hover:ring-[1px] hover:ring-green-primary/50"
-                onClick={visibilityToggle}
-              >
-                {visibilityIcon}
-              </button>
-            </Tooltip>
-          ) : (
-            <div className="rounded-md bg-white/10 p-2">{visibilityIcon}</div>
-          ))}
-      </div>
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
@@ -91,9 +54,6 @@ const ChatHeader = () => {
   const [inputText, setText] = useState<string>();
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  console.log('THREAD name:', threadName);
-  console.log('THREAD  id:', threadId);
 
   const submitNameChange = useCallback(() => {
     console.log('submitNameChange', inputText);
@@ -187,7 +147,7 @@ const ChatHeader = () => {
           </span>
         </div>
       </div>
-      <PrimaryActions {...{ threadId }} />
+      {threadId && <PrimaryActions threadId={threadId} />}
     </div>
   );
 };
