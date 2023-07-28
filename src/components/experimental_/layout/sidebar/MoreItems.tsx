@@ -64,11 +64,7 @@ const MoreItems = () => {
         action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
       />
 
-      <MoreItem
-        icon={<BugAntIcon />}
-        label={`App Version: 0.1.1`}
-        action={() => {}}
-      />
+      <MoreItem icon={<BugAntIcon />} label={`App Version: 0.1.1`} action={() => {}} />
     </div>
   );
 };
