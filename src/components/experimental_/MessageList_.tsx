@@ -22,7 +22,7 @@ const MessageList = () => {
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
   return (
-    <div className="h-full pt-8">
+    <div className="h-full w-full pt-8">
       {messages.map((message) => {
         if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
           return <React.Fragment key={message.messageId} />;
