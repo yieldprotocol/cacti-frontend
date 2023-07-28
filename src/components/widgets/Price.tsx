@@ -1,6 +1,6 @@
 //   based on the returned token
-import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Spinner } from '@/utils';
+import useUniswapQuote from '../experimental_/widgets/uniswap/useUniswapQuote';
 
 type PriceProps = {
   baseToken: string;
