@@ -1,9 +1,9 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { PencilIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChatSettings } from '@/api/chats/queries';
-import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
@@ -23,24 +23,29 @@ const Tooltip = ({ text, children }: TooltipProps) => (
 
 const PrimaryActions = ({ threadId }: { threadId: string }) => {
   const { setShowShareModal } = useChatContext();
+  const { route } = useRouter();
+  const isShare = route === '/share/[id]';
 
-  const { mutate } = useMutationDeleteChat(threadId);
-  const handleDelete = async () => mutate();
+  const { mutate: deleteChat } = useMutationDeleteChat(threadId);
+  const { mutate: deleteShare } = useMutationDeleteSharedSession(threadId);
+  const handleDelete = async () => (isShare ? deleteShare() : deleteChat());
 
   return (
     <div className="flex items-center gap-2">
-      <button
-        onClick={() => setShowShareModal(true)}
-        className="rounded-md bg-green-primary px-2 py-1 hover:bg-green-primary/80"
-      >
-        Share
-      </button>
+      {!isShare ? (
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
+        >
+          <ShareIcon className="hover:text-green/10 h-3 w-3" />
+        </button>
+      ) : null}
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
         onClick={handleDelete}
       >
-        <TrashIcon className="hover:text-red/10 h-4 w-4" />
+        <TrashIcon className="hover:text-red/10 h-3 w-3" />
       </button>
     </div>
   );
@@ -131,9 +136,7 @@ const ChatHeader = () => {
             <span onClick={handleTextClick}>
               {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
             </span>
-            <div className="h-4 w-4 hover:text-white" onClick={() => setIsEditing(true)}>
-              <PencilIcon />
-            </div>
+            {threadId && <PrimaryActions threadId={threadId} />}
           </div>
         )}
 
@@ -147,7 +150,6 @@ const ChatHeader = () => {
           </span>
         </div>
       </div>
-      {threadId && <PrimaryActions threadId={threadId} />}
     </div>
   );
 };
