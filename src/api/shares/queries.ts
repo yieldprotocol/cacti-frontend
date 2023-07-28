@@ -32,10 +32,12 @@ export interface SharedSessionWithMessages {
   name?: string;
   messages: SharedSessionMessage[];
 }
-export const useQuerySharedSession = (sharedSessionId: string) => {
+export const useQuerySharedSession = (sharedSessionId: string | undefined) => {
   const { data: settings, ...rest } = useQuery<SharedSessionWithMessages>({
     queryKey: ['sharedSession', sharedSessionId],
-    queryFn: async () => getSharedSession(sharedSessionId),
+    queryFn: async () => {
+      if (sharedSessionId) return getSharedSession(sharedSessionId);
+    },
     refetchOnWindowFocus: false,
   });
   return { settings, ...rest };
