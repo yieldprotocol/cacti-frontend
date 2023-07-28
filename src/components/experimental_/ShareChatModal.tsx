@@ -3,30 +3,26 @@ import { Dialog, Transition } from '@headlessui/react';
 import { CheckCircleIcon, DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useMutationCreateSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
-import useThread from '@/hooks/useThread';
 import { Spinner } from '@/utils';
 import CopyWrap from '../CopyWrap';
 
 const ShareChatModal = ({ id }: { id: string | undefined }) => {
-  const { threadName } = useThread(id);
   const { showShareModal: isOpen, setShowShareModal } = useChatContext();
-
   const { mutateAsync } = useMutationCreateSharedSession(id!);
-
   const [newThreadId, setNewThreadId] = useState<string>();
   const [newThreadUrl, setNewThreadUrl] = useState<string>();
 
   const [isSharing, setIsSharing] = useState<boolean>(false);
 
   const buttonStyle =
-    'w-full cursor-pointer select-none rounded-[8px] bg-green-primary p-[8px] text-center text-white transition ease-in-out active:bg-transparent';
+    'w-full cursor-pointer select-none rounded-lg bg-green-primary hover:bg-green-primary/80 p-[8px] text-center text-white transition ease-in-out ';
 
   /* Reset newThreadID whenever the id changes */
   useEffect(() => {
     setNewThreadId(undefined);
   }, [id]);
 
-  const handleEditName = (newName: string) => {};
+  // TODO: const handleEditName = (newName: string) => {};
   const handleShareChat = async () => {
     setIsSharing(true);
     try {
@@ -34,8 +30,6 @@ const ShareChatModal = ({ id }: { id: string | undefined }) => {
       const newId = await mutateAsync();
       setNewThreadId(newId!);
       setNewThreadUrl(`${window.location.origin}/share/${newId}`);
-      /* TODO: If the thread has a name - rename the share to the same name */
-      // threadName !== id && handleEditName(threadName!);
     } catch (error) {
       console.log('Sharing Error: ', error);
     }

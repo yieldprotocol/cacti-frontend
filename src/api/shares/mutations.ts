@@ -22,9 +22,11 @@ export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
   };
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation(mutationFn, {
     onSuccess: (data, variables, context): void => {
+      router.push(`/`);
       queryClient.invalidateQueries({ queryKey: ['shares'] });
       queryClient.invalidateQueries({ queryKey: ['sharedSession', sharedSessionId] });
     },

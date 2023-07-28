@@ -4,6 +4,8 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useQueryChats } from '@/api/chats/queries';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
+import { useQueryShares } from '@/api/shares/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import { abbreviateHash } from '@/utils';
@@ -18,9 +20,8 @@ const ChatItem = ({ id }: ChatItem) => {
   const { query } = useRouter();
   const selected = query.id === id;
 
-  const { mutate } = useMutationDeleteChat(id);
-
-  const handleDelete = () => mutate();
+  const { mutate: deleteChat } = useMutationDeleteChat(id);
+  const handleDelete = () => deleteChat();
   const handleShare = () => setShowShareModal(true);
 
   return (
@@ -29,20 +30,17 @@ const ChatItem = ({ id }: ChatItem) => {
         className={`
         group
         relative
-        flex w-full cursor-pointer items-center gap-2 break-all rounded-md p-2.5
+        flex w-full cursor-pointer items-center gap-1 break-all rounded-md p-2.5
         text-gray-300 hover:bg-gray-800/50 ${
           selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
         }`}
       >
-        {selected ? <CheckIcon className="h-4 w-4 text-green-500" /> : <div />}
+        {selected ? <CheckIcon className="h-4 w-4 text-green-primary" /> : <div className="px-2" />}
+
         <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
           {threadName !== id ? threadName : abbreviateHash(id, 8)}
-          <div
-            className={`absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l ${
-              selected ? 'from-gray-800/50' : 'from-[#031016] group-hover:from-gray-800/50'
-            } `}
-          ></div>
         </div>
+
         {selected && (
           <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
             <button className="p-1" onClick={handleShare}>
@@ -58,8 +56,49 @@ const ChatItem = ({ id }: ChatItem) => {
   );
 };
 
+const ShareItem = ({ id }: ChatItem) => {
+  const { query } = useRouter();
+  const selected = query.id === id;
+
+  const { mutate: deleteShare } = useMutationDeleteSharedSession(id);
+  const handleDelete = () => deleteShare();
+
+  return (
+    <Link href={`/share/${id}`}>
+      <div
+        className={`
+        group
+        relative
+        flex w-full cursor-pointer items-center gap-2 break-all rounded-md p-2.5
+        text-gray-300 hover:bg-gray-800/50 ${
+          selected ? 'bg-gray-800/50 pr-12' : 'hover:bg-white/10 hover:text-white'
+        }`}
+      >
+        {selected ? (
+          <CheckIcon className="h-4 w-4 text-green-primary" />
+        ) : (
+          <ShareIcon className="h-3 w-3" />
+        )}
+        <div className={`relative max-h-4 flex-1 overflow-hidden text-ellipsis break-all text-xs`}>
+          {abbreviateHash(id, 6)}
+        </div>
+
+        {selected && (
+          <div className={`visible absolute right-1 z-10 flex text-gray-300`}>
+            <button className="p-1" onClick={handleDelete}>
+              <TrashIcon className="h-4 w-4 hover:text-white" />
+            </button>
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+};
+
 const ChatList = () => {
   const { chats } = useQueryChats();
+  const { shares } = useQueryShares();
+
   return (
     <div>
       <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
@@ -70,6 +109,17 @@ const ChatList = () => {
           <ChatItem key={chat.id} id={chat.id} />
         ))}
       </div>
+
+      {shares?.shares?.length ? (
+        <>
+          <div className="text-ellipsis break-all px-3 pb-2 pt-5 text-xs font-medium text-gray-400">
+            My Shared Chats
+          </div>
+          {shares?.shares?.map((chat) => (
+            <ShareItem key={chat.id} id={chat.id} />
+          ))}
+        </>
+      ) : null}
     </div>
   );
 };
