@@ -13,30 +13,18 @@ import {
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import SwapRouter02Abi from './SwapRouter02';
+import useUniswapQuote from './useUniswapQuote';
 
 interface UniswapProps {
   tokenInSymbol: string;
   tokenOutSymbol: string;
   inputAmount: string;
-}
-
-interface ExactInputSingleParams {
-  tokenIn: string;
-  tokenOut: string;
-  fee: BigNumber;
-  recipient: string;
-  deadline: BigNumber;
-  amountIn: BigNumber;
-  amountOutMinimum: BigNumber;
-  sqrtPriceLimitX96: BigNumber;
 }
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
