@@ -55,12 +55,11 @@ const ShareBox = () => {
         {isWalletConnected ? (
           <button onClick={() => continueChat({ metadata: {} })} className={buttonStyle}>
             <Spinner className={`text-gray-300 ${!isCreatingChat && 'hidden'}`} />
-            <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'} </div>
+            <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'}</div>
           </button>
         ) : (
           <div>
-            {' '}
-            <CustomConnectButton />{' '}
+            <CustomConnectButton />
           </div>
         )}
       </div>
