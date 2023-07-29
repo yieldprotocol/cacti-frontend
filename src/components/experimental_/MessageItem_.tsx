@@ -36,7 +36,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
     <div className="mb-4">
       <div className="mx-auto max-w-3xl">
         {actor === 'bot' && <MessageTranslator message={message} />}
-        {actor !== 'system' && <SystemMessage message={payload} />}
+        {actor === 'system' && <SystemMessage message={payload} />}
         {actor === 'function' && <SystemMessage message={payload} />}
       </div>
       {isUser && (
