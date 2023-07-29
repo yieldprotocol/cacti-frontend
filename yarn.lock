@@ -2421,7 +2421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@headlessui/react@npm:^1.7.7":
+"@headlessui/react@npm:^1.7.15":
   version: 1.7.15
   resolution: "@headlessui/react@npm:1.7.15"
   dependencies:
@@ -8118,7 +8118,7 @@ __metadata:
   resolution: "chatweb3-frontend@workspace:."
   dependencies:
     "@center-inc/react": ^1.1.13
-    "@headlessui/react": ^1.7.7
+    "@headlessui/react": ^1.7.15
     "@heroicons/react": ^2.0.14
     "@liquity/lib-base": ^3.0.0
     "@liquity/lib-ethers": ^3.4.0

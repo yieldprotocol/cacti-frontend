@@ -1,6 +1,7 @@
 import { ReactNode, useContext } from 'react';
 import {
   ArrowTopRightOnSquareIcon,
+  BugAntIcon,
   Cog8ToothIcon,
   DocumentIcon,
   HomeIcon,
@@ -62,6 +63,8 @@ const MoreItems = () => {
         label="StoryBook"
         action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
       />
+
+      <MoreItem icon={<BugAntIcon />} label={`App Version: 0.1.1`} action={() => {}} />
     </div>
   );
 };

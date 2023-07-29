@@ -32,11 +32,16 @@ export type ChatContextType = {
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
   isMultiStepInProgress: boolean;
-  showDebugMessages: boolean;
-  setShowDebugMessages: (arg0: boolean) => void;
+
   interactor: string;
   setInteractor: (arg0: string) => void;
   connectionStatus: ReadyState;
+
+  showDebugMessages: boolean;
+  setShowDebugMessages: (arg0: boolean) => void;
+
+  showShareModal: boolean;
+  setShowShareModal: (value: boolean) => void;
 };
 
 const initialContext = {
@@ -59,6 +64,9 @@ const initialContext = {
   interactor: 'user',
   setInteractor: (arg0: string) => {},
   connectionStatus: ReadyState.UNINSTANTIATED,
+
+  showShareModal: false,
+  setShowShareModal: (value: boolean) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -73,6 +81,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
+
+  const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
@@ -238,7 +248,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...beforeMessages, msg, ...afterMessages];
       }
     });
-  }, [lastMessage]);
+  }, [lastMessage, queryClient, router]);
 
   const sendMessage = (msg: string) => {
     setInsertBeforeMessageId(null);
@@ -353,6 +363,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         interactor,
         setInteractor,
         connectionStatus,
+
+        showShareModal,
+        setShowShareModal,
       }}
     >
       {children}

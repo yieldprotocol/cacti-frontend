@@ -13,7 +13,7 @@ export const Price = (props: PriceProps) => {
     quoteTokenSymbol: props.queryToken,
   });
 
-  let widgetComponent = <Spinner />;
+  let widgetComponent = <Spinner className="h-4" />;
 
   if (data?.humanReadableAmount) {
     widgetComponent = (

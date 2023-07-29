@@ -7,6 +7,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import { VoidExpression } from 'typescript';
 import Avatar from '../Avatar';
 import { Markdown } from './Markdown';
 
@@ -40,6 +41,10 @@ export const UserMessage = ({
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isCommenter = actor === 'commenter';
+
+  const setEditing = (val: boolean) => {
+    !isShare && setIsEditing(val);
+  };
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
