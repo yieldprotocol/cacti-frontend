@@ -13,7 +13,7 @@ import { Markdown } from './Markdown';
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
-const iconBtnBaseStyle = 'center rounded-lg overflow-hidden w-9 h-9 text-white/70';
+const iconBtnBaseStyle = 'center rounded-lg p-2 text-white/70';
 
 const IconBtn = ({ children, ...rest }: IconBtnProps) => (
   <button className={iconBtnBaseStyle} {...rest}>
@@ -27,12 +27,14 @@ export const UserMessage = ({
   submitEdit,
   submitRegenerate,
   submitDelete,
+  isShare = false,
 }: {
   actor: string;
   initialText: string;
   submitEdit: (text: string) => void;
   submitRegenerate: () => void;
   submitDelete: () => void;
+  isShare?: boolean;
 }) => {
   const [input, setInput] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,7 +45,7 @@ export const UserMessage = ({
     const handleKeys = (e: globalThis.KeyboardEvent) => {
       // cancel edit
       if (e.key === 'Escape') {
-        setIsEditing(false);
+        !isShare && setIsEditing(false);
         setInput(initialText);
       }
 
@@ -54,7 +56,7 @@ export const UserMessage = ({
         }
         inputRef.current?.blur();
         setInput(input);
-        setIsEditing(false);
+        !isShare && setIsEditing(false);
       }
     };
 
@@ -66,9 +68,11 @@ export const UserMessage = ({
   return (
     <div
       className={`
-      flex 
-      items-center justify-center text-white/70
-      ${isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 '}
+      flex
+      justify-center text-white/70
+      ${
+        isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
+      }
       focus-within:ring-gray-700/70
       hover:bg-gray-700/20
       focus:text-gray-50
@@ -89,10 +93,10 @@ export const UserMessage = ({
             <TextareaAutosize
               ref={inputRef}
               className="h-full w-full resize-none rounded border-gray-800 bg-inherit p-2 text-white/70 focus:border focus:outline-none"
-              min-rows={4}
+              min-rows={1}
               value={input}
               onChange={(e) => {
-                setInput(e.target.value);
+                !isShare && setInput(e.target.value);
               }}
               onBlur={() => {
                 setInput(initialText);
@@ -116,7 +120,7 @@ export const UserMessage = ({
             <div className="-mt-1 w-full" onClick={() => setIsEditing(true)}>
               <Markdown>{input}</Markdown>
             </div>
-            <div className="durtaion-200 flex items-center gap-2 opacity-0 group-hover:opacity-100">
+            <div className="flex items-center gap-2 opacity-0 duration-200 group-hover:opacity-100">
               <IconBtn
                 onClick={() => setIsEditing(true)}
                 className={`${iconBtnBaseStyle} hover:bg-teal-100/10`}
