@@ -38,11 +38,11 @@ const useUniswapQuote = (props: {
       });
 
       if (!tokenIn) {
-        console.log(`ERROR: Token ${props.baseTokenSymbol} not found`);
+        console.error(`Token ${props.baseTokenSymbol} not found`);
         return;
       }
       if (!tokenOut) {
-        console.log(`ERROR: Token ${props.quoteTokenSymbol} not found`);
+        console.error(`Token ${props.quoteTokenSymbol} not found`);
         return;
       }
 

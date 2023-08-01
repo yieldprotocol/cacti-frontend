@@ -77,7 +77,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       setLabel(stateToLabel[ZKSyncDepositState.SWITCH_WALLET_TO_L1](process.env.NODE_ENV));
 
       if (!bridgeToken) {
-        console.log(`ERROR: Token ${tokenSymbol} not supported`);
+        console.error(`Token ${tokenSymbol} not supported`);
       }
 
       // --- Step 2: Initiate bridge to zkSync --- //

@@ -26,7 +26,7 @@ const useInput = (
   const { data: token } = useToken(tokenSymbol);
 
   if (!token) {
-    console.log(`Token ${tokenSymbol} not found`);
+    console.error(`Token ${tokenSymbol} not found`);
   }
 
   return useMemo((): Input => {
