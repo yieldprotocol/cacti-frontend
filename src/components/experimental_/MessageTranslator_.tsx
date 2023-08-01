@@ -31,6 +31,9 @@ import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
+import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-close/YieldProtocolBorrowClose';
+import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
+import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -203,6 +206,36 @@ export const Widget = (props: WidgetProps) => {
     />
   );
 
+  widgets.set(
+    'yield-protocol-lend-close',
+    <YieldProtocolLendClose
+      baseTokenSymbol={parsedArgs[0]}
+      inputAmount={parsedArgs[1]}
+      action="lend-close"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-borrow',
+    <YieldProtocolBorrow
+      borrowTokenSymbol={parsedArgs[0]}
+      borrowAmount={parsedArgs[1]}
+      collateralTokenSymbol={parsedArgs[2]}
+      collateralAmount={parsedArgs[3]}
+      action="borrow"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-borrow-close',
+    <YieldProtocolBorrowClose
+      borrowTokenSymbol={parsedArgs[0]}
+      action="borrow-close"
+      projectName="yield-protocol"
+    />
+  );
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */
