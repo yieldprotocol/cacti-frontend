@@ -32,8 +32,14 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
     [chainId, getTokenIsETH]
   );
 
-  const data = useMemo(() => getToken(tokenSymbol, tokenAddress), []);
-  const isETH = useMemo(() => getTokenIsETH(tokenSymbol, tokenAddress), []);
+  const data = useMemo(
+    () => getToken(tokenSymbol, tokenAddress),
+    [getToken, tokenAddress, tokenSymbol]
+  );
+  const isETH = useMemo(
+    () => getTokenIsETH(tokenSymbol, tokenAddress),
+    [getTokenIsETH, tokenAddress, tokenSymbol]
+  );
 
   return {
     data,
