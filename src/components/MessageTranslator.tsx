@@ -15,9 +15,9 @@ import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
+import useToken from '@/hooks/useToken';
 import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
-import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,

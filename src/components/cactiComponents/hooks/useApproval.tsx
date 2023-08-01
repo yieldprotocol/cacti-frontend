@@ -1,17 +1,15 @@
-import { useContext, useState } from 'react';
+import { useMemo } from 'react';
 import { AddressZero } from '@ethersproject/constants';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import {
   erc20ABI,
   useAccount,
-  useContract,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import SettingsContext from '@/contexts/SettingsContext';
-import useSigner from '@/hooks/useSigner';
+import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
@@ -20,98 +18,69 @@ export type ApprovalBasicParams = {
   tokenAddress: `0x${string}`;
   spender: `0x${string}`;
   skipApproval?: boolean;
+  skipBalanceCheck?: boolean; // TODO make this more robust
 };
 
-const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined => {
-  if (addr === AddressZero || addr === undefined) return undefined;
-  return addr;
-};
+const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
+  addr === AddressZero ? undefined : addr;
 
 const useApproval = (params: ApprovalBasicParams) => {
-  /* Get the useForkSettings the settings context */
-  const {
-    settings: { isForkedEnv },
-  } = useContext(SettingsContext);
-
-  const signer = useSigner();
+  const chainId = useChainId();
   const { address: account } = useAccount();
-
-  //local state
-  const [hash, setHash] = useState<`0x${string}`>();
-  const [txPending, setTxPending] = useState(false);
-
-  const { approvalAmount, tokenAddress, spender } = params;
+  const { approvalAmount, tokenAddress: _tokenAddress, spender: _spender } = params;
+  const tokenAddress = validateAddress(_tokenAddress);
+  const spender = validateAddress(_spender);
   const { data: token } = useToken(undefined, tokenAddress); // get token data from address (zero address === ETH)
+
   // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
-  const amountToUse = BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals));
+  const amountToUse = useMemo(
+    () => BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals)),
+    [approvalAmount, token?.decimals]
+  );
 
   // Get allowance amount - doesn't run if address or spender is undefined
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: validateAddress(tokenAddress),
+    address: tokenAddress,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spender!],
-    scopeKey: `allowance_${tokenAddress}`,
-    cacheTime: 20_000,
-    enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined, and not skip approval
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
-  const contract = useContract({ address: tokenAddress, abi: erc20ABI, signerOrProvider: signer });
-  const { config: tokenConfig } = usePrepareContractWrite({
-    address: validateAddress(tokenAddress),
+  const { config } = usePrepareContractWrite({
+    address: !params.skipApproval ? tokenAddress : undefined,
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
-    enabled: !!validateAddress(spender) && !params.skipApproval, // only enable if both address and spender are defined.
+    chainId,
+    // enabled: !!spender && !params.skipApproval,
   });
 
-  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+  const {
+    writeAsync: approveTx,
+    data,
+    isLoading: approvalWaitingOnUser,
+  } = useContractWrite(config);
 
-  const approveTx = async () => {
-    setTxPending(true);
-    try {
-      if (isForkedEnv) {
-        const tx = await contract?.approve(spender!, amountToUse);
-        setHash(tx?.hash as `0x${string}`);
-      } else {
-        const tx = await approvalWriteAsync?.();
-        setHash(tx?.hash);
-      }
-    } catch (error) {
-      console.log('user rejected approval');
-      setTxPending(false);
-    }
-    setTxPending(false);
-  };
-
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
-    hash,
-    onSuccess: () => refetchAllowance(),
+  const {
+    isError: approvalError,
+    isLoading: approvalTransacting,
+    isSuccess: approvalSuccess,
+  } = useWaitForTransaction({
+    hash: data?.hash,
+    onSuccess: async () => await refetchAllowance(),
   });
-
-  /* if params are undefined, or address is addressZero (ETH), return empty object */
-  if (
-    validateAddress(tokenAddress) === undefined ||
-    validateAddress(spender) === undefined ||
-    params.skipApproval
-  )
-    return { approveTx: undefined, hasAllowance: true };
 
   return {
     approveTx,
     refetchAllowance,
-
     approvalReceipt: data,
-    approvalHash: hash,
-
-    approvalTransacting: isLoading,
-    approvalWaitingOnUser: txPending,
-
-    approvalError: isError,
-    approvalSuccess: isSuccess,
-
-    hasAllowance: allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    approvalHash: data?.hash,
+    approvalWaitingOnUser,
+    approvalTransacting,
+    approvalError,
+    approvalSuccess,
+    hasAllowance: params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 

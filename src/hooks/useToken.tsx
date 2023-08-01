@@ -1,20 +1,24 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ethers } from 'ethers';
-import { Address, useChainId } from 'wagmi';
+import { Address } from 'wagmi';
+import useChainId from '@/hooks/useChainId';
 import { Token } from '@/types';
 import { findTokenByAddress, findTokenBySymbol } from '@/utils';
 
 const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
   const chainId = useChainId();
 
-  const getTokenIsETH = (tokenSymbol?: string, tokenAddress?: string) =>
-    tokenSymbol === 'ETH' || tokenAddress === ethers.constants.AddressZero;
+  const getTokenIsETH = useCallback(
+    (tokenSymbol?: string, tokenAddress?: string) =>
+      tokenSymbol === 'ETH' || tokenAddress === ethers.constants.AddressZero,
+    []
+  );
 
   const getToken = useCallback(
-    (tokenSymbol?: string, tokenAddress?: string) => {
+    (tokenSymbol?: string, tokenAddress?: Address): Token | undefined => {
       if (getTokenIsETH(tokenSymbol, tokenAddress))
         return {
-          address: ethers.constants.AddressZero as Address,
+          address: ethers.constants.AddressZero,
           symbol: 'ETH',
           decimals: 18,
           logoURI:
@@ -24,12 +28,15 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
       if (tokenAddress) return findTokenByAddress(tokenAddress, chainId) as Token;
       return undefined;
     },
-    [chainId]
+    [chainId, getTokenIsETH]
   );
 
+  const data = useMemo(() => getToken(tokenSymbol, tokenAddress), []);
+  const isETH = useMemo(() => getTokenIsETH(tokenSymbol, tokenAddress), []);
+
   return {
-    data: getToken(tokenSymbol, tokenAddress),
-    isETH: getTokenIsETH(tokenSymbol, tokenAddress),
+    data,
+    isETH,
     getToken,
     getTokenIsETH,
   };

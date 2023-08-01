@@ -25,14 +25,9 @@ export const findProjectByName = (name: string): Project | undefined => {
       project.id?.toLowerCase() == name.toLowerCase()
   );
 
-  if (!found) {
-    console.log(`No project found for name ${name}`);
-    return undefined;
-  }
-  if (!found.id) {
-    console.log(`No project ID found for name ${name}`);
-    return undefined;
-  }
+  // if (!found) throw new Error(`No project found for name ${name}`);
+  // if (!found.id) throw new Error(`No ID found for project ${name}`);
+  if (!found || !found.id) return undefined; // We don't throw and throw error if no project found, we simply return undefined
 
   return {
     id: found.id,
