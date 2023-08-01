@@ -23,7 +23,7 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
           decimals: 18,
           logoURI:
             'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x0000000000000000000000000000000000000000.png',
-        };
+        } as Token;
       if (tokenSymbol) return findTokenBySymbol(tokenSymbol, chainId) as Token;
       if (tokenAddress) return findTokenByAddress(tokenAddress, chainId) as Token;
       return undefined;
