@@ -27,20 +27,20 @@ const useInput = (
 
   if (!token) {
     console.log(`Token ${tokenSymbol} not found`);
-    return;
   }
 
-  const { decimals } = token;
-
   return useMemo((): Input => {
-    const inputCleaned = cleanValue(input, decimals);
-    const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
-    if (!inputBN) return { value: undefined, formatted: undefined, decimals };
+
+    const decimals = token?.decimals || 18; // TODO: this defaults to ETH decimals, but it shouldnt neccesarily.
+    const inputCleaned = cleanValue(input, decimals );
+    const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals ) : undefined;
+    if (!inputBN) return { value: undefined, formatted: undefined, decimals: decimals};
 
     const value = mutate ? mutate(inputBN) : inputBN;
     const formatted = formatUnits(value, decimals);
     return { value, formatted, decimals };
-  }, [decimals, input, mutate]);
+
+  }, [tokenSymbol, input, mutate]);
 };
 
 export default useInput;
