@@ -24,10 +24,9 @@ const useUniswapQuote = (props: {
     `useUniswapQuote-${props.baseTokenSymbol}-${props.quoteTokenSymbol}-${chainId}`,
 
     async () => {
-      
       const isQueryTokenEth = props.quoteTokenSymbol === 'ETH';
       const isBaseTokenEth = props.baseTokenSymbol === 'ETH';
-      
+
       const tokenIn = isBaseTokenEth
         ? findTokenBySymbol('WETH', chainId)
         : findTokenBySymbol(props.baseTokenSymbol, chainId);

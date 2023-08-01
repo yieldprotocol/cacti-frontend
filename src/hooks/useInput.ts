@@ -26,8 +26,8 @@ const useInput = (
   const { data: token } = useToken(tokenSymbol);
 
   if (!token) {
-    console.log(`Token ${tokenSymbol} not found`)
-    return
+    console.log(`Token ${tokenSymbol} not found`);
+    return;
   }
 
   const { decimals } = token;
