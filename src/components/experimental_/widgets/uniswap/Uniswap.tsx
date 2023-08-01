@@ -80,8 +80,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       tokenAddress: tokenIn?.address!,
       approvalAmount: input.value!,
       spender: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
+      skipApproval: tokenInIsETH,
     }),
-    [chainId, input.value, tokenIn?.address]
+    [chainId, input.value, tokenIn?.address, tokenInIsETH]
   );
 
   const { config } = usePrepareContractWrite({
