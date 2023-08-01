@@ -24,21 +24,31 @@ const useUniswapQuote = (props: {
     `useUniswapQuote-${props.baseTokenSymbol}-${props.quoteTokenSymbol}-${chainId}`,
 
     async () => {
+      
       const isQueryTokenEth = props.quoteTokenSymbol === 'ETH';
       const isBaseTokenEth = props.baseTokenSymbol === 'ETH';
+      
       const tokenIn = isBaseTokenEth
         ? findTokenBySymbol('WETH', chainId)
         : findTokenBySymbol(props.baseTokenSymbol, chainId);
+
       const tokenOut = isQueryTokenEth
         ? findTokenBySymbol('WETH', chainId)
         : findTokenBySymbol(props.quoteTokenSymbol, chainId);
+
       const router = new AlphaRouter({
         chainId,
         provider,
       });
 
-      if (!tokenIn) throw new Error(`Token ${props.baseTokenSymbol} not found`);
-      if (!tokenOut) throw new Error(`Token ${props.quoteTokenSymbol} not found`);
+      if (!tokenIn) {
+        console.log(`ERROR: Token ${props.baseTokenSymbol} not found`);
+        return;
+      }
+      if (!tokenOut) {
+        console.log(`ERROR: Token ${props.quoteTokenSymbol} not found`);
+        return;
+      }
 
       /* If the token are the same, simply return 1:1 as the rate ( without going through the actual fetching process via router ) */
       if (experimentalUi && tokenIn.symbol === tokenOut.symbol)
