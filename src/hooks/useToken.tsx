@@ -23,6 +23,7 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
           decimals: 18,
           logoURI:
             'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x0000000000000000000000000000000000000000.png',
+          name: 'Ether',
         } as Token;
       if (tokenSymbol) return findTokenBySymbol(tokenSymbol, chainId) as Token;
       if (tokenAddress) return findTokenByAddress(tokenAddress, chainId) as Token;
@@ -31,8 +32,14 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
     [chainId, getTokenIsETH]
   );
 
-  const data = useMemo(() => getToken(tokenSymbol, tokenAddress), []);
-  const isETH = useMemo(() => getTokenIsETH(tokenSymbol, tokenAddress), []);
+  const data = useMemo(
+    () => getToken(tokenSymbol, tokenAddress),
+    [getToken, tokenAddress, tokenSymbol]
+  );
+  const isETH = useMemo(
+    () => getTokenIsETH(tokenSymbol, tokenAddress),
+    [getTokenIsETH, tokenAddress, tokenSymbol]
+  );
 
   return {
     data,
