@@ -24,7 +24,7 @@ jobs:
         run: yarn run lint
       - name: Format
         if: always()
-        run: yarn run checkFormat
+        run: yarn format
       - name: Build
         if: always()
         run: yarn run build
