@@ -1,8 +1,13 @@
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { formatEther } from 'ethers/lib/utils.js';
+import useBalance from '@/hooks/useBalance';
+import { cleanValue } from '@/utils';
 import Avatar from '../Avatar';
 
 const CustomConnectButton = () => {
+  const { data: balance } = useBalance();
+  const balance_ = balance ? formatEther(balance) : '';
   return (
     <ConnectButton.Custom>
       {({
@@ -65,7 +70,7 @@ const CustomConnectButton = () => {
                         {account.displayName}
                       </div>
                       <div className="flex justify-start font-mono text-xs font-thin text-white/70">
-                        {account.displayBalance ? `${account.displayBalance}` : ''}
+                        {cleanValue(balance_, 2)}
                       </div>
                     </div>
                   </div>
