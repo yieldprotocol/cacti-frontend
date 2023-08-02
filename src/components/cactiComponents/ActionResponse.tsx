@@ -93,7 +93,8 @@ export const ActionResponse = ({
     hasAllowance ? txParams : undefined,
     hasAllowance ? sendParams : undefined,
     () => null,
-    () => null
+    () => null,
+    label_
   );
 
   const { data: ethBal } = useBalance();
