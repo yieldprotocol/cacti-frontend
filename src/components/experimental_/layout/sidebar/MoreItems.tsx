@@ -1,4 +1,5 @@
 import { ReactNode, useContext } from 'react';
+import pack from '@../../package.json';
 import {
   ArrowTopRightOnSquareIcon,
   BugAntIcon,
@@ -9,7 +10,6 @@ import {
 } from '@heroicons/react/24/outline';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
-import pack from '@../../package.json';
 
 type MoreItem = { icon: ReactNode; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
