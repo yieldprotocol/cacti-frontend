@@ -255,7 +255,11 @@ export const ActionResponse = ({
       {address && stepper && <ActionStepper />}
       {address && !stepper && (
         <div className=" flex w-full items-center gap-4">
-          <StyledButton className={`bg-teal-900 ${extraStyle}`} onClick={handleAction}>
+          <StyledButton
+            className={`bg-teal-900 ${extraStyle}`}
+            onClick={handleAction}
+            disabled={isSuccess || disabled || state === ActionResponseState.DISABLED}
+          >
             {label || <Skeleton width={100} />}
           </StyledButton>
 
