@@ -115,10 +115,12 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
   return (
     <SharedStateContextProvider>
       <MessageWrap avatar={<Avatar actor="bot" />} className_="">
-        <div className="flex gap-2">
-          {widgetGroup.map((component, i) => (
-            <Fragment key={`i${i}`}>{component}</Fragment>
-          ))}
+        <div className="flex w-full gap-2">
+          <div className="gap-2 w-full space-y-2 mb-8">
+            {widgetGroup.map((component, i) => (
+              <Fragment key={`i${i}`}>{component}</Fragment>
+            ))}
+          </div>
           <div className="text-white/70">
             <FeedbackButton message={message} />
           </div>
