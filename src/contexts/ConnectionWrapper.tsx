@@ -123,7 +123,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
             chains={chains}
             theme={
               experimentalUi
-                ? darkTheme({ accentColor: '#1f2937' })
+                ? darkTheme({ accentColor: '#14b8a6' })
                 : lightTheme({ accentColor: '#1f2937' })
             }
             showRecentTransactions={true}
@@ -138,7 +138,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
           chains={chains}
           theme={
             experimentalUi
-              ? darkTheme({ accentColor: '#1f2937' })
+              ? darkTheme({ accentColor: '#14b8a6' })
               : lightTheme({ accentColor: '#1f2937' })
           }
           showRecentTransactions={true}
