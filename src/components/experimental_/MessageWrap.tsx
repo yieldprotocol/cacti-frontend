@@ -15,7 +15,7 @@ export const MessageWrap = ({
         <div className="float-right">{avatar}</div>
       </div>
       <div className="col-span-8 flex items-center px-4 text-white/70 focus:outline-none">
-        {children}  
+        {children}
       </div>
     </div>
   );

@@ -116,7 +116,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
     <SharedStateContextProvider>
       <MessageWrap avatar={<Avatar actor="bot" />} className_="">
         <div className="flex w-full gap-2">
-          <div className="gap-2 w-full space-y-2 mb-8">
+          <div className="mb-8 w-full gap-2 space-y-2">
             {widgetGroup.map((component, i) => (
               <Fragment key={`i${i}`}>{component}</Fragment>
             ))}
