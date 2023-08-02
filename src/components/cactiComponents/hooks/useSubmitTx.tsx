@@ -98,7 +98,7 @@ const useSubmitTx = (
         description: label ?? params?.functionName ?? '',
       });
     }
-  }, [addRecentTx, data?.hash!, label, params?.functionName, status]);
+  }, [addRecentTx, data?.hash, label, params?.functionName]);
 
   /* DEVELOPER logging */
   useEffect(() => {
