@@ -1,12 +1,14 @@
 import { CommandLineIcon } from '@heroicons/react/24/outline';
+import Avatar from '../Avatar';
+import { MessageWrap } from './MessageWrap';
 
 export const SystemMessage = ({ message }: { message: string }) => {
   return (
-    <div className="flex flex-row items-center gap-4 pb-3 font-mono text-xs text-white text-opacity-70">
-      <div className="w-min-[16px] w-[16px]">
-        <CommandLineIcon />
-      </div>
-      <div className="w-[90%] flex-shrink">{message}</div>
-    </div>
+    <MessageWrap
+      avatar={<Avatar actor="system" />}
+      className_="font-mono text-xs text-white text-opacity-70"
+    >
+      {message}
+    </MessageWrap>
   );
 };

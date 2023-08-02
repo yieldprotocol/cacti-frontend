@@ -7,9 +7,9 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { VoidExpression } from 'typescript';
 import Avatar from '../Avatar';
 import { Markdown } from './Markdown';
+import { MessageWrap } from './MessageWrap';
 
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -42,10 +42,6 @@ export const UserMessage = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const isCommenter = actor === 'commenter';
 
-  const setEditing = (val: boolean) => {
-    !isShare && setIsEditing(val);
-  };
-
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
       // cancel edit
@@ -71,28 +67,22 @@ export const UserMessage = ({
   }, [initialText, input, submitEdit]);
 
   return (
-    <div
-      className={`
-      flex
-      justify-center text-white/70
-      ${
-        isCommenter ? 'bg-white bg-opacity-[2%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
-      }
-      focus-within:ring-gray-700/70
-      hover:bg-gray-700/20
-      focus:text-gray-50
-      ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
-      grid-gap-2 group overflow-hidden py-3
-      `}
-    >
-      <div className="flex w-full max-w-3xl items-center justify-start gap-2">
-        <div className="w-6">
-          {!isCommenter ? (
-            <Avatar actor="user" />
-          ) : (
-            <PaperClipIcon className="h-[16px] w-[16px] text-teal-500" />
-          )}
-        </div>
+    <>
+      <MessageWrap
+        avatar={<Avatar actor={isCommenter ? 'commenter' : 'user'} />}
+        className_={`
+        flex items-center
+        justify-center text-white/70
+        ${
+          isCommenter ? 'bg-white bg-opacity-[1%]' : 'bg-white bg-opacity-5 ' //bg-yellow-200 bg-opacity-50
+        }
+        focus-within:ring-gray-700/70
+        hover:bg-gray-700/20
+        focus:text-gray-50
+        ${isEditing ? 'ring-1 ring-gray-500/30' : ''}
+        group overflow-hidden
+    `}
+      >
         {isEditing ? (
           <>
             <TextareaAutosize
@@ -108,7 +98,7 @@ export const UserMessage = ({
                 setIsEditing(false);
               }}
             />
-            <div className="m-auto mr-2 flex gap-2">
+            <div className="m-auto mr-4 flex gap-2">
               <div
                 className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
                 onClick={submitRegenerate}
@@ -122,9 +112,10 @@ export const UserMessage = ({
           </>
         ) : (
           <>
-            <div className="-mt-1 w-full" onClick={() => setIsEditing(true)}>
+            <div className="w-full" onClick={() => setIsEditing(true)}>
               <Markdown>{input}</Markdown>
             </div>
+
             <div className="flex items-center gap-2 opacity-0 duration-200 group-hover:opacity-100">
               <IconBtn
                 onClick={() => setIsEditing(true)}
@@ -146,7 +137,7 @@ export const UserMessage = ({
             </div>
           </>
         )}
-      </div>
-    </div>
+      </MessageWrap>
+    </>
   );
 };

@@ -105,7 +105,7 @@ const MessageInput = () => {
           </button>
         </div>
 
-        <form onSubmit={handleSendMessage} className="flex w-full grow items-center">
+        <form onSubmit={handleSendMessage} className="flex w-full grow items-center space-x-2">
           <TextareaAutosize
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
