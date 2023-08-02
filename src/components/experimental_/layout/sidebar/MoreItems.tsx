@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import SettingsContext, { Setting } from '@/contexts/SettingsContext';
 import { navigateToExternalUrl } from '@/utils';
+import pack from '@../../package.json';
 
 type MoreItem = { icon: ReactNode; action: () => void; label: string };
 const MoreItem = ({ icon, action, label }: MoreItem) => {
@@ -62,7 +63,7 @@ const MoreItems = () => {
         action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
       />
 
-      <MoreItem icon={<BugAntIcon />} label={`App Version: 0.1.1`} action={() => {}} />
+      <MoreItem icon={<BugAntIcon />} label={`App Version: ${pack.version}`} action={() => {}} />
     </div>
   );
 };
