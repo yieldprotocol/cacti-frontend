@@ -9,16 +9,12 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import Layout from '@/components/experimental_/layout/Layout';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import '@/styles/globals.css';
 
-/*
-// disabled dynamic because this causes the query.id useEffect hook to fire twice
 const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
   ssr: false,
 });
-*/
-import ChatContext from '@/contexts/ChatContext';
-import { SettingsProvider } from '@/contexts/SettingsContext';
-import '@/styles/globals.css';
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
@@ -48,7 +44,7 @@ export default function App({
       />
       <QueryClientProvider client={queryClient}>
         <SessionProvider refetchInterval={0} session={session}>
-          <ChatContext>
+          <ChatContextDynamic>
             <ConnectionWrapperDynamic>
               <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
                 <Layout>
@@ -56,7 +52,7 @@ export default function App({
                 </Layout>
               </CenterProvider>
             </ConnectionWrapperDynamic>
-          </ChatContext>
+          </ChatContextDynamic>
         </SessionProvider>
       </QueryClientProvider>
     </SettingsProvider>

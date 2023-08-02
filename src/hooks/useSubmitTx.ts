@@ -36,7 +36,7 @@ const useSubmitTx = (
   }, [request, signer]);
 
   const submitTx = async () => {
-    if (!signer) throw new Error('No signer found');
+    if (!signer) throw new Error('ERROR: No signer found');
     if (!request) return undefined;
     if (!isPrepared) return undefined;
 

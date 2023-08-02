@@ -15,9 +15,9 @@ import { Price } from '@/components/widgets/Price';
 import { TransferWidget } from '@/components/widgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
+import useToken from '@/hooks/useToken';
 import { shortenAddress } from '@/utils';
 import { BuyNFT } from './widgets/BuyNFT';
-import { MultiStepContainer } from './widgets/MultiStepContainer';
 import {
   NftAttributes,
   NftCollectionAttributes,
@@ -29,7 +29,6 @@ import { YieldFarmWidget } from './widgets/YieldFarm';
 import { YieldRowContainer } from './widgets/YieldRowContainer';
 import { ActionPanel } from './widgets/helpers/ActionPanel';
 import { ConnectFirst } from './widgets/helpers/ConnectFirst';
-import { SwapWidget } from './widgets/swap/SwapWidget';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);

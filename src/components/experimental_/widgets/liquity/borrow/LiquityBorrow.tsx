@@ -46,12 +46,7 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
         projectName="Liquity"
         altUrl={`https://www.liquity.org/`}
       />
-      <SingleLineResponse
-        tokenSymbol={borrowToken?.symbol}
-        tokenValueInUsd={100}
-        amount={borrowLUSD}
-        amountValueInUsd={100}
-      />
+      <SingleLineResponse tokenSymbol={borrowToken?.symbol} value={100} />
       <ListResponse
         title="Breakdown"
         data={[
