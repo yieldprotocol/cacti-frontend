@@ -22,7 +22,10 @@ jobs:
       - run: yarn install
       - name: Lint
         run: yarn run lint
-      - name: Format
+      - name: Do Format
+        if: always()
+        run: yarn format
+      - name: Check Format
         if: always()
         run: yarn run checkFormat
       - name: Update App Version
@@ -30,4 +33,3 @@ jobs:
       - name: Build
         if: always()
         run: yarn run build
-
