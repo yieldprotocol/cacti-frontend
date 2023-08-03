@@ -20,26 +20,16 @@ export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) 
 const Avatar = ({ actor }: ActorProps) => {
   const { address } = useAccount();
 
-  const botAvatar =
-    'https://user-images.githubusercontent.com/1568680/221064265-c6d3b2be-148b-4bec-b955-e6f59be9e0ef.png';
-
   return (
-    <div className="avatar">
+    <div className="avatar h-[24px] w-[24px]">
       {actor === 'user' ? (
         <UserAvatar address={address!} />
       ) : actor === 'system' ? (
-        <div className="center h-full w-full border bg-gray-100 text-teal-900 ">
-          <CommandLineIcon className="h-4 w-4" />
-        </div>
+        <CommandLineIcon />
       ) : actor === 'commenter' ? (
-        <div className="center h-full w-full border bg-gray-100 text-gray-700">
-          <ClipboardDocumentListIcon className="h-4 w-4" />
-        </div>
+        <ClipboardDocumentListIcon />
       ) : (
-        <div className="center h-full w-full">
-          <CactusAvatar color={'#ffffff70'} />
-        </div>
-        // <img src={botAvatar} alt="bot avatar" />
+        <CactusAvatar color={'#ffffff70'} />
       )}
     </div>
   );
