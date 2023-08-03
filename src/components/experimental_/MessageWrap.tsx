@@ -10,7 +10,7 @@ export const MessageWrap = ({
   className_?: string;
 }) => {
   return (
-    <div className={`grid-gap-2 grid grid-cols-12 ${className_}`}>
+    <div className={`grid-gap-2 grid grid-cols-12 ${className_ ?? ''}`}>
       <div className="col-span-2 py-4">
         <div className="float-right">{avatar}</div>
       </div>
