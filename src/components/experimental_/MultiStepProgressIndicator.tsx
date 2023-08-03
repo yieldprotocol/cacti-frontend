@@ -20,7 +20,7 @@ export const MultiStepProgressIndicator = () => {
           "
       >
         <ResponseWrap>
-          <div className="cen flex w-full justify-center">
+          <div className="flex w-full items-center justify-center gap-2">
             <Spinner className="h-4 w-4 text-white" />
             <div>
               There are more steps in the current workflow, please wait as the system computes the
