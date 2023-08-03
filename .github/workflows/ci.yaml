@@ -29,4 +29,4 @@ jobs:
         if: always()
         run: yarn run build
       - name: Update App Version
-        run: npm version patch
+        run: yarn version patch
