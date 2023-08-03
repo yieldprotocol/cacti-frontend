@@ -25,8 +25,9 @@ jobs:
       - name: Format
         if: always()
         run: yarn run checkFormat
+      - name: Update App Version
+        run: yarn version patch
       - name: Build
         if: always()
         run: yarn run build
-      - name: Update App Version
-        run: yarn version patch
+
