@@ -24,12 +24,12 @@ jobs:
         run: yarn run lint
       - name: Do Format
         if: always()
-        run: yarn run format
+        run: yarn format
       - name: Check Format
         if: always()
-        run: yarn run checkFormat
+        run: yarn checkFormat
       - name: Update App Version
         run: yarn version patch
       - name: Build
         if: always()
-        run: yarn run build
+        run: yarn build
