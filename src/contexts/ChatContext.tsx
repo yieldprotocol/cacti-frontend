@@ -4,6 +4,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import ChatErrorBoundary from '@/components/experimental_/errors/ChatError';
 import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
@@ -344,32 +345,34 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ChatContext.Provider
-      value={{
-        messages,
-        sendMessage,
-        replayUserMessage,
-        sendMultiStepClientMessage,
-        sendAction,
-        isBotThinking,
-        insertBeforeMessageId,
-        setInsertBeforeMessageId,
-        isMultiStepInProgress,
-        setIsMultiStepInProgress,
-        truncateUntilNextHumanMessage,
-        spoofBotMessage,
-        showDebugMessages,
-        setShowDebugMessages,
-        interactor,
-        setInteractor,
-        connectionStatus,
+    <ChatErrorBoundary>
+      <ChatContext.Provider
+        value={{
+          messages,
+          sendMessage,
+          replayUserMessage,
+          sendMultiStepClientMessage,
+          sendAction,
+          isBotThinking,
+          insertBeforeMessageId,
+          setInsertBeforeMessageId,
+          isMultiStepInProgress,
+          setIsMultiStepInProgress,
+          truncateUntilNextHumanMessage,
+          spoofBotMessage,
+          showDebugMessages,
+          setShowDebugMessages,
+          interactor,
+          setInteractor,
+          connectionStatus,
 
-        showShareModal,
-        setShowShareModal,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
+          showShareModal,
+          setShowShareModal,
+        }}
+      >
+        {children}
+      </ChatContext.Provider>
+    </ChatErrorBoundary>
   );
 };
 
