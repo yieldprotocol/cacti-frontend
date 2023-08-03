@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
+import { Fragment, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { AnyARecord } from 'dns';
 import { Message } from '@/contexts/ChatContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
@@ -9,6 +9,7 @@ import { ListResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
+import { MessageWrap } from './MessageWrap';
 import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
@@ -113,21 +114,18 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   return (
     <SharedStateContextProvider>
-      <div className={`grid-gap-2 mb-8 grid grid-cols-12 pb-3`}>
-        <div className="col-span-2 py-4">
-          <div className="float-right">
-            <Avatar actor="bot" />
+      <MessageWrap avatar={<Avatar actor="bot" />} className_="">
+        <div className="flex w-full gap-2">
+          <div className="mb-8 w-full gap-2 space-y-2">
+            {widgetGroup.map((component, i) => (
+              <Fragment key={`i${i}`}>{component}</Fragment>
+            ))}
+          </div>
+          <div className="text-white/70">
+            <FeedbackButton message={message} />
           </div>
         </div>
-        <div className=" col-span-8 flex h-full w-full flex-col gap-2 px-4 text-white/70 focus:outline-none">
-          {widgetGroup.map((component, i) => (
-            <Fragment key={`i${i}`}>{component}</Fragment>
-          ))}
-        </div>
-        <div className="text-white/70">
-          <FeedbackButton message={message} />
-        </div>
-      </div>
+      </MessageWrap>
     </SharedStateContextProvider>
   );
 };
