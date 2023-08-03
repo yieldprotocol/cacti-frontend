@@ -16,7 +16,7 @@ export const findTokenByAddress = (address: string, chainId: number) =>
 export const formatToEther = (amount: string) => utils.formatEther(amount);
 export const formatToWei = (amount: string) => utils.parseEther(amount).toString();
 
-export const findProjectByName = (name: string): Project => {
+export const findProjectByName = (name: string): Project | undefined => {
   // Project/Protocol list derived from Defillama - https://api.llama.fi/protocols
   const found = projectListJson.find(
     (project) =>
@@ -24,9 +24,10 @@ export const findProjectByName = (name: string): Project => {
       project.slug?.toLowerCase() == name.toLowerCase() ||
       project.id?.toLowerCase() == name.toLowerCase()
   );
-  if (!found) throw new Error(`No project found for name ${name}`);
 
-  if (!found.id) throw new Error(`No ID found for project ${name}`);
+  // if (!found) throw new Error(`No project found for name ${name}`);
+  // if (!found.id) throw new Error(`No ID found for project ${name}`);
+  if (!found || !found.id) return undefined; // We don't throw and throw error if no project found, we simply return undefined
 
   return {
     id: found.id,
@@ -44,7 +45,7 @@ export const findProjectByName = (name: string): Project => {
 
 export const Spinner = ({ className }: { className?: string }) => (
   <svg
-    className={`-ml-1 mr-3 h-5 w-5 animate-spin text-black ${className}`}
+    className={`h-4 w-4 animate-spin text-gray-100 ${className ?? ''}`}
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"

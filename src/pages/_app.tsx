@@ -7,15 +7,19 @@ import dynamic from 'next/dynamic';
 import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
+import Layout from '@/components/experimental_/layout/Layout';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
+
+const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
+  ssr: false,
+});
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
 });
-const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
-  ssr: false,
-});
+
 const queryClient = new QueryClient();
 
 export default function App({
@@ -39,13 +43,17 @@ export default function App({
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <ConnectionWrapperDynamic session={session}>
-          <CenterProvider>
-            <ChatContextDynamic>
-              <Component {...pageProps} />
-            </ChatContextDynamic>
-          </CenterProvider>
-        </ConnectionWrapperDynamic>
+        <SessionProvider refetchInterval={0} session={session}>
+          <ChatContextDynamic>
+            <ConnectionWrapperDynamic>
+              <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </CenterProvider>
+            </ConnectionWrapperDynamic>
+          </ChatContextDynamic>
+        </SessionProvider>
       </QueryClientProvider>
     </SettingsProvider>
   );

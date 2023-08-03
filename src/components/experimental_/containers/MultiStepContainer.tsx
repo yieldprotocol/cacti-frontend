@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { UnsignedTransaction } from 'ethers';
 import { SendTransaction } from '@/components/widgets/SendTransaction';
 import { useChatContext } from '@/contexts/ChatContext';
+import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
+import { ConnectFirst } from '../widgets/helpers/ConnectFirst';
 
 interface MultiStepContainerProps {
   status: 'success' | 'error';
@@ -18,6 +22,8 @@ interface MultiStepContainerProps {
 }
 
 interface UserActionTxTypeProps {
+  stepNumber: number;
+  isFinalStep: boolean;
   tx: { from: string; to: string; value: string; data: string; gas: string } | null;
   sendStepResult: (stepStatus: string, stepStatusMessage: string, userActionData: string) => void;
   description: string;
@@ -85,34 +91,60 @@ export const MultiStepContainer = ({
   }
 
   if (userActionType === 'tx') {
-    return <UserActionTxType tx={tx} sendStepResult={sendStepResult} description={description} />;
+    return (
+      <UserActionTxType
+        stepNumber={stepNumber}
+        isFinalStep={isFinalStep}
+        tx={tx}
+        sendStepResult={sendStepResult}
+        description={description}
+      />
+    );
   }
 
   if (userActionType === 'acknowledge') {
-    return <div>ACKNOWLEDGE WIDGET</div>;
+    return <div>ACKNOWLEDGEMENT ACTION TYPE NOT IMPLEMENTED</div>;
   }
 
   return <div>INVALID</div>;
 };
 
-export const UserActionTxType = ({ tx, sendStepResult, description }: UserActionTxTypeProps) => {
-  const handleTxResult = (
-    sendError: Error | null,
-    txError: Error | null,
-    isTxSuccess: boolean,
-    sendTxData: any
-  ) => {
-    if (sendError?.message || txError?.message) {
-      const errMsg = sendError?.message || txError?.message;
-      sendStepResult('error', `Transaction failed, error: ${errMsg}`, sendTxData?.hash);
-    } else if (isTxSuccess && sendTxData?.hash) {
-      sendStepResult(
-        'success',
-        `Transaction successful, hash: ${sendTxData?.hash}`,
-        sendTxData?.hash
-      );
-    }
+export const UserActionTxType = ({
+  stepNumber,
+  isFinalStep,
+  tx,
+  sendStepResult,
+  description,
+}: UserActionTxTypeProps) => {
+  const handleSuccess = (receipt?: TransactionReceipt) => {
+    sendStepResult('success', `Transaction successful`, receipt?.transactionHash || '');
   };
 
-  return <SendTransaction tx={tx} description={description} onResult={handleTxResult} />;
+  const handleError = (txHash?: string) => {
+    sendStepResult('error', `Transaction failed`, txHash || '');
+  };
+
+  const unsignedTx: UnsignedTransaction = {
+    to: tx?.to,
+    data: tx?.data,
+    value: tx?.value,
+    gasLimit: tx?.gas,
+  };
+
+  const stepDescription =
+    stepNumber === 1 && isFinalStep ? description : `Step ${stepNumber}: ${description}`;
+
+  return (
+    <ConnectFirst>
+      <HeaderResponse text={stepDescription} />
+      <ActionResponse
+        label={`Send Transaction`}
+        sendParams={unsignedTx}
+        onSuccess={handleSuccess}
+        onError={handleError}
+        txParams={undefined}
+        approvalParams={undefined}
+      />
+    </ConnectFirst>
+  );
 };

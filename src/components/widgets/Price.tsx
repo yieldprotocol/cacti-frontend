@@ -1,6 +1,6 @@
 //   based on the returned token
-import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { Spinner } from '@/utils';
+import useUniswapQuote from '../experimental_/widgets/uniswap/useUniswapQuote';
 
 type PriceProps = {
   baseToken: string;
@@ -13,7 +13,7 @@ export const Price = (props: PriceProps) => {
     quoteTokenSymbol: props.queryToken,
   });
 
-  let widgetComponent = <Spinner />;
+  let widgetComponent = <Spinner className="h-4" />;
 
   if (data?.humanReadableAmount) {
     widgetComponent = (

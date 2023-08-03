@@ -74,7 +74,7 @@ const initState: ISettings = {
   disclaimerChecked: false,
 
   /* UI test */
-  experimentalUi: false,
+  experimentalUi: true,
 
   developerTools: false,
 
@@ -86,7 +86,7 @@ const initState: ISettings = {
   diagnostics: false,
 
   /* use a forked network */
-  isForkedEnv: false,
+  isForkedEnv: true,
   forkId: process.env.NEXT_PUBLIC_TENDERLY_FORK_ID || '',
   forkEnvUrl: `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`,
 };

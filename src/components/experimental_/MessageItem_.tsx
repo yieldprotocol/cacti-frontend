@@ -5,11 +5,15 @@ import MessageTranslator from './MessageTranslator_';
 import { SystemMessage } from './SystemMessage_';
 import { UserMessage } from './UserMessage_';
 
-export const MessageItem = ({ message }: { message: Message }) => {
+export const MessageItem = ({
+  message,
+  isShare = false,
+}: {
+  message: Message;
+  isShare?: boolean;
+}) => {
   const { actor, payload, messageId } = message;
   const { sendAction, truncateUntilNextHumanMessage, setInsertBeforeMessageId } = useChatContext();
-
-  const isUser = actor === 'user' || actor === 'commenter';
 
   const submitEdit = (text: string) => {
     sendAction({ actionType: 'edit', messageId, text }); // this also truncates message list on backend
@@ -33,11 +37,10 @@ export const MessageItem = ({ message }: { message: Message }) => {
   };
 
   return (
-    <div className={`flex w-full flex-col py-2`}>
+    <div className="mb-4">
       {actor === 'bot' && <MessageTranslator message={message} />}
-      {actor === 'system' && <SystemMessage message={payload} />}
-      {actor === 'function' && <SystemMessage message={payload} />}
-      {isUser && (
+      {(actor === 'system' || actor === 'function') && <SystemMessage message={payload} />}
+      {(actor === 'user' || actor === 'commenter') && (
         <UserMessage
           {...{
             actor,
@@ -45,6 +48,7 @@ export const MessageItem = ({ message }: { message: Message }) => {
             submitEdit,
             submitRegenerate,
             submitDelete,
+            isShare,
           }}
         />
       )}

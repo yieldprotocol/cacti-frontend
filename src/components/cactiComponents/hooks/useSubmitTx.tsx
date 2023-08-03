@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
   usePrepareContractWrite,
@@ -7,6 +8,7 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
+import useBalance from '@/hooks/useBalance';
 
 export type TxBasicParams = {
   address?: `0x${string}`;
@@ -35,24 +37,32 @@ const useSubmitTx = (
   params?: TxBasicParams,
   sendParams?: UnsignedTransaction,
   onSuccess?: () => void,
-  onError?: () => void
+  onError?: () => void,
+  label?: string
 ) => {
+  const addRecentTx = useAddRecentTransaction();
+  const { refetch: refetchEthBal } = useBalance();
   const [error, setError] = useState<string>();
   const handleError = (error: Error) => {
     console.log(error.message);
     if (onError) onError();
     setError(error.message);
   };
+
   /**
    * note: usePrepareContractWrite/usePrepareSend : It only runs if all params are defined - so no duplication
    * */
+
   /* prepare a write transaction */
-  const { config: writeConfig } = usePrepareContractWrite(params);
+  const { config: writeConfig, error: prepareError } = usePrepareContractWrite({
+    ...params,
+    onError: handleError,
+  });
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig } = usePrepareSendTransaction({
     request: { ...(writeConfig.request ?? sendParams) },
-    enabled: !!(writeConfig.request ?? sendParams),
+    enabled: true,
     onError: handleError,
   });
 
@@ -73,9 +83,22 @@ const useSubmitTx = (
     status,
   } = useWaitForTransaction({
     hash: data?.hash,
-    onSuccess,
+    onSuccess: () => {
+      if (onSuccess) onSuccess();
+      refetchEthBal();
+    },
     onError,
   });
+
+  // add the transaction to the recent transactions list for rainbow
+  useEffect(() => {
+    if (data?.hash) {
+      addRecentTx({
+        hash: data.hash,
+        description: label ?? params?.functionName ?? '',
+      });
+    }
+  }, [addRecentTx, data?.hash, label, params?.functionName]);
 
   /* DEVELOPER logging */
   useEffect(() => {

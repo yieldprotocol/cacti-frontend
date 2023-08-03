@@ -7,6 +7,7 @@
   --light-width: 50%;
   --light-color-on: hsl(176, 41%, 19%);
   /* --light-color-off: hsl(176, 11%, 59%); */
+  background-color: #031016;
 }
 .body {
   font-variant-numeric: slashed-zero;
@@ -47,10 +48,31 @@ button:focus {
 
 @layer components {
   .avatar {
-    @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
+    @apply grid h-4 w-4 place-items-center overflow-hidden rounded-full;
   }
 
   .center {
     @apply grid place-items-center;
   }
+}
+
+::-webkit-scrollbar {
+  /* Customize the scrollbar width */
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  /* Customize the scrollbar track */
+  background: #031016;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #e5e7eb;
+}
+
+::-webkit-scrollbar-thumb {
+  /* Customize the scrollbar thumb */
+  background: #1d1f24;
+  border-radius: 5px;
 }

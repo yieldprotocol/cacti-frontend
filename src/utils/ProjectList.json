@@ -56,11 +56,41 @@
     "parentProtocol": "Uniswap",
     "slug": "uniswap"
   },
+
+  {
+    "id": "2258",
+    "name": "Opensea Seaport",
+    "address": null,
+    "symbol": "-",
+    "url": "https://opensea.io/",
+    "description": "OpenSea is the world's first and largest web3 marketplace for NFTs and crypto collectibles.",
+    "chain": "Ethereum",
+    "logo": "https://icons.llama.fi/opensea-seaport.png",
+    "category": "NFT Marketplace",
+    "chains": ["Ethereum"],
+    "twitter": "opensea",
+    "parentProtocol": "parent#opensea",
+    "slug": "opensea-seaport"
+  },
   {
     "id": "zksync",
     "name": "zkSync",
     "description": "zkSync is an L2 scaling solution for Ethereum",
     "url": "https://zksync.io/",
     "logo": "https://zksync.io/favicon.ico"
+  },
+  {
+    "id": "yield-protocol",
+    "name": "Yield Protocol",
+    "description": "Yield is a fixed-rate borrowing and lending protocol built on Ethereum",
+    "url": "https://yieldprotocol.com/",
+    "logo": "https://d33wubrfki0l68.cloudfront.net/6402e6bd28aafed79ac082896171779ee35ffaac/2800e/logo.svg"
+  },
+  {
+    "id": "weth",
+    "name": "WETH",
+    "description": "Wrapped Ether",
+    "url": "https://weth.io/",
+    "logo": "https://etherscan.io/token/images/weth_28.png"
   }
 ]

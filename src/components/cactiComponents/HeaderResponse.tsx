@@ -22,15 +22,9 @@ export const HeaderResponse = (props: any) => {
 
   useEffect(() => {
     if (props.projectName) {
-      try {
-        const project = findProjectByName(props.projectName);
-        setProject(project);
-      } catch (e) {
-        // console.error(e);
-        setProject(undefined);
-      }
+      const project = findProjectByName(props.projectName);
+      setProject(project);
     }
-
     // if (props.projectName==='user') {
     //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
     // }

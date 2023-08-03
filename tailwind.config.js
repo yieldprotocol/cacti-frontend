@@ -24,7 +24,13 @@ module.exports = {
       fontFamily: {
         sans: ['Inter, sans-serif', { fontFeatureSettings: '"zero", "lnum", "pnum"' }],
       },
+      colors: {
+        'gray-primary': '#031016',
+        'gray-secondary': '#0F1C22',
+        'gray-tertiary': '#09161C',
+        'green-primary': '#2E8C87',
+      },
     },
+    plugins: [],
   },
-  plugins: [],
 };
