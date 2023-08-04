@@ -9,7 +9,7 @@ interface ActorProps {
 }
 
 export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) => {
-  const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+  const { data: ensImage } = useEnsAvatar({ address });
   return ensImage ? (
     <img alt="avatar" src={ensImage} />
   ) : (
