@@ -29,11 +29,12 @@ export interface ChatSettings {
 export const useQueryChatSettings = (sessionId: string | undefined) => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
-  const { data: settings, ...rest } = useQuery<ChatSettings>(
-    ['chatSettings', sessionId, userId],
-    async () => {
+  const { data: settings, ...rest } = useQuery<ChatSettings>({
+    queryKey: ['chatSettings', sessionId, userId],
+    queryFn: async () => {
       if (sessionId) return getChatSettings(sessionId);
-    }
-  );
+    },
+    refetchOnWindowFocus: false,
+  });
   return { settings, ...rest };
 };

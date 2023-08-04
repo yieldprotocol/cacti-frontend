@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { deleteChat, postCreateChatFromShareImport, putChatSettings } from '@/api/chats/calls';
-import { useChatContext } from '@/contexts/ChatContext';
 import { Chats } from './queries';
 
 export const useMutationUpdateChatSettings = (sessionId: string) => {
