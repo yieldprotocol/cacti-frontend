@@ -45,13 +45,14 @@ const CustomConnectButton = () => {
             })}
           >
             {(() => {
-
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className='w-full' >
-                    <div className={`flex items-center justify-center text-xs text-white/70 ${buttonStyle}`}>
+                  <button onClick={openConnectModal} type="button" className="w-full">
+                    <div
+                      className={`flex items-center justify-center text-xs text-white/70 ${buttonStyle}`}
+                    >
                       Connect Wallet
-                      </div>
+                    </div>
                   </button>
                 );
               }
@@ -71,11 +72,11 @@ const CustomConnectButton = () => {
                     cursor-pointer 
                     items-center 
                     justify-between 
-                    p-1
-                    px-3
-                    bg-gray-600/20
                     rounded-lg
                     border-gray-800
+                    bg-gray-600/20
+                    p-1
+                    px-3
                   "
                   onClick={openAccountModal}
                 >
