@@ -1,16 +1,20 @@
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatEther } from 'ethers/lib/utils.js';
-import { useAccount, useEnsName } from 'wagmi';
+import { useAccount, useEnsAvatar } from 'wagmi';
 import useBalance from '@/hooks/useBalance';
 import { cleanValue } from '@/utils';
 import Avatar from '../Avatar';
+import SkeletonWrap from '../SkeletonWrap';
+import useEnsName from '../cactiComponents/hooks/useEnsName';
 
 const CustomConnectButton = () => {
   const { data: balance } = useBalance();
   const balance_ = balance ? formatEther(balance) : '';
-  const { address: account } = useAccount();
-  const { data: ensName } = useEnsName({ address: account });
+  const { address } = useAccount();
+  const { data: ensAvatar } = useEnsAvatar({ address, scopeKey: `ensAvatar-${address}` });
+  const { data: ensName, isRefetching } = useEnsName();
+
   return (
     <ConnectButton.Custom>
       {({
@@ -70,7 +74,11 @@ const CustomConnectButton = () => {
                     <Avatar actor="user" />
                     <div>
                       <div className="text-sm font-semibold text-white/70">
-                        {ensName || account.address}
+                        {isRefetching ? (
+                          <SkeletonWrap width={100} height={10} />
+                        ) : (
+                          ensName || account.displayName
+                        )}
                       </div>
                       <div className="flex justify-start font-mono text-xs font-thin text-white/70">
                         {cleanValue(balance_, 2)}

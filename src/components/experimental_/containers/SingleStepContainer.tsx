@@ -1,4 +1,6 @@
 import { UnsignedTransaction } from 'ethers';
+import { useAccount, useEnsAvatar } from 'wagmi';
+import useEnsName from '@/components/cactiComponents/hooks/useEnsName';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
 import { ConnectFirst } from '../widgets/helpers/ConnectFirst';
@@ -18,6 +20,8 @@ export const SingleStepContainer = ({
   errorMsg,
   description,
 }: SingleStepContainerProps) => {
+  const { refetch: refetchEnsName } = useEnsName();
+
   if (userRequestStatus === 'error') {
     return <WidgetError>{errorMsg}</WidgetError>;
   }
@@ -37,6 +41,9 @@ export const SingleStepContainer = ({
         sendParams={unsignedTx}
         txParams={undefined}
         approvalParams={undefined}
+        onSuccess={() => {
+          refetchEnsName();
+        }}
       />
     </ConnectFirst>
   );
