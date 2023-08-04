@@ -141,7 +141,8 @@ const MessageInput = () => {
           </div>
         </div>
       ) : (
-        <CustomConnectButton />
+       botConnected ? <CustomConnectButton /> : 
+       <div className='text-white/30 text-sm animate-pulse'> Waiting for Cacti connection ... </div>
       )}
     </>
   );
