@@ -117,16 +117,16 @@ export const ActionResponse = ({
    *
    *  */
   const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
-  useEffect(() => {
-    if (approvalParams?.skipBalanceCheck) return setHasEnoughBalance(true);
 
-    // check value balance if skipping approval cuz we assume user is using eth
-    if (approvalParams?.skipApproval && sendParams?.value! <= ethBal!)
+  useEffect(() => {
+    if (approvalParams?.skipBalanceCheck || approvalParams?.skipApproval)
       return setHasEnoughBalance(true);
 
+    // check value balance if skipping approval cuz we assume user is using eth
+    if (sendParams?.value! <= ethBal!) return setHasEnoughBalance(true);
+
     // check approval token balance
-    balance &&
-      approvalParams?.approvalAmount &&
+    if (balance && approvalParams?.approvalAmount)
       setHasEnoughBalance(balance.gte(approvalParams?.approvalAmount!));
   }, [
     approvalParams?.approvalAmount,
@@ -144,7 +144,6 @@ export const ActionResponse = ({
   useEffect(() => {
     // case:not enough balance */
     if (!hasEnoughBalance) {
-      console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
       setState(ActionResponseState.DISABLED);
     }
@@ -153,6 +152,7 @@ export const ActionResponse = ({
     if (!hasAllowance && hasEnoughBalance) {
       // case: enough balance, but allowance not sufficient */
       if (approveTx) {
+        console.log('🦄 ~ file: ActionResponse.tsx:156 ~ useEffect ~ approveTx:', approveTx);
         setAction({ name: 'approve', fn: approveTx });
         console.log('READY FOR APPROVAL: Has balance.');
         setLabel(`A token approval is required`);
