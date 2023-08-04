@@ -127,6 +127,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
                 : lightTheme({ accentColor: '#1f2937' })
             }
             showRecentTransactions={true}
+            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
