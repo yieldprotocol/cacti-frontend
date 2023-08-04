@@ -1,4 +1,5 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import {
   RainbowKitAuthenticationProvider,
   createAuthenticationAdapter,
@@ -40,15 +41,17 @@ export function RainbowKitSiweNextAuthProvider({
 }: RainbowKitSiweNextAuthProviderProps) {
   const { data: session, status } = useSession();
   const { address: account } = useAccount();
+  const router = useRouter();
 
-  const signoutSequence = async () => {
+  const signoutSequence = useCallback(async () => {
     // signout on backend first, to ensure session cookies get cleared
     // prior to any frontend hooks firing
     if (getSignoutCallback) {
       await getSignoutCallback();
+      router.push('/');
     }
     await signOut({ redirect: false });
-  };
+  }, [getSignoutCallback]);
 
   /* force logout if account changes */
   useEffect(() => {
@@ -56,7 +59,7 @@ export function RainbowKitSiweNextAuthProvider({
       console.log('detected account switch, logging out', session, account);
       signoutSequence();
     }
-  }, [account, session]);
+  }, [account, session, signoutSequence]);
 
   const adapter = useMemo(
     () =>
