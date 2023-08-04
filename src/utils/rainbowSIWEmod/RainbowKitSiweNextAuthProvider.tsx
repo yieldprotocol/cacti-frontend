@@ -6,6 +6,7 @@ import {
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
 
 type UnconfigurableMessageOptions = {
   address: string;
@@ -40,12 +41,14 @@ export function RainbowKitSiweNextAuthProvider({
 }: RainbowKitSiweNextAuthProviderProps) {
   const { data: session, status } = useSession();
   const { address: account } = useAccount();
+  const router = useRouter();
 
   const signoutSequence = useCallback(async () => {
     // signout on backend first, to ensure session cookies get cleared
     // prior to any frontend hooks firing
     if (getSignoutCallback) {
       await getSignoutCallback();
+      router.push('/');
     }
     await signOut({ redirect: false });
   }, [getSignoutCallback]);
