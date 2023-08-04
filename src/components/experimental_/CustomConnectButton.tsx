@@ -29,9 +29,16 @@ const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className={`h-12 w-full cursor-pointer rounded-lg border-[1px] ${
-              !connected ? 'border-green-primary/10 bg-green-primary' : 'border-gray-800'
-            } bg-gray-700/50 text-center text-sm font-bold text-white hover:opacity-80`}
+            className={`
+            h-12
+            cursor-pointer 
+            rounded-lg border-[1px]
+            bg-gray-700/50 
+            text-center 
+            text-sm text-white 
+            hover:opacity-80
+            ${!connected ? 'border-green-primary/10 h-8' : 'border-gray-800'}
+             `}
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -44,16 +51,16 @@ const CustomConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className="h-full w-full p-3">
-                    <div className="text-sm text-white/70">Connect Wallet</div>
+                  <button onClick={openConnectModal} type="button" className="h-full w-full">
+                    <div className="text-xs text-white/70 animate-pulse">Connect Wallet</div>
                   </button>
                 );
               }
 
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button" className="h-full w-full p-3">
-                    <div className="text-sm text-red-500">Wrong network</div>
+                  <button onClick={openChainModal} type="button" className="h-full w-full">
+                    <div className="text-xs text-red-500">Wrong network</div>
                   </button>
                 );
               }
@@ -70,7 +77,7 @@ const CustomConnectButton = () => {
                         {account.displayName}
                       </div>
                       <div className="flex justify-start font-mono text-xs font-thin text-white/70">
-                        {cleanValue(balance_, 2)}
+                        {cleanValue(balance_, 2)} ETH
                       </div>
                     </div>
                   </div>
