@@ -144,7 +144,6 @@ export const ActionResponse = ({
   useEffect(() => {
     // case:not enough balance */
     if (!hasEnoughBalance) {
-      console.log('NOT READY: Balance not sufficient for transaction.');
       setLabel('Insufficient Balance');
       setState(ActionResponseState.DISABLED);
     }
