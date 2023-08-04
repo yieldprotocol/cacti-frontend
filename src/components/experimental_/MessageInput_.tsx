@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { FormEvent, ReactNode, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import React, { ButtonHTMLAttributes } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { ReadyState } from 'react-use-websocket';
@@ -8,6 +8,8 @@ import {
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
 import { useChatContext } from '@/contexts/ChatContext';
+import { useAccount } from 'wagmi';
+import CustomConnectButton from './CustomConnectButton';
 
 interface IconBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -61,6 +63,8 @@ const useFocus = () => {
 const MessageInput = () => {
   const [messageInput, setMessageInput] = useState<string>('');
 
+  const {isConnected:walletConnected } = useAccount();
+
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
   const [inputRef] = useFocus();
   const submit = useCallback(() => {
@@ -86,10 +90,15 @@ const MessageInput = () => {
     setInteractor(interactor === 'user' ? 'commenter' : 'user');
   };
 
-  const isConnected = connectionStatus === ReadyState.OPEN;
+  const botConnected = connectionStatus === ReadyState.OPEN;
+
+  const isConnected = useMemo(() => { 
+    return walletConnected && botConnected;
+  }, [botConnected, walletConnected]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl rounded-xl bg-black/30">
+    <>
+    {isConnected ? <div className={`mx-auto w-full max-w-4xl rounded-xl bg-black/30 `}>
       <div className="flex items-center gap-1 rounded-xl border border-gray-300/10 p-1 duration-200 focus-within:border-teal-100/30 lg:gap-3 lg:p-2">
         <div className="text-end">
           <button
@@ -105,7 +114,7 @@ const MessageInput = () => {
           </button>
         </div>
 
-        <form onSubmit={handleSendMessage} className="flex w-full grow items-center space-x-2">
+         <form onSubmit={handleSendMessage} className="flex w-full grow items-center space-x-2">
           <TextareaAutosize
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder={interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'}
@@ -128,6 +137,9 @@ const MessageInput = () => {
         </form>
       </div>
     </div>
+    : <CustomConnectButton />}
+
+    </>
   );
 };
 

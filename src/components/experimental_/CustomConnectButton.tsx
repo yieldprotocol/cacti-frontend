@@ -4,6 +4,7 @@ import { formatEther } from 'ethers/lib/utils.js';
 import useBalance from '@/hooks/useBalance';
 import { cleanValue } from '@/utils';
 import Avatar from '../Avatar';
+import { buttonStyle } from './layout/sidebar/NewChatButton';
 
 const CustomConnectButton = () => {
   const { data: balance } = useBalance();
@@ -30,15 +31,10 @@ const CustomConnectButton = () => {
         return (
           <div
             className={`
-            h-12
+            min-w-[200px]
             cursor-pointer 
-            rounded-lg border-[1px]
-            bg-gray-700/50 
-            text-center 
-            text-sm text-white 
             hover:opacity-80
-            ${!connected ? 'border-green-primary/10 h-8' : 'border-gray-800'}
-             `}
+            `}
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -49,17 +45,20 @@ const CustomConnectButton = () => {
             })}
           >
             {(() => {
+
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className="h-full w-full">
-                    <div className="text-xs text-white/70 animate-pulse">Connect Wallet</div>
+                  <button onClick={openConnectModal} type="button" className='w-full' >
+                    <div className={`flex items-center justify-center text-xs text-white/70 ${buttonStyle}`}>
+                      Connect Wallet
+                      </div>
                   </button>
                 );
               }
 
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button" className="h-full w-full">
+                  <button onClick={openChainModal} type="button">
                     <div className="text-xs text-red-500">Wrong network</div>
                   </button>
                 );
@@ -67,7 +66,17 @@ const CustomConnectButton = () => {
 
               return (
                 <div
-                  className="flex h-full w-full cursor-pointer items-center justify-between p-3"
+                  className="
+                    flex h-full w-full 
+                    cursor-pointer 
+                    items-center 
+                    justify-between 
+                    p-1
+                    px-3
+                    bg-gray-600/20
+                    rounded-lg
+                    border-gray-800
+                  "
                   onClick={openAccountModal}
                 >
                   <div className="flex items-center gap-3">
