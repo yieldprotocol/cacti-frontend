@@ -1,4 +1,5 @@
 import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import {
   RainbowKitAuthenticationProvider,
   createAuthenticationAdapter,
@@ -6,7 +7,6 @@ import {
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 import { useAccount } from 'wagmi';
-import { useRouter } from 'next/router';
 
 type UnconfigurableMessageOptions = {
   address: string;
