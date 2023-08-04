@@ -56,10 +56,8 @@ export type ActionResponseProps = {
   label?: string;
   disabled?: boolean;
   stepper?: boolean;
-  onSuccess?: (txReceipt?: TransactionReceipt) => any;
+  onSuccess?: () => void;
   onError?: (txHash?: string) => any;
-  // assertCallParams?: AssertCallBasicParams;
-  // altAction?: () => Promise<any>;
 };
 
 /**
@@ -92,8 +90,8 @@ export const ActionResponse = ({
   const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt, hash } = useSubmitTx(
     hasAllowance ? txParams : undefined,
     hasAllowance ? sendParams : undefined,
-    () => null,
-    () => null,
+    onSuccess,
+    onError,
     label_
   );
 
@@ -229,7 +227,6 @@ export const ActionResponse = ({
         console.log('TX SUCCESS');
         setLabel('Transaction Complete');
         setState(ActionResponseState.SUCCESS);
-        onSuccess?.(receipt);
       }
     }
   }, [
@@ -244,6 +241,8 @@ export const ActionResponse = ({
     defaultLabel,
     isSuccess,
     disabled,
+    onError,
+    hash,
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */

@@ -3,16 +3,12 @@ import { toast } from 'react-toastify';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
-  useAccount,
-  useEnsAvatar,
-  useEnsName,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
 import useBalance from '@/hooks/useBalance';
-import useChainId from '@/hooks/useChainId';
 
 export type TxBasicParams = {
   address?: `0x${string}`;
@@ -44,10 +40,6 @@ const useSubmitTx = (
   onError?: () => void,
   label?: string
 ) => {
-  const chainId = useChainId();
-  const { address: account } = useAccount();
-  const { refetch: refetchEnsName, data: ensName } = useEnsName({ address: account });
-  const { refetch: refetchEnsAvatar } = useEnsAvatar({ address: account, chainId });
   const addRecentTx = useAddRecentTransaction();
   const { refetch: refetchEthBal } = useBalance();
   const [error, setError] = useState<string>();
@@ -88,7 +80,6 @@ const useSubmitTx = (
     error: transactError,
     isLoading: isTransacting,
     isSuccess,
-    status,
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
@@ -117,15 +108,6 @@ const useSubmitTx = (
       toast.success(`Transaction Complete: ${receipt.transactionHash}`);
     }
   }, [receipt?.status, receipt?.transactionHash, transactError?.message]);
-
-  /* refetch ens name and avatar on tx success */
-  /* TODO handle more specifically */
-  useEffect(() => {
-    if (isSuccess) {
-      refetchEnsName();
-      refetchEnsAvatar();
-    }
-  }, [isSuccess, refetchEnsName, refetchEnsAvatar]);
 
   /* Return the transaction data and states */
   return {
