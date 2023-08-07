@@ -14,16 +14,17 @@ const HeaderContainer = ({
   const { pathname } = useRouter();
   return (
     <div
-      className={`sticky top-0 z-40 flex items-center gap-x-4 ${
+      className={`sticky top-0 z-40 flex gap-x-4 p-4 pt-6 text-white/70 sm:gap-x-6 ${
         pathname !== '/' ? 'bg-gray-secondary' : ''
-      } p-2 text-white/70 sm:gap-x-6 md:p-6`}
+      }`}
     >
       <button type="button" className="text-white/50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
         <span className="sr-only">Open sidebar</span>
         <Bars3Icon className="h-8 w-8" aria-hidden="true" />
       </button>
 
-      <div className="h-full w-full">{children}</div>
+      <div className="h-full w-full ">{children}</div>
+
       <div className="hidden min-w-[200px] md:block">
         <CustomConnectButton />
       </div>

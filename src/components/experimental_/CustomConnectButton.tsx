@@ -4,6 +4,7 @@ import { formatEther } from 'ethers/lib/utils.js';
 import useBalance from '@/hooks/useBalance';
 import { cleanValue } from '@/utils';
 import Avatar from '../Avatar';
+import { buttonStyle } from './layout/sidebar/NewChatButton';
 
 const CustomConnectButton = () => {
   const { data: balance } = useBalance();
@@ -29,9 +30,11 @@ const CustomConnectButton = () => {
           (!authenticationStatus || authenticationStatus === 'authenticated');
         return (
           <div
-            className={`h-12 w-full cursor-pointer rounded-lg border-[1px] ${
-              !connected ? 'border-green-primary/10 bg-green-primary' : 'border-gray-800'
-            } bg-gray-700/50 text-center text-sm font-bold text-white hover:opacity-80`}
+            className={`
+            min-w-[200px]
+            cursor-pointer 
+            hover:opacity-80
+            `}
             {...(!ready && {
               'aria-hidden': true,
               style: {
@@ -44,23 +47,37 @@ const CustomConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" className="h-full w-full p-3">
-                    <div className="text-sm text-white/70">Connect Wallet</div>
+                  <button onClick={openConnectModal} type="button" className="w-full">
+                    <div
+                      className={`flex items-center justify-center text-xs text-white/70 ${buttonStyle}`}
+                    >
+                      Connect Wallet
+                    </div>
                   </button>
                 );
               }
 
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button" className="h-full w-full p-3">
-                    <div className="text-sm text-red-500">Wrong network</div>
+                  <button onClick={openChainModal} type="button">
+                    <div className="text-xs text-red-500">Wrong network</div>
                   </button>
                 );
               }
 
               return (
                 <div
-                  className="flex h-full w-full cursor-pointer items-center justify-between p-3"
+                  className="
+                    flex h-full w-full 
+                    cursor-pointer 
+                    items-center 
+                    justify-between 
+                    rounded-lg
+                    border-gray-800
+                    bg-gray-600/20
+                    p-1
+                    px-3
+                  "
                   onClick={openAccountModal}
                 >
                   <div className="flex items-center gap-3">
@@ -70,7 +87,7 @@ const CustomConnectButton = () => {
                         {account.displayName}
                       </div>
                       <div className="flex justify-start font-mono text-xs font-thin text-white/70">
-                        {cleanValue(balance_, 2)}
+                        {cleanValue(balance_, 2)} ETH
                       </div>
                     </div>
                   </div>
