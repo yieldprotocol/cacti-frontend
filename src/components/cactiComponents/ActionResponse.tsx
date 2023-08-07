@@ -119,11 +119,12 @@ export const ActionResponse = ({
   const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
 
   useEffect(() => {
-    if (approvalParams?.skipBalanceCheck || approvalParams?.skipApproval)
+    if (approvalParams?.skipApproval)
       return setHasEnoughBalance(true);
 
-    // check value balance if skipping approval cuz we assume user is using eth
-    if (sendParams?.value! <= ethBal!) return setHasEnoughBalance(true);
+    // check value balance if skipping approval cuz we assume user is using eth 
+    // ( explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams)
+    if (approvalParams === undefined || sendParams?.value! <= ethBal!) return setHasEnoughBalance(true);
 
     // check approval token balance
     if (balance && approvalParams?.approvalAmount)
@@ -131,7 +132,6 @@ export const ActionResponse = ({
   }, [
     approvalParams?.approvalAmount,
     approvalParams?.skipApproval,
-    approvalParams?.skipBalanceCheck,
     balance,
     ethBal,
     sendParams?.value,
