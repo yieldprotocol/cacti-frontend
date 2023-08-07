@@ -125,20 +125,6 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
   return (
     <ConnectFirst>
       <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
-      {/* <Widget
-        widget={{
-          name: 'nft-asset-container',
-          params: {
-            network: 'ethereum-mainnet',
-            address: nftAddress,
-            tokenId: tokenId,
-            // collectionName: nftData?.collectionName,
-            // name: nftData?.name,
-            // previewImageUrl: nftData?.smallPreviewImageUrl,
-            variant: 'showcase',
-          },
-        }}
-      /> */}
       <NftAsset
         address={nftAddress}
         tokenId={tokenId}
@@ -156,45 +142,5 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       />
     </ConnectFirst>
 
-    /* <div className="mb-2 flex flex-col items-center justify-center gap-1">
-          <NFTMetadata nftAddress={nftAddress} tokenId={tokenId} />
-          <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
-        </div> */
-
-    /* <SubmitButton
-        styleProps="flex rounded-sm border border-gray-200/25 bg-gray-700/80 p-3.5 hover:bg-gray-700"
-        label={
-          isSuccess
-            ? 'Success! You now own the NFT.'
-            : isTxPending
-            ? 'Buying NFT...'
-            : isWriteError
-            ? 'Error buying NFT'
-            : isPrepareError
-            ? 'NFT not available for purchase'
-            : isQueryError
-            ? 'Error fetching NFT listing'
-            : isFulfillError
-            ? 'Error fetching fulfillment data'
-            : isQueryLoading
-            ? 'Fetching NFT listing...'
-            : isExpired
-            ? 'Listing expired'
-            : `Buy NFT ${valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}`
-        }
-        onClick={() => seaportWrite?.()}
-        isLoading={isQueryLoading || isTxPending}
-        isError={isQueryError || isFulfillError || isWriteError || isPrepareError}
-        disabled={
-          isQueryLoading ||
-          isExpired ||
-          isQueryError ||
-          isFulfillError ||
-          isWriteError ||
-          isPrepareError ||
-          isTxPending ||
-          isSuccess
-        }
-      /> */
   );
 };
