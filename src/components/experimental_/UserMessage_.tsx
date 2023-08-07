@@ -3,13 +3,13 @@ import * as React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   PaperAirplaneIcon,
-  PaperClipIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import Avatar from '../Avatar';
 import { Markdown } from './Markdown';
 import { MessageWrap } from './MessageWrap';
+import InputWrap from './InputWrap';
 
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -84,10 +84,10 @@ export const UserMessage = ({
     `}
       >
         {isEditing ? (
-          <>
+          <InputWrap submitFunction={submitRegenerate}>
             <TextareaAutosize
               ref={inputRef}
-              className="h-full w-full resize-none rounded border-gray-800 bg-inherit p-2 text-white/70 focus:border focus:outline-none"
+              className="h-full w-full resize-none rounded border-gray-800 bg-inherit text-white/70 focus:outline-none"
               min-rows={1}
               value={input}
               onChange={(e) => {
@@ -98,7 +98,7 @@ export const UserMessage = ({
                 setIsEditing(false);
               }}
             />
-            <div className="m-auto mr-4 flex gap-2">
+            {/* <div className="m-auto mr-4 flex gap-2">
               <div
                 className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
                 onClick={submitRegenerate}
@@ -108,11 +108,11 @@ export const UserMessage = ({
               <span className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
                 esc
               </span>
-            </div>
-          </>
+            </div> */}
+          </InputWrap>
         ) : (
           <>
-            <div className="w-full" onClick={() => setIsEditing(true)}>
+            <div className="w-full px-2" onClick={() => setIsEditing(true)}>
               <Markdown>{input}</Markdown>
             </div>
 
