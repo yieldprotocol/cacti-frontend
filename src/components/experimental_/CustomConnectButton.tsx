@@ -75,7 +75,7 @@ const CustomConnectButton = () => {
                     rounded-lg
                     border-gray-800
                     bg-gray-600/20
-                    p-1
+                    p-1.5
                     px-3
                   "
                   onClick={openAccountModal}
