@@ -141,6 +141,5 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         disabled={isExpired || notForSale}
       />
     </ConnectFirst>
-
   );
 };

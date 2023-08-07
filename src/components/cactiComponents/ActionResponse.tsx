@@ -55,6 +55,7 @@ export type ActionResponseProps = {
   sendParams?: UnsignedTransaction | undefined;
   label?: string;
   disabled?: boolean;
+  skipBalanceCheck?: boolean;
   stepper?: boolean;
   onSuccess?: (txReceipt?: TransactionReceipt) => any;
   onError?: (txHash?: string) => any;
@@ -73,6 +74,7 @@ export const ActionResponse = ({
   label: label_,
   disabled,
   stepper,
+  skipBalanceCheck,
   onSuccess,
   onError,
 }: ActionResponseProps) => {
@@ -119,12 +121,12 @@ export const ActionResponse = ({
   const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
 
   useEffect(() => {
-    if (approvalParams?.skipApproval)
-      return setHasEnoughBalance(true);
+    if (approvalParams?.skipApproval || skipBalanceCheck) return setHasEnoughBalance(true);
 
-    // check value balance if skipping approval cuz we assume user is using eth 
+    // check value balance if skipping approval cuz we assume user is using eth
     // ( explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams)
-    if (approvalParams === undefined || sendParams?.value! <= ethBal!) return setHasEnoughBalance(true);
+    if (approvalParams === undefined || sendParams?.value! <= ethBal!)
+      return setHasEnoughBalance(true);
 
     // check approval token balance
     if (balance && approvalParams?.approvalAmount)
