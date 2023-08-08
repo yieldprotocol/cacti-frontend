@@ -21,6 +21,7 @@ export const SingleStepContainer = ({
   description,
 }: SingleStepContainerProps) => {
   const { refetch: refetchEnsName } = useEnsName();
+  const { refetch: refetchEnsAvatar } = useEnsAvatar();
 
   if (userRequestStatus === 'error') {
     return <WidgetError>{errorMsg}</WidgetError>;
@@ -43,6 +44,7 @@ export const SingleStepContainer = ({
         approvalParams={undefined}
         onSuccess={() => {
           refetchEnsName();
+          refetchEnsAvatar();
         }}
       />
     </ConnectFirst>

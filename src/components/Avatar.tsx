@@ -1,7 +1,8 @@
 import { jsNumberForAddress } from 'react-jazzicon';
 import Jazzicon from 'react-jazzicon/dist/Jazzicon';
 import { ClipboardDocumentListIcon, CommandLineIcon } from '@heroicons/react/24/outline';
-import { useAccount, useEnsAvatar } from 'wagmi';
+import { useAccount } from 'wagmi';
+import useEnsAvatar from './cactiComponents/hooks/useEnsAvatar';
 import CactusAvatar from './experimental_/CactiImages/CactusAvatar';
 
 interface ActorProps {
@@ -9,7 +10,7 @@ interface ActorProps {
 }
 
 export const UserAvatar = ({ address }: { address: `0x${string}` | undefined }) => {
-  const { data: ensImage } = useEnsAvatar({ address });
+  const { data: ensImage } = useEnsAvatar();
   return ensImage ? (
     <img alt="avatar" src={ensImage} />
   ) : (
