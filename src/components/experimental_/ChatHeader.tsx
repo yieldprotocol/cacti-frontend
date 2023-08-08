@@ -75,14 +75,12 @@ const ChatHeader = () => {
   };
 
   useEffect(() => {
-    const handleKeys = (e: globalThis.KeyboardEvent) => {
-      
+    const handleKeys = (e: globalThis.KeyboardEvent) => {  
       // cancel edit
       if (e.key === 'Escape') {
         setIsEditing(false);
         setText(threadName!);
       }
-
       // submit edit
       if (e.key === 'Enter') {
         if (inputText !== threadName) {
@@ -92,10 +90,8 @@ const ChatHeader = () => {
         setIsEditing(false);
       }
     };
-
     window.addEventListener('keydown', handleKeys);
     return () => window.removeEventListener('keydown', handleKeys);
-
   }, [threadName, inputText, submitNameChange]);
 
   return (

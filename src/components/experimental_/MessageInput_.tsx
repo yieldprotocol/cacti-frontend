@@ -68,7 +68,6 @@ const MessageInput = () => {
 
   const { sendMessage, interactor, setInteractor, connectionStatus } = useChatContext();
   const [inputRef] = useFocus();
-
   const submit = useCallback(() => {
     if (messageInput.length > 0) {
       sendMessage(messageInput);
@@ -101,7 +100,7 @@ const MessageInput = () => {
   return (
     <>
       {isConnected ? (
-        <InputWrap>
+        <InputWrap className_='max-w-4xl'>
           <button
             className="grid h-9 w-9 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
             type="button"
@@ -138,7 +137,7 @@ const MessageInput = () => {
           </form>
         </InputWrap>
       ) : botConnected ? (
-        <CustomConnectButton />
+        <div className='w-full flex justify-center'><CustomConnectButton /></div>
       ) : (
         <div className="animate-pulse text-sm text-white/30">Waiting for Cacti connection ...</div>
       )}
