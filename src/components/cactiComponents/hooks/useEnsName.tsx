@@ -8,7 +8,7 @@ const useEnsName = () => {
   const { address } = useAccount();
 
   const { data, ...rest } = useQuery({
-    queryKey: ['ensName', { chainId, address }],
+    queryKey: ['ensName', chainId, address],
     queryFn: async () =>
       address &&
       (await fetchEnsName({
