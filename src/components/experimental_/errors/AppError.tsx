@@ -1,7 +1,4 @@
-import CopyWrap from '@/components/CopyWrap';
-import { Spinner } from '@/utils';
 import { Dialog, Transition } from '@headlessui/react';
-import { CheckCircleIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { Fragment, ReactNode, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -13,20 +10,16 @@ const buttonStyle =
 
 const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
 
-
-    const [showError, setShowError] = useState(true);
     const router = useRouter();
-
     const handleReload = () => {
-        router.push("/").then(()=>router.reload());
-        
+        router.push("/").then(()=>router.reload());       
     };
     
     return (
       <ErrorBoundary
         FallbackComponent={() => {
           return ( <Transition appear show={true} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={() => setShowError(false)}>
+            <Dialog as="div" className="relative z-10" onClose={handleReload}>
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
