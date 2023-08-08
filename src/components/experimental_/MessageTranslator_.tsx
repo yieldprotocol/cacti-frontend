@@ -110,6 +110,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
         setWidgetGroup(list);
       } catch (e) {
+        /* Catch the case where the widget fails to render for ANY reason */
         console.error(e);
         setWidgetGroup([
           <Widget
@@ -123,7 +124,6 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
           />,
         ]);
       }
-      // setWidgetGroup(list);
     }
   }, [parsedMessage]);
 
