@@ -4,9 +4,9 @@ import { useSession } from 'next-auth/react';
 import { deleteSharedSession, postCreateSharedSession, putSharedSession } from '@/api/shares/calls';
 import { Shares } from './queries';
 
-export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
+export const useMutationUpdateSharedSession = (sharedSessionId: string | undefined) => {
   const mutationFn = async ({ metadata }: { metadata: any }) => {
-    return putSharedSession(sharedSessionId, metadata);
+    if (sharedSessionId) return putSharedSession(sharedSessionId, metadata);
   };
 
   const queryClient = useQueryClient();

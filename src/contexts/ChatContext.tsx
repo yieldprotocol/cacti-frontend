@@ -248,6 +248,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...beforeMessages, msg, ...afterMessages];
       }
     });
+
+    // determine if we should bump timestamp: when there is activity besides streaming (append)
+    if (
+      obj.operation == 'create' ||
+      obj.operation == 'replace' ||
+      obj.operation == 'create_then_replace'
+    ) {
+      queryClient.invalidateQueries({ queryKey: ['chatSettings', sessionId] });
+    }
   }, [lastMessage, queryClient, router]);
 
   const sendMessage = (msg: string) => {

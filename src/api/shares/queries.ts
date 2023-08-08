@@ -31,6 +31,8 @@ export interface SharedSessionMessage {
 export interface SharedSessionWithMessages {
   name?: string;
   messages: SharedSessionMessage[];
+  created: string;
+  updated: string;
 }
 export const useQuerySharedSession = (sharedSessionId: string | undefined) => {
   const { data: settings, ...rest } = useQuery<SharedSessionWithMessages>({
