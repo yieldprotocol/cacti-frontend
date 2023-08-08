@@ -53,7 +53,7 @@ export const StreamingContainer = ({
     return (
       <Fragment>
         <div className="flex flex-row">
-          <Widget widget={{ name: 'TextResponse', params: { text: prefix } }} />
+          <Widget widget={{ name: 'TextResponse', params: { text: prefix, isThinking: isThinking } }} />
         </div>
         <div className="text-white">
           <ListContainer items={items} showcaseFirst={false} />
