@@ -73,7 +73,6 @@ const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
                       </div>
                     </button>
 
-
                       </div>
                     </Dialog.Panel>
                   </Transition.Child>

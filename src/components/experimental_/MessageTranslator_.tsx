@@ -70,44 +70,60 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.reduce((list, item, idx) => {
-        /* if item is a string (and not nothing) simply send a text response */
-        if (typeof item === 'string' && item.trim() !== '')
-          return [
-            ...list,
-            <Widget
-              key={item.slice(0, 16)}
-              widget={{ name: 'TextResponse', params: { text: item } }}
-            />,
-          ];
+      try {
+        const list = parsedMessage.reduce((list, item, idx) => {
+          /* if item is a string (and not nothing) simply send a text response */
+          if (typeof item === 'string' && item.trim() !== '')
+            return [
+              ...list,
+              <Widget
+                key={item.slice(0, 16)}
+                widget={{ name: 'TextResponse', params: { text: item } }}
+              />,
+            ];
 
-        /* if item is an object, assume it is a container or a widget */
-        if (typeof item !== 'string' && item.name) {
-          /* handle if a list container is passed */
-          if (item.name === 'list-container')
-            return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
+          /* if item is an object, assume it is a container or a widget */
+          if (typeof item !== 'string' && item.name) {
+            /* handle if a list container is passed */
+            if (item.name === 'list-container')
+              return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle is a streaming container is passed */
-          if (item.name === 'display-streaming-list-container')
-            return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle is a streaming container is passed */
+            if (item.name === 'display-streaming-list-container')
+              return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle if a multistep container is passed */
-          if (item.name === 'display-multistep-payload-container')
-            return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle if a multistep container is passed */
+            if (item.name === 'display-multistep-payload-container')
+              return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle if a single step container is passed */
-          if (item.name === 'display-tx-payload-for-sending-container')
-            return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle if a single step container is passed */
+            if (item.name === 'display-tx-payload-for-sending-container')
+              return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* if item has a function name, assume its a widget */
-          return [...list, <Widget key={idx} widget={item} />];
-        }
+            /* if item has a function name, assume its a widget */
+            return [...list, <Widget key={idx} widget={item} />];
+          }
 
-        /* else return null */
-        return list;
-      }, [] as JSX.Element[]);
+          /* else return null */
+          return list;
+        }, [] as JSX.Element[]);
 
-      setWidgetGroup(list);
+        setWidgetGroup(list);
+      } catch (e) {
+        console.log('ERROR: ', e);
+        setWidgetGroup([
+          <Widget
+            key={'error'}
+            widget={{
+              name: 'TextResponse',
+              params: {
+                text: 'Hmmm, it looks like we had a little trouuble translating the AI response.',
+              },
+            }}
+          />,
+        ]);
+      }
+      // setWidgetGroup(list);
     }
   }, [parsedMessage]);
 

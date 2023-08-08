@@ -4,7 +4,6 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import ChatErrorBoundary from '@/components/experimental_/errors/ChatError';
 import { getBackendWebsocketUrl } from '@/utils/backend';
 
 export type Message = {
@@ -224,6 +223,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       actor,
       feedback: obj.feedback || 'none',
     };
+    
     setMessages((messages) => {
       // if beforeMessageId is specified, then we are inserting new messages before that point.
       // break up our existing message list into 2 parts, those before the insertion point,
@@ -345,7 +345,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ChatErrorBoundary>
       <ChatContext.Provider
         value={{
           messages,
@@ -372,7 +371,6 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       >
         {children}
       </ChatContext.Provider>
-    </ChatErrorBoundary>
   );
 };
 

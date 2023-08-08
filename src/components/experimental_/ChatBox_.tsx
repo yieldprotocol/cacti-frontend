@@ -6,7 +6,6 @@ import MessageList from './MessageList_';
 // Use experimental components
 import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage_';
-import ChatErrorBoundary from './errors/ChatError';
 
 const ChatBox = () => {
   const { isLoading } = useQueryChats();
