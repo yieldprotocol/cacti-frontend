@@ -51,7 +51,6 @@ export const NftAsset = ({
   variant,
   price,
 }: NftAssetProps) => {
-  // const listPrice = price === 'unlisted' ? 'Not for sale' : price ? price : '';
   const {
     data: nftData,
     error,
@@ -61,10 +60,7 @@ export const NftAsset = ({
     async () => fetchNftAsset(address, tokenId.toString(), network),
     {
       enabled: true,
-      // name && previewImageUrl || !(variant === ImageVariant.SHOWCASE)
-      //   ? false
-      //   : true,
-    } // only fetch if we don't have the basic data from props
+    }
   );
 
   return (
@@ -84,7 +80,7 @@ export const NftAsset = ({
       {variant === ImageVariant.SHOWCASE && (
         <div className="text-xs">{nftData?.metadata?.description}</div>
       )}
-      {!price ? null : (
+      {price && (
         <InlineChip
           className="text-xs"
           label={price !== 'unlisted' ? `${price}` : 'Not for Sale'}
@@ -94,24 +90,3 @@ export const NftAsset = ({
     </ImageResponse>
   );
 };
-
-//   // Asset with a nested list of trait values
-//   export const NftAssetTraitsContainer = ({ asset, children }: NftAssetTraitsContainerProps) => {
-//     return (
-//       <div className="flex justify-center gap-16 rounded-lg bg-gray-500 p-4 shadow">
-//         {asset}
-//         <div>{children}</div>
-//       </div>
-//     );
-//   };
-
-//   // Value of a trait
-//   export const NftAssetTraitValueContainer = ({ trait, value }: NftAssetTraitValueContainerProps) => {
-//     return (
-//       <div>
-//         <div className="m-2 text-gray-200">
-//           <b>{trait}</b>: {value}{' '}
-//         </div>
-//       </div>
-//     );
-//   };
