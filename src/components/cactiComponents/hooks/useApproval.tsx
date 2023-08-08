@@ -18,7 +18,6 @@ export type ApprovalBasicParams = {
   tokenAddress: `0x${string}`;
   spender: `0x${string}`;
   skipApproval?: boolean;
-  skipBalanceCheck?: boolean; // TODO make this more robust
 };
 
 const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
