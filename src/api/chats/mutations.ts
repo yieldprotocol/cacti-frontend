@@ -4,8 +4,10 @@ import { useSession } from 'next-auth/react';
 import { deleteChat, postCreateChatFromShareImport, putChatSettings } from '@/api/chats/calls';
 import { Chats } from './queries';
 
-export const useMutationUpdateChatSettings = (sessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => putChatSettings(sessionId, metadata);
+export const useMutationUpdateChatSettings = (sessionId: string | undefined) => {
+  const mutationFn = async ({ metadata }: { metadata: any }) => {
+    if (sessionId) putChatSettings(sessionId, metadata);
+  };
   const queryClient = useQueryClient();
 
   return useMutation(mutationFn, {

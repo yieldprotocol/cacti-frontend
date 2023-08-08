@@ -2,7 +2,7 @@ import React from 'react';
 import { ReadyState } from 'react-use-websocket';
 import { useRouter } from 'next/router';
 import { useMutationChatImportSession } from '@/api/chats/mutations';
-import { useQuerySharedSession, useQueryShares } from '@/api/shares/queries';
+import { useQuerySharedSession } from '@/api/shares/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 import CustomConnectButton from './CustomConnectButton';
