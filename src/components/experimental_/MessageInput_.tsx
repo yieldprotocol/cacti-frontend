@@ -125,7 +125,7 @@ const MessageInput = () => {
                 value={messageInput}
                 ref={inputRef}
                 onKeyDown={isConnected && messageInput ? onKeyPress : undefined}
-                className={`   
+                className={`
             grow
             resize-none
             bg-transparent
@@ -143,10 +143,7 @@ const MessageInput = () => {
       ) : botConnected ? (
         <CustomConnectButton />
       ) : (
-        <div className="animate-pulse text-sm text-white/30">
-          {' '}
-          Waiting for Cacti connection ...{' '}
-        </div>
+        <div className="animate-pulse text-sm text-white/30">Waiting for Cacti connection ...</div>
       )}
     </>
   );
