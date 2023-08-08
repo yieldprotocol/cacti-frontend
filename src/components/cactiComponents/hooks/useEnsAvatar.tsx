@@ -8,7 +8,7 @@ const useEnsAvatar = () => {
   const { address } = useAccount();
 
   const { data, ...rest } = useQuery({
-    queryKey: ['ensAvatar', { chainId, address }],
+    queryKey: ['ensAvatar', chainId, address],
     queryFn: async () =>
       address &&
       (await fetchEnsAvatar({
