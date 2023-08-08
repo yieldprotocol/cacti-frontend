@@ -53,13 +53,10 @@ export const StreamingContainer = ({
     return (
       <Fragment>
         <div className="flex flex-row">
-          <Widget widget={{ name: 'TextResponse', params: { text: prefix, isThinking: isThinking } }} />
+          <Widget widget={{ name: 'TextResponse', params: { text: prefix, isThinking } }} />
         </div>
         <div className="text-white">
           <ListContainer items={items} showcaseFirst={false} />
-          {/* {items.map((item: any, i: number) => (
-            <Widget key={`i${i}`} widget={{ name: item.name, args: item.params }} />
-          )) || null} */}
         </div>
         <span>{suffix}</span>
       </Fragment>
