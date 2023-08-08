@@ -173,14 +173,7 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
 
-  widgets.set(
-    'nft-asset-traits-container',
-    <NftAsset {...parsedArgs?.asset?.params}>
-      {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
-      console.log( trait) ) }
-    </> */}
-    </NftAsset>
-  );
+  widgets.set('nft-asset-traits-container', <NftAsset {...parsedArgs?.asset?.params} />);
 
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
