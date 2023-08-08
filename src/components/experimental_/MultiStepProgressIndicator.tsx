@@ -21,11 +21,8 @@ export const MultiStepProgressIndicator = () => {
       >
         <ResponseWrap>
           <div className="cen flex w-full justify-center">
-            <Spinner className="h-4 w-4 text-white" />
-            <div>
-              There are more steps in the current workflow, please wait as the system computes the
-              next step.
-            </div>
+            <Spinner className="mx-2 my-1 h-4 w-4 text-white" />
+            <div>There are more steps in the current workflow, please wait for next step...</div>
           </div>
         </ResponseWrap>
       </div>
