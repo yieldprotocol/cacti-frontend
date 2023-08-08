@@ -110,7 +110,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
         setWidgetGroup(list);
       } catch (e) {
-        console.log('ERROR: ', e);
+        console.error(e);
         setWidgetGroup([
           <Widget
             key={'error'}
