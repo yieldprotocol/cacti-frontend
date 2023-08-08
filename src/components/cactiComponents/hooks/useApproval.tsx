@@ -46,39 +46,35 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
-  const { config } = usePrepareContractWrite({
+  const { config, isError: isPrepareError } = usePrepareContractWrite({
     address: !params.skipApproval ? tokenAddress : undefined,
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
     chainId,
-    // enabled: !!spender && !params.skipApproval,
   });
 
-  const {
-    writeAsync: approveTx,
-    data,
-    isLoading: approvalWaitingOnUser,
-  } = useContractWrite(config);
+  const { writeAsync: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config);
 
   const {
-    isError: approvalError,
-    isLoading: approvalTransacting,
-    isSuccess: approvalSuccess,
+    isError,
+    isLoading: isPending,
+    isSuccess,
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: async () => await refetchAllowance(),
   });
 
   return {
-    approveTx,
+    write: !!params.skipApproval ? undefined : approveTx,
     refetchAllowance,
-    approvalReceipt: data,
-    approvalHash: data?.hash,
-    approvalWaitingOnUser,
-    approvalTransacting,
-    approvalError,
-    approvalSuccess,
+    receipt: data,
+    hash: data?.hash,
+    isPrepareError,
+    isWaitingOnUser,
+    isError,
+    isPending,
+    isSuccess,
     hasAllowance: params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
