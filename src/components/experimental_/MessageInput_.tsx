@@ -140,9 +140,13 @@ const MessageInput = () => {
             </form>
           </div>
         </div>
+      ) : botConnected ? (
+        <CustomConnectButton />
       ) : (
-       botConnected ? <CustomConnectButton /> : 
-       <div className='text-white/30 text-sm animate-pulse'> Waiting for Cacti connection ... </div>
+        <div className="animate-pulse text-sm text-white/30">
+          {' '}
+          Waiting for Cacti connection ...{' '}
+        </div>
       )}
     </>
   );
