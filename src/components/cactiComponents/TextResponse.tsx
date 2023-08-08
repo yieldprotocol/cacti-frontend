@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { Markdown } from '../experimental_/Markdown';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 /**
@@ -18,7 +19,11 @@ export const TextResponse = (props: any) => {
         </>
       )}
 
-      {!props.title && <div className=" text-base text-white text-opacity-70">{props.text}</div>}
+      {!props.title && (
+        <div className=" text-base text-white text-opacity-70">
+          <Markdown>{props.text}</Markdown>
+        </div>
+      )}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
