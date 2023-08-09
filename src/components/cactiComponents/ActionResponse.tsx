@@ -205,7 +205,6 @@ export const ActionResponse = ({
         return setState(ActionResponseState.WAITING_FOR_USER);
       }
 
-      console.log('🦄 ~ file: ActionResponse.tsx:215 ~ useEffect ~ hasAllowance:', hasAllowance);
       if (!hasAllowance) {
         if (approveTx) {
           setLabel(`Approve ${cleanValue(amountFmt, 2)} ${token?.symbol}`);
