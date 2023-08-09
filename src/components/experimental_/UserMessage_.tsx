@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import {
-  PaperAirplaneIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Avatar from '../Avatar';
+import InputWrap from './InputWrap';
 import { Markdown } from './Markdown';
 import { MessageWrap } from './MessageWrap';
-import InputWrap from './InputWrap';
 
 interface IconBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;

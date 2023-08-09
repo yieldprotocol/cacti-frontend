@@ -23,10 +23,12 @@ export const TextResponse = (props: any) => {
         </>
       )}
 
-      {!props.title && <div className={`${textStyle} `}>
-        <Markdown>{props.text}</Markdown>
-        {props.isThinking && <div className={`animate-pulse`}>...</div>}
-        </div>}
+      {!props.title && (
+        <div className={`${textStyle} `}>
+          <Markdown>{props.text}</Markdown>
+          {props.isThinking && <div className={`animate-pulse`}>...</div>}
+        </div>
+      )}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>

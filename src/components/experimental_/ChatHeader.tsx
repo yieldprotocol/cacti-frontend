@@ -69,7 +69,6 @@ const ChatHeader = () => {
     inputText === '' && setThreadName(threadName!);
   }, [inputText, setThreadName, threadName]);
 
-
   const handleTextClick = isShare
     ? undefined
     : () => {
@@ -79,7 +78,7 @@ const ChatHeader = () => {
       };
 
   useEffect(() => {
-    const handleKeys = (e: globalThis.KeyboardEvent) => {  
+    const handleKeys = (e: globalThis.KeyboardEvent) => {
       // cancel edit
       if (e.key === 'Escape') {
         setIsEditing(false);
@@ -102,42 +101,42 @@ const ChatHeader = () => {
     <div className="flex flex-col justify-between gap-2">
       <div className="flex w-full">
         {isEditing ? (
-          <InputWrap submitFunction={()=> submitNameChange()} >
-              <input
-                ref={inputRef}
-                className={`w-full bg-transparent text-white/70 focus:outline-none`}
-                onClick={() => setIsEditing(true)}
-                onChange={(e) => { 
-                  setIsEditing(true);
-                  setText(e.target.value);
-                }}
-                value={inputText}
-                onBlur={() => {
-                  setIsEditing(false);
-                }}
-                onFocus={() => setIsEditing(true)}
-                placeholder={threadName}
-              />
+          <InputWrap submitFunction={() => submitNameChange()}>
+            <input
+              ref={inputRef}
+              className={`w-full bg-transparent text-white/70 focus:outline-none`}
+              onClick={() => setIsEditing(true)}
+              onChange={(e) => {
+                setIsEditing(true);
+                setText(e.target.value);
+              }}
+              value={inputText}
+              onBlur={() => {
+                setIsEditing(false);
+              }}
+              onFocus={() => setIsEditing(true)}
+              placeholder={threadName}
+            />
           </InputWrap>
         ) : (
-          <div className="flex p-2 items-center gap-4">
+          <div className="flex items-center gap-4 p-2">
             <span onClick={handleTextClick}>
               {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
             </span>
             {threadId && <PrimaryActions threadId={threadId} isShare={isShare} />}
           </div>
         )}
-        </div>
+      </div>
 
-        <div className="flex w-full justify-items-start text-xs text-white/30 px-2">
-          <span>
-            {isLoading || !threadId ? (
-              <SkeletonWrap height={10} width={50} />
-            ) : (
-              `Last edit: ${lastEdited}`
-            )}
-          </span>
-        </div>
+      <div className="flex w-full justify-items-start px-2 text-xs text-white/30">
+        <span>
+          {isLoading || !threadId ? (
+            <SkeletonWrap height={10} width={50} />
+          ) : (
+            `Last edit: ${lastEdited}`
+          )}
+        </span>
+      </div>
 
       {/* </div> */}
     </div>

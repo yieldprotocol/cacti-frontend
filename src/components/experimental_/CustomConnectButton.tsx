@@ -47,7 +47,7 @@ const CustomConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} type="button" >
+                  <button onClick={openConnectModal} type="button">
                     <div
                       className={`flex items-center justify-center text-xs text-white/70 ${buttonStyle}`}
                     >
