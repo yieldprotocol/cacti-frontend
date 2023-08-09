@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { erc721ABI, useAccount, useContractRead } from 'wagmi';
-import erc1155ABI from '@/abi/erc1155ABI.json';
+import { Address, erc721ABI, useAccount, useContractRead } from 'wagmi';
 import { shortenAddress } from '@/utils';
+import useBalance from './cactiComponents/hooks/useBalance';
 
 interface Props {
   nftAddress: string;
@@ -21,20 +21,14 @@ export const NftOwner = ({ nftAddress, tokenId }: Props) => {
     watch: true,
   });
 
-  const { data: erc1155Data, isSuccess: is1155ReadSuccess } = useContractRead({
-    address: nftAddress as `0x${string}`,
-    abi: erc1155ABI,
-    functionName: 'balanceOf',
-    args: [account, BigNumber.from(tokenId)],
-    watch: true,
-  });
+  const { data: erc1155Data } = useBalance(nftAddress as Address, undefined, tokenId);
 
   const isOwner = owner === account;
 
   useEffect(() => {
     if (is721ReadSuccess) setOwner(`${erc721Data?.toString()}` || '');
-    if (is1155ReadSuccess) setOwner(`Your balance: ` + erc1155Data?.toString() || '0');
-  }, [erc721Data, erc1155Data, is721ReadSuccess, is1155ReadSuccess]);
+    if (erc1155Data) setOwner(`Your balance: ` + erc1155Data.toString() || '0');
+  }, [erc721Data, erc1155Data, is721ReadSuccess]);
 
   return (
     <div>

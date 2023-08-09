@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { useAccount, useBalance, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork, useProvider } from 'wagmi';
 import { Button } from '@/components/Button';
+import useBalance from '../cactiComponents/hooks/useBalance';
 
 export const MintButton = () => {
   const { address } = useAccount();
   const [isLoading, setLoading] = useState(false);
   const [isVisible, setVisible] = useState(false);
   const { chain } = useNetwork();
-  const { refetch } = useBalance({ address });
+  const { refetch } = useBalance();
   const provider = useProvider() as JsonRpcProvider;
 
   useEffect(() => {

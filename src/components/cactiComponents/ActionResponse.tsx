@@ -117,13 +117,7 @@ export const ActionResponse = ({
   );
 
   const { data: ethBal } = useBalance();
-
-  const { data: balance } = useBalance(
-    _approvalParams.tokenAddress,
-    undefined,
-    undefined,
-    _approvalParams.skipApproval
-  );
+  const { data: balance } = useBalance(_approvalParams.tokenAddress, undefined, undefined);
 
   // button state
   const [label, setLabel] = useState<string>();

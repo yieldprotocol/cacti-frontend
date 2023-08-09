@@ -14,10 +14,10 @@ import {
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import SubmitButton from '@/components/widgets/common/SubmitButton';
-import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { NftOwner } from '../CheckNftOwner';
+import useBalance from '../cactiComponents/hooks/useBalance';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });

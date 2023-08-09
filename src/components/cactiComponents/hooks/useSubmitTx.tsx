@@ -8,7 +8,7 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
-import useBalance from '@/hooks/useBalance';
+import useBalance from './useBalance';
 
 export type TxBasicParams = {
   address?: `0x${string}`;

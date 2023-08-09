@@ -13,7 +13,7 @@ import {
 } from '@/components/cactiComponents';
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import useBalance from '@/hooks/useBalance';
+import useBalance from '@/components/cactiComponents/hooks/useBalance';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
@@ -139,7 +139,7 @@ const SingleItem = ({
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
   const fyTokenAddress = item.fyToken.id as Address;
   const poolAddress = item.fyToken.pools[0].id as Address;
-  const { data: fyTokenBalance } = useBalance(item.fyToken.id);
+  const { data: fyTokenBalance } = useBalance(fyTokenAddress);
 
   const { data } = useContractReads({
     contracts: [
