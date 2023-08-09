@@ -2,13 +2,17 @@ import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatEther } from 'ethers/lib/utils.js';
 import useBalance from '@/hooks/useBalance';
-import { cleanValue } from '@/utils';
+import { abbreviateHash, cleanValue } from '@/utils';
 import Avatar from '../Avatar';
+import SkeletonWrap from '../SkeletonWrap';
+import useEnsName from '../cactiComponents/hooks/useEnsName';
 import { buttonStyle } from './layout/sidebar/NewChatButton';
 
 const CustomConnectButton = () => {
   const { data: balance } = useBalance();
   const balance_ = balance ? formatEther(balance) : '';
+  const { data: ensName, isRefetching } = useEnsName();
+
   return (
     <ConnectButton.Custom>
       {({
@@ -68,7 +72,8 @@ const CustomConnectButton = () => {
               return (
                 <div
                   className="
-                    flex h-full w-full 
+                  flex
+                    h-full w-full
                     cursor-pointer 
                     items-center 
                     justify-between 
@@ -83,8 +88,14 @@ const CustomConnectButton = () => {
                   <div className="flex items-center gap-3">
                     <Avatar actor="user" />
                     <div>
-                      <div className="text-sm font-semibold text-white/70">
-                        {account.displayName}
+                      <div className="whitespace-nowrap text-sm font-semibold text-white/70">
+                        {isRefetching ? (
+                          <SkeletonWrap width={100} height={10} />
+                        ) : ensName && ensName.length > 30 ? (
+                          abbreviateHash(ensName, 8)
+                        ) : (
+                          ensName || account.displayName
+                        )}
                       </div>
                       <div className="flex justify-start font-mono text-xs font-thin text-white/70">
                         {cleanValue(balance_, 2)} ETH

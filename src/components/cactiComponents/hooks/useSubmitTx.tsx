@@ -80,7 +80,6 @@ const useSubmitTx = (
     error: transactError,
     isLoading: isTransacting,
     isSuccess,
-    status,
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
