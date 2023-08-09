@@ -19,7 +19,7 @@ const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
       <ErrorBoundary
         FallbackComponent={() => {
           return ( <Transition appear show={true} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={handleReload}>
+            <Dialog as="div" className="relative z-10" onClose={()=>undefined}>
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
