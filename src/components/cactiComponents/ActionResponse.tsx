@@ -3,12 +3,12 @@ import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
+import { BigNumber, UnsignedTransaction } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
-import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
@@ -156,6 +156,12 @@ export const ActionResponse = ({
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
+    // pre-approval and pre-tx state
+    if (!hasEnoughBalance) {
+      setLabel('Insufficient Balance');
+      return setState(ActionResponseState.DISABLED);
+    }
+
     // tx status/state
     if (isSuccess) {
       console.log('TX SUCCESS');
@@ -204,22 +210,17 @@ export const ActionResponse = ({
         setLabel(`Please check your wallet...`);
         return setState(ActionResponseState.WAITING_FOR_USER);
       }
-    }
 
-    // pre-approval and pre-tx state
-    if (!hasEnoughBalance) {
-      setLabel('Insufficient Balance');
-      return setState(ActionResponseState.DISABLED);
-    }
-
-    if (!hasAllowance) {
-      if (approveTx) {
-        setLabel(`Approve ${amountFmt} ${token?.symbol}`);
-        setAction({ name: 'approval', fn: approveTx });
-        return setState(ActionResponseState.READY);
-      } else {
-        setLabel('Preparing Approval');
-        return setState(ActionResponseState.LOADING);
+      console.log('🦄 ~ file: ActionResponse.tsx:215 ~ useEffect ~ hasAllowance:', hasAllowance);
+      if (!hasAllowance) {
+        if (approveTx) {
+          setLabel(`Approve ${cleanValue(amountFmt, 2)} ${token?.symbol}`);
+          setAction({ name: 'approval', fn: approveTx });
+          return setState(ActionResponseState.READY);
+        } else {
+          setLabel('Preparing Approval');
+          return setState(ActionResponseState.LOADING);
+        }
       }
     }
 
