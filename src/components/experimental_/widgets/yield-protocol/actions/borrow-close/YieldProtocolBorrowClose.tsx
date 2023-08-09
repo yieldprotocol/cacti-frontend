@@ -172,7 +172,6 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
       spender: ladleAddress,
       approvalAmount: vault?.accruedArt.mul(110).div(100), // 10% buffer: TODO make more kosher
       tokenAddress: vault.borrowToken?.address!,
-      skipBalanceCheck: vault.borrowToken?.symbol === 'WETH',
     };
   }, [ladleAddress, vault]);
 
@@ -207,6 +206,7 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
           approvalParams={approvalParams}
           sendParams={sendParams}
           txParams={undefined}
+          skipBalanceCheck={vault.borrowToken?.symbol === 'WETH'}
         />
       </div>
     </SingleLineResponse>

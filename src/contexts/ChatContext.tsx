@@ -223,6 +223,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       actor,
       feedback: obj.feedback || 'none',
     };
+    
     setMessages((messages) => {
       // if beforeMessageId is specified, then we are inserting new messages before that point.
       // break up our existing message list into 2 parts, those before the insertion point,
@@ -248,6 +249,15 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...beforeMessages, msg, ...afterMessages];
       }
     });
+
+    // determine if we should bump timestamp: when there is activity besides streaming (append)
+    if (
+      obj.operation == 'create' ||
+      obj.operation == 'replace' ||
+      obj.operation == 'create_then_replace'
+    ) {
+      queryClient.invalidateQueries({ queryKey: ['chatSettings', sessionId] });
+    }
   }, [lastMessage, queryClient, router]);
 
   const sendMessage = (msg: string) => {
@@ -344,32 +354,32 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ChatContext.Provider
-      value={{
-        messages,
-        sendMessage,
-        replayUserMessage,
-        sendMultiStepClientMessage,
-        sendAction,
-        isBotThinking,
-        insertBeforeMessageId,
-        setInsertBeforeMessageId,
-        isMultiStepInProgress,
-        setIsMultiStepInProgress,
-        truncateUntilNextHumanMessage,
-        spoofBotMessage,
-        showDebugMessages,
-        setShowDebugMessages,
-        interactor,
-        setInteractor,
-        connectionStatus,
+      <ChatContext.Provider
+        value={{
+          messages,
+          sendMessage,
+          replayUserMessage,
+          sendMultiStepClientMessage,
+          sendAction,
+          isBotThinking,
+          insertBeforeMessageId,
+          setInsertBeforeMessageId,
+          isMultiStepInProgress,
+          setIsMultiStepInProgress,
+          truncateUntilNextHumanMessage,
+          spoofBotMessage,
+          showDebugMessages,
+          setShowDebugMessages,
+          interactor,
+          setInteractor,
+          connectionStatus,
 
-        showShareModal,
-        setShowShareModal,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
+          showShareModal,
+          setShowShareModal,
+        }}
+      >
+        {children}
+      </ChatContext.Provider>
   );
 };
 

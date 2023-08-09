@@ -14,20 +14,19 @@ const ChatBox = () => {
   const messageContentComponent = !!id ? <MessageList /> : <WelcomeMessage />;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-auto">
-      {/* chat sharing modal*/}
-      <ShareChatModal id={id as string} />
+      <div className="relative flex h-full w-full flex-col overflow-auto">
+        {/* chat sharing modal*/}
+        <ShareChatModal id={id as string} />
 
-      {/* chat area */}
-      <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
-        {isLoading ? <Spinner className="h-6 w-6" /> : messageContentComponent}
-      </div>
+        {/* chat area */}
+        <div className="flex h-full w-full items-center justify-center overflow-auto pt-5">
+          {isLoading ? <Spinner className="h-6 w-6" /> : messageContentComponent}
+        </div>
 
       {/* Chat input */}
       <div className="sticky top-[100vh] flex bg-gray-secondary px-2 py-2 lg:py-6 ">
         <MessageInput />
       </div>
-    </div>
   );
 };
 

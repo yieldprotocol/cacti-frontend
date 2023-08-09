@@ -25,6 +25,8 @@ export interface ChatSettings {
   visibility?: string;
   name?: string;
   canEdit?: boolean;
+  created?: string;
+  updated?: string;
 }
 export const useQueryChatSettings = (sessionId: string | undefined) => {
   const { data: sessionData } = useSession();

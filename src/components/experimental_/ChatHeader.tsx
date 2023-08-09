@@ -2,7 +2,6 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { PencilIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useMutationDeleteChat } from '@/api/chats/mutations';
-import { useQueryChatSettings } from '@/api/chats/queries';
 import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
@@ -22,10 +21,8 @@ const Tooltip = ({ text, children }: TooltipProps) => (
   </div>
 );
 
-const PrimaryActions = ({ threadId }: { threadId: string }) => {
+const PrimaryActions = ({ threadId, isShare }: { threadId: string; isShare: boolean }) => {
   const { setShowShareModal } = useChatContext();
-  const { route } = useRouter();
-  const isShare = route === '/share/[id]';
 
   const { mutate: deleteChat } = useMutationDeleteChat(threadId);
   const { mutate: deleteShare } = useMutationDeleteSharedSession(threadId);
@@ -54,8 +51,12 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 };
 
 const ChatHeader = () => {
-  const { threadId, threadName, setThreadName } = useThread();
-  const { isLoading } = useQueryChatSettings(threadId);
+  const { route } = useRouter();
+  const isShare = route === '/share/[id]';
+  const { isLoading, threadId, threadName, setThreadName, lastEdited } = useThread(
+    undefined,
+    isShare
+  );
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputText, setText] = useState<string>();
@@ -68,11 +69,14 @@ const ChatHeader = () => {
     inputText === '' && setThreadName(threadName!);
   }, [inputText, setThreadName, threadName]);
 
-  const handleTextClick = () => {
-    // setText('');
-    setIsEditing(true);
-    inputRef.current?.focus();
-  };
+
+  const handleTextClick = isShare
+    ? undefined
+    : () => {
+        setText('');
+        setIsEditing(true);
+        inputRef.current?.focus();
+      };
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {  
@@ -120,7 +124,7 @@ const ChatHeader = () => {
             <span onClick={handleTextClick}>
               {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
             </span>
-            {threadId && <PrimaryActions threadId={threadId} />}
+            {threadId && <PrimaryActions threadId={threadId} isShare={isShare} />}
           </div>
         )}
         </div>
@@ -130,7 +134,7 @@ const ChatHeader = () => {
             {isLoading || !threadId ? (
               <SkeletonWrap height={10} width={50} />
             ) : (
-              'Last edit: recently'
+              `Last edit: ${lastEdited}`
             )}
           </span>
         </div>
