@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
+import useInput from '@/hooks/useInput';
+import useToken from '@/hooks/useToken';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
@@ -42,7 +45,7 @@ const stylingByState = {
 
 type Action = {
   name: string;
-  fn: (overrideConfig?: undefined) => any;
+  fn: () => void;
 };
 
 export type ActionResponseProps = {
@@ -54,7 +57,7 @@ export type ActionResponseProps = {
   skipBalanceCheck?: boolean;
   stepper?: boolean;
   onSuccess?: () => void;
-  onError?: (txHash?: string) => any;
+  onError?: () => void;
 };
 
 /**
@@ -74,6 +77,18 @@ export const ActionResponse = ({
 }: ActionResponseProps) => {
   const defaultLabel = label_ || 'Submit';
   const { address } = useAccount();
+  const _approvalParams = useMemo<ApprovalBasicParams>(
+    () =>
+      approvalParams || {
+        tokenAddress: AddressZero,
+        spender: AddressZero,
+        approvalAmount: BigNumber.from(0),
+        skipApproval: true, // NOTE: approval is skipped if no approval params are passed in
+      },
+    [approvalParams]
+  );
+  const { data: token } = useToken(undefined, _approvalParams.tokenAddress);
+  const amountFmt = formatUnits(_approvalParams.approvalAmount, token?.decimals);
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
   const {
@@ -82,14 +97,7 @@ export const ActionResponse = ({
     isWaitingOnUser: approvalWaitingOnUser,
     isPending: approvalTransacting,
     isPrepareError: isPrepareApprovalError,
-  } = useApproval(
-    approvalParams || {
-      tokenAddress: AddressZero,
-      spender: AddressZero,
-      approvalAmount: BigNumber.from(0),
-      skipApproval: true, // NOTE: approval is skipped if no approval params are passed in
-    }
-  );
+  } = useApproval(_approvalParams);
 
   const {
     write: submitTx,
@@ -97,7 +105,6 @@ export const ActionResponse = ({
     isPending,
     error,
     isSuccess,
-    receipt,
     hash,
     isError,
     isPrepareError,
@@ -112,10 +119,10 @@ export const ActionResponse = ({
   const { data: ethBal } = useBalance();
 
   const { data: balance } = useBalance(
-    approvalParams?.tokenAddress,
+    _approvalParams.tokenAddress,
     undefined,
     undefined,
-    approvalParams?.skipApproval
+    _approvalParams.skipApproval
   );
 
   // button state
@@ -131,18 +138,18 @@ export const ActionResponse = ({
   const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
 
   useEffect(() => {
-    if (approvalParams?.skipApproval || skipBalanceCheck) return setHasEnoughBalance(true);
+    if (_approvalParams.skipApproval || skipBalanceCheck) return setHasEnoughBalance(true);
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
-    if (approvalParams === undefined) return setHasEnoughBalance(true);
+    if (_approvalParams === undefined) return setHasEnoughBalance(true);
     if (sendParams?.value! >= ethBal!) {
       return setHasEnoughBalance(false);
     }
 
     // check approval token balance
-    if (balance && approvalParams?.approvalAmount)
-      setHasEnoughBalance(balance.gte(approvalParams?.approvalAmount!));
-  }, [approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
+    if (balance && _approvalParams?.approvalAmount)
+      setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+  }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
    * BUTTON FLOW:
@@ -163,13 +170,13 @@ export const ActionResponse = ({
     }
 
     if (isPending) {
-      console.log('TX IN PROGRESS... ');
+      console.log('TX IN PROGRESS...');
       setLabel(defaultLabel);
       return setState(ActionResponseState.TRANSACTING);
     }
 
     if (isPrepareError) {
-      setLabel('Could not prepare tx');
+      setLabel('Could not prepare transaction');
       return setState(ActionResponseState.ERROR);
     }
 
@@ -180,7 +187,7 @@ export const ActionResponse = ({
     }
 
     // approval status/state
-    if (!approvalParams?.skipApproval) {
+    if (!_approvalParams.skipApproval) {
       if (isPrepareApprovalError) {
         setLabel('Could not prepare approval');
         return setState(ActionResponseState.ERROR);
@@ -206,17 +213,28 @@ export const ActionResponse = ({
     }
 
     if (!hasAllowance) {
-      setLabel('Token approval needed');
-      setAction({ name: 'approval', fn: approveTx! });
-      return setState(ActionResponseState.READY);
+      if (approveTx) {
+        setLabel(`Approve ${amountFmt} ${token?.symbol}`);
+        setAction({ name: 'approval', fn: approveTx });
+        return setState(ActionResponseState.READY);
+      } else {
+        setLabel('Error Preparing Approval');
+        return setState(ActionResponseState.LOADING);
+      }
     }
 
     // has balance and allowance, and ready to submit tx
-    setLabel(defaultLabel);
-    setAction({ name: 'submit', fn: submitTx! });
-    setState(ActionResponseState.READY);
+    if (submitTx) {
+      setLabel(defaultLabel);
+      setAction({ name: 'submit', fn: submitTx });
+      return setState(ActionResponseState.READY);
+    } else {
+      setLabel('Error Preparing Transaction');
+      return setState(ActionResponseState.LOADING);
+    }
   }, [
-    approvalParams?.skipApproval,
+    _approvalParams.skipApproval,
+    amountFmt,
     approvalTransacting,
     approvalWaitingOnUser,
     defaultLabel,
@@ -229,6 +247,7 @@ export const ActionResponse = ({
     isSuccess,
     isWaitingOnUser,
     submitTx,
+    token?.symbol,
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
