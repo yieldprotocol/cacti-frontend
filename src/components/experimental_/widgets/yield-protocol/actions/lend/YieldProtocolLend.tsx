@@ -123,15 +123,28 @@ const YieldProtocolLend = ({
   const [data, setData] = useState<{ seriesEntities: YieldSeriesEntity[] | undefined }>();
 
   // all series entities use the same approval params
-  const approvalParams = useMemo<ApprovalBasicParams>(
-    () => ({
-      tokenAddress: tokenInToUse?.address!,
-      spender: ladle!,
-      approvalAmount: amount?.value!,
+  const approvalParams = useMemo<ApprovalBasicParams | undefined>(() => {
+    if (!tokenInToUse) {
+      console.error(`No token address found for ${tokenInSymbol}`);
+      return undefined;
+    }
+    if (!ladle) {
+      console.error(`No ladle address found for ${tokenInSymbol}`);
+      return undefined;
+    }
+
+    if (!amount?.value) {
+      console.error(`No amount found for ${tokenInSymbol}`);
+      return undefined;
+    }
+
+    return {
+      tokenAddress: tokenInToUse.address,
+      spender: ladle,
+      approvalAmount: amount.value,
       skipApproval: tokenInIsETH,
-    }),
-    [amount, ladle, tokenInIsETH, tokenInToUse?.address]
-  );
+    };
+  }, [amount, ladle, tokenInIsETH, tokenInSymbol, tokenInToUse]);
 
   const getSendParams = useCallback(
     async (seriesEntity: YieldGraphResSeriesEntity) => {
@@ -141,14 +154,24 @@ const YieldProtocolLend = ({
         return undefined;
       }
 
+      if (!tokenInToUse?.address) {
+        console.error(`No token address found for ${tokenInSymbol}`);
+        return undefined;
+      }
+
+      if (!amount?.value) {
+        console.error(`No amount found for ${tokenInSymbol}`);
+        return undefined;
+      }
+
       return await lend({
-        tokenInAddress: tokenInToUse?.address!,
-        amount: amount?.value!,
+        tokenInAddress: tokenInToUse.address,
+        amount: amount.value,
         poolAddress: poolAddress as Address,
         isEthBase: tokenInIsETH,
       });
     },
-    [amount, tokenInIsETH, tokenInToUse] // intentionally omitting lend cuz of infinite render issue; TODO make more kosher
+    [amount?.value, tokenInIsETH, tokenInSymbol, tokenInToUse?.address] // intentionally omitting lend cuz of infinite render issue; TODO make more kosher
   );
 
   useEffect(() => {
