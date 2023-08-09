@@ -24,7 +24,7 @@ const ChatBox = () => {
       </div>
 
       {/* Chat input */}
-      <div className="sticky top-[100vh] flex w-full items-center justify-center justify-items-center bg-gray-secondary px-2 py-4 lg:py-6">
+      <div className="sticky top-[100vh] flex bg-gray-secondary px-2 py-2 lg:py-6 ">
         <MessageInput />
       </div>
     </div>

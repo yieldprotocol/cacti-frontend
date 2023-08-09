@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -54,7 +53,7 @@ export type ActionResponseProps = {
   disabled?: boolean;
   skipBalanceCheck?: boolean;
   stepper?: boolean;
-  onSuccess?: (txReceipt?: TransactionReceipt) => any;
+  onSuccess?: () => void;
   onError?: (txHash?: string) => any;
 };
 
@@ -105,8 +104,8 @@ export const ActionResponse = ({
   } = useSubmitTx(
     hasAllowance ? txParams : undefined,
     hasAllowance ? sendParams : undefined,
-    () => null,
-    () => null,
+    onSuccess,
+    onError,
     label_
   );
 
