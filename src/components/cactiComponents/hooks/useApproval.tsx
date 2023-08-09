@@ -4,7 +4,6 @@ import { BigNumber } from 'ethers';
 import {
   erc20ABI,
   useAccount,
-  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -12,6 +11,7 @@ import {
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
+import useAllowance from './useAllowance';
 
 export type ApprovalBasicParams = {
   approvalAmount: BigNumber;
@@ -37,24 +37,22 @@ const useApproval = (params: ApprovalBasicParams) => {
     [approvalAmount, token?.decimals]
   );
 
-  // Get allowance amount - doesn't run if address or spender is undefined
-  const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: tokenAddress,
-    abi: erc20ABI,
-    functionName: 'allowance',
-    args: [account!, spender!],
+  const { data: allowanceAmount, refetch: refetchAllowance } = useAllowance({
+    tokenAddress,
+    spender,
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
   const { config, isError: isPrepareError } = usePrepareContractWrite({
-    address: !params.skipApproval ? tokenAddress : undefined,
+    address: !!params.skipApproval ? undefined : tokenAddress,
     abi: erc20ABI,
     functionName: 'approve',
     args: [spender!, amountToUse],
     chainId,
+    onError: (e) => console.error(e),
   });
 
-  const { writeAsync: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config);
+  const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config);
 
   const {
     isError,
@@ -64,6 +62,8 @@ const useApproval = (params: ApprovalBasicParams) => {
     hash: data?.hash,
     onSuccess: async () => await refetchAllowance(),
   });
+
+  const hasAllowance = !!params.skipApproval ? true : allowanceAmount?.gte(amountToUse); // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
 
   return {
     write: !!params.skipApproval ? undefined : approveTx,
@@ -75,7 +75,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     isError,
     isPending,
     isSuccess,
-    hasAllowance: !!params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance,
   };
 };
 
