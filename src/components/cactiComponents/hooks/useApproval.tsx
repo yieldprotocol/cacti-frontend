@@ -25,7 +25,6 @@ const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
 
 const useApproval = (params: ApprovalBasicParams) => {
   const chainId = useChainId();
-  const { address: account } = useAccount();
   const { approvalAmount, tokenAddress: _tokenAddress, spender: _spender } = params;
   const tokenAddress = validateAddress(_tokenAddress);
   const spender = validateAddress(_spender);
