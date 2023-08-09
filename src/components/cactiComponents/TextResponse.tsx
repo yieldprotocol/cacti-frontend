@@ -17,16 +17,16 @@ export const TextResponse = (props: any) => {
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
           <div className={`${textStyle}`}>
-            {props.text}
-            {props.isThinking && <div className={`animate-pulse`}>...</div>}
+            <Markdown>{props.text}</Markdown>
           </div>
         </>
       )}
 
-      {!props.title && <div className={`${textStyle} `}>
-        <Markdown>{props.text}</Markdown>
-        {props.isThinking && <div className={`animate-pulse`}>...</div>}
-        </div>}
+      {!props.title && (
+        <div className={`${textStyle}`}>
+            <Markdown>{props.text}</Markdown>
+        </div>
+      )}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
@@ -34,14 +34,13 @@ export const TextResponse = (props: any) => {
             <>
               <Disclosure.Button as="div">
                 <ResponseTitle>
-                  <div>{props.title}</div>
+                  <Markdown>{props.title}</Markdown>
                   <div className="w-[16px]">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
                 </ResponseTitle>
               </Disclosure.Button>
 
               <Disclosure.Panel as="div" className={`${textStyle}`}>
-                {props.text}
-                {props.isThinking && <div className={`animate-pulse`}>...</div>}
+                <Markdown>{props.text}</Markdown>
               </Disclosure.Panel>
             </>
           )}
