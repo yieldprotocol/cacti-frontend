@@ -252,7 +252,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
         title="Breakdown"
         data={[
           ['Slippage', `${slippage}%`],
-          ['Minimum swap', amountOutMinimum_],
+          ['Minimum swap', cleanValue(amountOutMinimum_, 2)],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
         collapsible
