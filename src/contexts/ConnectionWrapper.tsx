@@ -27,6 +27,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
+  console.log('🦄 ~ file: ConnectionWrapper.tsx:29 ~ ConnectionWrapper ~ forkUrl:', forkUrl);
 
   const {
     settings: { experimentalUi },
@@ -131,10 +132,11 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
             chains={chains}
             theme={
               experimentalUi
-                ? darkTheme({ accentColor: '#1f2937' })
+                ? darkTheme({ accentColor: '#14b8a6' })
                 : lightTheme({ accentColor: '#1f2937' })
             }
             showRecentTransactions={true}
+            avatar={CustomAvatar}
           >
             {children}
           </RainbowKitProvider>
@@ -146,7 +148,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
           chains={chains}
           theme={
             experimentalUi
-              ? darkTheme({ accentColor: '#1f2937' })
+              ? darkTheme({ accentColor: '#14b8a6' })
               : lightTheme({ accentColor: '#1f2937' })
           }
           showRecentTransactions={true}

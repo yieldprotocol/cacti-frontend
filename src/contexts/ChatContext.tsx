@@ -32,11 +32,16 @@ export type ChatContextType = {
   insertBeforeMessageId: string | null;
   setInsertBeforeMessageId: (arg0: string | null) => void;
   isMultiStepInProgress: boolean;
-  showDebugMessages: boolean;
-  setShowDebugMessages: (arg0: boolean) => void;
+
   interactor: string;
   setInteractor: (arg0: string) => void;
   connectionStatus: ReadyState;
+
+  showDebugMessages: boolean;
+  setShowDebugMessages: (arg0: boolean) => void;
+
+  showShareModal: boolean;
+  setShowShareModal: (value: boolean) => void;
 };
 
 const initialContext = {
@@ -59,6 +64,9 @@ const initialContext = {
   interactor: 'user',
   setInteractor: (arg0: string) => {},
   connectionStatus: ReadyState.UNINSTANTIATED,
+
+  showShareModal: false,
+  setShowShareModal: (value: boolean) => {},
 };
 
 const ChatContext = createContext<ChatContextType>(initialContext);
@@ -73,6 +81,8 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   const [insertBeforeMessageId, setInsertBeforeMessageId] = useState<string | null>(null);
   const [showDebugMessages, setShowDebugMessages] = useState(initialContext.showDebugMessages);
   const [interactor, setInteractor] = useState<string>(initialContext.interactor);
+
+  const [showShareModal, setShowShareModal] = useState<boolean>(initialContext.showShareModal);
 
   const [connectionStatus, setConnectionStatus] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
   const [lastInitSessionId, setLastInitSessionId] = useState<string | null>(null);
@@ -213,6 +223,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
       actor,
       feedback: obj.feedback || 'none',
     };
+
     setMessages((messages) => {
       // if beforeMessageId is specified, then we are inserting new messages before that point.
       // break up our existing message list into 2 parts, those before the insertion point,
@@ -238,7 +249,16 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         return [...beforeMessages, msg, ...afterMessages];
       }
     });
-  }, [lastMessage]);
+
+    // determine if we should bump timestamp: when there is activity besides streaming (append)
+    if (
+      obj.operation == 'create' ||
+      obj.operation == 'replace' ||
+      obj.operation == 'create_then_replace'
+    ) {
+      queryClient.invalidateQueries({ queryKey: ['chatSettings', sessionId] });
+    }
+  }, [lastMessage, queryClient, router]);
 
   const sendMessage = (msg: string) => {
     setInsertBeforeMessageId(null);
@@ -353,6 +373,9 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
         interactor,
         setInteractor,
         connectionStatus,
+
+        showShareModal,
+        setShowShareModal,
       }}
     >
       {children}

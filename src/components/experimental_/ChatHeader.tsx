@@ -1,11 +1,12 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useSession } from 'next-auth/react';
-import { useMutationUpdateChatSettings } from '@/api/chats/mutations';
-import { useQueryChatSettings } from '@/api/chats/queries';
-import { useMutationCreateSharedSession } from '@/api/shares/mutations';
+import { useRouter } from 'next/router';
+import { PencilIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useMutationDeleteChat } from '@/api/chats/mutations';
+import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
+import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
 import SkeletonWrap from '../SkeletonWrap';
+import InputWrap from './InputWrap';
 
 interface TooltipProps {
   children: ReactNode;
@@ -20,58 +21,24 @@ const Tooltip = ({ text, children }: TooltipProps) => (
   </div>
 );
 
-const PrimaryActions = ({ threadId }: { threadId: string }) => {
-  const sessionId = threadId;
-  const { status } = useSession();
-  const { isSuccess, settings } = useQueryChatSettings(sessionId);
-  const visibilityMutation = useMutationUpdateChatSettings(sessionId);
-  const cloneMutation = useMutationCreateSharedSession(sessionId);
-  const visibilityToggle = () => {
-    const targetVisibility = settings?.visibility === 'public' ? 'private' : 'public';
-    visibilityMutation.mutate({ metadata: { visibility: targetVisibility } });
-  };
-  const visibilityIcon =
-    settings?.visibility === 'public' ? (
-      <EyeIcon className="h-4 w-4 hover:text-white" />
-    ) : (
-      <EyeSlashIcon className="h-4 w-4 hover:text-white" />
-    );
+const PrimaryActions = ({ threadId, isShare }: { threadId: string; isShare: boolean }) => {
+  const { setShowShareModal } = useChatContext();
 
-  const canEdit = isSuccess && settings?.canEdit;
-  const canClone = status === 'authenticated';
-  const cloneSession = () => {
-    if (canClone) {
-      cloneMutation.mutate({ metadata: {} });
-    } else {
-      alert('Please sign up to clone thread.');
-    }
-  };
-
-  const handleDelete = () => console.log('deleting chat');
+  const { mutate: deleteChat } = useMutationDeleteChat(threadId);
+  const { mutate: deleteShare } = useMutationDeleteSharedSession(threadId);
+  const handleDelete = async () => (isShare ? deleteShare() : deleteChat());
 
   return (
     <div className="flex items-center gap-2">
-      <button
-        onClick={cloneSession}
-        className="rounded-md bg-green-primary px-2 py-1 hover:bg-green-primary/80"
-      >
-        Share
-      </button>
-      <div>
-        {isSuccess &&
-          (canEdit ? (
-            <Tooltip text={`make chat ${settings.visibility === 'public' ? 'private' : 'public'}`}>
-              <button
-                className="rounded-md bg-white/10 p-2 hover:ring-[1px] hover:ring-green-primary/50"
-                onClick={visibilityToggle}
-              >
-                {visibilityIcon}
-              </button>
-            </Tooltip>
-          ) : (
-            <div className="rounded-md bg-white/10 p-2">{visibilityIcon}</div>
-          ))}
-      </div>
+      {!isShare ? (
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="flex items-center gap-1 rounded-md bg-green-primary p-2 hover:bg-green-primary/80"
+        >
+          <ShareIcon className="hover:text-green/10 h-3 w-3" />
+          <span className="text-sm">Share</span>
+        </button>
+      ) : null}
 
       <button
         className="rounded-md bg-white/10 p-2 hover:text-white hover:ring-[1px] hover:ring-red-500/50"
@@ -84,28 +51,31 @@ const PrimaryActions = ({ threadId }: { threadId: string }) => {
 };
 
 const ChatHeader = () => {
-  const { threadId, threadName, setThreadName } = useThread();
-  const { isLoading } = useQueryChatSettings(threadId);
+  const { route } = useRouter();
+  const isShare = route === '/share/[id]';
+  const { isLoading, threadId, threadName, setThreadName, lastEdited } = useThread(
+    undefined,
+    isShare
+  );
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputText, setText] = useState<string>();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  console.log('THREAD name:', threadName);
-  console.log('THREAD  id:', threadId);
-
   const submitNameChange = useCallback(() => {
     console.log('submitNameChange', inputText);
     inputText && inputText !== '' && setThreadName(inputText);
-    inputText === '' && setThreadName(threadId!);
-  }, [inputText, setThreadName, threadId]);
+    inputText === '' && setThreadName(threadName!);
+  }, [inputText, setThreadName, threadName]);
 
-  const handleTextClick = () => {
-    setText('');
-    setIsEditing(true);
-    inputRef.current?.focus();
-  };
+  const handleTextClick = isShare
+    ? undefined
+    : () => {
+        setText('');
+        setIsEditing(true);
+        inputRef.current?.focus();
+      };
 
   useEffect(() => {
     const handleKeys = (e: globalThis.KeyboardEvent) => {
@@ -120,7 +90,6 @@ const ChatHeader = () => {
           submitNameChange();
         }
         inputRef.current?.blur();
-        // setText(threadName);
         setIsEditing(false);
       }
     };
@@ -129,65 +98,47 @@ const ChatHeader = () => {
   }, [threadName, inputText, submitNameChange]);
 
   return (
-    <div
-      className="flex items-center justify-between
-    gap-2"
-    >
-      <div className="flex flex-col items-center justify-start gap-2">
+    <div className="flex flex-col justify-between gap-2">
+      <div className="flex w-full">
         {isEditing ? (
-          <span className="flex items-center gap-2">
+          <InputWrap submitFunction={() => submitNameChange()}>
             <input
               ref={inputRef}
-              className={`h-full bg-transparent text-white/70 focus:outline-none`}
+              className={`w-full bg-transparent text-white/70 focus:outline-none`}
               onClick={() => setIsEditing(true)}
               onChange={(e) => {
                 setIsEditing(true);
                 setText(e.target.value);
               }}
+              value={inputText}
               onBlur={() => {
-                setText(threadName ?? threadId);
                 setIsEditing(false);
               }}
               onFocus={() => setIsEditing(true)}
-              placeholder={threadName ?? threadId}
+              placeholder={threadName}
             />
-            <div className="mr-2 flex gap-2">
-              {inputRef.current?.value ? (
-                <div
-                  className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white"
-                  onClick={submitNameChange}
-                >
-                  enter
-                </div>
-              ) : (
-                <div className="rounded-md bg-gray-500/25 p-1.5 text-xs uppercase text-gray-100 hover:text-white">
-                  esc
-                </div>
-              )}
-            </div>
-          </span>
+          </InputWrap>
         ) : (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 p-2">
             <span onClick={handleTextClick}>
               {isLoading || !threadId ? <SkeletonWrap width={300} height={20} /> : threadName}
             </span>
-            <div className="h-4 w-4 hover:text-white" onClick={() => setIsEditing(true)}>
-              <PencilIcon />
-            </div>
+            {threadId && <PrimaryActions threadId={threadId} isShare={isShare} />}
           </div>
         )}
-
-        <div className="flex w-full justify-items-start text-xs text-white/30">
-          <span>
-            {isLoading || !threadId ? (
-              <SkeletonWrap height={10} width={50} />
-            ) : (
-              'Last edit: recently'
-            )}
-          </span>
-        </div>
       </div>
-      <PrimaryActions {...{ threadId }} />
+
+      <div className="flex w-full justify-items-start px-2 text-xs text-white/30">
+        <span>
+          {isLoading || !threadId ? (
+            <SkeletonWrap height={10} width={50} />
+          ) : (
+            `Last edit: ${lastEdited}`
+          )}
+        </span>
+      </div>
+
+      {/* </div> */}
     </div>
   );
 };

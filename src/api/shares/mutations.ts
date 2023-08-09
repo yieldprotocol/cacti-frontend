@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { deleteSharedSession, postCreateSharedSession, putSharedSession } from '@/api/shares/calls';
+import { Shares } from './queries';
 
-export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
-    return putSharedSession(sharedSessionId, metadata);
+export const useMutationUpdateSharedSession = (sharedSessionId: string | undefined) => {
+  const mutationFn = async ({ metadata }: { metadata: any }) => {
+    if (sharedSessionId) return putSharedSession(sharedSessionId, metadata);
   };
 
   const queryClient = useQueryClient();
@@ -17,32 +19,60 @@ export const useMutationUpdateSharedSession = (sharedSessionId: string) => {
 };
 
 export const useMutationDeleteSharedSession = (sharedSessionId: string) => {
-  const mutationFn = () => {
+  const mutationFn = async () => {
     return deleteSharedSession(sharedSessionId);
   };
 
+  const { data: sessionData } = useSession();
+  const userId = sessionData?.user?.name;
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const sharedChatKey = ['shares', userId];
+  const sharedChatSettingsKey = ['shareSettings', sharedSessionId];
 
   return useMutation(mutationFn, {
-    onSuccess: (data, variables, context): void => {
-      queryClient.invalidateQueries({ queryKey: ['shares'] });
-      queryClient.invalidateQueries({ queryKey: ['sharedSession', sharedSessionId] });
+    onMutate: async () => {
+      // cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: sharedChatKey });
+      await queryClient.cancelQueries({ queryKey: sharedChatSettingsKey });
+
+      // Get the previous shares data
+      const previousSharedChats = queryClient.getQueryData<Shares>(sharedChatKey); // TODO improve types to not use generic typing here
+
+      // Update the chats data by removing the session with the provided sessionId
+      if (previousSharedChats && previousSharedChats.shares) {
+        const filteredSharedChats = previousSharedChats.shares.filter(
+          (s) => s.id !== sharedSessionId
+        );
+        const updated: Shares = { shares: filteredSharedChats };
+        queryClient.setQueryData(sharedChatKey, updated);
+      }
+
+      router.push(`/`);
+      return { previousSharedChats };
+    },
+
+    onError: (err, deletedSharedChat, context) => {
+      // if optimistic update fails, roll back to previousChats
+      queryClient.setQueryData(sharedChatKey, context?.previousSharedChats);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: sharedChatKey });
+      queryClient.invalidateQueries({ queryKey: sharedChatSettingsKey });
     },
   });
 };
 
 export const useMutationCreateSharedSession = (sessionId: string) => {
-  const mutationFn = ({ metadata }: { metadata: any }) => {
-    return postCreateSharedSession(sessionId, metadata);
-  };
-  const router = useRouter();
+  const mutationFn = async () => postCreateSharedSession(sessionId);
   const queryClient = useQueryClient();
+  // const router = useRouter();
 
   return useMutation(mutationFn, {
     onSuccess: (data, variables, context): void => {
       if (data) {
-        const newSessionId = data;
-        router.push(`/shares/${newSessionId}`);
+        // const newSessionId = data;
+        // router.push(`/shares/${newSessionId}`);
         queryClient.invalidateQueries({ queryKey: ['shares'] });
       }
     },

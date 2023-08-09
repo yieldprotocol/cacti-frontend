@@ -8,17 +8,14 @@ import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+import AppErrorBoundary from '@/components/experimental_/errors/AppError';
 import Layout from '@/components/experimental_/layout/Layout';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import '@/styles/globals.css';
 
-/*
-// disabled dynamic because this causes the query.id useEffect hook to fire twice
 const ChatContextDynamic = dynamic(() => import('@/contexts/ChatContext'), {
   ssr: false,
 });
-*/
-import ChatContext from '@/contexts/ChatContext';
-import { SettingsProvider } from '@/contexts/SettingsContext';
-import '@/styles/globals.css';
 
 const ConnectionWrapperDynamic = dynamic(() => import('@/contexts/ConnectionWrapper'), {
   ssr: false,
@@ -33,32 +30,34 @@ export default function App({
   session: Session;
 }>) {
   return (
-    <SettingsProvider>
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <QueryClientProvider client={queryClient}>
-        <SessionProvider refetchInterval={0} session={session}>
-          <ChatContext>
-            <ConnectionWrapperDynamic>
-              <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </CenterProvider>
-            </ConnectionWrapperDynamic>
-          </ChatContext>
-        </SessionProvider>
-      </QueryClientProvider>
-    </SettingsProvider>
+    <AppErrorBoundary>
+      <SettingsProvider>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <QueryClientProvider client={queryClient}>
+          <SessionProvider refetchInterval={0} session={session}>
+            <ChatContextDynamic>
+              <ConnectionWrapperDynamic>
+                <CenterProvider apiKey={process.env.NEXT_PUBLIC_CENTER_APP_KEY}>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </CenterProvider>
+              </ConnectionWrapperDynamic>
+            </ChatContextDynamic>
+          </SessionProvider>
+        </QueryClientProvider>
+      </SettingsProvider>
+    </AppErrorBoundary>
   );
 }

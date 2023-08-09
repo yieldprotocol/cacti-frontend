@@ -91,7 +91,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       setLabel(stateToLabel[ZKSyncWithdrawalState.SWITCH_WALLET_TO_L2](process.env.NODE_ENV));
 
       if (!tokenProfile) {
-        throw new Error(`Token ${tokenSymbol} not supported`);
+        console.error(`Token ${tokenSymbol} not supported`);
       }
 
       // --- Step 2: Initiate withdraw from zksync --- //

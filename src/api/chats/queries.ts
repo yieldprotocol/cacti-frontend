@@ -13,7 +13,11 @@ export interface Chats {
 export const useQueryChats = () => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
-  const { data: chats, ...rest } = useQuery<Chats>(['chats', userId], async () => getChatsList());
+  const { data: chats, ...rest } = useQuery<Chats>({
+    queryKey: ['chats', userId],
+    queryFn: async () => getChatsList(),
+    refetchOnWindowFocus: false,
+  });
   return { chats, ...rest };
 };
 
@@ -21,13 +25,18 @@ export interface ChatSettings {
   visibility?: string;
   name?: string;
   canEdit?: boolean;
+  created?: string;
+  updated?: string;
 }
-export const useQueryChatSettings = (sessionId: string) => {
+export const useQueryChatSettings = (sessionId: string | undefined) => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
-  const { data: settings, ...rest } = useQuery<ChatSettings>(
-    ['chatSettings', sessionId, userId],
-    async () => getChatSettings(sessionId)
-  );
+  const { data: settings, ...rest } = useQuery<ChatSettings>({
+    queryKey: ['chatSettings', sessionId, userId],
+    queryFn: async () => {
+      if (sessionId) return getChatSettings(sessionId);
+    },
+    refetchOnWindowFocus: false,
+  });
   return { settings, ...rest };
 };

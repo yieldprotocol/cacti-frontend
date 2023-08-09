@@ -48,7 +48,7 @@ button:focus {
 
 @layer components {
   .avatar {
-    @apply grid h-6 w-6 place-items-center overflow-hidden rounded-full;
+    @apply grid h-4 w-4 place-items-center overflow-hidden rounded-full;
   }
 
   .center {

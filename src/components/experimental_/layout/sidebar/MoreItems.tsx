@@ -1,6 +1,8 @@
 import { ReactNode, useContext } from 'react';
+import pack from '@../../package.json';
 import {
   ArrowTopRightOnSquareIcon,
+  BugAntIcon,
   Cog8ToothIcon,
   DocumentIcon,
   HomeIcon,
@@ -50,18 +52,18 @@ const MoreItems = () => {
         label="Twitter"
         action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
       />
-      {process.env.NODE_ENV === 'development' && (
-        <MoreItem
-          icon={<WrenchIcon />}
-          label="Developer Tools"
-          action={() => changeSetting(Setting.DEVELOPER_TOOLS, !developerTools)}
-        />
-      )}
+      <MoreItem
+        icon={<WrenchIcon />}
+        label="Developer Tools"
+        action={() => changeSetting(Setting.DEVELOPER_TOOLS, !developerTools)}
+      />
       <MoreItem
         icon={<ArrowTopRightOnSquareIcon />}
         label="StoryBook"
         action={() => navigateToExternalUrl('https://cacti-storybook.netlify.app/')}
       />
+
+      <MoreItem icon={<BugAntIcon />} label={`App Version: ${pack.version}`} action={() => {}} />
     </div>
   );
 };

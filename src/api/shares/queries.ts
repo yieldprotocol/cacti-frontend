@@ -13,9 +13,11 @@ export interface Shares {
 export const useQueryShares = () => {
   const { data: sessionData } = useSession();
   const userId = sessionData?.user?.name || '';
-  const { data: shares, ...rest } = useQuery<Shares>(['shares', userId], async () =>
-    getSharesList()
-  );
+  const { data: shares, ...rest } = useQuery<Shares>({
+    queryKey: ['shares', userId],
+    queryFn: async () => getSharesList(),
+    refetchOnWindowFocus: false,
+  });
   return { shares, ...rest };
 };
 
@@ -29,11 +31,16 @@ export interface SharedSessionMessage {
 export interface SharedSessionWithMessages {
   name?: string;
   messages: SharedSessionMessage[];
+  created: string;
+  updated: string;
 }
-export const useQuerySharedSession = (sharedSessionId: string) => {
-  const { data: settings, ...rest } = useQuery<SharedSessionWithMessages>(
-    ['sharedSession', sharedSessionId],
-    async () => getSharedSession(sharedSessionId)
-  );
+export const useQuerySharedSession = (sharedSessionId: string | undefined) => {
+  const { data: settings, ...rest } = useQuery<SharedSessionWithMessages>({
+    queryKey: ['sharedSession', sharedSessionId],
+    queryFn: async () => {
+      if (sharedSessionId) return getSharedSession(sharedSessionId);
+    },
+    refetchOnWindowFocus: false,
+  });
   return { settings, ...rest };
 };

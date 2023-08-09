@@ -4,21 +4,21 @@ import { getBackendApiUrl } from '@/utils/backend';
 const headers = { Accept: 'application/json' };
 const backendUrl = getBackendApiUrl();
 
-export const getChatsList = () => {
+export const getChatsList = async () => {
   return axios
     .get(`${backendUrl}/api/chats`, { headers, withCredentials: true })
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
 
-export const getChatSettings = (sessionId: string) => {
+export const getChatSettings = async (sessionId: string) => {
   return axios
     .get(`${backendUrl}/api/chats/${sessionId}`, { headers, withCredentials: true })
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
 
-export const putChatSettings = (sessionId: string, metadata: any = {}) => {
+export const putChatSettings = async (sessionId: string, metadata: any = {}) => {
   return axios
     .put(`${backendUrl}/api/chats/${sessionId}`, metadata, {
       withCredentials: true,
@@ -28,7 +28,7 @@ export const putChatSettings = (sessionId: string, metadata: any = {}) => {
     .catch((err) => console.log(err));
 };
 
-export const deleteChat = (sessionId: string) => {
+export const deleteChat = async (sessionId: string) => {
   return axios
     .delete(`${backendUrl}/api/chats/${sessionId}`, {
       withCredentials: true,
@@ -38,7 +38,10 @@ export const deleteChat = (sessionId: string) => {
     .catch((err) => console.log(err));
 };
 
-export const postCreateChatFromShareImport = (sharedSessionId: string, metadata: any = {}) => {
+export const postCreateChatFromShareImport = async (
+  sharedSessionId: string,
+  metadata: any = {}
+) => {
   return axios
     .post(
       `${backendUrl}/api/chats`,

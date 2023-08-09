@@ -19,12 +19,6 @@ const MessageList = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const multiStepInProgress = isMultiStepInProgress ? (
-    <div className={`relative flex w-[100%] flex-col gap-1 md:gap-3 lg:w-[100%]`}>
-      <span className="after:animate-ellipse">Multi-step workflow in progress</span>
-    </div>
-  ) : null;
-
   const bottomRefDiv = <div ref={bottomRef}></div>;
 
   return (
@@ -36,7 +30,7 @@ const MessageList = () => {
 
         return (
           <React.Fragment key={message.messageId}>
-            {message.messageId == insertBeforeMessageId && (
+            {message.messageId === insertBeforeMessageId && (
               <>
                 {bottomRefDiv}
                 <ProgressIndicators

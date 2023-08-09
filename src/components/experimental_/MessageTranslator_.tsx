@@ -8,15 +8,14 @@ import { ListResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
+import { MessageWrap } from './MessageWrap';
 import ListContainer from './containers/ListContainer';
 import { MultiStepContainer } from './containers/MultiStepContainer';
 import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
 import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
-import ArbitrumDepositETH from './widgets/arbitrum/ArbitrumDeposit';
 import ArbitrumDeposit from './widgets/arbitrum/ArbitrumDeposit';
-import ArbitrumWithdrawETH from './widgets/arbitrum/ArbitrumWithdraw';
 import ArbitrumWithdraw from './widgets/arbitrum/ArbitrumWithdraw';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
@@ -34,6 +33,9 @@ import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
+import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-close/YieldProtocolBorrowClose';
+import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
+import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
@@ -70,64 +72,77 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
 
   useEffect(() => {
     if (parsedMessage && parsedMessage.length) {
-      const list = parsedMessage.reduce((list, item, idx) => {
-        /* if item is a string (and not nothing) simply send a text response */
-        if (typeof item === 'string' && item.trim() !== '')
-          return [
-            ...list,
-            <Widget
-              key={item.slice(0, 16)}
-              widget={{ name: 'TextResponse', params: { text: item } }}
-            />,
-          ];
+      try {
+        const list = parsedMessage.reduce((list, item, idx) => {
+          /* if item is a string (and not nothing) simply send a text response */
+          if (typeof item === 'string' && item.trim() !== '')
+            return [
+              ...list,
+              <Widget
+                key={item.slice(0, 16)}
+                widget={{ name: 'TextResponse', params: { text: item } }}
+              />,
+            ];
 
-        /* if item is an object, assume it is a container or a widget */
-        if (typeof item !== 'string' && item.name) {
-          /* handle if a list container is passed */
-          if (item.name === 'list-container')
-            return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
+          /* if item is an object, assume it is a container or a widget */
+          if (typeof item !== 'string' && item.name) {
+            /* handle if a list container is passed */
+            if (item.name === 'list-container')
+              return [...list, <ListContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle is a streaming container is passed */
-          if (item.name === 'display-streaming-list-container')
-            return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle is a streaming container is passed */
+            if (item.name === 'display-streaming-list-container')
+              return [...list, <StreamingContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle if a multistep container is passed */
-          if (item.name === 'display-multistep-payload-container')
-            return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle if a multistep container is passed */
+            if (item.name === 'display-multistep-payload-container')
+              return [...list, <MultiStepContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* handle if a single step container is passed */
-          if (item.name === 'display-tx-payload-for-sending-container')
-            return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
+            /* handle if a single step container is passed */
+            if (item.name === 'display-tx-payload-for-sending-container')
+              return [...list, <SingleStepContainer key={idx} {...JSON.parse(item.params)} />];
 
-          /* if item has a function name, assume its a widget */
-          return [...list, <Widget key={idx} widget={item} />];
-        }
+            /* if item has a function name, assume its a widget */
+            return [...list, <Widget key={idx} widget={item} />];
+          }
 
-        /* else return null */
-        return list;
-      }, [] as JSX.Element[]);
+          /* else return null */
+          return list;
+        }, [] as JSX.Element[]);
 
-      setWidgetGroup(list);
+        setWidgetGroup(list);
+      } catch (e) {
+        /* Catch the case where the widget fails to render for ANY reason */
+        console.error(e);
+        setWidgetGroup([
+          <Widget
+            key={'error'}
+            widget={{
+              name: 'TextResponse',
+              params: {
+                text: 'Hmmm, it looks like we had a little trouuble translating the AI response.',
+              },
+            }}
+          />,
+        ]);
+      }
     }
   }, [parsedMessage]);
 
   return (
     <SharedStateContextProvider>
-      <div className={`grid-gap-2 mb-8 grid grid-cols-12 pb-3`}>
-        <div className="col-span-2 py-4">
-          <div className="float-right">
-            <Avatar actor="bot" />
+      <MessageWrap avatar={<Avatar actor="bot" />} className_="">
+        <div className="flex w-full gap-2">
+          <div className="mb-8 w-full gap-2 space-y-2">
+            {widgetGroup.map((component, i) => (
+              <Fragment key={`i${i}`}>{component}</Fragment>
+            ))}
+          </div>
+          <div className="text-white/70">
+            <FeedbackButton message={message} />
           </div>
         </div>
-        <div className=" col-span-8 flex h-full w-full flex-col gap-2 px-4 text-white/70 focus:outline-none">
-          {widgetGroup.map((component, i) => (
-            <Fragment key={`i${i}`}>{component}</Fragment>
-          ))}
-        </div>
-        <div className="text-white/70">
-          <FeedbackButton message={message} />
-        </div>
-      </div>
+      </MessageWrap>
     </SharedStateContextProvider>
   );
 };
@@ -173,14 +188,9 @@ export const Widget = (props: WidgetProps) => {
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
-  widgets.set(
-    'nft-asset-traits-container',
-    <NftAsset {...parsedArgs?.asset?.params}>
-      {/* <>{  parsedArgs?.asset?.values?.params?.map((trait: any) =>
-      console.log( trait) ) }
-    </> */}
-    </NftAsset>
-  );
+
+  widgets.set('nft-asset-traits-container', <NftAsset {...parsedArgs?.asset?.params} />);
+
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
   widgets.set(
     'fetch-nfts',
@@ -201,6 +211,36 @@ export const Widget = (props: WidgetProps) => {
     />
   );
 
+  widgets.set(
+    'yield-protocol-lend-close',
+    <YieldProtocolLendClose
+      baseTokenSymbol={parsedArgs[0]}
+      inputAmount={parsedArgs[1]}
+      action="lend-close"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-borrow',
+    <YieldProtocolBorrow
+      borrowTokenSymbol={parsedArgs[0]}
+      borrowAmount={parsedArgs[1]}
+      collateralTokenSymbol={parsedArgs[2]}
+      collateralAmount={parsedArgs[3]}
+      action="borrow"
+      projectName="yield-protocol"
+    />
+  );
+
+  widgets.set(
+    'yield-protocol-borrow-close',
+    <YieldProtocolBorrowClose
+      borrowTokenSymbol={parsedArgs[0]}
+      action="borrow-close"
+      projectName="yield-protocol"
+    />
+  );
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */

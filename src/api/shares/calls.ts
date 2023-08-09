@@ -4,21 +4,21 @@ import { getBackendApiUrl } from '@/utils/backend';
 const headers = { Accept: 'application/json' };
 const backendUrl = getBackendApiUrl();
 
-export const getSharesList = () => {
+export const getSharesList = async () => {
   return axios
     .get(`${backendUrl}/api/shares`, { headers, withCredentials: true })
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
 
-export const getSharedSession = (sharedSessionId: string) => {
+export const getSharedSession = async (sharedSessionId: string) => {
   return axios
     .get(`${backendUrl}/api/shares/${sharedSessionId}`, { headers, withCredentials: true })
     .then((res) => res.data)
     .catch((err) => console.log(err));
 };
 
-export const putSharedSession = (sharedSessionId: string, metadata: any = {}) => {
+export const putSharedSession = async (sharedSessionId: string, metadata: any = {}) => {
   return axios
     .put(`${backendUrl}/api/shares/${sharedSessionId}`, metadata, {
       withCredentials: true,
@@ -28,7 +28,7 @@ export const putSharedSession = (sharedSessionId: string, metadata: any = {}) =>
     .catch((err) => console.log(err));
 };
 
-export const deleteSharedSession = (sharedSessionId: string) => {
+export const deleteSharedSession = async (sharedSessionId: string) => {
   return axios
     .delete(`${backendUrl}/api/shares/${sharedSessionId}`, {
       withCredentials: true,
@@ -38,7 +38,7 @@ export const deleteSharedSession = (sharedSessionId: string) => {
     .catch((err) => console.log(err));
 };
 
-export const postCreateSharedSession = (sessionId: string, metadata: any = {}) => {
+export const postCreateSharedSession = async (sessionId: string, metadata: any = {}) => {
   return axios
     .post(
       `${backendUrl}/api/shares`,

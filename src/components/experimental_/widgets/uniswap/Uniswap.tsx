@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { useAccount } from 'wagmi';
-import SwapRouter02Abi from '@/abi/SwapRouter02.json';
+import { formatUnits } from 'ethers/lib/utils.js';
+import { Address, useAccount, usePrepareContractWrite } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -14,12 +13,13 @@ import {
 import { DoubleLineResponse } from '@/components/cactiComponents/DoubleLineResponse';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
+import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import useUniswapQuote from '@/hooks/useUniswapQuote';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
+import SwapRouter02Abi from './SwapRouter02';
+import useUniswapQuote from './useUniswapQuote';
 
 interface UniswapProps {
   tokenInSymbol: string;
@@ -27,52 +27,45 @@ interface UniswapProps {
   inputAmount: string;
 }
 
-interface ExactInputSingleParams {
-  tokenIn: string;
-  tokenOut: string;
-  fee: BigNumber;
-  recipient: string;
-  deadline: BigNumber;
-  amountIn: BigNumber;
-  amountOutMinimum: BigNumber;
-  sqrtPriceLimitX96: BigNumber;
-}
-
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
   const chainId = useChainId();
 
-  const { address: receiver } = useAccount();
+  const { address: recipient } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
   const { isETH: tokenOutIsETH } = useToken(tokenOutSymbol);
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
-
-  const inputCleaned = cleanValue(inputAmount.toString(), tokenInChecked?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenInChecked?.decimals);
+  const input = useInput(inputAmount, tokenInChecked?.symbol!);
+  const slippage = 0.5; // in percentage terms
+  const getSlippageAdjustedAmount = (amount: BigNumber) =>
+    BigNumber.from(amount)
+      .mul(10000 - slippage * 100)
+      .div(10000);
 
   // token out quote for amount in
-  const { isLoading: quoteIsLoading, data: quote } = useUniswapQuote({
+  const { data: quote } = useUniswapQuote({
     baseTokenSymbol: tokenInSymbol,
     quoteTokenSymbol: tokenOutSymbol,
-    amount: inputCleaned,
+    amount: inputAmount,
   });
 
-  // formatted amount out quote value
-  const quoteTokenOut = quote?.value?.toExact();
-
   // usdc quote for amount in
-  const { isLoading: quoteIsLoadingUSDC, data: quoteUSDC } = useUniswapQuote({
+  const { data: quoteUSDC } = useUniswapQuote({
     baseTokenSymbol: tokenInSymbol,
     quoteTokenSymbol: 'USDC',
-    amount: inputCleaned,
+    amount: inputAmount,
   });
 
   // usdc RATE for token out (1 USDC)
-  const { isLoading: quoteIsLoadingTokenOutUSDC, data: tokenOutUSDRate } = useUniswapQuote({
+  const { data: tokenOutUSDRate } = useUniswapQuote({
     baseTokenSymbol: tokenOutSymbol,
     quoteTokenSymbol: 'USDC',
     amount: undefined,
   });
+
+  const amountOut = useInput(quote?.value.toExact()!, tokenOutChecked?.symbol!);
+  const amountOutMinimum = getSlippageAdjustedAmount(amountOut.value || ethers.constants.Zero);
+  const amountOutMinimum_ = cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2);
 
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
@@ -82,50 +75,36 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       ? undefined
       : cleanValue((+amount * +tokenOutUSDRate.humanReadableAmount).toString(), 2);
 
-  const amountOutMinimum = quote?.value
-    ? ethers.utils.parseUnits(quote.value.toExact(), tokenOutChecked?.decimals).div('1000')
-    : undefined;
-
-  const amountOutMinimum_ = amountOutMinimum
-    ? cleanValue(formatUnits(amountOutMinimum, tokenOutChecked?.decimals), 2)
-    : undefined;
-
-  const params: ExactInputSingleParams = useMemo(
+  const approval = useMemo<ApprovalBasicParams>(
     () => ({
-      tokenIn: tokenInChecked?.address!,
-      tokenOut: tokenOutChecked?.address!,
-      fee: BigNumber.from(3000),
-      recipient: receiver!,
-      deadline: BigNumber.from(0),
-      amountIn: amountIn,
-      amountOutMinimum: amountOutMinimum!,
-      sqrtPriceLimitX96: BigNumber.from(0),
+      tokenAddress: tokenIn?.address!,
+      approvalAmount: input.value!,
+      spender: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
+      skipApproval: tokenInIsETH,
     }),
-    [amountIn, amountOutMinimum, receiver, tokenInChecked?.address, tokenOutChecked?.address]
+    [chainId, input.value, tokenIn?.address, tokenInIsETH]
   );
 
-  const approval = useMemo(
-    (): ApprovalBasicParams => ({
-      tokenAddress: tokenIn?.address! as `0x${string}`,
-      approvalAmount: amountIn,
-      spender: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
-    }),
-    [amountIn, chainId, tokenIn?.address]
-  );
-
-  const tx = useMemo(
-    (): TxBasicParams => ({
-      address: SWAP_ROUTER_02_ADDRESSES(chainId) as `0x${string}`,
-      abi: SwapRouter02Abi,
-      functionName: 'exactInputSingle',
-      args: [params],
-      overrides: {
-        value: tokenInIsETH ? amountIn : 0,
+  const { config } = usePrepareContractWrite({
+    address: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
+    abi: SwapRouter02Abi,
+    functionName: 'exactInputSingle',
+    args: [
+      {
+        tokenIn: tokenInChecked?.address!,
+        tokenOut: tokenOutChecked?.address!,
+        fee: 3000,
+        recipient: recipient!,
+        amountIn: input.value!,
+        amountOutMinimum,
+        sqrtPriceLimitX96: BigNumber.from(0),
       },
-      enabled: !quoteIsLoading && !!quote, // NOTE: here we are only enabling when the  async call is ready!!
-    }),
-    [amountIn, chainId, params, tokenInIsETH, quoteIsLoading, quote]
-  );
+    ],
+    overrides: {
+      value: tokenInIsETH ? input.value : ethers.constants.Zero,
+    },
+    enabled: !!quote, // NOTE: here we are only enabling when the async call is ready!!
+  });
 
   if (inputAmount === '*' || inputAmount === '{amount}')
     return (
@@ -144,34 +123,38 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ResponseRow>
         <DoubleLineResponse
           tokenSymbol={tokenInSymbol}
-          tokenValueInUsd={cleanValue(calcPrice(quoteUSDC?.humanReadableAmount, inputCleaned), 2)}
-          amount={inputCleaned}
+          tokenValueInUsd={cleanValue(
+            calcPrice(quoteUSDC?.humanReadableAmount, input.formatted),
+            2
+          )}
+          amount={input.formatted}
           amountValueInUsd={cleanValue(quoteUSDC?.humanReadableAmount, 2)}
         />
         <IconResponse icon="forward" />
         <DoubleLineResponse
           tokenSymbol={tokenOutSymbol}
           tokenValueInUsd={cleanValue(tokenOutUSDRate?.humanReadableAmount, 2)}
-          amount={cleanValue(quoteTokenOut, 2)}
-          amountValueInUsd={cleanValue(calcUSDValue(quoteTokenOut), 2)}
+          amount={cleanValue(amountOut.formatted, 2)}
+          amountValueInUsd={cleanValue(calcUSDValue(amountOut.formatted), 2)}
         />
       </ResponseRow>
       <ListResponse
         title="Breakdown"
         data={[
-          ['Slippage', '0.5%'],
+          ['Slippage', `${slippage}%`],
           ['Minimum swap', amountOutMinimum_],
-          ['Gas Fees', '0.32'],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
         collapsible
       />
       <ActionResponse
-        label={`Swap ${inputCleaned || ''} ${tokenInSymbol || ''} on Uniswap`}
-        txParams={tx}
+        label={`Swap ${input.formatted} ${tokenInSymbol || ''} for ${cleanValue(
+          quote?.humanReadableAmount,
+          2
+        )} ${tokenOutSymbol}`}
         approvalParams={approval}
-        // stepper
-        // disabled={true}
+        txParams={undefined}
+        sendParams={config.request}
       />
     </ConnectFirst>
   );

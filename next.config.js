@@ -4,6 +4,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_ENV_TAG: process.env.NEXT_PUBLIC_ENV_TAG,
     ARBITRUM_FORK_URL: process.env.ARBITRUM_FORK_URL,
+    NEXT_PUBLIC_TENDERLY_FORK_ID: process.env.NEXT_PUBLIC_TENDERLY_FORK_ID,
   },
   images: {
     remotePatterns: [
