@@ -1,5 +1,5 @@
 import { UnsignedTransaction } from 'ethers';
-import { useAccount, useEnsAvatar } from 'wagmi';
+import useEnsAvatar from '@/components/cactiComponents/hooks/useEnsAvatar';
 import useEnsName from '@/components/cactiComponents/hooks/useEnsName';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
