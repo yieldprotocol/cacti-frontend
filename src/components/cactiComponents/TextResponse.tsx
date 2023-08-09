@@ -3,7 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Markdown } from '../experimental_/Markdown';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
-const textStyle = 'flex text-base text-white text-opacity-70 gap-1 ';
+const textStyle = 'text-base text-white text-opacity-70 gap-1 ';
 /**
  * Simple Text response element
  *
@@ -17,16 +17,18 @@ export const TextResponse = (props: any) => {
         <>
           <ResponseTitle>{props.title}</ResponseTitle>
           <div className={`${textStyle}`}>
-            {props.text}
+            <Markdown>{props.text}</Markdown>
             {props.isThinking && <div className={`animate-pulse`}>...</div>}
           </div>
         </>
       )}
 
-      {!props.title && <div className={`${textStyle} `}>
-        <Markdown>{props.text}</Markdown>
-        {props.isThinking && <div className={`animate-pulse`}>...</div>}
-        </div>}
+      {!props.title && (
+        <div className={`${textStyle}`}>
+          <Markdown>{props.text}</Markdown>
+          {props.isThinking && <div className={`animate-pulse`}>...</div>}
+        </div>
+      )}
 
       {props.title && props.collapsible && (
         <Disclosure as="div" defaultOpen>
@@ -34,7 +36,7 @@ export const TextResponse = (props: any) => {
             <>
               <Disclosure.Button as="div">
                 <ResponseTitle>
-                  <div>{props.title}</div>
+                <Markdown>{props.text}</Markdown>
                   <div className="w-[16px]">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
                 </ResponseTitle>
               </Disclosure.Button>

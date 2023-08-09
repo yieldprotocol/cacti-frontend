@@ -10,6 +10,7 @@ import {
 import { useAccount } from 'wagmi';
 import { useChatContext } from '@/contexts/ChatContext';
 import CustomConnectButton from './CustomConnectButton';
+import InputWrap from './InputWrap';
 
 interface IconBtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -99,49 +100,46 @@ const MessageInput = () => {
   return (
     <>
       {isConnected ? (
-        <div className={`mx-auto w-full max-w-4xl rounded-xl bg-black/30 `}>
-          <div className="flex items-center gap-1 rounded-xl border border-gray-300/10 p-1 duration-200 focus-within:border-teal-100/30 lg:gap-3 lg:p-2">
-            <div className="text-end">
-              <button
-                className="grid h-9 w-9 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
-                type="button"
-                onClick={toggleInteractionMode}
-              >
-                {interactor === 'user' ? (
-                  <ChatBubbleLeftRightIcon className="h-5 w-5" />
-                ) : (
-                  <PaperClipIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-
-            <form onSubmit={handleSendMessage} className="flex w-full grow items-center space-x-2">
-              <TextareaAutosize
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder={
-                  interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'
-                }
-                tabIndex={0}
-                value={messageInput}
-                ref={inputRef}
-                onKeyDown={isConnected && messageInput ? onKeyPress : undefined}
-                className={`
+        <InputWrap className_="max-w-4xl">
+          <button
+            className="grid h-9 w-9 cursor-pointer select-none place-items-center rounded-lg bg-teal-200/10 align-middle text-white/70 transition duration-100 ease-in-out hover:text-white/90"
+            type="button"
+            onClick={toggleInteractionMode}
+          >
+            {interactor === 'user' ? (
+              <ChatBubbleLeftRightIcon className="h-5 w-5" />
+            ) : (
+              <PaperClipIcon className="h-5 w-5" />
+            )}
+          </button>
+          <form onSubmit={handleSendMessage} className="flex w-full grow items-center space-x-2">
+            <TextareaAutosize
+              onChange={(e) => setMessageInput(e.target.value)}
+              placeholder={
+                interactor === 'user' ? 'Enter your message...' : 'Enter your comment...'
+              }
+              tabIndex={0}
+              value={messageInput}
+              ref={inputRef}
+              onKeyDown={isConnected && messageInput ? onKeyPress : undefined}
+              className={`   
             grow
             resize-none
             bg-transparent
             tracking-wider text-white/30
             placeholder:text-white/30 focus:text-white/70 focus:outline-none
           `}
-                maxRows={7}
-              />
-              <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
-                <PaperAirplaneIcon className="h-5 w-5" />
-              </IconBtn>
-            </form>
-          </div>
-        </div>
+              maxRows={7}
+            />
+            <IconBtn onClick={handleSendMessage} disabled={!isConnected || !messageInput}>
+              <PaperAirplaneIcon className="h-5 w-5" />
+            </IconBtn>
+          </form>
+        </InputWrap>
       ) : botConnected ? (
-        <CustomConnectButton />
+        <div className="flex w-full justify-center">
+          <CustomConnectButton />
+        </div>
       ) : (
         <div className="animate-pulse text-sm text-white/30">Waiting for Cacti connection ...</div>
       )}
