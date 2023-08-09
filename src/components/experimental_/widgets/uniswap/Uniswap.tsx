@@ -1,9 +1,8 @@
-import { use, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
-import { set } from 'date-fns';
 import { BigNumber, ethers } from 'ethers';
 import { UnsignedTransaction, formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { Address, useAccount, useContract, usePrepareContractWrite } from 'wagmi';
+import { Address, useAccount, useContract } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -71,7 +70,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
 
   useEffect(() => {
     if (!quote) {
-      console.log('No quote yet');
+      console.log(`No quote yet for ${tokenInSymbol}-${tokenOutSymbol}`);
       return;
     }
     const quoteValue = quote.value.toExact();
@@ -87,7 +86,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     const slippeageAdjustedAmount = getSlippageAdjustedAmount(parsed);
     setAmountOutMinimum(slippeageAdjustedAmount);
     setAmountOutMinimum_(formatUnits(slippeageAdjustedAmount, decimals));
-  }, [quote, tokenOutChecked]);
+  }, [quote, tokenInSymbol, tokenOutChecked, tokenOutSymbol]);
 
   const calcPrice = (quote: string | undefined, amount: string | undefined) =>
     !quote || !amount ? undefined : cleanValue((+quote / +amount).toString(), 2);
@@ -103,18 +102,18 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       return;
     }
 
-    if (!amountOut) {
-      console.error('No amountOut, quote is loading probably');
+    if (!input?.value) {
+      console.error('No input');
       return;
     }
 
     return {
       tokenAddress: tokenIn.address,
-      approvalAmount: amountOut,
+      approvalAmount: input.value,
       spender: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
       skipApproval: tokenInIsETH,
     };
-  }, [amountOut, chainId, tokenIn, tokenInIsETH]);
+  }, [chainId, input?.value, tokenIn, tokenInIsETH]);
 
   // get swap router contract
   const contract = useContract({
