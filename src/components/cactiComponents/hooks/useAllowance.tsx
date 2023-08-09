@@ -17,10 +17,12 @@ const useAllowance = ({
   const { data, ...rest } = useQuery({
     queryKey: ['allowance', tokenAddress, spender, chainId],
     queryFn: async () => {
+      // is eth probably?
       if (!tokenAddress) {
-        console.error(`Token address not found for approval`);
+        console.log('🦄 ~ file: useAllowance.tsx:21 ~ queryFn: ~ tokenAddress:', tokenAddress);
         return;
       }
+
       if (!account) {
         console.error(`Account not found for approval`);
         return;
