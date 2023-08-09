@@ -3,7 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Markdown } from '../experimental_/Markdown';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
-const textStyle = 'flex text-base text-white text-opacity-70 gap-1 ';
+const textStyle = 'text-base text-white text-opacity-70 gap-1 ';
 /**
  * Simple Text response element
  *
