@@ -75,7 +75,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     isError,
     isPending,
     isSuccess,
-    hasAllowance: params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+    hasAllowance: !!params.skipApproval ? true : allowanceAmount?.gte(amountToUse), // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
   };
 };
 
