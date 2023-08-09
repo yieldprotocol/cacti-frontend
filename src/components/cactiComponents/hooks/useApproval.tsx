@@ -1,13 +1,9 @@
 import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
-import {
-  erc20ABI,
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
+import { erc20ABI, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { prepareWriteContract } from 'wagmi/actions';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -42,13 +38,30 @@ const useApproval = (params: ApprovalBasicParams) => {
   });
 
   // Prepare the approval transaction - doesn't run if address or spender is undefined
-  const { config, isError: isPrepareError } = usePrepareContractWrite({
-    address: !!params.skipApproval ? undefined : tokenAddress,
-    abi: erc20ABI,
-    functionName: 'approve',
-    args: [spender!, amountToUse],
-    chainId,
-    onError: (e) => console.error(e),
+  const { data: config, isError: isPrepareError } = useQuery({
+    queryKey: ['prepareApprove', tokenAddress, spender, chainId],
+    queryFn: async () => {
+      if (!spender) {
+        console.error(`Spender not found for approval`);
+        return;
+      }
+
+      // is eth
+      if (!tokenAddress) {
+        return;
+      }
+
+      const config = await prepareWriteContract({
+        address: tokenAddress,
+        abi: erc20ABI,
+        functionName: 'approve',
+        args: [spender, amountToUse],
+        chainId,
+      });
+
+      return config;
+    },
+    refetchOnWindowFocus: false,
   });
 
   const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config);
@@ -62,7 +75,11 @@ const useApproval = (params: ApprovalBasicParams) => {
     onSuccess: async () => await refetchAllowance(),
   });
 
-  const hasAllowance = !!params.skipApproval ? true : allowanceAmount?.gte(amountToUse); // if isETH, then hasAllowance is true, else check if allowanceAmount is greater than amount
+  const hasAllowance = useMemo(() => {
+    if (!!params.skipApproval) return true;
+    if (!allowanceAmount) return false;
+    return allowanceAmount.gte(amountToUse);
+  }, [allowanceAmount, amountToUse, params.skipApproval]);
 
   return {
     write: !!params.skipApproval ? undefined : approveTx,
