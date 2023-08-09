@@ -99,7 +99,7 @@ const YieldProtocolLend = ({
   const { data: tokenInToUse } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const label = `
         ${toTitleCase(action)} ${inputAmount} ${tokenInSymbol} on ${toTitleCase(projectName)}`;
-  const { value: amount } = useInput(inputAmount, tokenInSymbol);
+  const amount = useInput(inputAmount, tokenInSymbol);
 
   /***************INPUTS******************************************/
   // Yield Protocol specific spender handling
@@ -127,7 +127,7 @@ const YieldProtocolLend = ({
     () => ({
       tokenAddress: tokenInToUse?.address!,
       spender: ladle!,
-      approvalAmount: amount!,
+      approvalAmount: amount?.value!,
       skipApproval: tokenInIsETH,
     }),
     [amount, ladle, tokenInIsETH, tokenInToUse?.address]
@@ -143,7 +143,7 @@ const YieldProtocolLend = ({
 
       return await lend({
         tokenInAddress: tokenInToUse?.address!,
-        amount: amount!,
+        amount: amount?.value!,
         poolAddress: poolAddress as Address,
         isEthBase: tokenInIsETH,
       });

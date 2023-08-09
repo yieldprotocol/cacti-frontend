@@ -60,8 +60,8 @@ const YieldProtocolBorrow = ({
         )} ${borrowAmount} ${borrowTokenSymbol} using ${collateralAmount} ${collateralTokenSymbol} on ${toTitleCase(
     projectName
   )}`;
-  const { value: _borrowAmount } = useInput(borrowAmount, borrowToken?.symbol!);
-  const { value: _collateralAmount } = useInput(collateralAmount, collateralToken?.symbol!);
+  const _borrowAmount = useInput(borrowAmount, borrowToken?.symbol!);
+  const _collateralAmount = useInput(collateralAmount, collateralToken?.symbol!);
 
   /***************INPUTS******************************************/
 
@@ -126,7 +126,7 @@ const YieldProtocolBorrow = ({
       console.error('No join address');
       return undefined;
     }
-    if (!_collateralAmount) {
+    if (!_collateralAmount?.value) {
       console.error('No collateral amount');
       return undefined;
     }
@@ -134,7 +134,7 @@ const YieldProtocolBorrow = ({
     return {
       tokenAddress: collateralTokenToUse?.address,
       spender: joinAddress,
-      approvalAmount: _collateralAmount,
+      approvalAmount: _collateralAmount.value,
       skipApproval: collateralTokenIsEth,
     };
   }, [_collateralAmount, collateralTokenIsEth, collateralTokenToUse?.address, joinAddress]);
@@ -157,12 +157,12 @@ const YieldProtocolBorrow = ({
 
   const getSendParams = useCallback(
     async (seriesEntity: YieldGraphResSeriesEntity) => {
-      if (!_borrowAmount) {
+      if (!_borrowAmount?.value) {
         console.error('No borrow amount');
         return undefined;
       }
 
-      if (!_collateralAmount) {
+      if (!_collateralAmount?.value) {
         console.error('No collateral amount');
         return undefined;
       }
@@ -174,12 +174,12 @@ const YieldProtocolBorrow = ({
 
       const maxAmountToBorrow = await getMaxBorrowAmount(
         seriesEntity.fyToken?.pools[0]?.id as Address,
-        _borrowAmount
+        _borrowAmount.value
       );
 
       return await borrow({
-        borrowAmount: _borrowAmount,
-        collateralAmount: _collateralAmount,
+        borrowAmount: _borrowAmount.value,
+        collateralAmount: _collateralAmount.value,
         seriesEntityId: seriesEntity.id,
         ilkId,
         borrowTokenIsEth,
