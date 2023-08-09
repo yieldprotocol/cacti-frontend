@@ -218,7 +218,7 @@ export const ActionResponse = ({
         setAction({ name: 'approval', fn: approveTx });
         return setState(ActionResponseState.READY);
       } else {
-        setLabel('Error Preparing Approval');
+        setLabel('Preparing Approval');
         return setState(ActionResponseState.LOADING);
       }
     }
@@ -229,7 +229,7 @@ export const ActionResponse = ({
       setAction({ name: 'submit', fn: submitTx });
       return setState(ActionResponseState.READY);
     } else {
-      setLabel('Error Preparing Transaction');
+      setLabel('Preparing Transaction...');
       return setState(ActionResponseState.LOADING);
     }
   }, [
@@ -253,7 +253,7 @@ export const ActionResponse = ({
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
 
-  const handleAction = async () => (action ? await action.fn() : undefined);
+  const handleAction = async () => (action ? action.fn() : undefined);
 
   return (
     <div className="flex w-full justify-center">
