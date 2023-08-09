@@ -55,6 +55,7 @@ const useBalance = (
         })
       ).value;
     },
+    refetchOnWindowFocus: false,
   });
 
   const [comparisons, setComparisons] = useState<any>();
