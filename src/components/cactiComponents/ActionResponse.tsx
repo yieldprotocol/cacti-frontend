@@ -231,6 +231,7 @@ export const ActionResponse = ({
     amountFmt,
     approvalTransacting,
     approvalWaitingOnUser,
+    approveTx,
     defaultLabel,
     hasAllowance,
     hasEnoughBalance,
