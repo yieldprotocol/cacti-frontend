@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { Markdown } from '../experimental_/Markdown';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const textStyle = 'flex text-base text-white text-opacity-70 gap-1 ';
@@ -23,7 +24,7 @@ export const TextResponse = (props: any) => {
       )}
 
       {!props.title && <div className={`${textStyle} `}>
-        {props.text}
+        <Markdown>{props.text}</Markdown>
         {props.isThinking && <div className={`animate-pulse`}>...</div>}
         </div>}
 

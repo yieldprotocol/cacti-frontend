@@ -10,8 +10,7 @@ import { ResetButton } from './ResetButton';
 const ChatBox = () => {
   const { messages } = useChatContext();
   const router = useRouter();
-  const { s: threadId } = router.query;
-  const showMessageList = messages.length > 0 || threadId;
+  const showMessageList = messages.length > 0;
   const messageContentComponent = showMessageList ? <MessageList /> : <WelcomeMessage />;
   const [ready, setReady] = useState(false);
   // This is needed to prevent differences in server side pre-rendering and client side
