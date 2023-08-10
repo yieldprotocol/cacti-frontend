@@ -116,6 +116,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       ],
       overrides: {
         value: BigNumber.from(valueAmount || 0),
+        gasLimit: 5000000,
       },
       enabled: !!fulfillmentData,
     }),
