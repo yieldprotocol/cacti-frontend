@@ -36,6 +36,7 @@ import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-cl
 import YieldProtocolBorrow from './widgets/yield-protocol/actions/borrow/YieldProtocolBorrow';
 import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/YieldProtocolLendClose';
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
+import YieldProtocolPositions from './widgets/yield-protocol/actions/positions/YieldProtocolPositions';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
 
@@ -243,6 +244,7 @@ export const Widget = (props: WidgetProps) => {
       projectName="yield-protocol"
     />
   );
+  widgets.set('yield-protocol-positions', <YieldProtocolPositions />);
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */
