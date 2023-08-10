@@ -65,7 +65,7 @@ const useBalance = (
     if (compareAmount && data) {
       setComparisons({
         isZero: data.isZero(),
-        isGTEcompared: data.gt(compareAmount),
+        isGTEcompared: data.gte(compareAmount),
         isEQcompared: data.eq(compareAmount),
         isLTcompared: data.lt(compareAmount),
       });
