@@ -25,9 +25,6 @@ export const HeaderResponse = (props: any) => {
       const project = findProjectByName(props.projectName);
       setProject(project);
     }
-    // if (props.projectName==='user') {
-    //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
-    // }
   }, [props.projectName]);
 
   const url = project?.url || props.altUrl;
