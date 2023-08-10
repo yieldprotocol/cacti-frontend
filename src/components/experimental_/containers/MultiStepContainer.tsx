@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { useEffect } from 'react';
 import { UnsignedTransaction } from 'ethers';
-import { SendTransaction } from '@/components/widgets/SendTransaction';
 import { useChatContext } from '@/contexts/ChatContext';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
@@ -116,8 +114,8 @@ export const UserActionTxType = ({
   sendStepResult,
   description,
 }: UserActionTxTypeProps) => {
-  const handleSuccess = (receipt?: TransactionReceipt) => {
-    sendStepResult('success', `Transaction successful`, receipt?.transactionHash || '');
+  const handleSuccess = (txHash?: string) => {
+    sendStepResult('success', `Transaction successful`, txHash || '');
   };
 
   const handleError = (txHash?: string) => {
