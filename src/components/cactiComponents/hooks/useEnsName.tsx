@@ -17,6 +17,7 @@ const useEnsName = () => {
       })),
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 
   return {

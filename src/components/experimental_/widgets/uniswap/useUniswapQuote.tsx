@@ -55,13 +55,18 @@ const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUnisw
       return;
     }
 
+    if (!oneInput || !oneInput.value) {
+      console.error(`Amount not able to be parsed for swapping`);
+      return;
+    }
+
     /* If the token are the same, simply return 1:1 as the rate (without going through the actual fetching process via router) */
     if (experimentalUi && tokenIn.symbol === tokenOut.symbol)
       return {
         humanReadableAmount: '1.0000',
         value: CurrencyAmount.fromRawAmount(
           new Token(chainId, tokenIn.address, tokenIn.decimals, tokenIn.symbol, tokenIn.name),
-          oneInput.value?.toString()!
+          oneInput.value.toString()
         ),
       };
 

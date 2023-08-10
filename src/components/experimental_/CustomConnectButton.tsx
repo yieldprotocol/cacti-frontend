@@ -1,10 +1,10 @@
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatEther } from 'ethers/lib/utils.js';
-import useBalance from '@/hooks/useBalance';
 import { abbreviateHash, cleanValue } from '@/utils';
 import Avatar from '../Avatar';
 import SkeletonWrap from '../SkeletonWrap';
+import useBalance from '../cactiComponents/hooks/useBalance';
 import useEnsName from '../cactiComponents/hooks/useEnsName';
 import { buttonStyle } from './layout/sidebar/NewChatButton';
 
