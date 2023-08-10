@@ -63,7 +63,7 @@ const useNft = ({
     queryFn: async () => await fetchNft(address, tokenId, network),
   });
 
-  const { data: owner } = useQuery({
+  const { data: owner, refetch: refetchOwner } = useQuery({
     queryKey: ['nftOwner', address, tokenId, network],
     queryFn: async () =>
       await readContract({
@@ -80,6 +80,7 @@ const useNft = ({
   return {
     data,
     ...rest,
+    refetchOwner,
   };
 };
 
