@@ -1,4 +1,5 @@
 import { Network, useCollection } from '@center-inc/react';
+import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import ListContainer from '../../containers/ListContainer';
@@ -41,7 +42,7 @@ export const NftCollection = ({
    * Create the nfts assets for each tokenId to Show
    * */
   const assets = assetsIdsToShow.map((id) => (
-    <NftAsset network={network} address={address} tokenId={id} key={id} />
+    <NftAsset network={network} address={address as Address} tokenId={id} key={id} />
   ));
 
   return (
