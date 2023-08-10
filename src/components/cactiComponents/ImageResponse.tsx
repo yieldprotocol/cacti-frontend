@@ -68,10 +68,9 @@ export const ImageResponse = ({
   const Title = () => (
     <ResponseTitle>
       <div>
-        {title}
-        <div className="text-xs text-white/50">{subTitle}</div>
+        <div className={variant_ === ImageVariant.SHOWCASE ? 'text-lg': ''}> {title} </div>
+        <div className={`text-white/50 ${variant_ === ImageVariant.SHOWCASE ? '': 'text-xs'}`}>{subTitle}</div>
       </div>
-
       {imageLink && ( // if has external link
         <div onClick={() => navigateToExternalUrl(imageLink!)}>
           <ArrowTopRightOnSquareIcon className="w-[16px] stroke-2 hover:text-white " />
