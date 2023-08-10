@@ -57,10 +57,7 @@ export const NftAsset = ({
     isLoading,
   } = useQuery(
     ['NftAsset', address, tokenId],
-    async () => fetchNftAsset(address, tokenId.toString(), network),
-    {
-      enabled: true,
-    }
+    async () => fetchNftAsset(address, tokenId.toString(), network)
   );
 
   return (

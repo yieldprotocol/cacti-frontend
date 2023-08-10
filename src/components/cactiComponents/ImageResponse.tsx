@@ -1,4 +1,4 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { ArrowTopRightOnSquareIcon, CameraIcon } from '@heroicons/react/24/outline';
 import { navigateToExternalUrl } from '@/utils';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
@@ -40,12 +40,12 @@ const TagItem = (props: { tag: string }) => {
 
 const Image = (props: { src?: string; alt?: string }) => {
   return (
-    <div className="max-w-[250px] gap-2 space-y-2 overflow-hidden rounded-xl bg-white bg-opacity-5 p-2  ">
+    <div className="w-full h-[200px] max-h-[200px] gap-2 space-y-2 overflow-auto rounded-xl bg-white bg-opacity-5 p-2  ">
       {props.src ? (
-        <img className="w-full rounded-xl" src={props.src} alt={props.alt} />
+        <img className="rounded-xl object-cover w-full h-full" src={props.src} alt={props.alt} />
       ) : (
-        <div className="flex min-h-[200px] items-center justify-center rounded-xl bg-white bg-opacity-10 text-4xl text-gray-200">
-          <div>?</div>
+        <div className="flex p-10 object-cover h-full items-center justify-center rounded-xl bg-white bg-opacity-10 text-lg text-white/50">
+          <div className='font-thin' > <CameraIcon />No Image</div>
         </div>
       )}
     </div>
