@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/24/outline';
-import { findProjectByName, shortenAddress } from '@/utils';
-import projectList from '@/utils/ProjectList.json';
-import Avatar from '../Avatar';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { findProjectByName } from '@/utils';
 import { ResponseWrap } from './helpers/layout';
 
 const navigateToExternalUrl = ({ url }: { url: string | URL }) => {
