@@ -40,11 +40,11 @@ const TagItem = (props: { tag: string }) => {
 
 const Image = (props: { src?: string; alt?: string }) => {
   return (
-    <div className="w-full h-[200px] max-h-[200px] gap-2 space-y-2 overflow-auto rounded-xl bg-white bg-opacity-5 p-2  ">
+    <div className="w-full h-[250px] gap-2 space-y-2 overflow-auto rounded-xl bg-white bg-opacity-5 p-2  ">
       {props.src ? (
         <img className="rounded-xl object-cover w-full h-full" src={props.src} alt={props.alt} />
       ) : (
-        <div className="flex p-10 object-cover h-full items-center justify-center rounded-xl bg-white bg-opacity-10 text-lg text-white/50">
+        <div className="flex p-16 h-full items-center justify-center rounded-xl bg-white bg-opacity-10 text-lg text-white/50">
           <div className='font-thin' > <CameraIcon />No Image</div>
         </div>
       )}
