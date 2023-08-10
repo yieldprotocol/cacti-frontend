@@ -1,5 +1,6 @@
 import { Fragment, useEffect } from 'react';
 import { useSharedStateContext } from '@/contexts/SharedStateContext';
+import { Spinner } from '@/utils';
 import { Widget } from '../MessageTranslator_';
 import ListContainer from './ListContainer';
 
@@ -52,7 +53,8 @@ export const StreamingContainer = ({
   if (operation === 'create') {
     return (
       <Fragment>
-        <div className="flex flex-row">
+        <div className="flex items-center ">
+          {isThinking && <Spinner className="ml-2" />}
           <Widget widget={{ name: 'TextResponse', params: { text: prefix, isThinking } }} />
         </div>
         <div className="text-white">
