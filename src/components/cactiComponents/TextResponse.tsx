@@ -24,7 +24,7 @@ export const TextResponse = (props: any) => {
 
       {!props.title && (
         <div className={`${textStyle}`}>
-            <Markdown>{props.text}</Markdown>
+          <Markdown>{props.text}</Markdown>
         </div>
       )}
 
