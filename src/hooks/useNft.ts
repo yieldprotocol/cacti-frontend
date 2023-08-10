@@ -61,6 +61,7 @@ const useNft = ({
   const { data: centerData, ...rest } = useQuery({
     queryKey: ['nft', address, tokenId, network],
     queryFn: async () => await fetchNft(address, tokenId, network),
+    refetchOnWindowFocus: false,
   });
 
   const { data: owner, refetch: refetchOwner } = useQuery({
