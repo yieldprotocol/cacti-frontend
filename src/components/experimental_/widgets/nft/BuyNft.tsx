@@ -146,7 +146,7 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
         approvalParams={undefined}
         label={isOwner ? 'Already Owner' : notForSale ? 'Item not for sale' : 'Purchase NFT'}
         disabled={isExpired || notForSale || isOwner}
-        onSuccess={refetchOwner}
+        onSuccess={async () => await refetchOwner()}
       />
     </ConnectFirst>
   );
