@@ -56,8 +56,8 @@ export type ActionResponseProps = {
   disabled?: boolean;
   skipBalanceCheck?: boolean;
   stepper?: boolean;
-  onSuccess?: () => void;
-  onError?: () => void;
+  onSuccess?: (txHash?: string) => void;
+  onError?: (txHash?: string) => void;
 };
 
 /**
@@ -160,12 +160,14 @@ export const ActionResponse = ({
     if (isSuccess) {
       console.log('TX SUCCESS');
       setLabel('Transaction Complete');
+      onSuccess && onSuccess(hash);
       return setState(ActionResponseState.SUCCESS);
     }
 
     if (isError) {
       console.log('TX ERROR');
       setLabel('Transaction Failed');
+      onError && onError(hash);
       return setState(ActionResponseState.ERROR);
     }
 
