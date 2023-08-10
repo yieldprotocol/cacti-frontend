@@ -187,10 +187,13 @@ export const Widget = (props: WidgetProps) => {
     <NftCollection {...parsedArgs} variant={variant as ImageVariant} />
   );
 
+  widgets.set(
+    'nft-collection-assets-container',
+    <NftCollection {...parsedArgs.collection?.params} assetsToShow={parsedArgs.assets} variant={ImageVariant.SHOWCASE} />
+  );
+
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
-
   widgets.set('nft-asset-traits-container', <NftAsset {...parsedArgs?.asset?.params} />);
-
   widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
 
   widgets.set(
