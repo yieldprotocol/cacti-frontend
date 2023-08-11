@@ -1,9 +1,10 @@
 import { Network, useCollection } from '@center-inc/react';
+import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
-import ListContainer from '../../containers/ListContainer';
-import { NftAsset} from './NftAsset';
 import { Widget } from '../../MessageTranslator_';
+import ListContainer from '../../containers/ListContainer';
+import { NftAsset } from './NftAsset';
 
 interface NftCollectionContainerProps {
   network: Network;
@@ -43,10 +44,10 @@ export const NftCollection = ({
    * */
   const assets = assetsIdsToShow.map((asset, i) =>
     typeof asset === 'number' ? (
-      <NftAsset network={network} address={address} tokenId={asset} key={asset} /> // if just a number, use it as tokenId
+      <NftAsset network={network} address={address as Address} tokenId={asset} key={asset} /> // if just a number, use it as tokenId
     ) : (
-      <Widget key={asset.params.tokenId || `${i}` } widget={asset} />
-    ) 
+      <Widget key={asset.params.tokenId || `${i}`} widget={asset} />
+    )
   );
 
   return (

@@ -4,12 +4,12 @@ import axios from 'axios';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 // @ts-ignore TODO: fix this
 import * as JSONbigint from 'json-bigint';
-import { useAccount } from 'wagmi';
+import { Address, useAccount } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
-import { NftOwner } from '@/components/CheckNftOwner';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
+import useNft from '@/hooks/useNft';
 import { Order } from '@/types';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { NftAsset } from './NftAsset';
@@ -62,8 +62,14 @@ const fetchFulfillParams = async (
 export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
   // // The new owner will be the receiver
   const { address: account } = useAccount();
-  //const addRecentTransaction = useAddRecentTransaction();
-  // const { refetch: refetchBal } = useBalance();
+  const {
+    data: { isOwner },
+    refetchOwner,
+  } = useNft({
+    address: nftAddress as Address,
+    tokenId: +tokenId,
+    network: 'ethereum-mainnet',
+  });
 
   // fetchListing possible states:
   // If order array is empty, show the NFT is not currently for sale
@@ -127,8 +133,8 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
     <ConnectFirst>
       <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
       <NftAsset
-        address={nftAddress}
-        tokenId={tokenId}
+        address={nftAddress as Address}
+        tokenId={+tokenId}
         network="ethereum-mainnet"
         variant={ImageVariant.SHOWCASE}
         price={
@@ -138,8 +144,9 @@ export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: s
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
-        label={notForSale ? 'Item not for sale' : 'Purchase NFT'}
-        disabled={isExpired || notForSale}
+        label={isOwner ? 'Already Owner' : notForSale ? 'Item not for sale' : 'Purchase NFT'}
+        disabled={isExpired || notForSale || isOwner}
+        onSuccess={async () => await refetchOwner()}
       />
     </ConnectFirst>
   );
