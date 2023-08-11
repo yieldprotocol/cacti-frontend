@@ -2,6 +2,7 @@ import { Network, useCollection } from '@center-inc/react';
 import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { Widget } from '../../MessageTranslator_';
 import ListContainer from '../../containers/ListContainer';
 import { NftAsset } from './NftAsset';
 
@@ -14,7 +15,7 @@ interface NftCollectionContainerProps {
   previewImageUrl?: string;
 
   variant?: ImageVariant; // widget variant (default, showcase, compact)
-  assetsToShow?: number | number[]; // number of assets to show in the list. from 0 to num for not array DEFAULT
+  assetsToShow?: number | number[] | Widget[]; // number of assets to show in the list. from 0 to num for not array DEFAULT
 }
 
 export const NftCollection = ({
@@ -24,7 +25,7 @@ export const NftCollection = ({
   numAssets,
   previewImageUrl,
   variant,
-  assetsToShow = 0,
+  assetsToShow = [],
 }: NftCollectionContainerProps) => {
   const collection = useCollection({
     network,
@@ -41,9 +42,13 @@ export const NftCollection = ({
   /**
    * Create the nfts assets for each tokenId to Show
    * */
-  const assets = assetsIdsToShow.map((id) => (
-    <NftAsset network={network} address={address as Address} tokenId={id} key={id} />
-  ));
+  const assets = assetsIdsToShow.map((asset, i) =>
+    typeof asset === 'number' ? (
+      <NftAsset network={network} address={address as Address} tokenId={asset} key={asset} /> // if just a number, use it as tokenId
+    ) : (
+      <Widget key={asset.params.tokenId || `${i}`} widget={asset} />
+    )
+  );
 
   return (
     <>
@@ -56,6 +61,7 @@ export const NftCollection = ({
             subTitle={collection?.symbol || collection?.name}
             imageLink={`https://center.app/${network}/collections/${address}`}
             key={address}
+            variant={variant}
           />,
           ...assets,
         ]}
