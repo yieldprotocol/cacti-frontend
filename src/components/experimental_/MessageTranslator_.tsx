@@ -24,7 +24,7 @@ import LidoWithdraw from './widgets/lido/LidoWithdraw';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
 import LiquityClose from './widgets/liquity/close/LiquityClose';
 import { BuyNft } from './widgets/nft/BuyNft';
-import { NftAsset } from './widgets/nft/NftAsset';
+import { NftAsset, NftAssetProps } from './widgets/nft/NftAsset';
 import { NftAssetList } from './widgets/nft/NftAssetList';
 import { NftCollection } from './widgets/nft/NftCollection';
 import RethDeposit from './widgets/rocketPool/rocketPoolDeposit';
@@ -189,12 +189,19 @@ export const Widget = (props: WidgetProps) => {
 
   widgets.set(
     'nft-collection-assets-container',
-    <NftCollection {...parsedArgs.collection?.params} assetsToShow={parsedArgs.assets} variant={ImageVariant.SHOWCASE} />
+    <NftCollection
+      {...parsedArgs.collection?.params}
+      assetsToShow={parsedArgs.assets}
+      variant={ImageVariant.SHOWCASE}
+    />
   );
 
   widgets.set('nft-asset-list-container', <NftAssetList {...parsedArgs} />);
   widgets.set('nft-asset-traits-container', <NftAsset {...parsedArgs?.asset?.params} />);
-  widgets.set('buy-nft', <BuyNft nftAddress={parsedArgs[0]} tokenId={parsedArgs[1]} />);
+  widgets.set(
+    'nft-asset-fulfillment-container',
+    <BuyNft {...parsedArgs} asset={parsedArgs?.asset?.params as NftAssetProps} />
+  );
 
   widgets.set(
     'fetch-nfts',
