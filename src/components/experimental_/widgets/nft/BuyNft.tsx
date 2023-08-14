@@ -14,9 +14,6 @@ import { Order } from '@/types';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { NftAsset, NftAssetProps } from './NftAsset';
 
-// @ts-ignore
-const JSONbig = JSONbigint({ storeAsString: true });
-
 interface BuyNftProps {
   isForSale: boolean;
   orderParameters: any;
@@ -70,9 +67,7 @@ export const BuyNft = ({
         tokenId={asset.tokenId}
         network="ethereum-mainnet"
         variant={ImageVariant.SHOWCASE}
-        price={
-          orderValue ? `${ethers.utils.formatEther(BigNumber.from(orderValue))} ETH` : 'unlisted'
-        }
+        price={asset.price === 'unlisted' ? 'Not for Sale' : asset.price}
       />
       <ActionResponse
         txParams={tx}
