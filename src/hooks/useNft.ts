@@ -46,6 +46,7 @@ const useNft = ({
     tokenId: number,
     network: string = ETHEREUM_NETWORK
   ) => {
+    // TODO: deprecate this hook as Center API shouldn't be called from the FE
     const { data } = await axios.get<NftRes>(
       `https://api.center.dev/v1/${network}/${nftAddress}/${tokenId}`,
       {

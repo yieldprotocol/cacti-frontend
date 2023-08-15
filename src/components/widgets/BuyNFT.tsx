@@ -29,7 +29,6 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
       {
         headers: {
           Accept: 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
         },
       }
     )
@@ -56,7 +55,6 @@ const fetchFulfillParams = async (
     .post('https://api.opensea.io/v2/listings/fulfillment_data', data, {
       headers: {
         Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
       },
       transformResponse: (data) => JSONbig.parse(data), // opensea passes ints that are too big for js, so we process here first
     })

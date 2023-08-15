@@ -34,7 +34,7 @@ export const NftAsset = ({
       imageTags={
         variant === ImageVariant.SHOWCASE
           ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
-          : []
+          : [`Token Id: ${tokenId}`] // always show the token id 
       }
       title={nftData.name || name}
       subTitle={nftData.collectionName || collectionName}
