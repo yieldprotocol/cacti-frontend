@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { UnsignedTransaction } from 'ethers';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { useChatContext } from '@/contexts/ChatContext';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
@@ -114,12 +115,12 @@ export const UserActionTxType = ({
   sendStepResult,
   description,
 }: UserActionTxTypeProps) => {
-  const handleSuccess = (txHash?: string) => {
-    sendStepResult('success', `Transaction successful`, txHash || '');
+  const handleSuccess = (receipt?: TransactionReceipt) => {
+    sendStepResult('success', `Transaction successful`, receipt?.transactionHash || '');
   };
 
-  const handleError = (txHash?: string) => {
-    sendStepResult('error', `Transaction failed`, txHash || '');
+  const handleError = (receipt?: TransactionReceipt) => {
+    sendStepResult('error', `Transaction failed`, receipt?.transactionHash || '');
   };
 
   const unsignedTx: UnsignedTransaction = {
