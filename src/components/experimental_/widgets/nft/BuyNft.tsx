@@ -1,20 +1,13 @@
-import { useEffect, useMemo } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
-// @ts-ignore TODO: fix this
-import * as JSONbigint from 'json-bigint';
-import { Address, useAccount, usePrepareContractWrite } from 'wagmi';
+import { BigNumber } from 'ethers';
+import { usePrepareContractWrite } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-import useNft from '@/hooks/useNft';
-import { Order } from '@/types';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import { NftAsset, NftAssetProps } from './NftAsset';
 
-interface BuyNftProps {
+interface BuyNftProps extends NftAssetProps {
+  // TODO: consider inherited typings?
   isForSale: boolean;
   orderParameters: any;
   orderSignature: string;
@@ -63,11 +56,13 @@ export const BuyNft = ({
     <ConnectFirst>
       <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
       <NftAsset
-        address={asset.address as Address}
-        tokenId={asset.tokenId}
-        network="ethereum-mainnet"
+        {...asset}
         variant={ImageVariant.SHOWCASE}
-        price={asset.price === 'unlisted' ? 'Not for Sale' : asset.price}
+        // address={asset?.address as Address}
+        // tokenId={asset?.tokenId}
+        // network="ethereum-mainnet"
+        // variant={ImageVariant.SHOWCASE}
+        // price={asset?.price === 'unlisted' ? 'Not for Sale' : asset?.price}
       />
       <ActionResponse
         txParams={tx}
