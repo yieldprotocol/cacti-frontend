@@ -19,7 +19,7 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
       text-white text-opacity-70 md:p-2 ${onClickClasses} center w-full`}
       onClick={onClick}
     >
-      <p className="m-0 flex min-h-[48px] items-center justify-center font-mono">&rdquo;{children}&rdquo;</p>
+      <p className="m-0 flex min-h-[48px] items-center justify-center font-light ">&rdquo;{children}&rdquo;</p>
     </div>
   );
 };
