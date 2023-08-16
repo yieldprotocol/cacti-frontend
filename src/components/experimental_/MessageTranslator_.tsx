@@ -1,11 +1,11 @@
-import { Fragment, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { AnyARecord } from 'dns';
 import { Message } from '@/contexts/ChatContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
 import Avatar from '../Avatar';
 import { Widgetize } from '../MessageTranslator';
-import { ListResponse, TextResponse } from '../cactiComponents';
+import { ErrorResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
 import { FeedbackButton } from './FeedbackButton_';
@@ -74,7 +74,22 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
       try {
         const list = parsedMessage.reduce((list, item, idx) => {
           /* if item is a string (and not nothing) simply send a text response */
-          if (typeof item === 'string' && item.trim() !== '')
+          if (typeof item === 'string' && item.trim() !== '') {
+            if (item.includes('exception evaluating'))
+              return [
+                ...list,
+                <Widget
+                  key={idx}
+                  widget={{
+                    name: 'ErrorResponse',
+                    params: {
+                      text: 'We encountered a problem building this particular widget.',
+                      error: item,
+                    },
+                  }}
+                />,
+              ];
+
             return [
               ...list,
               <Widget
@@ -82,6 +97,7 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
                 widget={{ name: 'TextResponse', params: { text: item } }}
               />,
             ];
+          }
 
           /* if item is an object, assume it is a container or a widget */
           if (typeof item !== 'string' && item.name) {
@@ -112,14 +128,14 @@ export const MessageTranslator = ({ message }: { message: Message }) => {
         setWidgetGroup(list);
       } catch (e) {
         /* Catch the case where the widget fails to render for ANY reason */
-        console.error(e);
         setWidgetGroup([
           <Widget
             key={'error'}
             widget={{
-              name: 'TextResponse',
+              name: 'ErrorResponse',
               params: {
-                text: 'Hmmm, it looks like we had a little trouuble translating the AI response.',
+                text: 'Hmmm, it looks like we had a little trouble translating the AI response.',
+                error: e,
               },
             }}
           />,
@@ -153,7 +169,6 @@ export interface WidgetProps {
 
 export const Widget = (props: WidgetProps) => {
   const widgets = new Map<string, JSX.Element>();
-
   const { name, params, variant } = props.widget;
   const fnName = name.replace('display-', '');
   const parsedArgs = parseArgs(params);
@@ -256,8 +271,10 @@ export const Widget = (props: WidgetProps) => {
   /**
    * Experimental: Bring in some 'direct' cacti components
    * */
+  widgets.set('ErrorResponse', <ErrorResponse {...parsedArgs} />);
   widgets.set('tableresponse', <TableResponse {...parsedArgs} />);
   widgets.set('TextResponse', <TextResponse {...parsedArgs} />);
+
   widgets.set('table-container', <TableResponse {...parsedArgs} />);
   widgets.set(
     'zksync-deposit',
