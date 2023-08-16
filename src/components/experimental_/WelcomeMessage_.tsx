@@ -47,8 +47,8 @@ const WelcomeMessage = () => {
             <WelcomeBox onClick={() => sendMessage('Load Pudgy Penguins nft collection')}>
               Show specific NFT collections [Pudgy Penguins]
             </WelcomeBox>
-            <WelcomeBox onClick={() => sendMessage('What Nfts do I own?')}>
-              What Nfts do I own?
+            <WelcomeBox onClick={() => sendMessage('What NFTs do I own?')}>
+              What NFTs do I own?
             </WelcomeBox>
           </WelcomeColumn>
 
@@ -59,7 +59,7 @@ const WelcomeMessage = () => {
               Swap 0.1 ETH for DAI on Uniswap
             </WelcomeBox>
             <WelcomeBox onClick={() => sendMessage('Borrow 1000 USDC on yield Protocol with ETH collateral')}>
-              Borrow 1000 USDC on yield Protocol with  ETH collateral
+              Borrow 1000 USDC on yield Protocol with ETH collateral
             </WelcomeBox>
             <WelcomeBox onClick={() => sendMessage('Register the name [domain-name].eth on ENS')}>
               Register the name [domain-name].eth on ENS
@@ -71,7 +71,7 @@ const WelcomeMessage = () => {
             {/* <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" /> */}
             <WelcomeBoxSubtitle>Query the Network</WelcomeBoxSubtitle>
             <WelcomeBox onClick={() => sendMessage('What is the price of ETH in terms of USD')}>
-              What is the price of ETH in terms of USD?
+              What is the price of ETH in terms of USDC?
             </WelcomeBox>
             <WelcomeBox onClick={() => sendMessage('What is my DAI balance?')}>
               What is my DAI balance?
