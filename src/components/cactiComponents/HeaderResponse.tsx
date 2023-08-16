@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  ArrowTopRightOnSquareIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/24/outline';
-import { findProjectByName, shortenAddress } from '@/utils';
-import projectList from '@/utils/ProjectList.json';
-import Avatar from '../Avatar';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { findProjectByName } from '@/utils';
 import { ResponseWrap } from './helpers/layout';
 
 const navigateToExternalUrl = ({ url }: { url: string | URL }) => {
@@ -22,18 +16,9 @@ export const HeaderResponse = (props: any) => {
 
   useEffect(() => {
     if (props.projectName) {
-      try {
-        const project = findProjectByName(props.projectName);
-        setProject(project);
-      } catch (e) {
-        // console.error(e);
-        setProject(undefined);
-      }
+      const project = findProjectByName(props.projectName);
+      setProject(project);
     }
-
-    // if (props.projectName==='user') {
-    //   setProject({name: 'user', logo: '/images/user.png', url: 'https://app.cacti.finance/'})
-    // }
   }, [props.projectName]);
 
   const url = project?.url || props.altUrl;
@@ -42,10 +27,8 @@ export const HeaderResponse = (props: any) => {
     <ResponseWrap classNameExtra="group">
       <div className="flex w-full justify-between px-1">
         <div className="flex items-center space-x-4">
-          {project?.logo || props.altImageUrl ? (
+          {(project?.logo || props.altImageUrl) && (
             <img className="avatar" src={project.logo || props.altImageUrl} alt="projectLogo" />
-          ) : (
-            <Avatar actor={'user'} />
           )}
           <div>{props.text}</div>
         </div>

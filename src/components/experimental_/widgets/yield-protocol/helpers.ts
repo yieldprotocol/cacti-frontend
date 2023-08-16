@@ -1,9 +1,8 @@
-import { BigNumber, BigNumberish, Contract, PayableOverrides, ethers } from 'ethers';
+import { BigNumber, BigNumberish, Contract, PayableOverrides, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import { getContract } from 'wagmi/actions';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-import ladleAbi from './contracts/abis/Ladle.json';
-import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule.json';
+import ladleAbi from './contracts/abis/Ladle';
+import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule';
 import contractAddresses, { ContractNames } from './contracts/config';
 import { LadleActions, ModuleActions } from './operations';
 
@@ -18,19 +17,30 @@ export interface ICallData {
 
 /**
  * Encode all function calls to ladle.batch()
- * @param calls array of ICallData objects
- * @param ladleAddress ladle contract address
- * @returns {Promise<TxBasicParams | undefined>}
+ * @params calls array of ICallData
+ * @returns {Promise<PopulatedTransaction | undefined>}
  */
-export const getTxParams = async (
-  calls: ICallData[],
-  ladleAddress: string
-): Promise<TxBasicParams | undefined> => {
-  const ladle = getContract({ address: ladleAddress, abi: ladleAbi });
-  if (!ladle) {
-    console.error('Ladle contract not found');
+export const getSendParams = async ({
+  calls,
+  signer,
+  chainId,
+}: {
+  calls: ICallData[];
+  signer: Signer;
+  chainId: number;
+}) => {
+  const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
+
+  if (!ladleAddress) {
+    console.error('Ladle address not found; possibly on an unsupported chain');
     return undefined;
   }
+
+  const ladle = getContract({
+    address: ladleAddress,
+    abi: ladleAbi,
+    signerOrProvider: signer,
+  });
 
   /* filter out any ignored calls */
   const filteredCalls = calls.filter((c) => !c.ignoreIf);
@@ -62,15 +72,11 @@ export const getTxParams = async (
   });
 
   /* calculate the eth value sent */
-  const batchValue = await getCallValue(calls);
+  const value = await getCallValue(calls);
 
-  return {
-    address: ladleAddress,
-    abi: ladleAbi,
-    functionName: LadleActions.Fn.BATCH,
-    args: encodedCalls,
-    overrides: { value: batchValue },
-  } as TxBasicParams;
+  return await ladle.populateTransaction.batch(encodedCalls as `0x${string}`[], {
+    value,
+  });
 };
 
 const getCallValue = async (calls: ICallData[]) =>
@@ -89,27 +95,58 @@ const getCallValue = async (calls: ICallData[]) =>
  * @param chainId chainId to use (defaults to mainnet for now)
  * @returns
  */
-export const getWrapEthCallData = (to: Address, value: BigNumber, chainId = 1): ICallData[] => {
+export const getWrapEthCallData = ({
+  to,
+  value,
+  signer,
+  chainId = 1,
+}: {
+  to?: Address;
+  value: BigNumber;
+  signer: Signer;
+  chainId: number;
+}): ICallData[] => {
   const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
+  if (!address)
+    throw new Error('Wrap Ether Module address not found; possibly on an unsupported chain');
 
   const targetContract = getContract({
-    address: address!,
+    address: address,
     abi: wrapEtherModuleAbi,
+    signerOrProvider: signer,
   });
 
-  if (!targetContract) {
-    console.error('WrapEtherModule contract not found');
-    return [];
-  }
-
-  return [
-    {
-      operation: LadleActions.Fn.MODULE,
-      fnName: ModuleActions.Fn.WRAP_ETHER_MODULE,
-      args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
-      targetContract,
-      ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
-      overrides: { value },
-    },
-  ];
+  return to
+    ? [
+        {
+          operation: LadleActions.Fn.MODULE,
+          fnName: 'wrap',
+          args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
+          targetContract,
+          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
+          overrides: { value },
+        },
+      ]
+    : [
+        {
+          operation: LadleActions.Fn.JOIN_ETHER,
+          args: ['0x303000000000'] as LadleActions.Args.JOIN_ETHER,
+          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
+          overrides: { value },
+        },
+      ];
 };
+
+export const getUnwrapEthCallData = ({
+  value,
+  to,
+}: {
+  value: BigNumber;
+  to: Address;
+}): ICallData[] => [
+  {
+    operation: LadleActions.Fn.EXIT_ETHER,
+    args: [to] as LadleActions.Args.EXIT_ETHER,
+    ignoreIf: value.eq(ethers.constants.Zero),
+  },
+];

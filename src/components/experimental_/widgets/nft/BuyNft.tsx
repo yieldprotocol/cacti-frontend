@@ -1,200 +1,75 @@
-import { useEffect, useMemo } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
-// @ts-ignore TODO: fix this
-import * as JSONbigint from 'json-bigint';
-import { useAccount } from 'wagmi';
+import { BigNumber } from 'ethers';
+import { usePrepareContractWrite } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
-import { NftOwner } from '@/components/CheckNftOwner';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
-import { Order } from '@/types';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import { NftAsset } from './NftAsset';
+import { NftAsset, NftAssetProps } from './NftAsset';
 
-// @ts-ignore
-const JSONbig = JSONbigint({ storeAsString: true });
+interface BuyNftProps extends NftAssetProps {
+  // TODO: consider inherited typings?
+  isForSale: boolean;
+  orderParameters: any;
+  orderSignature: string;
+  orderValue: string;
+  protocolAddress: string;
+  asset: NftAssetProps;
+}
 
-const fetchListing = async (nftAddress: string, tokenId: string) => {
-  // console.log( nftAddress, tokenId);
-  return axios
-    .get(
-      `https://api.opensea.io/v2/orders/ethereum/seaport/listings?asset_contract_address=${nftAddress}&token_ids=${tokenId}&order_by=created_date&order_direction=desc`,
+export const BuyNft = ({
+  isForSale,
+  orderParameters,
+  orderSignature,
+  orderValue,
+  protocolAddress,
+  asset,
+}: BuyNftProps) => {
+  const tx = {
+    address: protocolAddress as `0x${string}`,
+    abi: SeaportAbi,
+    functionName: 'fulfillOrder',
+    args: [
       {
-        headers: {
-          Accept: 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
-        },
-      }
-    )
-    .then((res) => res.data);
-};
-
-const fetchFulfillParams = async (
-  orderHash: string,
-  fulfillerAddr: string,
-  protocolAddress: string
-) => {
-  const data = {
-    listing: {
-      hash: orderHash,
-      chain: 'ethereum',
-      protocol_address: protocolAddress,
-    },
-    fulfiller: {
-      address: fulfillerAddr,
+        parameters: orderParameters,
+        signature: orderSignature,
+      },
+      '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
+    ],
+    overrides: {
+      value: BigNumber.from(orderValue || 0),
+      gasLimit: 500000,
     },
   };
 
-  return axios
-    .post('https://api.opensea.io/v2/listings/fulfillment_data', data, {
-      headers: {
-        Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
-      },
-      transformResponse: (data) => JSONbig.parse(data), // opensea passes ints that are too big for js, so we process here first
-    })
-    .then((res) => res.data);
-};
-
-export const BuyNft = ({ nftAddress, tokenId }: { nftAddress: string; tokenId: string }) => {
-  // // The new owner will be the receiver
-  const { address: account } = useAccount();
-  //const addRecentTransaction = useAddRecentTransaction();
-  // const { refetch: refetchBal } = useBalance();
-
-  // fetchListing possible states:
-  // If order array is empty, show the NFT is not currently for sale
-  // If order is no longer valid based on the timestamp, show the fork is out of date
-  // If !isQueryError, proceed
-  const {
-    isLoading: isQueryLoading,
-    isError: isQueryError,
-    data: listingData,
-  } = useQuery({
-    queryKey: ['listing', nftAddress, tokenId],
-    queryFn: async () => fetchListing(nftAddress, tokenId),
-    retry: false,
+  // Simulate tx to re-verify if the NFT is for sale
+  const { isError } = usePrepareContractWrite({
+    ...tx,
+    overrides: {
+      ...tx.overrides,
+      gasLimit: undefined,
+    },
   });
 
-  const orderHash = listingData?.orders[0]?.order_hash;
-  const orderExpirationDate = listingData?.orders[0]?.expiration_time;
-  const protocol_address = listingData?.orders[0]?.protocol_address;
-
-  const notForSale = listingData?.orders.length === 0;
-  const isExpired = orderExpirationDate < Date.now() / 1000;
-
-  // fetchFulfillParams possible states:
-  // If listing Query failed, error is already shown, no concern to fetchFulfillParams
-  // If listing Query succeeds but there's no order hash, no concern to fetchFulfillParams
-  // If listing Query succeeds and there's an order hash, but fetchFulfillParams fails, show error
-  // If listing Query succeeds and there's an order hash, and fetchFulfillParams succeeds, proceed
-  const { isError: isFulfillError, data: fulfillmentData } = useQuery({
-    queryKey: ['fulfillment', orderHash],
-    queryFn: async () => orderHash && fetchFulfillParams(orderHash, account!, protocol_address),
-    retry: false,
-    enabled: !!listingData && !notForSale && !isExpired,
-  });
-
-  const params = fulfillmentData?.fulfillment_data.orders[0].parameters as Order;
-  const signature = fulfillmentData?.fulfillment_data.orders[0].signature as string;
-  const valueAmount = fulfillmentData?.fulfillment_data.transaction.value as BigNumberish;
-
-  const tx = useMemo(
-    (): TxBasicParams => ({
-      address: protocol_address,
-      abi: SeaportAbi,
-      functionName: 'fulfillOrder',
-      args: [
-        {
-          parameters: params,
-          signature: signature,
-        },
-        '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
-      ],
-      overrides: {
-        value: BigNumber.from(valueAmount || 0),
-      },
-      enabled: !!fulfillmentData,
-    }),
-    [fulfillmentData]
-  );
+  const notForSale = !isForSale || isError;
 
   return (
     <ConnectFirst>
       <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
-      {/* <Widget
-        widget={{
-          name: 'nft-asset-container',
-          params: {
-            network: 'ethereum-mainnet',
-            address: nftAddress,
-            tokenId: tokenId,
-            // collectionName: nftData?.collectionName,
-            // name: nftData?.name,
-            // previewImageUrl: nftData?.smallPreviewImageUrl,
-            variant: 'showcase',
-          },
-        }}
-      /> */}
       <NftAsset
-        address={nftAddress}
-        tokenId={tokenId}
-        network="ethereum-mainnet"
+        {...asset}
         variant={ImageVariant.SHOWCASE}
-        price={
-          valueAmount ? `${ethers.utils.formatEther(BigNumber.from(valueAmount))} ETH` : 'unlisted'
-        }
+        // address={asset?.address as Address}
+        // tokenId={asset?.tokenId}
+        // network="ethereum-mainnet"
+        // variant={ImageVariant.SHOWCASE}
+        // price={asset?.price === 'unlisted' ? 'Not for Sale' : asset?.price}
       />
       <ActionResponse
         txParams={tx}
         approvalParams={undefined}
         label={notForSale ? 'Item not for sale' : 'Purchase NFT'}
-        disabled={isExpired || notForSale}
+        disabled={notForSale}
       />
     </ConnectFirst>
-
-    /* <div className="mb-2 flex flex-col items-center justify-center gap-1">
-          <NFTMetadata nftAddress={nftAddress} tokenId={tokenId} />
-          <NftOwner nftAddress={nftAddress} tokenId={tokenId} />
-        </div> */
-
-    /* <SubmitButton
-        styleProps="flex rounded-sm border border-gray-200/25 bg-gray-700/80 p-3.5 hover:bg-gray-700"
-        label={
-          isSuccess
-            ? 'Success! You now own the NFT.'
-            : isTxPending
-            ? 'Buying NFT...'
-            : isWriteError
-            ? 'Error buying NFT'
-            : isPrepareError
-            ? 'NFT not available for purchase'
-            : isQueryError
-            ? 'Error fetching NFT listing'
-            : isFulfillError
-            ? 'Error fetching fulfillment data'
-            : isQueryLoading
-            ? 'Fetching NFT listing...'
-            : isExpired
-            ? 'Listing expired'
-            : `Buy NFT ${valueAmount ? `for ${formatEther(valueAmount)} ETH` : ''}`
-        }
-        onClick={() => seaportWrite?.()}
-        isLoading={isQueryLoading || isTxPending}
-        isError={isQueryError || isFulfillError || isWriteError || isPrepareError}
-        disabled={
-          isQueryLoading ||
-          isExpired ||
-          isQueryError ||
-          isFulfillError ||
-          isWriteError ||
-          isPrepareError ||
-          isTxPending ||
-          isSuccess
-        }
-      /> */
   );
 };

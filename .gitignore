@@ -45,3 +45,7 @@ next-env.d.ts
 !.yarn/versions
 
 .env
+
+.history
+.vscode/settings.json
+pnpm-lock.yaml

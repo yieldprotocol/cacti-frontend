@@ -1,34 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
+import useToken from '@/hooks/useToken';
+import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
-import useSubmitTx, { SEND_ETH_FNNAME, TxBasicParams } from './hooks/useSubmitTx';
+import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 
 export enum ActionResponseState {
-  LOADING, // background async checks
-  DISABLED, // button is disabled (eg. not enough balance, or error with building tx)
-
-  WAITING_FOR_USER, // waiting for user action on wallet,  likely confirmation
-
-  READY, // tx ready to go - not submitted.  (either approval or tx)
-  TRANSACTING, // transaction taking place. (either approval or tx)
-
-  SUCCESS, // transaction successful
-  ERROR, // transaction failed
+  LOADING = 'LOADING', // background async checks
+  DISABLED = 'DISABLED', // button is disabled (eg. not enough balance, or error with building tx)
+  WAITING_FOR_USER = 'WAITING', // waiting for user action on wallet,  likely confirmation
+  READY = 'READY', // tx ready to go - not submitted.  (either approval or tx)
+  TRANSACTING = 'TRANSACTING', // transaction taking place. (either approval or tx)
+  SUCCESS = 'SUCCESS', // transaction successful
+  ERROR = 'ERROR', // transaction failed
 }
 
 const StyledButton = tw.button`
   inline-flex items-center justify-center
   height-[40px]
-  py-2 rounded-lg
+  p-2 rounded-lg
   border-[1px] border-white/10
   bg-[#2E8C87]
   text-white/70 w-full duration-200
@@ -46,20 +46,20 @@ const stylingByState = {
 
 type Action = {
   name: string;
-  fn: (overrideConfig?: undefined) => any;
+  fn: () => void;
 };
 
 export type ActionResponseProps = {
   txParams: TxBasicParams | undefined;
   approvalParams: ApprovalBasicParams | undefined;
   sendParams?: UnsignedTransaction | undefined;
-  label?: string;
+  label?: string; // label to show on button
+  description?: string; // tx description (for wallet )
   disabled?: boolean;
+  skipBalanceCheck?: boolean;
   stepper?: boolean;
-  onSuccess?: (txReceipt?: TransactionReceipt) => any;
-  onError?: (txHash?: string) => any;
-  // assertCallParams?: AssertCallBasicParams;
-  // altAction?: () => Promise<any>;
+  onSuccess?: (receipt?: TransactionReceipt ) => void;
+  onError?: (receipt?: TransactionReceipt) => void;
 };
 
 /**
@@ -70,171 +70,188 @@ export const ActionResponse = ({
   txParams,
   approvalParams,
   sendParams,
-  label: label_,
+  label,
+  description,
   disabled,
   stepper,
+  skipBalanceCheck,
   onSuccess,
   onError,
 }: ActionResponseProps) => {
-  const defaultLabel = label_ || 'Submit';
+
   const { address } = useAccount();
-
-  const { submitTx, isWaitingOnUser, isTransacting, error, isSuccess, receipt, hash } = useSubmitTx(
-    txParams,
-    sendParams
+  const _approvalParams = useMemo<ApprovalBasicParams>(
+    () =>
+      approvalParams || {
+        tokenAddress: AddressZero,
+        spender: AddressZero,
+        approvalAmount: BigNumber.from(0),
+        skipApproval: true, // NOTE: approval is skipped if no approval params are passed in
+      },
+    [approvalParams]
   );
-
-  // const { data: nativeBalance } = useBalance();
-  const { data: balance } = useBalance(approvalParams?.tokenAddress);
-
-  const [hasEnoughBalance, setHasEnoughBalance] = useState<boolean>(false);
-
-  // button state
-  const [label, setLabel] = useState<string | undefined>();
-  const [state, setState] = useState(ActionResponseState.LOADING);
-  const [action, setAction] = useState<Action>();
+  const { data: token } = useToken(undefined, _approvalParams.tokenAddress);
+  const amountFmt = formatUnits(_approvalParams.approvalAmount, token?.decimals);
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
-  const { approveTx, hasAllowance, approvalWaitingOnUser, approvalTransacting } = useApproval(
-    approvalParams || {
-      tokenAddress: AddressZero,
-      spender: AddressZero,
-      approvalAmount: BigNumber.from(0),
-      skipApproval: true, // NOTE: apporval is skipped if no approval params are passed in
-    }
+  const {
+    write: approveTx,
+    hasAllowance,
+    isWaitingOnUser: approvalWaitingOnUser,
+    isPending: approvalTransacting,
+    isPrepareError: isPrepareApprovalError,
+  } = useApproval(_approvalParams);
+
+  const {
+    write: submitTx,
+    isWaitingOnUser,
+    isPending,
+    error,
+    isSuccess,
+    hash,
+    isError,
+    isPrepareError,
+  } = useSubmitTx(
+    hasAllowance ? txParams : undefined,
+    hasAllowance ? sendParams : undefined,
+    onSuccess,
+    onError,
+    description
   );
+
+  const { data: ethBal } = useBalance();
+  const { data: balance } = useBalance(_approvalParams.tokenAddress, undefined, undefined);
+
+  // button state
+  const [buttonLabel, setButtonLabel] = useState<string>();
+  const [state, setState] = useState<ActionResponseState>(ActionResponseState.DISABLED);
+  const [action, setAction] = useState<Action>();
 
   /**
    *
-   * Check if the acount has enough balance from the transaction: NOTE this is only
+   * Check if the acount has enough balance for the transaction
    *
    *  */
+  const [hasEnoughBalance, setHasEnoughBalance] = useState(false);
+
   useEffect(() => {
-    // // Lastl, try get value from overrides
-    // (txParams.overrides as PayableOverrides)?.value &&
-    // setHasEnoughBalance(balance.gte((txParams.overrides! as any).value));
+    if (_approvalParams.skipApproval || skipBalanceCheck) return setHasEnoughBalance(true);
 
-    if (balance && approvalParams?.tokenAddress && approvalParams?.approvalAmount) {
-      setHasEnoughBalance(balance.gte(approvalParams.approvalAmount));
-    } else if (balance && txParams?.functionName === SEND_ETH_FNNAME) {
-      setHasEnoughBalance(balance.gte(txParams?.args?.[1] || 0));
+    // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
+    if (_approvalParams === undefined) return setHasEnoughBalance(true);
+    if (sendParams?.value! >= ethBal!) {
+      return setHasEnoughBalance(false);
     }
 
-    // default case, set enough balance to true
-    else {
-      setHasEnoughBalance(true);
-    }
-  }, [txParams, approvalParams, balance]);
+    // check approval token balance
+    if (balance && _approvalParams?.approvalAmount)
+      setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+  }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
    * BUTTON FLOW:
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
-    // case:not enough balance */
+    // pre-approval and pre-tx state
     if (!hasEnoughBalance) {
-      console.log('NOT READY: Balance not sufficient for transaction.');
-      setLabel('Insufficient Balance');
-      setState(ActionResponseState.DISABLED);
+      setButtonLabel('Insufficient Balance');
+      return setState(ActionResponseState.DISABLED);
     }
 
-    /* -------- APPROVAL FLOW --------- */
-    if (!hasAllowance && hasEnoughBalance) {
-      // case: enough balance, but allowance not sufficient */
-      if (approveTx) {
-        setAction({ name: 'approve', fn: approveTx });
-        console.log('READY FOR APPROVAL: Has balance.');
-        setLabel(`A token approval is required`);
-        setState(ActionResponseState.READY);
+    // tx status/state
+    if (isSuccess) {
+      console.log('TX SUCCESS');
+      setButtonLabel('Transaction Complete');
+      return setState(ActionResponseState.SUCCESS);
+    }
+
+    if (isError) {
+      console.log('TX ERROR');
+      setButtonLabel('Transaction Failed');
+      return setState(ActionResponseState.ERROR);
+    }
+
+    if (isPending) {
+      console.log('TX IN PROGRESS...');
+      setButtonLabel('Transaction processing...');
+      return setState(ActionResponseState.TRANSACTING);
+    }
+
+    if (isPrepareError) {
+      setButtonLabel('Could not prepare transaction');
+      return setState(ActionResponseState.ERROR);
+    }
+
+    if (isWaitingOnUser) {
+      console.log('Waiting for TX confirmation...');
+      setButtonLabel(`Please check your wallet...`);
+      return setState(ActionResponseState.WAITING_FOR_USER);
+    }
+
+    // approval status/state
+    if (!_approvalParams.skipApproval) {
+      if (isPrepareApprovalError) {
+        setButtonLabel('Could not prepare approval');
+        return setState(ActionResponseState.ERROR);
       }
 
-      // ACTION: user clicks approve token button
-
-      // case: waiting for wallet interaction*/
-      if (approvalWaitingOnUser) {
-        console.log('Waiting for approval confirmation...');
-        setLabel(`Please check your wallet...`);
-        setState(ActionResponseState.WAITING_FOR_USER);
-      }
-
-      // ACTION: user confirms approval in wallet  ( or signs permit )
-
-      // case: waiting for the approval transaction */
       if (approvalTransacting) {
         console.log('Waiting for approval transaction...');
-        setLabel(`Token approval pending...`);
-        setState(ActionResponseState.TRANSACTING);
+        setButtonLabel(`Token approval pending...`);
+        return setState(ActionResponseState.TRANSACTING);
+      }
+
+      if (approvalWaitingOnUser) {
+        console.log('Waiting for approval confirmation...');
+        setButtonLabel(`Please check your wallet...`);
+        return setState(ActionResponseState.WAITING_FOR_USER);
+      }
+
+      if (!hasAllowance) {
+        if (approveTx) {
+          setButtonLabel(`Approve ${cleanValue(amountFmt, 2)} ${token?.symbol}`);
+          setAction({ name: 'approval', fn: approveTx });
+          return setState(ActionResponseState.READY);
+        } else {
+          setButtonLabel('Preparing Approval');
+          return setState(ActionResponseState.LOADING);
+        }
       }
     }
 
-    /* -------- TRANSACTION FLOW --------- */
-    if (hasAllowance && hasEnoughBalance) {
-      /* case tx/approval success, waiting for tx-building */
-      if (!submitTx && !error) {
-        console.log('Building TX: Has balance and allowance.');
-        // if the button is disabled, the label is controlled by the parent widget
-        !disabled ? setLabel('Validating the transaction...') : setLabel(defaultLabel);
-        setState(ActionResponseState.LOADING);
-      }
-
-      /* case approval success, but trnasaction error with tx-building */
-      if (!submitTx && error) {
-        console.log('Error Building/Validating tx');
-        setLabel(`Error validating the transaction.`);
-        setState(ActionResponseState.ERROR);
-        onError?.(hash);
-      }
-
-      /* case tx/approval success, waiting for tx-building */
-      if (!!submitTx) {
-        console.log('READY FOR TX: Has balance and allowance.');
-        setLabel(defaultLabel);
-        setState(ActionResponseState.READY);
-        setAction({ name: 'submit', fn: submitTx });
-      }
-
-      // ACTION: user clicks submit button
-
-      // case: waiting for wallet interaction*/
-      if (isWaitingOnUser) {
-        console.log('Waiting for TX confirmation...');
-        setLabel(`Please check your wallet...`);
-        setState(ActionResponseState.WAITING_FOR_USER);
-      }
-
-      // ACTION: user confirms approval in wallet  ( or signs permit )
-
-      /* case tx/approval success */
-      if (isTransacting) {
-        console.log('TX IN PROGRESS... ');
-        setLabel(defaultLabel);
-        setState(ActionResponseState.TRANSACTING);
-      }
-
-      if (isSuccess) {
-        console.log('TX SUCCESS');
-        setLabel('Transaction Complete');
-        setState(ActionResponseState.SUCCESS);
-        onSuccess?.(receipt);
-      }
+    // has balance and allowance, and ready to submit tx
+    if (submitTx) {
+      setButtonLabel(label || 'Submit Transaction');
+      setAction({ name: 'submit', fn: submitTx });
+      return setState(ActionResponseState.READY);
+    } else {
+      setButtonLabel('Preparing Transaction...');
+      return setState(ActionResponseState.LOADING);
     }
   }, [
-    hasEnoughBalance,
-    hasAllowance,
-    isWaitingOnUser,
-    isTransacting,
-    error,
-    approvalWaitingOnUser,
+    _approvalParams.skipApproval,
+    amountFmt,
     approvalTransacting,
-    submitTx,
-    defaultLabel,
+    approvalWaitingOnUser,
+    approveTx,
+    label,
+    hasAllowance,
+    hasEnoughBalance,
+    isError,
+    isPending,
+    isPrepareApprovalError,
+    isPrepareError,
     isSuccess,
-    disabled,
-    // approveTx
+    isWaitingOnUser,
+    submitTx,
+    token?.symbol,
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
+
+  const handleAction = async () => (action ? action.fn() : undefined);
 
   return (
     <div className="flex w-full justify-center">
@@ -243,9 +260,10 @@ export const ActionResponse = ({
         <div className=" flex w-full items-center gap-4">
           <StyledButton
             className={`bg-teal-900 ${extraStyle}`}
-            onClick={(e) => action && action.fn?.()}
+            onClick={handleAction}
+            disabled={isSuccess || disabled || state === ActionResponseState.DISABLED}
           >
-            {label || <Skeleton width={100} />}
+            {buttonLabel || <Skeleton width={100} />}
           </StyledButton>
 
           {error && (
@@ -259,12 +277,12 @@ export const ActionResponse = ({
                 text-white/70 group-hover:block
                 "
               >
-                {error}
+                {error.message}
               </div>
             </div>
           )}
 
-          {isSuccess && (
+          {hash && (
             <div className="group relative flex">
               <div className="h-6 w-6 text-white/20">
                 <CheckCircleIcon />
@@ -275,7 +293,7 @@ export const ActionResponse = ({
                 text-white/70 group-hover:block
                 "
               >
-                {receipt?.transactionHash}
+                {hash}
               </div>
             </div>
           )}

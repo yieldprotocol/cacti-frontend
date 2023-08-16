@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { cleanValue } from '@/utils';
@@ -25,21 +25,21 @@ const useInput = (
 ) => {
   const { data: token } = useToken(tokenSymbol);
 
-  if (!token) {
-    throw new Error(`Token ${tokenSymbol} not found`);
-  }
+  return useMemo((): Input | undefined => {
+    if (!token) {
+      console.error(`Token ${tokenSymbol} not found`);
+      return;
+    }
 
-  const { decimals } = token;
-
-  return useMemo((): Input => {
+    const { decimals } = token;
     const inputCleaned = cleanValue(input, decimals);
     const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
-    if (!inputBN) return { value: undefined, formatted: undefined, decimals };
+    if (!inputBN) return { value: undefined, formatted: undefined, decimals: decimals };
 
     const value = mutate ? mutate(inputBN) : inputBN;
     const formatted = formatUnits(value, decimals);
     return { value, formatted, decimals };
-  }, [decimals, input, mutate]);
+  }, [input, tokenSymbol, token, mutate]);
 };
 
 export default useInput;

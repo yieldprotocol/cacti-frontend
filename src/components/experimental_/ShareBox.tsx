@@ -2,7 +2,7 @@ import React from 'react';
 import { ReadyState } from 'react-use-websocket';
 import { useRouter } from 'next/router';
 import { useMutationChatImportSession } from '@/api/chats/mutations';
-import { useQuerySharedSession, useQueryShares } from '@/api/shares/queries';
+import { useQuerySharedSession } from '@/api/shares/queries';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
 import CustomConnectButton from './CustomConnectButton';
@@ -22,22 +22,21 @@ const ShareBox = () => {
     id as string
   );
 
-  const messageContentComponent = true ? (
+  const messageContentComponent = settings?.messages.length ? (
     <div className="h-full w-full pt-8">
-      {isSuccess &&
-        settings?.messages.map((message) => {
-          if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
-            return <React.Fragment key={message.messageId} />;
-          }
-          return (
-            <React.Fragment key={message.messageId}>
-              <MessageItem message={message} isShare={true} />
-            </React.Fragment>
-          );
-        })}
+      {settings.messages.map((message) => {
+        if (!showDebugMessages && (message.actor === 'system' || message.actor === 'function')) {
+          return <React.Fragment key={message.messageId} />;
+        }
+        return (
+          <React.Fragment key={message.messageId}>
+            <MessageItem message={message} isShare={true} />
+          </React.Fragment>
+        );
+      })}
     </div>
   ) : (
-    <div> Empty chat session </div>
+    <div>Empty chat session</div>
   );
 
   return (
@@ -55,12 +54,11 @@ const ShareBox = () => {
         {isWalletConnected ? (
           <button onClick={() => continueChat({ metadata: {} })} className={buttonStyle}>
             <Spinner className={`text-gray-300 ${!isCreatingChat && 'hidden'}`} />
-            <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'} </div>
+            <div> {isCreatingChat ? 'Converting to a new chat' : 'Continue Chatting'}</div>
           </button>
         ) : (
           <div>
-            {' '}
-            <CustomConnectButton />{' '}
+            <CustomConnectButton />
           </div>
         )}
       </div>

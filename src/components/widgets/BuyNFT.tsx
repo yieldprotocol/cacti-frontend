@@ -14,10 +14,10 @@ import {
 } from 'wagmi';
 import SeaportAbi from '@/abi/SeaportAbi.json';
 import SubmitButton from '@/components/widgets/common/SubmitButton';
-import useBalance from '@/hooks/useBalance';
 import { Order } from '@/types';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
 import { NftOwner } from '../CheckNftOwner';
+import useBalance from '../cactiComponents/hooks/useBalance';
 
 // @ts-ignore
 const JSONbig = JSONbigint({ storeAsString: true });
@@ -29,7 +29,6 @@ const fetchListing = async (nftAddress: string, tokenId: string) => {
       {
         headers: {
           Accept: 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
         },
       }
     )
@@ -56,7 +55,6 @@ const fetchFulfillParams = async (
     .post('https://api.opensea.io/v2/listings/fulfillment_data', data, {
       headers: {
         Accept: 'application/json',
-        'X-API-Key': process.env.NEXT_PUBLIC_OPENSEA_API_KEY,
       },
       transformResponse: (data) => JSONbig.parse(data), // opensea passes ints that are too big for js, so we process here first
     })

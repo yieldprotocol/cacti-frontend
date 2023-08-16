@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 18.12.1
@@ -22,9 +24,14 @@ jobs:
       - run: yarn install
       - name: Lint
         run: yarn run lint
-      - name: Format
+      - name: Do Format
         if: always()
-        run: yarn run checkFormat
+        run: yarn format
+      - name: Check Format
+        if: always()
+        run: yarn checkFormat
+      - name: Update App Version
+        run: yarn version patch
       - name: Build
         if: always()
-        run: yarn run build
+        run: yarn build
