@@ -19,7 +19,7 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
       text-white text-opacity-70 md:p-2 ${onClickClasses} center w-full`}
       onClick={onClick}
     >
-      <p className="m-0 flex min-h-[48px] items-center justify-center">{children}</p>
+      <p className="m-0 flex min-h-[48px] items-center justify-center font-mono">&rdquo;{children}&rdquo;</p>
     </div>
   );
 };
@@ -32,37 +32,53 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="h-full place-items-center ">
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 pb-4">
+
+      <div className="mx-auto w-full max-w-4xl space-y-20">
+
         <Image src={cactiImage} alt="CactiChat" className="mx-auto" width={400} height={300} />
-        <div className="grid grid-cols-1 gap-5 px-2 sm:grid-cols-3">
+
+        <div className="grid grid-cols-1 gap-20 px-2 sm:grid-cols-3">
           <WelcomeColumn>
             <Cactus1 className="h-16" />
-            <WelcomeBoxSubtitle>Examples</WelcomeBoxSubtitle>
-            <WelcomeBox onClick={() => sendMessage('Find some dog nfts')}>
-              &rdquo;Browse some dog nfts&rdquo;
+            <WelcomeBoxSubtitle> Explore NFTs </WelcomeBoxSubtitle>
+            <WelcomeBox onClick={() => sendMessage('Browse some cheetah nft collections')}>
+              Browse some [cheetah] NFT collections
             </WelcomeBox>
-            <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
-              &rdquo;Swap 0.1 ETH for DAI on Uniswap&rdquo;
+            <WelcomeBox onClick={() => sendMessage('Load Pudgy Penguins nft collection')}>
+              Show specific NFT collections [Pudgy Penguins]
             </WelcomeBox>
-            <WelcomeBox onClick={() => sendMessage('Get the price of ETH in terms of USD')}>
-              &rdquo;Get the price of ETH in terms of USD&rdquo;
+            <WelcomeBox onClick={() => sendMessage('What Nfts do I own?')}>
+              What Nfts do I own?
             </WelcomeBox>
           </WelcomeColumn>
 
           <WelcomeColumn>
             <Cactus2 className="h-16" />
-            <WelcomeBoxSubtitle>Capabilities</WelcomeBoxSubtitle>
-            <WelcomeBox>Generate transactions to send tokens or Swap on Uniswap</WelcomeBox>
-            <WelcomeBox>Query NFT collections</WelcomeBox>
-            <WelcomeBox>Check on chain data</WelcomeBox>
+            <WelcomeBoxSubtitle>Interact with protocols</WelcomeBoxSubtitle>
+            <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
+              Swap 0.1 ETH for DAI on Uniswap
+            </WelcomeBox>
+            <WelcomeBox onClick={() => sendMessage('Borrow 1000 USDC on yield Protocol with ETH collateral')}>
+              Borrow 1000 USDC on yield Protocol with  ETH collateral
+            </WelcomeBox>
+            <WelcomeBox onClick={() => sendMessage('Register the name [domain-name].eth on ENS')}>
+              Register the name [domain-name].eth on ENS
+            </WelcomeBox>
           </WelcomeColumn>
+
           <WelcomeColumn>
             <Cactus3 className="h-16" />
             {/* <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" /> */}
-            <WelcomeBoxSubtitle>Limitations</WelcomeBoxSubtitle>
-            <WelcomeBox>Can only interact with Ethereum mainnet</WelcomeBox>
-            <WelcomeBox>Does not support all tokens for all commands</WelcomeBox>
-            <WelcomeBox>More limitations</WelcomeBox>
+            <WelcomeBoxSubtitle>Query the Network</WelcomeBoxSubtitle>
+            <WelcomeBox onClick={() => sendMessage('What is the price of ETH in terms of USD')}>
+              What is the price of ETH in terms of USD?
+            </WelcomeBox>
+            <WelcomeBox onClick={() => sendMessage('What is my DAI balance?')}>
+              What is my DAI balance?
+            </WelcomeBox>
+            <WelcomeBox onClick={() => sendMessage('What are the top yields on Ethereum')}>
+              What are the top yields on Ethereum?
+            </WelcomeBox>
           </WelcomeColumn>
         </div>
       </div>
