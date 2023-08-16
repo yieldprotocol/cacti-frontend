@@ -15,11 +15,11 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
   return (
     <div
       className={`
-      max-w-[250px] rounded-lg border-[1px] border-white/5 p-4 text-center text-sm
+      max-w-[250px] rounded-lg border-[1px] border-green-primary/25 p-4 text-center text-sm
       text-white text-opacity-70 md:p-2 ${onClickClasses} center w-full`}
       onClick={onClick}
     >
-      <p className="m-0 flex min-h-[48px] items-center justify-center font-light ">&rdquo;{children}&rdquo;</p>
+      <p className="m-0 flex min-h-[48px] items-center justify-center font-light text-base ">&rdquo;{children}&rdquo;</p>
     </div>
   );
 };
