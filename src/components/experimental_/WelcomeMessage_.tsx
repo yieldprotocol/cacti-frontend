@@ -7,7 +7,7 @@ import Cactus3 from './CactiImages/Cactus3';
 import cactiImage from './CactiImages/cacti.png';
 
 const WelcomeColumn = ({ children }: { children: ReactNode }) => {
-  return <div className="flex flex-col items-center gap-y-5 ">{children}</div>;
+  return <div className="flex flex-col items-center gap-y-8 ">{children}</div>;
 };
 
 const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
@@ -37,7 +37,7 @@ const WelcomeMessage = () => {
 
         <Image src={cactiImage} alt="CactiChat" className="mx-auto" width={400} height={300} />
 
-        <div className="grid grid-cols-1 gap-20 px-2 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-20 p-4 sm:grid-cols-3">
           <WelcomeColumn>
             <Cactus1 className="h-16" />
             <WelcomeBoxSubtitle> Explore NFTs </WelcomeBoxSubtitle>
