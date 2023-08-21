@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const ShareBoxDynamic = dynamic(() => import('@/components/experimental_/ShareBox'), {
+const ShareBoxDynamic = dynamic(() => import('@/components/current/ShareBox'), {
   ssr: false,
 });
 

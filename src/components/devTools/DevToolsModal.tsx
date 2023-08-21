@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { DebugPanel } from '@/components/devTools/DebugPanel';
-import { ResetButton } from '../ResetButton';
+import { ResetButton } from './ResetButton';
 import { ChangeForkId } from './ChangeForkId';
 import { CurrentForkInfo } from './CurrentForkInfo';
 import { DebugMessageToggle } from './DebugMessageToggle';
