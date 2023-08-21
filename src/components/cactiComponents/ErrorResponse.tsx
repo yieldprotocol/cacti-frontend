@@ -4,8 +4,8 @@ import {
   ChevronUpIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import { Markdown } from '../experimental_/Markdown';
-import { buttonStyle } from '../experimental_/layout/sidebar/NewChatButton';
+import { Markdown } from '../current/Markdown';
+import { buttonStyle } from '../current/layout/sidebar/NewChatButton';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const textStyle = 'text-base text-white text-opacity-70 gap-1 ';
