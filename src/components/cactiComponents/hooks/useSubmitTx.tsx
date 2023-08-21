@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
+import {
+  CallOverrides,
+  Overrides,
+  PayableOverrides,
+  UnsignedTransaction,
+} from 'ethers';
 import {
   usePrepareContractWrite,
   usePrepareSendTransaction,
@@ -32,13 +38,14 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param sendParams the send transaction parameters to prepare and submit
  * @param onSuccess callback to run on success
  * @param onError callback to run on error
+ * @param description description of tx for wallet
  */
 const useSubmitTx = (
   params?: TxBasicParams,
   sendParams?: UnsignedTransaction,
-  onSuccess?: () => void,
-  onError?: () => void,
-  label?: string
+  onSuccess?: (receipt?: TransactionReceipt) => void,
+  onError?: (receipt?: TransactionReceipt) => void,
+  description?: string
 ) => {
   const addRecentTx = useAddRecentTransaction();
   const { refetch: refetchEthBal } = useBalance();
@@ -70,15 +77,15 @@ const useSubmitTx = (
     isLoading: isPending,
     isError,
     isSuccess,
+    status
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(receipt);
       refetchEthBal();
     },
     onError: (e) => {
-      console.log('tx error', e);
-      if (onError) onError();
+      if (onError) onError(receipt);
     },
   });
 
@@ -87,10 +94,10 @@ const useSubmitTx = (
     if (data?.hash) {
       addRecentTx({
         hash: data.hash,
-        description: label ?? params?.functionName ?? '',
+        description: description ?? params?.functionName ?? '',
       });
     }
-  }, [addRecentTx, data?.hash, label, params?.functionName]);
+  }, [addRecentTx, data?.hash, description, params?.functionName]);
 
   /* DEVELOPER logging */
   useEffect(() => {
@@ -113,6 +120,7 @@ const useSubmitTx = (
     isPending,
     isSuccess,
     error,
+    status
   };
 };
 
