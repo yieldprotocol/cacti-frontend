@@ -40,7 +40,9 @@ const useForkTools = (id?: string): ForkTools => {
     const currentBlockNumber = await provider.getBlockNumber();
     const resp = await axios.post(
       forkAPI,
-      { network_id: 1, block_number: currentBlockNumber },
+      { network_id: 1, block_number: currentBlockNumber, chain_config: {
+        'chain_id': 10111 // chain_id used in the forked environment
+      }},
       {
         headers: {
           'X-Access-Key': process.env.NEXT_PUBLIC_TENDERLY_ACCESS_KEY as string,

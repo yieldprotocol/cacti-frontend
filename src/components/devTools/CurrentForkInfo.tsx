@@ -7,6 +7,7 @@ import {
 import copy from 'copy-to-clipboard';
 import SettingsContext from '@/contexts/SettingsContext';
 import { Button } from '../shared/Button';
+import { useNetwork } from 'wagmi';
 
 export const CurrentForkInfo = () => {
   const {
@@ -39,8 +40,11 @@ export const CurrentForkInfo = () => {
     window.open(tenderlyUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const { chain } = useNetwork();
+
   return (
     <div>
+      NetworkId: {chain?.id }
       <div className="border">
         <div
           className={`p-2 text-left text-xs ${
