@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork, useProvider } from 'wagmi';
-import { Button } from '@/components/Button';
+import { Button } from '../shared/Button';
 import useBalance from '../cactiComponents/hooks/useBalance';
 
 export const MintButton = () => {

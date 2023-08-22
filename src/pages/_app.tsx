@@ -8,8 +8,8 @@ import { CenterProvider } from '@center-inc/react';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import AppErrorBoundary from '@/components/experimental_/errors/AppError';
-import Layout from '@/components/experimental_/layout/Layout';
+import AppErrorBoundary from '@/components/current/errors/AppError';
+import Layout from '@/components/current/layout/Layout';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import '@/styles/globals.css';
 

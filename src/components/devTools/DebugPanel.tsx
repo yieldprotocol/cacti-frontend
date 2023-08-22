@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
-import { Button } from '@/components/Button';
 import { useChatContext } from '@/contexts/ChatContext';
 import { shortenAddress } from '@/utils';
+import { Button } from '../shared/Button';
 
 const CUSTOM_PROMPT = 'Custom Prompt';
 

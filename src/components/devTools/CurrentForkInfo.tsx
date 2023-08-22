@@ -5,8 +5,8 @@ import {
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
 import copy from 'copy-to-clipboard';
-import { Button } from '@/components/Button';
 import SettingsContext from '@/contexts/SettingsContext';
+import { Button } from '../shared/Button';
 
 export const CurrentForkInfo = () => {
   const {
