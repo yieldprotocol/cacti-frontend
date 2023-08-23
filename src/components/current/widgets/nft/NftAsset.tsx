@@ -13,6 +13,20 @@ export interface NftAssetProps {
   previewImageUrl?: string;
   variant?: ImageVariant; // widget variant
   price?: string;
+  attributes?: {trait_type: string, value: string}[];
+}
+
+const TraitList = ({ attributes }: { attributes: {trait_type: string, value: string}[] }) => {
+  return (
+    <div className="">
+      {attributes.map((attribute, index) => (
+        <div key={index} className="text-xs mr-2 mb-2">
+          <span className="font-bold">{attribute.trait_type}</span>: {attribute.value}
+        </div>
+      ))}
+    </div>
+  )
+
 }
 
 export const NftAsset = ({
@@ -24,6 +38,7 @@ export const NftAsset = ({
   previewImageUrl,
   variant,
   price,
+  attributes
 }: NftAssetProps) => {
 
   return (
@@ -42,6 +57,7 @@ export const NftAsset = ({
       {/* {variant === ImageVariant.SHOWCASE && (
         <div className="text-xs">{nftData.metadata?.description}</div>
       )} */}
+      {attributes && <TraitList attributes={attributes} />}
       {price && (
         <InlineChip
           className="text-xs"
