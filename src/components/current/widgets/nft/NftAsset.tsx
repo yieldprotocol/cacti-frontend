@@ -3,7 +3,6 @@ import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { InlineChip } from '@/components/cactiComponents/InlineChip';
-import useNft from '@/hooks/useNft';
 
 export interface NftAssetProps {
   network: Network;
@@ -26,24 +25,23 @@ export const NftAsset = ({
   variant,
   price,
 }: NftAssetProps) => {
-  const { data: nftData } = useNft({ network, address, tokenId });
 
   return (
     <ImageResponse
-      image={nftData.smallPreviewImageUrl || previewImageUrl}
+      image={previewImageUrl}
       imageTags={
         variant === ImageVariant.SHOWCASE
           ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
           : [`Token Id: ${tokenId}`] // always show the token id 
       }
-      title={nftData.name || name}
-      subTitle={nftData.collectionName || collectionName}
+      title={name}
+      subTitle={collectionName}
       imageLink={`https://center.app/${network}/collections/${address}/${tokenId}`}
       variant={variant}
     >
-      {variant === ImageVariant.SHOWCASE && (
+      {/* {variant === ImageVariant.SHOWCASE && (
         <div className="text-xs">{nftData.metadata?.description}</div>
-      )}
+      )} */}
       {price && (
         <InlineChip
           className="text-xs"
