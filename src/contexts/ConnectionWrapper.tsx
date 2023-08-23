@@ -29,7 +29,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   } = useContext(SettingsContext);
 
   const mainnetForked = {
-    id: 10111,
+    id: 1,
     name: 'Cacti Mainnet Fork',
     network: 'mainnet',
     nativeCurrency: {
@@ -45,7 +45,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   } as Chain
 
   const { chains, provider } = configureChains(
-    [mainnetForked, mainnet, goerli, zkSyncTestnet],
+    [mainnetForked, goerli, zkSyncTestnet],
     [publicProvider()]
   );
 
