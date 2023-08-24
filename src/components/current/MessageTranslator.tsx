@@ -18,6 +18,7 @@ import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
+import FriendTechBuyKeys from './widgets/friend-tech/FriendTechBuyKeys';
 import FriendTechLeaderboard from './widgets/friend-tech/FriendTechLeaderboard';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
@@ -312,6 +313,10 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
   widgets.set('friend-tech-leaderboard', <FriendTechLeaderboard />);
+  widgets.set(
+    'friend-tech-buy-keys',
+    <FriendTechBuyKeys username={parsedArgs[0]} amount={parsedArgs[1]} />
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
