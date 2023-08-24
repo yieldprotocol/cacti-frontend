@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import useLeaderboardData, { LeaderboardUserItem } from './useLeaderboardData';
