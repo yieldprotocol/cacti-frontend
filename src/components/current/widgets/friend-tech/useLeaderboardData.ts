@@ -20,7 +20,7 @@ const useLeaderboardData = () => {
   };
 
   const { data, ...rest } = useQuery({
-    queryKey: 'friend-tech/leaderboard',
+    queryKey: ['friend-tech/leaderboard'],
     queryFn,
     refetchOnWindowFocus: false,
   });
