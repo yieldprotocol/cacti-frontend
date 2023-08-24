@@ -65,7 +65,7 @@ export const BuyNft = ({
         // price={asset?.price === 'unlisted' ? 'Not for Sale' : asset?.price}
       />
       <ActionResponse
-        txParams={tx}
+        txParams={notForSale ? undefined : tx} // if not for sale abort the tx preparation
         approvalParams={undefined}
         label={notForSale ? 'Item not for sale' : 'Purchase NFT'}
         disabled={notForSale}

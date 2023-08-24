@@ -153,6 +153,12 @@ export const ActionResponse = ({
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
+
+    if (disabled) {
+      setButtonLabel(label ?? 'Disabled');
+      return setState(ActionResponseState.DISABLED);
+    }
+
     // pre-approval and pre-tx state
     if (!hasEnoughBalance) {
       setButtonLabel('Insufficient Balance');
