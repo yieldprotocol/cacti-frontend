@@ -2,11 +2,11 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Message } from '@/contexts/ChatContext';
 import { SharedStateContextProvider } from '@/contexts/SharedStateContext';
 import { parseMessage } from '@/utils/parse-message';
-import Avatar from '../shared/Avatar';
-import { Widgetize } from '../legacy/legacyComponents/MessageTranslator';
 import { ErrorResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
+import { Widgetize } from '../legacy/legacyComponents/MessageTranslator';
+import Avatar from '../shared/Avatar';
 import { FeedbackButton } from './FeedbackButton';
 import { MessageWrap } from './MessageWrap';
 import ListContainer from './containers/ListContainer';
@@ -18,6 +18,8 @@ import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
+import FriendTechBuyKeys from './widgets/friend-tech/FriendTechBuyKeys';
+import FriendTechLeaderboard from './widgets/friend-tech/FriendTechLeaderboard';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
@@ -310,6 +312,11 @@ export const Widget = (props: WidgetProps) => {
     <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+  widgets.set('friend-tech-leaderboard', <FriendTechLeaderboard />);
+  widgets.set(
+    'friend-tech-buy-keys',
+    <FriendTechBuyKeys username={parsedArgs[0]} amount={parsedArgs[1]} />
+  );
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
