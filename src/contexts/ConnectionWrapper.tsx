@@ -27,7 +27,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   );
 
   const mainnetFork = {
-    id: 1277971,
+    id: 1277971,  // chainid is made up of 127797 with the natural id of the fork (eg mainnet = 1): 1277971 
     name: 'Cacti Mainnet Fork',
     network: 'mainnet_fork',
     nativeCurrency: {
