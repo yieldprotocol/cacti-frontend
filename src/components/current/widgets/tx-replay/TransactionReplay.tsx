@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
-import axios from 'axios';
 import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import { decodeFunctionData } from 'viem';
-import { Address, usePrepareContractWrite, usePrepareSendTransaction, useTransaction } from 'wagmi';
+import { Address, useTransaction } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import SkeletonWrap from '@/components/shared/SkeletonWrap';
+import useAbi from '@/hooks/useAbi';
 
 interface TransactionReplayProps {
   txHash: Address;
@@ -36,26 +35,11 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     value: string;
   }>();
 
-  // decode transaction function with parameters
-  // set parameter values to the original transaction
-  // set up form from transaction
+  // get the transaction data
   const { data, isLoading } = useTransaction({ hash: txHash });
 
-  // get abi from etherscan using tx hash
-  const getAbi = async (contractAddress: string | undefined) => {
-    const { data } = await axios.get(
-      `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`
-    );
-    const parsed = JSON.parse(data.result);
-    return parsed;
-  };
-
-  // use react query to get abi from etherscan
-  const { data: abi, isError: abiError } = useQuery({
-    queryKey: ['abi', data?.to],
-    queryFn: async () => await getAbi(data?.to),
-    refetchOnWindowFocus: false,
-  });
+  // get the abi
+  const { data: abi } = useAbi(data?.to as Address);
 
   const getArgsTypes = ({ abi, functionName }: { abi: any[]; functionName: string }) =>
     abi.find((f) => f.name === functionName).inputs;
