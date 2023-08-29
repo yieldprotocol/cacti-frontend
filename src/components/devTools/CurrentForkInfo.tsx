@@ -7,6 +7,7 @@ import {
 import copy from 'copy-to-clipboard';
 import SettingsContext from '@/contexts/SettingsContext';
 import { Button } from '../shared/Button';
+import { useNetwork } from 'wagmi';
 
 export const CurrentForkInfo = () => {
   const {
@@ -39,6 +40,8 @@ export const CurrentForkInfo = () => {
     window.open(tenderlyUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const { chain } = useNetwork();
+
   return (
     <div>
       <div className="border">
@@ -47,7 +50,7 @@ export const CurrentForkInfo = () => {
             isForkedEnv ? 'bg-green-300' : 'bg-red-300'
           } bg-red-300`}
         >
-          {isForkedEnv ? 'Current forked environment' : 'Default fork'}
+          {isForkedEnv ? 'Current forked environment' : 'Default fork'} {chain?.id}
         </div>
         <div className="overflow-x-scroll p-4 font-mono text-xs">{forkEnvUrl}</div>
         <div className="flex gap-2 p-2 text-xs ">

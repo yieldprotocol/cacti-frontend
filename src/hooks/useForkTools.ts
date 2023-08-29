@@ -21,34 +21,40 @@ const useForkTools = (id?: string): ForkTools => {
   const { settings } = useContext(SettingsContext);
   const { isForkedEnv, forkId } = settings;
 
-  const forkUrl = id
-    ? `https://rpc.tenderly.co/fork/${id}`
-    : `https://rpc.tenderly.co/fork/${forkId}`;
+  const forkUrl = `https://rpc.tenderly.co/fork/${ id ?? forkId }`
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
   const { refetch } = useBalance();
   const provider = useProvider();
+  
   const forkProvider = useMemo(
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
   const forkSigner = isForkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
 
+
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
     const currentBlockNumber = await provider.getBlockNumber();
     const resp = await axios.post(
       forkAPI,
-      { network_id: 1, block_number: currentBlockNumber, chain_config: {
-        'chain_id': 10111 // chain_id used in the forked environment
-      }},
+      { network_id: 1, 
+        block_number: currentBlockNumber,
+        chain_config: { 
+          chain_id: 1277971
+        }
+      },
       {
         headers: {
           'X-Access-Key': process.env.NEXT_PUBLIC_TENDERLY_ACCESS_KEY as string,
         },
       }
     );
+
+
+    
     return `https://rpc.tenderly.co/fork/${resp.data.simulation_fork.id}`;
   }, [provider]);
 

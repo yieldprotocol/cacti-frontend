@@ -1,11 +1,8 @@
 import {
-  Dispatch,
   ReactNode,
   createContext,
-  useContext,
   useEffect,
   useReducer,
-  useState,
 } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
@@ -20,7 +17,7 @@ export enum Setting {
 
   FORCE_TRANSACTIONS = 'forceTransactions',
 
-  FORKED_ENV = 'isForkedEnv',
+  IS_FORKED_ENV = 'isForkedEnv',
   FORK_ENV_URL = 'forkEnvUrl',
 
   EXPERIMENTAL_UI = 'experimentalUi',
@@ -75,7 +72,6 @@ const initState: ISettings = {
 
   /* UI test */
   experimentalUi: true,
-
   developerTools: false,
 
   /** Development settings **/
@@ -121,7 +117,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   /* Set universal Shortcut keys for the some settings */
   useHotkeys('alt+f', () => {
     const currentSetting = settings.isForkedEnv;
-    changeSetting(Setting.FORKED_ENV, !currentSetting);
+    changeSetting(Setting.IS_FORKED_ENV, !currentSetting);
     toast(
       `${
         !currentSetting

@@ -1,7 +1,5 @@
-import { ReactNode, useContext } from 'react';
+import { useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useQueryClient } from 'react-query';
-import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   RainbowKitProvider,
@@ -11,8 +9,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
-import { goerli, zkSyncTestnet } from 'wagmi/chains';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { goerli, mainnet, zkSyncTestnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
@@ -20,36 +17,32 @@ import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/r
 import SettingsContext from './SettingsContext';
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
-  const queryClient = useQueryClient();
+  const { settings } = useContext(SettingsContext);
+  const { experimentalUi, isForkedEnv, forkEnvUrl } = settings;
 
   /* Use a fork url cached in the browser localStorage, else use the .env value */
-  const [forkUrl] = useCachedState(
+  const [cachedForkUrl] = useCachedState(
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
-  console.log('🦄 ~ file: ConnectionWrapper.tsx:29 ~ ConnectionWrapper ~ forkUrl:', forkUrl);
-
-  const {
-    settings: { experimentalUi },
-  } = useContext(SettingsContext);
 
   const mainnetFork = {
-    id: 1,
-    name: 'Mainnet Fork',
-    network: 'mainnet',
+    id: 1277971,
+    name: 'Cacti Mainnet Fork',
+    network: 'mainnet_fork',
     nativeCurrency: {
       decimals: 18,
       name: 'Ether',
       symbol: 'ETH',
     },
     rpcUrls: {
-      public: { http: [forkUrl] },
-      default: { http: [forkUrl] },
+      public: { http: [forkEnvUrl] },
+      default: { http: [forkEnvUrl] },
     },
   } as Chain;
 
   const { chains, provider } = configureChains(
-    [mainnetFork, goerli, zkSyncTestnet],
+    [isForkedEnv ? mainnetFork : mainnet],
     [publicProvider()]
   );
 
