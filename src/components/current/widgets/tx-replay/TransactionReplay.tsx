@@ -15,6 +15,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const { data, isLoading } = useTransaction({ hash: txHash });
   const { data: abi } = useAbi(data?.to as Address | undefined);
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  console.log('🦄 ~ file: TransactionReplay.tsx:18 ~ TransactionReplay ~ sendParams:', sendParams);
 
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;
 
@@ -34,11 +35,11 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const handleDecode = useCallback(() => {
     if (!data) return console.log('no data');
     if (!abi) {
-      console.log('no abi, is possibly a transfer');
+      console.log('no abi, is possibly an eth/native currency transfer');
       return setDecoded({
         to: data.to,
         value: data.value.toString(),
-        functionName: 'transfer',
+        functionName: 'transfer ETH',
       });
     }
 
@@ -114,6 +115,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       console.error('Decoded data is missing');
       return;
     }
+    console.log('🦄 ~ file: TransactionReplay.tsx:116 ~ getSendParams ~ decoded:', decoded);
 
     // Initialize a transaction object
     let transaction: Partial<UnsignedTransaction> = {
@@ -122,8 +124,9 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     };
 
     // If it's a simple transfer
-    if (!decoded.functionName && !decoded.args) {
+    if (decoded.functionName == 'transfer ETH') {
       transaction.data = '0x';
+      return;
     } else {
       if (!decoded.functionName || !decoded.args) {
         console.error('Missing function name or args');
@@ -183,17 +186,29 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
                   />
                 </div>
               ))}
-              {BigNumber.from(decoded.value)?.gt(ethers.constants.Zero) && (
-                <div className="mb-4">
-                  <label htmlFor={'value'} className="block font-medium text-gray-400">
-                    {'value'}
-                  </label>
-                  <TransactionReplayInput
-                    name={'value'}
-                    value={decoded.value}
-                    onChange={handleInputChange}
-                  />
-                </div>
+              {BigNumber.from(decoded.value)?.gt(ethers.constants.Zero) && decoded.to && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor={'to'} className="block font-medium text-gray-400">
+                      {'to'}
+                    </label>
+                    <TransactionReplayInput
+                      name={'to'}
+                      value={decoded.to}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor={'value'} className="block font-medium text-gray-400">
+                      {'value'}
+                    </label>
+                    <TransactionReplayInput
+                      name={'value'}
+                      value={decoded.value}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </>
               )}
               <button className="rounded-md bg-green-primary p-1.5" onClick={handleReset}>
                 Reset
