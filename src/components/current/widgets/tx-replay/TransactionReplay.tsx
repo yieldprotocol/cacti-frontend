@@ -24,7 +24,7 @@ const Input = ({ name, value, onChange }: { name: string; value: string; onChang
 const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;
 
-  // handles the state for the original decoded tx, as well as any arg or value input changes
+  // handles the state for the decoded tx, as well as any arg or value input changes
   const [decoded, setDecoded] = useState<{
     functionName: string;
     args: {
@@ -44,11 +44,11 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const getArgsTypes = ({ abi, functionName }: { abi: any[]; functionName: string }) =>
     abi.find((f) => f.name === functionName).inputs;
 
-  // handle arg changes
+  // handle arg and native value changes
   const handleArgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // handle changing the value param
+    // handle changing the native value param
     if (name === 'value') {
       setDecoded((d) => d && { ...d, value });
       return;
@@ -149,7 +149,9 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
 
   return (
     <>
-      {!data && !isLoading && <div>no data found for this transaction</div>}
+      {!data && !isLoading && (
+        <div>No data found for this transaction: please try a different transaction</div>
+      )}
       {!decoded ? (
         <SkeletonWrap />
       ) : (
