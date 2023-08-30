@@ -97,6 +97,11 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       setDecoded((d) => d && { ...d, value });
       return;
     }
+    // handle changing the to param
+    if (name === 'to') {
+      setDecoded((d) => d && { ...d, to: value });
+      return;
+    }
 
     // handle changing the args
     setDecoded((d) => {
@@ -115,7 +120,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       console.error('Decoded data is missing');
       return;
     }
-    console.log('🦄 ~ file: TransactionReplay.tsx:116 ~ getSendParams ~ decoded:', decoded);
+    console.log('🦄 ~ file: TransactionReplay.tsx:120 ~ getSendParams ~ decoded:', decoded);
 
     // Initialize a transaction object
     let transaction: Partial<UnsignedTransaction> = {
@@ -124,9 +129,8 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     };
 
     // If it's a simple transfer
-    if (decoded.functionName == 'transfer ETH') {
+    if (decoded.functionName === 'transfer ETH') {
       transaction.data = '0x';
-      return;
     } else {
       if (!decoded.functionName || !decoded.args) {
         console.error('Missing function name or args');
