@@ -1,75 +1,18 @@
-import { TxArgType } from './TransactionReplay';
-
-const TransactionReplayInput = ({
-  name,
-  value,
-  type,
-  onChange,
-}: {
+interface TransactionReplayInputProps {
   name: string;
   value: string;
-  type: TxArgType;
-  onChange: any;
-}) => {
-  if (type === 'bool') {
-    return (
-      <input
-        type="checkbox"
-        checked={value === 'true' ? true : false}
-        onChange={(e) => onChange({ name, value: e.target.checked.toString(), type })}
-      />
-    );
-  } else if (type.startsWith('uint') || type.startsWith('int')) {
-    return (
-      <input
-        type="number"
-        name={name}
-        className="input-class"
-        value={value}
-        onChange={(e) => onChange({ name, value: e.target.value, type })}
-      />
-    );
-  } else if (type === 'address') {
-    return (
-      <input
-        type="text"
-        name={name}
-        className="input-class"
-        value={value}
-        onChange={(e) => onChange({ name, value: e.target.value, type })}
-      />
-    );
-  } else if (type.startsWith('bytes')) {
-    return (
-      <input
-        type="text"
-        name={name}
-        className="input-class"
-        value={value}
-        onChange={(e) => onChange({ name, value: e.target.value, type })}
-      />
-    );
-  } else if (type === 'string') {
-    return (
-      <input
-        type="text"
-        name={name}
-        className="input-class"
-        value={value}
-        onChange={(e) => onChange({ name, value: e.target.value, type })}
-      />
-    );
-  }
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-  return (
-    <input
-      type="text"
-      name={name}
-      className="input-class"
-      value={value}
-      onChange={(e) => onChange({ name, value: e.target.value, type })}
-    />
-  );
-};
+const TransactionReplayInput = ({ name, value, onChange }: TransactionReplayInputProps) => (
+  <input
+    className="mt-2 w-full rounded-md border border-gray-700 bg-gray-primary p-2 hover:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+    type="text"
+    name={name}
+    value={value}
+    placeholder={value}
+    onChange={onChange}
+  />
+);
 
 export default TransactionReplayInput;
