@@ -50,7 +50,7 @@ export const CurrentForkInfo = () => {
             isForkedEnv ? 'bg-green-300' : 'bg-red-300'
           } bg-red-300`}
         >
-          {isForkedEnv ? 'Current forked environment' : 'Default fork'} {chain?.id}
+          {isForkedEnv ? 'Current forked environment ID: ' : 'Default fork'} {chain?.id}
         </div>
         <div className="overflow-x-scroll p-4 font-mono text-xs">{forkEnvUrl}</div>
         <div className="flex gap-2 p-2 text-xs ">
