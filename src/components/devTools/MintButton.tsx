@@ -1,22 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useProvider } from 'wagmi';
 import { Button } from '../shared/Button';
 import useBalance from '../cactiComponents/hooks/useBalance';
+import SettingsContext from '@/contexts/SettingsContext';
 
 export const MintButton = () => {
   const { address } = useAccount();
   const [isLoading, setLoading] = useState(false);
-  const [isVisible, setVisible] = useState(false);
-  const { chain } = useNetwork();
   const { refetch } = useBalance();
   const provider = useProvider() as JsonRpcProvider;
-
-  useEffect(() => {
-    if (!address || chain?.id != 1) setVisible(false);
-    setVisible(true);
-  }, [address, chain?.id]);
+  const {
+    settings: { isForkedEnv },
+  } = useContext(SettingsContext);
 
   const mint = async () => {
     const params = [
@@ -28,15 +25,14 @@ export const MintButton = () => {
     await refetch();
     setLoading(false);
   };
-  return !isVisible ? (
-    <></>
-  ) : (
+  return (
+    isForkedEnv ? 
     <Button
       onClick={mint}
       disabled={isLoading}
       className="flex w-full text-xs disabled:bg-gray-400"
     >
       Mint 10 ETH
-    </Button>
+    </Button> : <></>
   );
 };
