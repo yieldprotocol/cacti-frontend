@@ -15,6 +15,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const { data, isLoading } = useTransaction({ hash: txHash });
   const { data: abi } = useAbi(data?.to as Address | undefined);
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [isError, setIsError] = useState(false);
 
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;
 
@@ -42,7 +43,18 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       });
     }
 
-    const { args, functionName } = decodeFunctionData({ abi, data: data.data as Address });
+    // Decode the function data
+    let args: string[] = [];
+    let functionName: string;
+
+    try {
+      const decoded = decodeFunctionData({ abi, data: data.data as Address });
+      args = decoded.args as string[];
+      functionName = decoded.functionName;
+    } catch (e) {
+      setIsError(true);
+      return console.error('error decoding function data', e);
+    }
 
     // Get the types of the arguments for the function
     const getArgsTypes = ({
@@ -168,9 +180,14 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
 
   return (
     <>
-      {!data && !isLoading && <div>no data found for this transaction</div>}
+      {isError && <SingleLineResponse>error handling this transaction</SingleLineResponse>}
+      {!data && !isLoading && (
+        <SingleLineResponse>no data found for this transaction</SingleLineResponse>
+      )}
       {!decoded ? (
-        <SkeletonWrap />
+        isError ? null : (
+          <SkeletonWrap />
+        )
       ) : (
         <>
           <HeaderResponse text={`${decoded.functionName}`} altUrl={explorerUrl} />
