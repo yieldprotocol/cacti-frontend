@@ -15,7 +15,6 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const { data, isLoading } = useTransaction({ hash: txHash });
   const { data: abi } = useAbi(data?.to as Address | undefined);
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
-  console.log('🦄 ~ file: TransactionReplay.tsx:18 ~ TransactionReplay ~ sendParams:', sendParams);
 
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;
 
@@ -120,7 +119,6 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       console.error('Decoded data is missing');
       return;
     }
-    console.log('🦄 ~ file: TransactionReplay.tsx:120 ~ getSendParams ~ decoded:', decoded);
 
     // Initialize a transaction object
     let transaction: Partial<UnsignedTransaction> = {
