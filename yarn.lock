@@ -6047,18 +6047,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/chains@npm:1.7.0":
-  version: 1.7.0
-  resolution: "@wagmi/chains@npm:1.7.0"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 24e930d2432def5d7cbba1d390622d2cb02f002c45d3806e5a95a814af058eb483a234cc1ad5eef650bc926641b6f31e795fb3941b25de585b58dd31407a4980
-  languageName: node
-  linkType: hard
-
 "@wagmi/connectors@npm:0.3.24":
   version: 0.3.24
   resolution: "@wagmi/connectors@npm:0.3.24"
@@ -8278,8 +8266,8 @@ __metadata:
     swr: ^2.0.4
     tailwind-styled-components: ^2.2.0
     tailwindcss: ^3.2.4
-    typescript: 4.9.4
-    viem: ^1.8.1
+    typescript: ^5.2.2
+    viem: ^1.9.3
     wagmi: ^0.12.0
     zksync-web3: ^0.14.3
   languageName: unknown
@@ -19081,23 +19069,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.4":
-  version: 4.9.4
-  resolution: "typescript@npm:4.9.4"
+"typescript@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "typescript@npm:5.2.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
+  checksum: 7912821dac4d962d315c36800fe387cdc0a6298dba7ec171b350b4a6e988b51d7b8f051317786db1094bd7431d526b648aba7da8236607febb26cf5b871d2d3c
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.4#~builtin<compat/typescript>":
-  version: 4.9.4
-  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"
+"typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+  version: 5.2.2
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=ad5954"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 1caaea6cb7f813e64345190fddc4e6c924d0b698ab81189b503763c4a18f7f5501c69362979d36e19c042d89d936443e768a78b0675690b35eb663d19e0eae71
+  checksum: 07106822b4305de3f22835cbba949a2b35451cad50888759b6818421290ff95d522b38ef7919e70fb381c5fe9c1c643d7dea22c8b31652a717ddbd57b7f4d554
   languageName: node
   linkType: hard
 
@@ -19598,9 +19586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "viem@npm:1.8.1"
+"viem@npm:^1.9.3":
+  version: 1.9.3
+  resolution: "viem@npm:1.9.3"
   dependencies:
     "@adraffy/ens-normalize": 1.9.0
     "@noble/curves": 1.1.0
@@ -19608,7 +19596,6 @@ __metadata:
     "@scure/bip32": 1.3.0
     "@scure/bip39": 1.2.0
     "@types/ws": ^8.5.4
-    "@wagmi/chains": 1.7.0
     abitype: 0.9.3
     isomorphic-ws: 5.0.0
     ws: 8.12.0
@@ -19617,7 +19604,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: ab8515cc54f07ad1ba2dc0906f0614e3c4be4c7fda3e13f22475eaf50c9a68cfce424d65738507e210fdfa1db52ec587242544504360fdf5b4b146d2e1534c16
+  checksum: ad7aa84853088ce22232ec31a571dff80165867bda7ea87f08da1688f5e58a8d5140c8369dd45dbf020eddcb1be7fc7da9c2a71fea3eb00b8ada7115d955ba16
   languageName: node
   linkType: hard
 
