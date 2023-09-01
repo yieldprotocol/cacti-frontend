@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const ChatBoxDynamic = dynamic(() => import('@/components/experimental_/ChatBox_'), {
+const ChatBoxDynamic = dynamic(() => import('@/components/current/ChatBox'), {
   ssr: false,
 });
 

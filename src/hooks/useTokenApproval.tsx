@@ -9,8 +9,8 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import useBalance from '@/components/cactiComponents/hooks/useBalance';
 import SettingsContext from '@/contexts/SettingsContext';
-import useBalance from '@/hooks/useBalance';
 import useForkTools from '@/hooks/useForkTools';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';

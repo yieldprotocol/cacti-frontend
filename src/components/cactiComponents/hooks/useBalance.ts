@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { AddressZero } from '@ethersproject/constants';
-import { BigNumber, ethers } from 'ethers';
-import { useAccount, useBalance as useBalanceWagmi, useContractRead } from 'wagmi';
-import erc1155ABI from '@/abi/erc1155ABI.json';
+import { useQuery } from 'react-query';
+import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
+import { fetchBalance, readContract } from 'wagmi/actions';
+import erc1155ABI from '@/abi/erc1155ABI';
 import useChainId from '@/hooks/useChainId';
 
 /**
@@ -12,47 +13,68 @@ import useChainId from '@/hooks/useChainId';
 const useBalance = (
   tokenAddress?: `0x${string}`,
   compareAmount?: BigNumber,
-  erc1155TokenId?: string,
-  isEth?: boolean
+  erc1155TokenId?: string
 ) => {
   const chainId = useChainId();
   const { address: account } = useAccount();
 
-  /* erc20 or eth if zero or no address is specified */
-  const { data, isLoading } = useBalanceWagmi({
-    address: account,
-    token: isEth || tokenAddress === AddressZero ? undefined : tokenAddress,
-    enabled: !erc1155TokenId, // if erc1155TokenId is specified, don't get erc20 balance
-    chainId,
-  });
+  const { data, ...rest } = useQuery({
+    queryKey: ['balance', account, tokenAddress, erc1155TokenId, chainId],
+    queryFn: async () => {
+      if (!account) {
+        console.log('Account is required to fetch balance.');
+        return;
+      }
 
-  /* erc1155 */
-  const { data: erc1155_data, isLoading: erc1155_Loading } = useContractRead({
-    address: tokenAddress,
-    abi: erc1155ABI,
-    functionName: 'balanceOf',
-    args: [account, erc1155TokenId],
-    enabled: !!erc1155TokenId, // if erc1155TokenId is specified, get erc1155 balance
+      // fetch native balance
+      if (!tokenAddress) {
+        return (
+          await fetchBalance({
+            address: account,
+            chainId,
+          })
+        ).value;
+      }
+
+      if (erc1155TokenId) {
+        const erc1155Bal = await readContract({
+          address: tokenAddress,
+          chainId,
+          abi: erc1155ABI,
+          functionName: 'balanceOf',
+          args: [account, BigNumber.from(erc1155TokenId)],
+        });
+        return erc1155Bal;
+      }
+
+      return (
+        await fetchBalance({
+          address: account,
+          token: tokenAddress,
+          chainId,
+        })
+      ).value;
+    },
+    refetchOnWindowFocus: false,
   });
 
   const [comparisons, setComparisons] = useState<any>();
 
   /* keep the comparisons in sync with the balance */
   useEffect(() => {
-    const data_bn = erc1155TokenId ? (erc1155_data as BigNumber) : data?.value;
-    if (compareAmount && data_bn) {
+    if (compareAmount && data) {
       setComparisons({
-        isZero: data_bn.isZero(),
-        isGTEcompared: data_bn.gt(compareAmount),
-        isEQcompared: data_bn.eq(compareAmount),
-        isLTcompared: data_bn.lt(compareAmount),
+        isZero: data.isZero(),
+        isGTEcompared: data.gte(compareAmount),
+        isEQcompared: data.eq(compareAmount),
+        isLTcompared: data.lt(compareAmount),
       });
     }
-  }, [compareAmount, data, erc1155TokenId, erc1155_data]);
+  }, [compareAmount, data, erc1155TokenId]);
 
   return {
-    data: erc1155TokenId ? (erc1155_data as BigNumber) : data?.value,
-    isLoading: erc1155TokenId ? erc1155_Loading : isLoading,
+    data,
+    ...rest,
 
     // comparisons
     isZero: comparisons?.isZero,
