@@ -16,7 +16,7 @@ interface ArbitrumDepositETHProps {
 
 // the proxy contract address, not the actual implementation address
 const INBOX_CONTRACT_ADDRESS = '0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f';
-const L2_CHAIN_ID = 42161;
+export const L2_CHAIN_ID = 42161;
 
 const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) => {
   const l1Provider = useProvider({ chainId: 1 });
