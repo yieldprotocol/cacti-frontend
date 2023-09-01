@@ -138,7 +138,8 @@ export const ActionResponse = ({
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
     if (_approvalParams === undefined) return setHasEnoughBalance(true);
-    if (BigNumber.from(sendParams?.value || '0').gt(ethBal!)) return setHasEnoughBalance(false);
+    if (BigNumber.from(sendParams?.value || '0').gt(BigNumber.from(ethBal || '0')))
+      return setHasEnoughBalance(false);
 
     // check approval token balance
     if (balance && _approvalParams?.approvalAmount) {
