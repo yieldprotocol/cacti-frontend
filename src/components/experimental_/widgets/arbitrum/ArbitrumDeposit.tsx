@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import { useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
-import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
+import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import Inbox from './abi/Inbox';
@@ -19,13 +19,13 @@ const L2_CHAIN_ID = 42161;
 const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) => {
   const l1Provider = useProvider({ chainId: 1 });
   const l2Provider = useProvider({ chainId: L2_CHAIN_ID });
-  const { data: token, isETH } = useToken(tokenSymbol);
+  const { data: token, isETH } = useToken(tokenSymbol.toUpperCase());
   const { address: account } = useAccount();
   const amount = useInput(amtString, token?.symbol!);
 
   const [erc20SendParams, setErc20SendParams] = useState<UnsignedTransaction>();
 
-  const { data: depositEth } = usePrepareContractWrite({
+  const { data: depositEth, isError } = usePrepareContractWrite({
     address: INBOX_CONTRACT_ADDRESS,
     abi: Inbox,
     functionName: 'depositEth',
