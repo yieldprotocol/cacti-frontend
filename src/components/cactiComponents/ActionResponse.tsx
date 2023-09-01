@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
 import useToken from '@/hooks/useToken';
@@ -13,7 +14,6 @@ import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 
 export enum ActionResponseState {
   LOADING = 'LOADING', // background async checks
@@ -58,7 +58,7 @@ export type ActionResponseProps = {
   disabled?: boolean;
   skipBalanceCheck?: boolean;
   stepper?: boolean;
-  onSuccess?: (receipt?: TransactionReceipt ) => void;
+  onSuccess?: (receipt?: TransactionReceipt) => void;
   onError?: (receipt?: TransactionReceipt) => void;
 };
 
@@ -78,7 +78,6 @@ export const ActionResponse = ({
   onSuccess,
   onError,
 }: ActionResponseProps) => {
-
   const { address } = useAccount();
   const _approvalParams = useMemo<ApprovalBasicParams>(
     () =>
@@ -139,13 +138,12 @@ export const ActionResponse = ({
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
     if (_approvalParams === undefined) return setHasEnoughBalance(true);
-    if (sendParams?.value! >= ethBal!) {
-      return setHasEnoughBalance(false);
-    }
+    if (BigNumber.from(sendParams?.value || '0').gt(ethBal!)) return setHasEnoughBalance(false);
 
     // check approval token balance
-    if (balance && _approvalParams?.approvalAmount)
+    if (balance && _approvalParams?.approvalAmount) {
       setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+    }
   }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
@@ -153,7 +151,6 @@ export const ActionResponse = ({
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
-
     if (disabled) {
       setButtonLabel(label ?? 'Disabled');
       return setState(ActionResponseState.DISABLED);
