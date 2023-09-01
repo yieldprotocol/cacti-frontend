@@ -55,6 +55,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
           });
         }
 
+        // TODO get the relevant to chain from hop
         const req = await bridge.populateSendTx(input?.value, _fromChain, toChain);
         setSendParams(req);
       } catch (e) {
