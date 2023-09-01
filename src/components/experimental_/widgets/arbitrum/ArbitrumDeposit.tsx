@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk';
-import { BigNumber, UnsignedTransaction } from 'ethers';
-import { useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
+import { UnsignedTransaction } from 'ethers';
+import { Interface } from 'ethers/lib/utils.js';
+import { erc20ABI, useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
+import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import Inbox from './abi/Inbox';
@@ -23,7 +25,9 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
   const { address: account } = useAccount();
   const amount = useInput(amtString, token?.symbol!);
 
+  const [erc20ApprovalParams, setErc20ApprovalParams] = useState<ApprovalBasicParams>();
   const [erc20SendParams, setErc20SendParams] = useState<UnsignedTransaction>();
+  const [error, setError] = useState('');
 
   const { data: depositEth } = usePrepareContractWrite({
     address: INBOX_CONTRACT_ADDRESS,
@@ -33,13 +37,15 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
     enabled: isETH,
   });
 
-  if (!token) <>token not supported</>;
-  if (!amount?.value) <>amount specified is invalid</>;
-
   // handle erc20 (wip)
   useEffect(() => {
     (async () => {
       if (isETH) return;
+      if (!l1Provider) return setError('No L1 provider detected');
+      if (!l2Provider) return setError('No L2 provider detected');
+      if (!token?.address) return setError('No token address detected');
+      if (!amount?.value) return setError('No amount detected');
+      if (!account) return setError('No account detected');
 
       const arbitrumOne = await getL2Network(
         L2_CHAIN_ID /** <-- chain id of target Arbitrum chain */
@@ -47,28 +53,52 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
 
       const erc20Bridger = new Erc20Bridger(arbitrumOne);
 
+      // get approval params
       try {
+        const { data } = await erc20Bridger.getApproveTokenRequest({
+          l1Provider,
+          erc20L1Address: token.address,
+          amount: amount.value,
+        });
+
+        // get the spender address
+        const iface = new Interface(erc20ABI);
+        const parsed = iface.parseTransaction({ data: data.toString() });
+        const spender = parsed.args[0];
+
+        setErc20ApprovalParams({
+          approvalAmount: amount.value,
+          tokenAddress: token.address,
+          spender,
+          skipApproval: false,
+        });
+      } catch (error) {
+        console.error(error);
+        setError('There was an error initiating the transaction');
+      }
+
+      try {
+        // get the send params
         const req = await erc20Bridger.getDepositRequest({
           l1Provider,
           l2Provider,
-          erc20L1Address: token?.address!,
-          amount: amount?.value!,
-          from: account!,
-          retryableGasOverrides: {
-            gasLimit: {
-              min: BigNumber.from(100000000000),
-            },
-          },
+          erc20L1Address: token.address,
+          amount: amount.value,
+          from: account,
         });
 
         setErc20SendParams(req.txRequest);
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
+        setError('There was an error initiating the transaction');
       }
     })();
   }, [account, amount?.value, isETH, l1Provider, l2Provider, token?.address]);
 
-  const sendParams = isETH ? depositEth?.request : erc20SendParams;
+  const sendParams = useMemo(
+    () => (isETH ? depositEth?.request : erc20SendParams),
+    [depositEth?.request, erc20SendParams, isETH]
+  );
 
   return (
     <>
@@ -79,7 +109,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
       <ActionResponse
         label={`Deposit ${amount?.formatted || ''} ${tokenSymbol} to Arbitrum`}
         txParams={undefined}
-        approvalParams={undefined}
+        approvalParams={erc20ApprovalParams}
         sendParams={sendParams}
       />
     </>
