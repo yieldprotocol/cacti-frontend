@@ -42,7 +42,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   } as Chain;
 
   const { chains, provider } = configureChains(
-    [isForkedEnv ? mainnetFork : mainnet],
+    [isForkedEnv ? mainnetFork : mainnet], // here we select one, so the other is never an option in a forked Env
     [publicProvider()]
   );
 

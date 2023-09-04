@@ -27,13 +27,11 @@ const useForkTools = (id?: string): ForkTools => {
   const { address: account } = useAccount();
   const { refetch } = useBalance();
   const provider = useProvider();
-  
   const forkProvider = useMemo(
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
   );
   const forkSigner = isForkedEnv && forkUrl ? forkProvider?.getSigner(account) : undefined;
-
 
   const createNewFork = useCallback(async (): Promise<string> => {
     const forkAPI = `http://api.tenderly.co/api/v1/account/${process.env.NEXT_PUBLIC_TENDERLY_USER}/project/${process.env.NEXT_PUBLIC_TENDERLY_PROJECT}/fork`;
@@ -52,9 +50,6 @@ const useForkTools = (id?: string): ForkTools => {
         },
       }
     );
-
-
-    
     return `https://rpc.tenderly.co/fork/${resp.data.simulation_fork.id}`;
   }, [provider]);
 
