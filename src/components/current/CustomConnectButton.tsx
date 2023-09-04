@@ -2,11 +2,11 @@ import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatEther } from 'ethers/lib/utils.js';
 import { abbreviateHash, cleanValue } from '@/utils';
-import Avatar from '../shared/Avatar';
 import useBalance from '../cactiComponents/hooks/useBalance';
 import useEnsName from '../cactiComponents/hooks/useEnsName';
-import { buttonStyle } from './layout/sidebar/NewChatButton';
+import Avatar from '../shared/Avatar';
 import SkeletonWrap from '../shared/SkeletonWrap';
+import { buttonStyle } from './layout/sidebar/NewChatButton';
 
 const CustomConnectButton = () => {
   const { data: balance } = useBalance();
@@ -64,7 +64,11 @@ const CustomConnectButton = () => {
               if (chain.unsupported) {
                 return (
                   <button onClick={openChainModal} type="button">
-                    <div className="text-xs text-red-500">Wrong network</div>
+                    <div
+                      className={`flex items-center justify-center text-xs text-red-500/70 ${buttonStyle}`}
+                    >
+                      Wrong Network
+                    </div>
                   </button>
                 );
               }
