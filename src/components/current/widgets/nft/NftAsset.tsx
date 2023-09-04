@@ -3,6 +3,7 @@ import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { InlineChip } from '@/components/cactiComponents/InlineChip';
+import { getBackendApiUrl } from '@/utils/backend';
 
 export interface NftAssetProps {
   network: Network;
@@ -41,9 +42,11 @@ export const NftAsset = ({
   attributes
 }: NftAssetProps) => {
 
+  const backendUrl = getBackendApiUrl();
+  
   return (
     <ImageResponse
-      image={previewImageUrl}
+      image={`${backendUrl}/center_image/${network}/${address}/${tokenId}/small`}
       imageTags={
         variant === ImageVariant.SHOWCASE
           ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
