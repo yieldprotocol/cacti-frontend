@@ -5,6 +5,7 @@ import ChatList from '../../ChatList';
 import AccountStatus from './AccountStatus';
 import MoreItems from './MoreItems';
 import NewChatButton from './NewChatButton';
+import ForkStatus from './ForkStatus';
 
 const Sidebar = ({
   isOpen,
@@ -31,8 +32,9 @@ const Sidebar = ({
       <div className="relative flex w-full flex-col self-end">
         <div className="p-2">
           <MoreItems />
-          <div className="p-2">
+          <div className="p-2 space-y-2">
             <AccountStatus />
+            <ForkStatus />
           </div>
         </div>
       </div>
