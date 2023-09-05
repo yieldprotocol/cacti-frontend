@@ -1,7 +1,5 @@
-import { ReactNode, useContext } from 'react';
+import { useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useQueryClient } from 'react-query';
-import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   RainbowKitProvider,
@@ -12,7 +10,6 @@ import {
 import axios from 'axios';
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
@@ -20,14 +17,12 @@ import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/r
 import SettingsContext from './SettingsContext';
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
-  const queryClient = useQueryClient();
 
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
-  console.log('🦄 ~ file: ConnectionWrapper.tsx:29 ~ ConnectionWrapper ~ forkUrl:', forkUrl);
 
   const {
     settings: { experimentalUi },
