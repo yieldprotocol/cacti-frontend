@@ -17,7 +17,7 @@ const ChatBox = () => {
   return (
     <div className="relative flex h-full w-full flex-col overflow-auto">
 
-      <NearWidget /> 
+      <NearWidget nearUser='aave-v3.near' nearWidgetName='AAVE' /> 
       {/* chat sharing modal*/}
       <ShareChatModal id={id as string} />
 

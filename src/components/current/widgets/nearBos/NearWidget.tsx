@@ -22,19 +22,26 @@ import { useEthersProviderContext } from './data/web3';
 // import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from './data/widgets';
 
-function NearWidgetUnwrapped(props: any) {
+interface NearWidgetProps {
+  nearUser: string;
+  nearWidgetName: string;
+  nearWidgetProps?: Map<any, any>;
+}
+
+function NearWidgetUnwrapped(props: NearWidgetProps) {
   // const { widgetSrc } = useParams();
   const [widgetProps, setWidgetProps] = useState({});
-  const src = 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
+  
+  const src = `${props.nearUser}/widget/${props.nearWidgetName}` // 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
 
   // useEffect(() => {
-  //   setWidgetProps(
-  //     [...query.entries()].reduce((props, [key, value]) => {
-  //       props[key] = value;
-  //       return props;
+  //   if (props.nearWidgetProps) setWidgetProps(
+  //     [...props.nearWidgetProps.entries()].reduce((props_, [key, value]) => {
+  //       props_[key] = value;
+  //       return props_;
   //     }, {})
   //   );
-  // }, [query]);
+  // }, [props.nearWidgetProps]);
 
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
@@ -164,10 +171,10 @@ function NearWidgetUnwrapped(props: any) {
   );
 }
 
-const NearWidget = () => {
+const NearWidget = (props: NearWidgetProps) => {
    const ethersProviderContext = useEthersProviderContext();
   return (
-    <EthersProviderContext.Provider value={ethersProviderContext}><NearWidgetUnwrapped /></EthersProviderContext.Provider> 
+    <EthersProviderContext.Provider value={ethersProviderContext}><NearWidgetUnwrapped {...props} /></EthersProviderContext.Provider> 
   )
 }
 
