@@ -275,6 +275,10 @@ export const Widget = (props: WidgetProps) => {
   widgets.set('TextResponse', <TextResponse {...parsedArgs} />);
 
   widgets.set('table-container', <TableResponse {...parsedArgs} />);
+  widgets.set('base-deposit-eth', <BaseDepositETH userAmount={parsedArgs[0]} />);
+  widgets.set('base-withdraw-eth', <BaseWithdrawETH userAmount={parsedArgs[0]} />);
+  widgets.set('base-deposit-erc20', <BaseDepositERC20 localToken={parsedArgs[0]} remoteToken= {parsedArgs[1]} userAmount={parsedArgs[2]} />);
+  widgets.set('base-withdraw-erc20', <BaseWithdrawERC20 localToken={parsedArgs[0]} remoteToken= {parsedArgs[1]} userAmount={parsedArgs[2]} />);
   widgets.set(
     'zksync-deposit',
     <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
