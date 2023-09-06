@@ -24,7 +24,7 @@ import { NetworkId, Widgets } from './data/widgets';
 
 interface NearWidgetProps {
   nearUser: string;
-  nearWidgetName: string;
+  nearWidget: string;
   nearWidgetProps?: Map<any, any>;
 }
 
@@ -32,7 +32,7 @@ function NearWidgetUnwrapped(props: NearWidgetProps) {
   // const { widgetSrc } = useParams();
   const [widgetProps, setWidgetProps] = useState({});
   
-  const src = `${props.nearUser}/widget/${props.nearWidgetName}` // 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
+  const src = `${props.nearUser}/widget/${props.nearWidget}` // 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
 
   // useEffect(() => {
   //   if (props.nearWidgetProps) setWidgetProps(

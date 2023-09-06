@@ -269,7 +269,7 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
     setMessages([
       ...messages,
       {
-        messageId: '',
+        messageId: 'spoof',
         actor: interactor,
         payload: msg,
         feedback: 'n/a',

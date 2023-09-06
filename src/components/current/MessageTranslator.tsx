@@ -37,6 +37,7 @@ import YieldProtocolLendClose from './widgets/yield-protocol/actions/lend-close/
 import YieldProtocolLend from './widgets/yield-protocol/actions/lend/YieldProtocolLend';
 import ZKSyncDeposit from './widgets/zksync/ZKSyncDeposit';
 import ZKSyncWithdraw from './widgets/zksync/ZKSyncWithdraw';
+import NearWidget from './widgets/nearBos/NearWidget';
 
 /**
  * This function parses the args passed to a widget,
@@ -310,6 +311,9 @@ export const Widget = (props: WidgetProps) => {
     <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+
+
+  widgets.set('near-bos', <NearWidget  nearUser={parsedArgs[0]} nearWidget={parsedArgs[1]} nearWidgetProps={parsedArgs[3]}  />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
