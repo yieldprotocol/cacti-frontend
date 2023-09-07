@@ -242,11 +242,8 @@ export const useEthersProviderContext = singletonHook(
   () => {
     
     const [{ wallet }] = useConnectWallet();
-
-    const provider = useProvider();
-
     const [ethersProvider, setEthersProvider] = useState(
-      provider
+      defaultEthersProviderContext
     );
     
     useEffect(() => {
@@ -270,8 +267,6 @@ export const useEthersProviderContext = singletonHook(
         }
       })();
     }, []);
-
-    // const provider = useProvider();
 
     useEffect(() => {
       setEthersProvider({
