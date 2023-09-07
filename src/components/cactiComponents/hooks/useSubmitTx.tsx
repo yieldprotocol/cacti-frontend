@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import {
-  CallOverrides,
-  Overrides,
-  PayableOverrides,
-  UnsignedTransaction,
-} from 'ethers';
+import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
   usePrepareContractWrite,
   usePrepareSendTransaction,
@@ -77,7 +72,7 @@ const useSubmitTx = (
     isLoading: isPending,
     isError,
     isSuccess,
-    status
+    status,
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
@@ -120,7 +115,7 @@ const useSubmitTx = (
     isPending,
     isSuccess,
     error,
-    status
+    status,
   };
 };
 

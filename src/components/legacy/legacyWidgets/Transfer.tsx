@@ -9,13 +9,13 @@ import {
   useSendTransaction,
 } from 'wagmi';
 import { WidgetError } from '@/components/legacy/legacyWidgets/helpers';
+import { Button } from '@/components/shared/Button';
 import useToken from '@/hooks/useToken';
 import { Token } from '@/types';
 import { shortenAddress } from '@/utils';
+import { TxStatus } from '../legacyComponents/TxStatus';
 import { ActionPanel } from './helpers/ActionPanel';
 import { ConnectFirst } from './helpers/ConnectFirst';
-import { Button } from '@/components/shared/Button';
-import { TxStatus } from '../legacyComponents/TxStatus';
 
 interface TransferButtonProps {
   token: Token;

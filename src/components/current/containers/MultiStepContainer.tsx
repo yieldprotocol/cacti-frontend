@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { UnsignedTransaction } from 'ethers';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { UnsignedTransaction } from 'ethers';
 import { useChatContext } from '@/contexts/ChatContext';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';

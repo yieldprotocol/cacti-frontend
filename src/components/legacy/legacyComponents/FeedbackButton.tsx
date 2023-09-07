@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
-import { Message, useChatContext } from '@/contexts/ChatContext';
 import { IconBtn } from '@/components/shared/IconButton';
+import { Message, useChatContext } from '@/contexts/ChatContext';
 
 export const FeedbackButton = ({ message }: { message: Message }) => {
   const { messageId, feedback: initialFeedback } = message;

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { findTokenBySymbol } from '@/utils';
+import SkeletonWrap from '../shared/SkeletonWrap';
 import { InlineChip } from './InlineChip';
 import { ResponseWrap } from './helpers/layout';
-import SkeletonWrap from '../shared/SkeletonWrap';
 
 /**
 * Dual Line Response Elements are generally used for swap, trading etc. interfaces where user wants to get addtional information about a market, or token.  

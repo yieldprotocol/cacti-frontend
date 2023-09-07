@@ -2,10 +2,10 @@ import { Network, useCollection } from '@center-inc/react';
 import { Address } from 'wagmi';
 import { ImageResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
+import { abbreviateHash } from '@/utils';
 import { Widget } from '../../MessageTranslator';
 import ListContainer from '../../containers/ListContainer';
 import { NftAsset } from './NftAsset';
-import { abbreviateHash } from '@/utils';
 
 interface NftCollectionContainerProps {
   network: Network;
@@ -28,7 +28,6 @@ export const NftCollection = ({
   variant,
   assetsToShow = [],
 }: NftCollectionContainerProps) => {
-  
   /**
    * Get the  array of the asset ids to show:
    * */
@@ -53,9 +52,9 @@ export const NftCollection = ({
         items={[
           <ImageResponse
             image={previewImageUrl}
-            imageTags={[`${(numAssets || 'Unknown')!.toString()} Assets`, network.split("-")[0] ]}
+            imageTags={[`${(numAssets || 'Unknown')!.toString()} Assets`, network.split('-')[0]]}
             title={name}
-            subTitle={abbreviateHash(address,8)}
+            subTitle={abbreviateHash(address, 8)}
             imageLink={`https://center.app/${network}/collections/${address}`}
             key={address}
             variant={variant}

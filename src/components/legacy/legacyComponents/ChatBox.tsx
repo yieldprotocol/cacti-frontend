@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { ResetButton } from '@/components/devTools/ResetButton';
+import { useChatContext } from '@/contexts/ChatContext';
+import { Spinner } from '@/utils';
 import { MessageInput } from './MessageInput';
 import { MessageList } from './MessageList';
 import WelcomeMessage from './WelcomeMessage';
-import { useChatContext } from '@/contexts/ChatContext';
-import { Spinner } from '@/utils';
-import { ResetButton } from '@/components/devTools/ResetButton';
 
 const ChatBox = () => {
   const { messages } = useChatContext();
