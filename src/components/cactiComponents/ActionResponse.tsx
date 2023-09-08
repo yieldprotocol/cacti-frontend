@@ -250,6 +250,7 @@ export const ActionResponse = ({
     isWaitingOnUser,
     submitTx,
     token?.symbol,
+    disabled,
   ]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */

@@ -31,6 +31,7 @@ import { NftCollection } from './widgets/nft/NftCollection';
 import RethDeposit from './widgets/rocketPool/rocketPoolDeposit';
 import RethWithdraw from './widgets/rocketPool/rocketPoolWithdraw';
 import Transfer from './widgets/transfer/Transfer';
+import TransactionReplay from './widgets/tx-replay/TransactionReplay';
 import Uniswap from './widgets/uniswap/Uniswap';
 import WrapEth from './widgets/weth/WrapEth';
 import YieldProtocolBorrowClose from './widgets/yield-protocol/actions/borrow-close/YieldProtocolBorrowClose';
@@ -308,6 +309,7 @@ export const Widget = (props: WidgetProps) => {
     <WithdrawVault withdrawToken={parsedArgs[0]} amount={parsedArgs[1]} vault={parsedArgs[2]} />
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
+  widgets.set('tx-replay', <TransactionReplay txHash={parsedArgs[0]} />);
 
   widgets.set(
     'arbitrum-deposit',
