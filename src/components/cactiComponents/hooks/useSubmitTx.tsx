@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import {
-  CallOverrides,
-  Overrides,
-  PayableOverrides,
-  UnsignedTransaction,
-} from 'ethers';
+import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
 import {
   usePrepareContractWrite,
   usePrepareSendTransaction,
@@ -62,7 +57,7 @@ const useSubmitTx = (
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig, isError: isPrepareError } = usePrepareSendTransaction({
-    request: { ...(writeConfig.request ?? sendParams), gasLimit: 500000 },
+    request: { ...(writeConfig.request ?? sendParams), gasLimit: sendParams?.gasLimit || 500000 },
     enabled: true,
     onError: (e) => console.log('prepare send error', e),
   });
@@ -77,7 +72,7 @@ const useSubmitTx = (
     isLoading: isPending,
     isError,
     isSuccess,
-    status
+    status,
   } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
@@ -120,7 +115,7 @@ const useSubmitTx = (
     isPending,
     isSuccess,
     error,
-    status
+    status,
   };
 };
 
