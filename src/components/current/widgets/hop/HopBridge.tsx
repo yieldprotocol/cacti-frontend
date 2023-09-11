@@ -66,12 +66,8 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
 
   return (
     <>
-      <HeaderResponse text={`Bridge ${tokenSymbol} Tokens using Hop Protocol`} />
-      <ResponseRow>
-        <SingleLineResponse tokenSymbol={tokenSymbol} value={input?.formatted} />
-        <IconResponse icon="forward" />
-        <SingleLineResponse tokenSymbol={tokenSymbol} />
-      </ResponseRow>
+      <HeaderResponse text={`Bridge ${tokenSymbol} using Hop Protocol`} />
+      <SingleLineResponse tokenSymbol={tokenSymbol} value={input?.formatted} />
       <ActionResponse
         label={`Bridge ${input?.formatted || ''} ${tokenSymbol} from ${_fromChain} to ${toChain}`}
         approvalParams={approvalParams}
