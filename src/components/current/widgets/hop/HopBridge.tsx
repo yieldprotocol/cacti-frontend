@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Hop } from '@hop-protocol/sdk';
 import { Interface, UnsignedTransaction } from 'ethers/lib/utils';
 import { erc20ABI } from 'wagmi';
-import {
-  ActionResponse,
-  HeaderResponse,
-  IconResponse,
-  SingleLineResponse,
-} from '@/components/cactiComponents';
-import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
+import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useSigner from '@/hooks/useSigner';
