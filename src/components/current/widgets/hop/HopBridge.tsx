@@ -17,11 +17,13 @@ interface HopBridgeProps {
 
 const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgeProps) => {
   const _fromChain = fromChain === 'ethereum-mainnet' ? 'mainnet' : fromChain;
+
   const signer = useSigner();
   const { data: tokenIn } = useToken(tokenSymbol);
   const input = useInput(inputString, tokenIn?.symbol!);
   const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
   const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     (async () => {
@@ -53,6 +55,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
         const req = await bridge.populateSendTx(input?.value, _fromChain, toChain);
         setSendParams({ ...req, gasLimit: 10_000_000 }); // TODO figure out a better way to handle gas limits on forks
       } catch (e) {
+        setError(e as string);
         console.error('An error occurred:', e);
       }
     })();
@@ -60,13 +63,19 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
 
   return (
     <>
-      <HeaderResponse text={`Bridge ${tokenSymbol} using Hop Protocol`} />
+      <HeaderResponse
+        text={`Bridge ${tokenSymbol} from ${_fromChain} to ${toChain} using Hop Protocol`}
+      />
       <SingleLineResponse tokenSymbol={tokenSymbol} value={input?.formatted} />
       <ActionResponse
-        label={`Bridge ${input?.formatted || ''} ${tokenSymbol} from ${_fromChain} to ${toChain}`}
+        label={
+          error ??
+          `Bridge ${input?.formatted || ''} ${tokenSymbol} from ${_fromChain} to ${toChain}`
+        }
         approvalParams={approvalParams}
         txParams={undefined}
         sendParams={sendParams}
+        disabled={!!error}
       />
     </>
   );
