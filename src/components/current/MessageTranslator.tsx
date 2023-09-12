@@ -20,6 +20,7 @@ import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
+import HopBridge from './widgets/hop/HopBridge';
 import LidoDeposit from './widgets/lido/LidoDeposit';
 import LidoWithdraw from './widgets/lido/LidoWithdraw';
 import LiquityBorrow from './widgets/liquity/borrow/LiquityBorrow';
@@ -310,6 +311,15 @@ export const Widget = (props: WidgetProps) => {
   );
   widgets.set('wrap-eth', <WrapEth amtString={'1'} />);
   widgets.set('tx-replay', <TransactionReplay txHash={parsedArgs[0]} />);
+  widgets.set(
+    'hop-protocol-bridge',
+    <HopBridge
+      inputString={parsedArgs[0]}
+      tokenSymbol={parsedArgs[1]}
+      fromChain={parsedArgs[2]}
+      toChain={parsedArgs[3]}
+    />
+  );
 
   widgets.set(
     'arbitrum-deposit',
