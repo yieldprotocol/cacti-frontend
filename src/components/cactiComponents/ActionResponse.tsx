@@ -154,22 +154,10 @@ export const ActionResponse = ({
   }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
-   * BUTTON FLOW:
+   * BUTTON FLOW for approvals and transactions:
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
-    if (wrongChain) {
-      const correctChainName = chains.find((c) => c.id === chainId)?.name;
-      setButtonLabel(
-        correctChainName && switchNetworkAsync
-          ? `Switch to ${correctChainName}`
-          : `Unsupported Chain`
-      );
-      switchNetworkAsync &&
-        setAction({ name: 'switch', fn: async () => await switchNetworkAsync(chainId) });
-      return;
-    }
-
     if (disabled) {
       setButtonLabel(label ?? 'Disabled');
       return setState(ActionResponseState.DISABLED);
@@ -269,20 +257,25 @@ export const ActionResponse = ({
     submitTx,
     token?.symbol,
     disabled,
+    wrongChain,
+    chains,
+    switchNetworkAsync,
+    chainId,
   ]);
 
-  /* handle chain switching when a chain id is provided as props */
+  // handle chain changes if on the wrong chain
   useEffect(() => {
-    if (!chainId) return console.log('no chainId provided; defaulting to using mainnet');
-    if (!chain) return console.log('no chain connected');
-    if (chain.id === chainId) return console.log('already on the correct chain');
+    if (!wrongChain) return;
 
-    const newChainName = chains.find((c) => c.id === chainId)?.name;
-    if (!newChainName) return setButtonLabel('Unsupported Chain');
-
-    setButtonLabel(`Switch to ${newChainName}`);
-    setfu;
-  }, [chain, chainId, chains]);
+    const correctChainName = chains.find((c) => c.id === chainId)?.name;
+    setButtonLabel(
+      correctChainName && switchNetworkAsync ? `Switch to ${correctChainName}` : `Unsupported Chain`
+    );
+    return (
+      switchNetworkAsync &&
+      setAction({ name: 'switch', fn: async () => await switchNetworkAsync(chainId) })
+    );
+  }, [chainId, chains, state, switchNetworkAsync, wrongChain]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
