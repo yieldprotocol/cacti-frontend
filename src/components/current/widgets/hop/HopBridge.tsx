@@ -70,7 +70,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
       }
 
       try {
-        // mainnet is the network we use for all
+        // mainnet is the network we use for all bridge operations
         const hop = new Hop('mainnet', signer);
         const bridge = hop.bridge(tokenSymbol);
 
