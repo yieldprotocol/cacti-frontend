@@ -7,7 +7,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
@@ -60,6 +60,7 @@ export type ActionResponseProps = {
   stepper?: boolean;
   onSuccess?: (receipt?: TransactionReceipt) => void;
   onError?: (receipt?: TransactionReceipt) => void;
+  chainId?: number;
 };
 
 /**
@@ -77,8 +78,13 @@ export const ActionResponse = ({
   skipBalanceCheck,
   onSuccess,
   onError,
+  chainId = 1,
 }: ActionResponseProps) => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { chains, switchNetworkAsync } = useSwitchNetwork();
+  const wrongChain = !!chainId && chain?.id !== chainId;
+
   const _approvalParams = useMemo<ApprovalBasicParams>(
     () =>
       approvalParams || {
@@ -152,6 +158,18 @@ export const ActionResponse = ({
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
+    if (wrongChain) {
+      const correctChainName = chains.find((c) => c.id === chainId)?.name;
+      setButtonLabel(
+        correctChainName && switchNetworkAsync
+          ? `Switch to ${correctChainName}`
+          : `Unsupported Chain`
+      );
+      switchNetworkAsync &&
+        setAction({ name: 'switch', fn: async () => await switchNetworkAsync(chainId) });
+      return;
+    }
+
     if (disabled) {
       setButtonLabel(label ?? 'Disabled');
       return setState(ActionResponseState.DISABLED);
@@ -252,6 +270,19 @@ export const ActionResponse = ({
     token?.symbol,
     disabled,
   ]);
+
+  /* handle chain switching when a chain id is provided as props */
+  useEffect(() => {
+    if (!chainId) return console.log('no chainId provided; defaulting to using mainnet');
+    if (!chain) return console.log('no chain connected');
+    if (chain.id === chainId) return console.log('already on the correct chain');
+
+    const newChainName = chains.find((c) => c.id === chainId)?.name;
+    if (!newChainName) return setButtonLabel('Unsupported Chain');
+
+    setButtonLabel(`Switch to ${newChainName}`);
+    setfu;
+  }, [chain, chainId, chains]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
