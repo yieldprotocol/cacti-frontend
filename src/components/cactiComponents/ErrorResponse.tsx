@@ -10,10 +10,9 @@ import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const textStyle = 'text-base text-white text-opacity-70 gap-1 ';
 
-
 export interface ErrorResponseProps {
-  text: string,
-  error: string,
+  text: string;
+  error: string;
 }
 /**
  * Error response element
@@ -31,7 +30,7 @@ export const ErrorResponse = (props: ErrorResponseProps): JSX.Element => {
             <Disclosure.Button as="div">
               <ResponseTitle>
                 <div className="flex items-center gap-4 text-base">
-                  <div className="w-[16px]">    
+                  <div className="w-[16px]">
                     <ExclamationTriangleIcon />
                   </div>
                   {props.text}

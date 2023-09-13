@@ -1,5 +1,4 @@
 import { Fragment, useEffect } from 'react';
-import Grid from './Grid';
 import {
   NftAssetContainer,
   NftAssetTraitValueContainer,
@@ -29,6 +28,7 @@ import { YieldFarmWidget } from '../legacyWidgets/YieldFarm';
 import { YieldRowContainer } from '../legacyWidgets/YieldRowContainer';
 import { ActionPanel } from '../legacyWidgets/helpers/ActionPanel';
 import { ConnectFirst } from '../legacyWidgets/helpers/ConnectFirst';
+import Grid from './Grid';
 
 export const MessageTranslator = ({ message }: { message: string }) => {
   const stringsAndWidgets = useParseMessage(message);

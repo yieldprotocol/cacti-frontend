@@ -1,6 +1,6 @@
 import { Spinner } from '../../utils';
-import Avatar from '../shared/Avatar';
 import { ResponseWrap } from '../cactiComponents/helpers/layout';
+import Avatar from '../shared/Avatar';
 
 export const MultiStepProgressIndicator = () => {
   return (
