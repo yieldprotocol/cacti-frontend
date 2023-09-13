@@ -57,7 +57,7 @@ const useSubmitTx = (
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig, isError: isPrepareError } = usePrepareSendTransaction({
-    request: { ...(writeConfig.request ?? sendParams), gasLimit: 500000 },
+    request: { ...(writeConfig.request ?? sendParams), gasLimit: sendParams?.gasLimit || 500000 },
     enabled: true,
     onError: (e) => console.log('prepare send error', e),
   });
