@@ -92,7 +92,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
         }
 
         // TODO get the relevant to chain from hop
-        const req = await bridge.populateSendTx(input?.value, _fromChain, _toChain);
+        const req = await bridge.populateSendTx(input.value, _fromChain, _toChain);
         setSendParams({ ...req, gasLimit: 10_000_000 }); // TODO figure out a better way to handle gas limits on forks
       } catch (e) {
         setError((e as Error).message);
