@@ -13,21 +13,20 @@ export interface NftAssetProps {
   previewImageUrl?: string;
   variant?: ImageVariant; // widget variant
   price?: string;
-  attributes?: {trait_type: string, value: string}[];
+  attributes?: { trait_type: string; value: string }[];
 }
 
-const TraitList = ({ attributes }: { attributes: {trait_type: string, value: string}[] }) => {
+const TraitList = ({ attributes }: { attributes: { trait_type: string; value: string }[] }) => {
   return (
     <div className="">
       {attributes.map((attribute, index) => (
-        <div key={index} className="text-xs mr-2 mb-2">
+        <div key={index} className="mb-2 mr-2 text-xs">
           <span className="font-bold">{attribute.trait_type}</span>: {attribute.value}
         </div>
       ))}
     </div>
-  )
-
-}
+  );
+};
 
 export const NftAsset = ({
   network,
@@ -38,16 +37,15 @@ export const NftAsset = ({
   previewImageUrl,
   variant,
   price,
-  attributes
+  attributes,
 }: NftAssetProps) => {
-
   return (
     <ImageResponse
       image={previewImageUrl}
       imageTags={
         variant === ImageVariant.SHOWCASE
           ? [`Token Id: ${tokenId}`, `${network.replace('-mainnet', '')}`]
-          : [`Token Id: ${tokenId}`] // always show the token id 
+          : [`Token Id: ${tokenId}`] // always show the token id
       }
       title={name}
       subTitle={collectionName}

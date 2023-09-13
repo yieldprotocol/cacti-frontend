@@ -1,12 +1,9 @@
 import dynamic from 'next/dynamic';
 import SidebarContainer from './SidebarContainer';
 
-const SidebarInnerDynamic = dynamic(
-  () => import('@/components/current/layout/sidebar/SideBar'),
-  {
-    ssr: false,
-  }
-);
+const SidebarInnerDynamic = dynamic(() => import('@/components/current/layout/sidebar/SideBar'), {
+  ssr: false,
+});
 
 const Sidebar = ({
   isOpen,

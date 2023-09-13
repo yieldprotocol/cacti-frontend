@@ -40,12 +40,16 @@ const TagItem = (props: { tag: string }) => {
 
 const Image = (props: { src?: string; alt?: string }) => {
   return (
-    <div className="w-full h-[250px] gap-2 space-y-2 overflow-auto rounded-xl bg-white bg-opacity-5 p-2  ">
+    <div className="h-[250px] w-full gap-2 space-y-2 overflow-auto rounded-xl bg-white bg-opacity-5 p-2  ">
       {props.src ? (
-        <img className="rounded-xl object-cover w-full h-full" src={props.src} alt={props.alt} />
+        <img className="h-full w-full rounded-xl object-cover" src={props.src} alt={props.alt} />
       ) : (
-        <div className="flex p-16 h-full items-center justify-center rounded-xl bg-white bg-opacity-10 text-lg text-white/50">
-          <div className='font-thin' > <CameraIcon />No Image</div>
+        <div className="flex h-full items-center justify-center rounded-xl bg-white bg-opacity-10 p-16 text-lg text-white/50">
+          <div className="font-thin">
+            {' '}
+            <CameraIcon />
+            No Image
+          </div>
         </div>
       )}
     </div>
@@ -68,8 +72,10 @@ export const ImageResponse = ({
   const Title = () => (
     <ResponseTitle>
       <div>
-        <div className={variant_ === ImageVariant.SHOWCASE ? 'text-lg': ''}> {title} </div>
-        <div className={`text-white/50 ${variant_ === ImageVariant.SHOWCASE ? '': 'text-xs'}`}>{subTitle}</div>
+        <div className={variant_ === ImageVariant.SHOWCASE ? 'text-lg' : ''}> {title} </div>
+        <div className={`text-white/50 ${variant_ === ImageVariant.SHOWCASE ? '' : 'text-xs'}`}>
+          {subTitle}
+        </div>
       </div>
       {imageLink && ( // if has external link
         <div onClick={() => navigateToExternalUrl(imageLink!)}>
