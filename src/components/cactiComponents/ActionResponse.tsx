@@ -5,7 +5,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import useToken from '@/hooks/useToken';
@@ -144,13 +144,13 @@ export const ActionResponse = ({
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
     if (_approvalParams === undefined) return setHasEnoughBalance(true);
-    if (sendParams?.value! >= ethBal!) {
+    if (BigNumber.from(sendParams?.value || '0').gt(BigNumber.from(ethBal || '0')))
       return setHasEnoughBalance(false);
-    }
 
     // check approval token balance
-    if (balance && _approvalParams?.approvalAmount)
+    if (balance && _approvalParams?.approvalAmount) {
       setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+    }
   }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
