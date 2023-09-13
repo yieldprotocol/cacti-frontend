@@ -148,4 +148,24 @@ const spoofPrompts: [string, string][] = [
     `<|near-bos('meta-pool-official.near','MetaPoolStakeEth', {})|>`,
   ],
 
+  [
+    'BOS ZKSwap',
+    `<|near-bos('ref-admin.near','ZKEVMSwap.zkevm-swap', {})|>`,
+  ],
+
+  [
+    'BOS ZK bridge',
+    `<|near-bos('ref-bigboss.near','ZKEVMSwap.zkevm-bridge', {})|>`,
+  ],
+
+  [
+    'BOS sushi swap',
+    `<|near-bos('alotaco.near','SushiSwap', {})|>`,
+  ],
+
+  [
+    'BOS transfer near',
+    `<|near-bos('ndcplug.near','Transfer', {})|>`,
+  ],
+
 ];

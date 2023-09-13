@@ -164,8 +164,10 @@ function NearWidgetUnwrapped(props: NearWidgetProps) {
 
   return (
     <ResponseWrap>
-      <div className="remove-all">
-       <BosWidget key={src} src={src} props={{...widgetProps, ...passProps}} />
+      <div className='overflow-auto table clear-both' >
+        <div>
+          <BosWidget key={src} src={src} props={{...widgetProps, ...passProps}} />
+          </div>
       </div>
     </ResponseWrap>
   );
