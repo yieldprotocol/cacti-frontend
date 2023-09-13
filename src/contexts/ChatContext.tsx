@@ -1,7 +1,6 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { getBackendWebsocketUrl } from '@/utils/backend';
@@ -19,13 +18,20 @@ export type TruncateOptions = {
   setBotThinking?: boolean;
 };
 
+type JSONPrimitive = string | number | boolean | null;
+interface JSONObject {
+  [key: string]: JSONValue;
+}
+type JSONArray = JSONValue[];
+export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
+
 export type ChatContextType = {
   messages: Message[];
   sendMessage: (msg: string) => void;
   replayUserMessage: (msg: string) => void;
-  sendMultiStepClientMessage: (action: JsonValue) => void;
+  sendMultiStepClientMessage: (action: any) => void;
   setIsMultiStepInProgress: (value: boolean) => void;
-  sendAction: (action: JsonValue) => void;
+  sendAction: (action: JSONValue) => void;
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => string | null;
   spoofBotMessage: (msg: string) => void;
   isBotThinking: boolean;
@@ -48,9 +54,9 @@ const initialContext = {
   messages: [],
   sendMessage: (msg: string) => {},
   replayUserMessage: (msg: string) => {},
-  sendMultiStepClientMessage: (action: JsonValue) => {},
+  sendMultiStepClientMessage: (action: JSONValue) => {},
   setIsMultiStepInProgress: (value: boolean) => {},
-  sendAction: (action: JsonValue) => {},
+  sendAction: (action: JSONValue) => {},
   truncateUntilNextHumanMessage: (messageId: string, options?: TruncateOptions) => {
     return null;
   },
@@ -286,14 +292,14 @@ export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const sendMultiStepClientMessage = useCallback(
-    (payload: JsonValue) => {
+    (payload: JSONValue) => {
       wsSendMessage({ actor: 'system', type: 'multistep-workflow', payload });
     },
     [wsSendMessage]
   );
 
   const sendAction = useCallback(
-    (action: JsonValue) => {
+    (action: JSONValue) => {
       wsSendMessage({ actor: 'user', type: 'action', payload: action });
     },
     [wsSendMessage]
