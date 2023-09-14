@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { Address } from 'wagmi';
-import stethAbi from '@/abi/steth.json';
+import { Address, UsePrepareContractWriteConfig } from 'wagmi';
+import stethAbi from '@/abi/steth';
 import {
   ActionResponse,
   HeaderResponse,
@@ -9,7 +8,6 @@ import {
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
@@ -25,11 +23,8 @@ const RethWithdraw = ({ inputString }: RethProps) => {
     () => cleanValue(inputString.toString(), tokenIn?.decimals),
     [inputString, tokenIn?.decimals]
   );
-  const value = useMemo(() => {
-    return parseUnits(inputCleaned!, tokenIn?.decimals);
-  }, [inputCleaned, tokenIn?.decimals]);
 
-  const tx: TxBasicParams = useMemo(
+  const tx: UsePrepareContractWriteConfig = useMemo(
     () => ({
       address: tokenOut?.address as Address | undefined,
       abi: stethAbi,
