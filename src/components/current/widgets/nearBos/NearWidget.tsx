@@ -1,21 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { sanitizeUrl } from '@braintree/sanitize-url';
+// import { sanitizeUrl } from '@braintree/sanitize-url';
 // import { useParams } from "react-router-dom";
 // import { useQuery } from "../hooks/useQuery";
 // import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import { setupWalletSelector } from '@near-wallet-selector/core';
-import { setupSender } from "@near-wallet-selector/sender";
-// import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-// import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupNeth } from "@near-wallet-selector/neth";
-import { setupNightly } from "@near-wallet-selector/nightly";
-
 import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupNearWallet } from '@near-wallet-selector/near-wallet';
+// import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+// import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupNeth } from '@near-wallet-selector/neth';
+import { setupNightly } from '@near-wallet-selector/nightly';
+import { setupSender } from '@near-wallet-selector/sender';
 import { Widget as BosWidget } from 'near-social-vm';
 import { EthersProviderContext, useAccount, useInitNear, useNear, utils } from 'near-social-vm';
-
 import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
 import { useEthersProviderContext } from './data/web3';
 // import Big from "big.js";
@@ -28,11 +26,9 @@ interface NearWidgetProps {
   nearWidgetProps?: Map<any, any>;
 }
 
-function NearWidgetUnwrapped(props: NearWidgetProps) {
-  // const { widgetSrc } = useParams();
+function NearWidget(props: NearWidgetProps) {
   const [widgetProps, setWidgetProps] = useState({});
-  
-  const src = `${props.nearUser}/widget/${props.nearWidget}` // 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
+  const src = `${props.nearUser}/widget/${props.nearWidget}`; // 'aave-v3.near/widget/AAVE'; //  widgetSrc || props.widgets.default;
 
   // useEffect(() => {
   //   if (props.nearWidgetProps) setWidgetProps(
@@ -69,7 +65,7 @@ function NearWidgetUnwrapped(props: NearWidgetProps) {
             // setupHereWallet(),
             // setupMeteorWallet(),
             setupNeth({
-              gas: "300000000000000",
+              gas: '300000000000000',
               bundle: false,
             }),
             setupNightly(),
@@ -81,9 +77,9 @@ function NearWidgetUnwrapped(props: NearWidgetProps) {
               props.to = props.href;
               delete props.href;
             }
-            if (props.to) {
-              props.to = sanitizeUrl(props.to);
-            }
+            // if (props.to) {
+            //   props.to = sanitizeUrl(props.to);
+            // }
             return <Link {...props} />;
           },
         },
@@ -162,22 +158,17 @@ function NearWidgetUnwrapped(props: NearWidgetProps) {
     documentationHref: 'https://docs.near.org/docs/develop/front-end/near-api-js',
   };
 
-  return (
-    <ResponseWrap>
-      <div className='overflow-auto table clear-both' >
-        <div>
-          <BosWidget key={src} src={src} props={{...widgetProps, ...passProps}} />
-          </div>
-      </div>
-    </ResponseWrap>
-  );
-}
+  const ethersProviderContext = useEthersProviderContext();
 
-const NearWidget = (props: NearWidgetProps) => {
-   const ethersProviderContext = useEthersProviderContext();
   return (
-    <EthersProviderContext.Provider value={ethersProviderContext}><NearWidgetUnwrapped {...props} /></EthersProviderContext.Provider> 
-  )
+    <EthersProviderContext.Provider value={ethersProviderContext}>
+      <ResponseWrap>
+        <div className="relative overflow-hidden inline-block text-black/70 bg-white">
+          <BosWidget key={src} src={src} props={{ ...widgetProps, ...passProps }} />
+        </div>
+      </ResponseWrap>
+    </EthersProviderContext.Provider>
+  );
 }
 
 export default NearWidget;
