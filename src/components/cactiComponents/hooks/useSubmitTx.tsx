@@ -3,20 +3,13 @@ import { toast } from 'react-toastify';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { TransactionReceipt, TransactionRequestBase } from 'viem';
 import {
+  UsePrepareContractWriteConfig,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
 import useBalance from './useBalance';
-
-export type TxBasicParams = {
-  address?: `0x${string}`;
-  abi?: any;
-  functionName?: string;
-  args?: any[];
-  enabled?: boolean;
-};
 
 /**
  * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName).
@@ -34,7 +27,7 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param description description of tx for wallet
  */
 const useSubmitTx = (
-  params?: TxBasicParams,
+  params?: UsePrepareContractWriteConfig,
   sendParams?: TransactionRequestBase,
   onSuccess?: (receipt?: TransactionReceipt) => void,
   onError?: (receipt?: TransactionReceipt) => void,
