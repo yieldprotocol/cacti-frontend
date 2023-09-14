@@ -14,11 +14,15 @@ import { setupNightly } from '@near-wallet-selector/nightly';
 import { setupSender } from '@near-wallet-selector/sender';
 import { Widget as BosWidget } from 'near-social-vm';
 import { EthersProviderContext, useAccount, useInitNear, useNear, utils } from 'near-social-vm';
+import { EIP1193Provider, EIP1193ProviderRpcError } from 'viem';
 import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
 import { useEthersProviderContext } from './data/web3';
 // import Big from "big.js";
 // import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from './data/widgets';
+// import { getProvider, disconnect, watchProvider } from '@wagmi/core'
+
+import {useWalletClient} from 'wagmi';
 
 interface NearWidgetProps {
   nearUser: string;
@@ -124,7 +128,6 @@ function NearWidget(props: NearWidgetProps) {
     await logOut();
     // requestSignIn();
   }, [logOut, requestSignIn]);
-
   // refreshAllowanceObj.refreshAllowance = refreshAllowance;
 
   useEffect(() => {
@@ -158,12 +161,56 @@ function NearWidget(props: NearWidgetProps) {
     documentationHref: 'https://docs.near.org/docs/develop/front-end/near-api-js',
   };
 
-  const ethersProviderContext = useEthersProviderContext();
+  // const ethersProviderContext = useEthersProviderContext();
+
+  // const [ethersProvider, setEthersProvider] = useState({
+  //   useConnectWallet: () => [{}], // [{ wallet, connecting }, connect, disconnect]
+  //   setChain: () => null,
+  //   provider: getProvider(),
+  // });
+
+  // interface WalletModule {
+  //   label: string;
+  //   getIcon: () => Promise<string>;
+  //   getInterface: (helpers: any) => Promise<WalletInterface>;
+  // }
+  // type WalletInterface = {
+  //   provider: EIP1193Provider;
+  //   instance?: unknown;
+  // };
+  // const walletModuleShim = (provider: EIP1193Provider): WalletModule => {
+  //   const label = 'lable';
+  //   return {
+  //     label,
+  //     getIcon: () => Promise.resolve(''),
+  //     getInterface: () => Promise.resolve({ provider }),
+  //   };
+  // };
+
+  const { data: walletClient, isError, isLoading } = useWalletClient()
+
+  const useConnectWallet = () => [
+    { wallet: 
+      {
+        label: 'default',
+        getIcon: () => Promise.resolve(''),
+        getInterface: walletClient,
+      }, 
+      connecting: false },
+    ()=> console.log('connect'),
+    ()=> console.log('disconnect'),
+  ]; // Retun: [{ wallet, connecting }, connect, disconnect] 
+
+  const ethersProviderContext = {
+      provider: walletClient,
+      useConnectWallet,
+      setChain: () => null,
+  };
 
   return (
     <EthersProviderContext.Provider value={ethersProviderContext}>
       <ResponseWrap>
-        <div className="relative overflow-hidden inline-block text-black/70 bg-white">
+        <div className="relative inline-block overflow-hidden bg-white text-black/70">
           <BosWidget key={src} src={src} props={{ ...widgetProps, ...passProps }} />
         </div>
       </ResponseWrap>
