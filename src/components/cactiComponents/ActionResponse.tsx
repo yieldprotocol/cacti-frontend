@@ -5,14 +5,14 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/ou
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
-import { useAccount } from 'wagmi';
+import { TransactionReceipt } from 'viem';
+import { UsePrepareContractWriteConfig, useAccount } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
-import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
-import { TransactionReceipt } from 'viem';
+import useSubmitTx from './hooks/useSubmitTx';
 
 export enum ActionResponseState {
   LOADING = 'LOADING', // background async checks
@@ -49,9 +49,9 @@ type Action = {
 };
 
 export type ActionResponseProps = {
-  txParams: TxBasicParams | undefined;
+  txParams: UsePrepareContractWriteConfig | undefined;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: any | undefined; // unsigned transaction type without ethers? 
+  sendParams?: any | undefined; // unsigned transaction type without ethers?
   label?: string; // label to show on button
   description?: string; // tx description (for wallet )
   disabled?: boolean;
