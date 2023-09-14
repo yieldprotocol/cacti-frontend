@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
+import { CallOverrides, Overrides, PayableOverrides } from 'ethers';
+import { TransactionReceipt, TransactionRequestBase } from 'viem';
 import {
   usePrepareContractWrite,
   usePrepareSendTransaction,
@@ -9,7 +10,6 @@ import {
   useWaitForTransaction,
 } from 'wagmi';
 import useBalance from './useBalance';
-import { Transaction, TransactionReceipt } from 'viem/dist/types/types/transaction';
 
 export type TxBasicParams = {
   address?: `0x${string}`;
@@ -37,7 +37,7 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  */
 const useSubmitTx = (
   params?: TxBasicParams,
-  sendParams?: Transaction,
+  sendParams?: TransactionRequestBase,
   onSuccess?: (receipt?: TransactionReceipt) => void,
   onError?: (receipt?: TransactionReceipt) => void,
   description?: string
@@ -58,7 +58,7 @@ const useSubmitTx = (
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig, isError: isPrepareError } = usePrepareSendTransaction({
     ...(writeConfig.request ?? sendParams),
-      // gasLimit: sendParams?.gasLimit || 500000  TODO add in gas limti? 
+    // gasLimit: sendParams?.gasLimit || 500000  TODO add in gas limti?
     enabled: true,
     onError: (e) => console.log('prepare send error', e),
   });
