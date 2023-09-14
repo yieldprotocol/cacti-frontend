@@ -22,6 +22,7 @@ interface UseUniswapQuoteRes {
 const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUniswapQuoteProps) => {
   const chainId = useChainId();
   const provider = useProvider();
+  
   const { isETH: baseTokenIsEth } = useToken(baseTokenSymbol);
   const { isETH: quoteTokenIsEth } = useToken(quoteTokenSymbol);
   const { data: baseTokenToUse } = useToken(baseTokenIsEth ? 'WETH' : baseTokenSymbol);
