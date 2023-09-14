@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { CallOverrides, Overrides, PayableOverrides } from 'ethers';
 import { TransactionReceipt, TransactionRequestBase } from 'viem';
 import {
   usePrepareContractWrite,
@@ -16,7 +15,6 @@ export type TxBasicParams = {
   abi?: any;
   functionName?: string;
   args?: any[];
-  overrides?: PayableOverrides | Overrides | CallOverrides;
   enabled?: boolean;
 };
 
