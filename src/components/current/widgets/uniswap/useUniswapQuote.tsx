@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { Token, TradeType } from '@uniswap/sdk-core';
 import { AlphaRouter, CurrencyAmount } from '@uniswap/smart-order-router';
-import { useProvider } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
@@ -21,8 +21,8 @@ interface UseUniswapQuoteRes {
 
 const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUniswapQuoteProps) => {
   const chainId = useChainId();
-  const provider = useProvider();
-  
+  const publicClient = usePublicClient();
+
   const { isETH: baseTokenIsEth } = useToken(baseTokenSymbol);
   const { isETH: quoteTokenIsEth } = useToken(quoteTokenSymbol);
   const { data: baseTokenToUse } = useToken(baseTokenIsEth ? 'WETH' : baseTokenSymbol);
@@ -36,7 +36,7 @@ const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUnisw
 
   const router = new AlphaRouter({
     chainId,
-    provider,
+    provider: publicClient as any, // TODO: convert public client to ethers provider
   });
 
   const getQuote = async (): Promise<UseUniswapQuoteRes | undefined> => {
