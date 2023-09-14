@@ -1,11 +1,8 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
-import request from 'graphql-request';
 import useSWR from 'swr';
-import { Address, erc20ABI, useContract, useContractReads } from 'wagmi';
+import { formatUnits } from 'viem';
+import { Address, erc20ABI, useContractReads, usePublicClient } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
-import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { Token } from '@/types';
 import Cauldron from '../contracts/abis/Cauldron';
@@ -17,11 +14,11 @@ import { nameFromMaturity } from '../utils';
 export interface YieldVault {
   id: `0x${string}`;
   owner: Address | undefined;
-  ink: BigNumber | undefined;
-  art: BigNumber | undefined;
+  ink: bigint | undefined;
+  art: bigint | undefined;
   ink_: string | undefined;
   art_: string | undefined;
-  accruedArt: BigNumber | undefined;
+  accruedArt: bigint | undefined;
   accruedArt_: string | undefined;
   seriesId: `0x${string}` | undefined;
   ilkId: `0x${string}` | undefined;
@@ -36,7 +33,7 @@ export interface YieldVault {
     maturity_: string | undefined; // formatted
 
     isMature: boolean | undefined;
-    maxBaseIn: BigNumber | undefined;
+    maxBaseIn: bigint | undefined;
   };
   borrowToken: Token | undefined;
   collateralToken: Token | undefined;
@@ -44,15 +41,10 @@ export interface YieldVault {
 }
 
 const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
-  const signer = useSigner();
+  const publicClient = usePublicClient();
   const chainId = useChainId();
   const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
-  const cauldron = useContract({
-    address: cauldronAddress,
-    abi: Cauldron,
-    signerOrProvider: signer,
-  });
 
   const { data: vault, isLoading: vaultIsLoading } = useContractReads({
     contracts: [
@@ -71,8 +63,8 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     ],
   });
 
-  const [art, ink] = (vault || [[], []])[0];
-  const _vaults = (vault || [[], []])[1]; // for some reason this is returning null, which is why there is this extra logic
+  const [art, ink] = vault![0].result ?? [];
+  const _vaults = vault![1].result;
   const [owner, seriesId, ilkId] = _vaults ?? [];
 
   const { data: seriesData, isLoading: seriesDataIsLoading } = useContractReads({
@@ -82,20 +74,19 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     ],
   });
 
-  const _seriesData = seriesData || [[]];
-  const [fyTokenAddress, baseId, maturity] = _seriesData[0] ?? []; // for some reason this is returning null, which is why there is this extra logic
-  const poolAddress = _seriesData[1];
+  const [fyTokenAddress, baseId, maturity] = seriesData![0].result ?? [];
+  const poolAddress = seriesData![1].result;
 
   const { data: extra, isLoading: extrasIsLoading } = useContractReads({
     contracts: [
       {
-        address: cauldronAddress!,
+        address: cauldronAddress,
         abi: Cauldron,
         functionName: 'assets',
         args: [baseId!],
       },
       {
-        address: ladleAddress!,
+        address: ladleAddress,
         abi: Ladle,
         functionName: 'joins',
         args: [baseId!],
@@ -111,7 +102,7 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
         functionName: 'decimals',
       },
       {
-        address: cauldronAddress!,
+        address: cauldronAddress,
         abi: Cauldron,
         functionName: 'assets',
         args: [ilkId!],
@@ -119,18 +110,25 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     ],
   });
 
-  const [baseAddress, associatedJoinAddress, maxBaseIn, decimals, ilkAddress] = extra || [];
+  // TODO: is there a better way? and handle types not returning from contract
+  const baseAddress = extra![0].result as Address | undefined;
+  const associatedJoinAddress = extra![1].result as Address | undefined;
+  const maxBaseIn = extra![2].result as bigint | undefined;
+  const decimals = extra![3].result as number | undefined;
+  const ilkAddress = extra![4].result as Address | undefined;
 
   const { data: borrowToken } = useToken(undefined, baseAddress);
   const { data: collateralToken } = useToken(undefined, ilkAddress);
 
   // get accrued art using swr
   const { data: accruedArt } = useSWR(['accruedArt', chainId, vaultId], async () => {
-    const accruedArt = (await cauldron?.callStatic.debtToBase(
-      seriesId!,
-      art!
-    )) as unknown as BigNumber; // TODO make more kosher
-    return accruedArt;
+    const { result } = await publicClient.simulateContract({
+      address: cauldronAddress!,
+      abi: Cauldron,
+      functionName: 'debtToBase',
+      args: [seriesId!, art!],
+    });
+    return result;
   });
 
   const data = useMemo<YieldVault>(
@@ -139,10 +137,10 @@ const useVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
       owner,
       ink,
       art,
-      art_: art ? formatUnits(art, decimals) : undefined,
+      art_: art ? formatUnits(art, decimals!) : undefined,
       accruedArt,
-      accruedArt_: accruedArt ? formatUnits(accruedArt, decimals) : undefined,
-      ink_: ink ? formatUnits(ink, collateralToken?.decimals) : undefined,
+      accruedArt_: accruedArt ? formatUnits(accruedArt, decimals!) : undefined,
+      ink_: ink ? formatUnits(ink, collateralToken?.decimals!) : undefined,
       ilkId,
       baseId,
       baseAddress,
