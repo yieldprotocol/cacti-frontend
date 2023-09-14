@@ -1,6 +1,5 @@
-import { BigNumber } from 'ethers';
-import { usePrepareContractWrite } from 'wagmi';
-import SeaportAbi from '@/abi/SeaportAbi.json';
+import { UsePrepareContractWriteConfig, usePrepareContractWrite } from 'wagmi';
+import SeaportAbi from '@/abi/SeaportAbi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ImageVariant } from '@/components/cactiComponents/ImageResponse';
 import { ConnectFirst } from '../helpers/ConnectFirst';
@@ -24,7 +23,7 @@ export const BuyNft = ({
   protocolAddress,
   asset,
 }: BuyNftProps) => {
-  const tx = {
+  const tx: UsePrepareContractWriteConfig = {
     address: protocolAddress as `0x${string}`,
     abi: SeaportAbi,
     functionName: 'fulfillOrder',
@@ -35,20 +34,13 @@ export const BuyNft = ({
       },
       '0x0000000000000000000000000000000000000000000000000000000000000000', // fulfillerConduitKey
     ],
-    overrides: {
-      value: BigNumber.from(orderValue || 0),
-      gasLimit: 500000,
-    },
+    value: BigInt(orderValue),
+    gas: BigInt(500_000),
   };
 
   // Simulate tx to re-verify if the NFT is for sale
   const { isError } = usePrepareContractWrite({
     ...tx,
-    // overrides: {
-    //   ...tx.overrides,
-    //   gasLimit: undefined,
-    // },
-    // ...tx.overrides
   });
 
   const notForSale = !isForSale || isError;
@@ -56,15 +48,7 @@ export const BuyNft = ({
   return (
     <ConnectFirst>
       <HeaderResponse text={`Buy NFT`} projectName={'Opensea Seaport'} />
-      <NftAsset
-        {...asset}
-        variant={ImageVariant.SHOWCASE}
-        // address={asset?.address as Address}
-        // tokenId={asset?.tokenId}
-        // network="ethereum-mainnet"
-        // variant={ImageVariant.SHOWCASE}
-        // price={asset?.price === 'unlisted' ? 'Not for Sale' : asset?.price}
-      />
+      <NftAsset {...asset} variant={ImageVariant.SHOWCASE} />
       <ActionResponse
         txParams={notForSale ? undefined : tx} // if not for sale abort the tx preparation
         approvalParams={undefined}
