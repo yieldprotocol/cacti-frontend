@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { BigNumber, UnsignedTransaction } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
 import { useAccount } from 'wagmi';
@@ -14,6 +12,7 @@ import { ActionStepper } from './ActionStepper';
 import useApproval, { ApprovalBasicParams } from './hooks/useApproval';
 import useBalance from './hooks/useBalance';
 import useSubmitTx, { TxBasicParams } from './hooks/useSubmitTx';
+import { TransactionReceipt } from 'viem';
 
 export enum ActionResponseState {
   LOADING = 'LOADING', // background async checks
@@ -52,7 +51,7 @@ type Action = {
 export type ActionResponseProps = {
   txParams: TxBasicParams | undefined;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: UnsignedTransaction | undefined;
+  sendParams?: any | undefined; // unsigned transaction type without ethers? 
   label?: string; // label to show on button
   description?: string; // tx description (for wallet )
   disabled?: boolean;
@@ -84,13 +83,13 @@ export const ActionResponse = ({
       approvalParams || {
         tokenAddress: AddressZero,
         spender: AddressZero,
-        approvalAmount: BigNumber.from(0),
+        approvalAmount: BigInt(0),
         skipApproval: true, // NOTE: approval is skipped if no approval params are passed in
       },
     [approvalParams]
   );
   const { data: token } = useToken(undefined, _approvalParams.tokenAddress);
-  const amountFmt = formatUnits(_approvalParams.approvalAmount, token?.decimals);
+  const amountFmt = formatUnits(_approvalParams.approvalAmount.toString(), token?.decimals);
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
   const {
@@ -144,7 +143,7 @@ export const ActionResponse = ({
 
     // check approval token balance
     if (balance && _approvalParams?.approvalAmount)
-      setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+      setHasEnoughBalance(balance >= _approvalParams?.approvalAmount);
   }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**

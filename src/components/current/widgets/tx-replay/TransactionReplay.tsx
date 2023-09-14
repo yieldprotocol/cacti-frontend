@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
-import { decodeFunctionData } from 'viem';
+import { Transaction, decodeFunctionData } from 'viem';
 import { Address, useTransaction } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import SkeletonWrap from '@/components/shared/SkeletonWrap';
@@ -14,7 +13,7 @@ interface TransactionReplayProps {
 const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
   const { data, isLoading } = useTransaction({ hash: txHash });
   const { data: abi } = useAbi(data?.to as Address | undefined);
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [sendParams, setSendParams] = useState<Transaction>();
   const [isError, setIsError] = useState(false);
 
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;

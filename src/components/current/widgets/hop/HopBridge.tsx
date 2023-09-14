@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Hop } from '@hop-protocol/sdk';
-import { Interface, UnsignedTransaction } from 'ethers/lib/utils';
 import { erc20ABI } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
+import { Transaction } from 'viem';
+import { Interface } from 'ethers/lib/utils';
 
 interface HopBridgeProps {
   inputString: string;
@@ -22,7 +23,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
   const { data: tokenIn } = useToken(tokenSymbol);
   const input = useInput(inputString, tokenIn?.symbol!);
   const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [sendParams, setSendParams] = useState<Transaction>();
   const [error, setError] = useState<string>();
 
   useEffect(() => {

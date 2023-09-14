@@ -12,7 +12,7 @@ import useChainId from '@/hooks/useChainId';
  */
 const useBalance = (
   tokenAddress?: `0x${string}`,
-  compareAmount?: BigNumber,
+  compareAmount?: bigint,
   erc1155TokenId?: string
 ) => {
   const chainId = useChainId();
@@ -42,7 +42,7 @@ const useBalance = (
           chainId,
           abi: erc1155ABI,
           functionName: 'balanceOf',
-          args: [account, BigNumber.from(erc1155TokenId)],
+          args: [account, BigInt(erc1155TokenId) ],
         });
         return erc1155Bal;
       }
@@ -64,10 +64,10 @@ const useBalance = (
   useEffect(() => {
     if (compareAmount && data) {
       setComparisons({
-        isZero: data.isZero(),
-        isGTEcompared: data.gte(compareAmount),
-        isEQcompared: data.eq(compareAmount),
-        isLTcompared: data.lt(compareAmount),
+        isZero: data === BigInt(0),
+        isGTEcompared: data >= compareAmount,
+        isEQcompared: data === compareAmount,
+        isLTcompared: data < compareAmount,
       });
     }
   }, [compareAmount, data, erc1155TokenId]);

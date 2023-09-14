@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { AddressZero } from '@ethersproject/constants';
-import { BigNumber } from 'ethers';
 import { erc20ABI, useContractWrite, useWaitForTransaction } from 'wagmi';
 import { prepareWriteContract } from 'wagmi/actions';
 import useChainId from '@/hooks/useChainId';
@@ -10,7 +9,7 @@ import { cleanValue } from '@/utils';
 import useAllowance from './useAllowance';
 
 export type ApprovalBasicParams = {
-  approvalAmount: BigNumber;
+  approvalAmount: bigint;
   tokenAddress: `0x${string}`;
   spender: `0x${string}`;
   skipApproval?: boolean;
@@ -28,7 +27,7 @@ const useApproval = (params: ApprovalBasicParams) => {
 
   // cleanup the bignumber and convert back to a bignumber to avoid underlow errors;
   const amountToUse = useMemo(
-    () => BigNumber.from(cleanValue(approvalAmount.toString(), token?.decimals)),
+    () => BigInt(cleanValue(approvalAmount.toString(), token?.decimals)!),
     [approvalAmount, token?.decimals]
   );
 
@@ -64,7 +63,7 @@ const useApproval = (params: ApprovalBasicParams) => {
     refetchOnWindowFocus: false,
   });
 
-  const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config);
+  const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config!);
 
   const {
     isError,
@@ -78,7 +77,7 @@ const useApproval = (params: ApprovalBasicParams) => {
   const hasAllowance = useMemo(() => {
     if (!!params.skipApproval) return true;
     if (!allowanceAmount) return false;
-    return allowanceAmount.gte(amountToUse);
+    return allowanceAmount >= amountToUse;
   }, [allowanceAmount, amountToUse, params.skipApproval]);
 
   return {

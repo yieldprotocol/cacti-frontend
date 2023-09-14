@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { UnsignedTransaction } from 'ethers';
 import { useChatContext } from '@/contexts/ChatContext';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
 import { ConnectFirst } from '../widgets/helpers/ConnectFirst';
+import { TransactionReceipt } from 'viem';
 
 interface MultiStepContainerProps {
   status: 'success' | 'error';

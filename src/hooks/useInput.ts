@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import { cleanValue } from '@/utils';
 import useToken from './useToken';
+import { formatUnits, parseUnits } from 'viem';
 
 type Input = {
-  value: BigNumber | undefined;
+  value: bigint | undefined;
   formatted: string | undefined;
   decimals: number;
 };
@@ -21,7 +20,7 @@ type Input = {
 const useInput = (
   input: string,
   tokenSymbol: string,
-  mutate?: (inputBN: BigNumber) => BigNumber
+  mutate?: (inputBN: bigint) => bigint
 ) => {
   const { data: token } = useToken(tokenSymbol);
 

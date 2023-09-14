@@ -1,10 +1,10 @@
 import { AddressZero } from '@ethersproject/constants';
-import { parseUnits } from 'ethers/lib/utils.js';
 import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { ConnectFirst } from '../helpers/ConnectFirst';
+import { parseUnits } from 'viem';
 
 interface TransferWidgetProps {
   tokenSymbol: string;
@@ -14,7 +14,7 @@ interface TransferWidgetProps {
 
 const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => {
   const { isETH, data: token } = useToken(tokenSymbol);
-  const amount = parseUnits(amtString, token?.decimals);
+  const amount = parseUnits(amtString, token?.decimals!);
 
   // Resolve ENS name
   const { data: receiverAddress } = useEnsAddress({

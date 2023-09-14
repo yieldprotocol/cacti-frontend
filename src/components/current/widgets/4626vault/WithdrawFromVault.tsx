@@ -1,6 +1,4 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
 import { Address, useAccount } from 'wagmi';
 import ERC4626Abi from '@/abi/erc4626ABI.json';
 import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
@@ -10,6 +8,7 @@ import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
+import { parseUnits } from 'viem';
 
 interface WithdrawVaultProps {
   amount: string;
@@ -52,7 +51,7 @@ export const WithdrawVault = ({ withdrawToken, amount, vault }: WithdrawVaultPro
   //TODO: Get the vault address
 
   const inputCleaned = cleanValue(amount.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals!);
 
   const params: WithdrawVaultParams = {
     assets: amountIn.toString(),
