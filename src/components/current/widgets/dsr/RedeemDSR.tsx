@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
-import ERC4626Abi from '@/abi/erc4626ABI.json';
+import { parseUnits } from 'viem';
+import { UsePrepareContractWriteConfig, useAccount } from 'wagmi';
+import ERC4626Abi from '@/abi/erc4626ABI';
 import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import { parseUnits } from 'viem';
 
 interface RedeemDSRProps {
   shares: string;
@@ -24,7 +23,6 @@ interface RedeemDSRParams {
 
 // SavingsDAI: https://etherscan.io/address/0x83F20F44975D03b1b09e64809B757c47f942BEeA#code
 export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
-  const chainId = useChainId();
   const { address: receiver } = useAccount();
 
   // Here we use DAI as the tokenIn and SavingsDAI as tokenOut
@@ -36,11 +34,14 @@ export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
   const inputCleaned = cleanValue(shares.toString(), tokenIn?.decimals);
   const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals!);
 
-  const params: RedeemDSRParams = {
-    assets: amountIn.toString(),
-    receiver: receiver!,
-    owner: receiver!,
-  };
+  const params = useMemo(
+    (): RedeemDSRParams => ({
+      assets: amountIn.toString(),
+      receiver: receiver!,
+      owner: receiver!,
+    }),
+    [amountIn, receiver]
+  );
 
   // Use DAI signatures for approval
   const approval = useMemo(
@@ -49,17 +50,17 @@ export const RedeemDSR = ({ shares }: RedeemDSRProps) => {
       approvalAmount: amountIn,
       spender: tokenOut?.address as `0x${string}`,
     }),
-    [amountIn, chainId, tokenIn]
+    [amountIn, tokenIn, tokenOut]
   );
 
   const tx = useMemo(
-    (): TxBasicParams => ({
+    (): UsePrepareContractWriteConfig => ({
       address: tokenIn?.address as `0x${string}`,
       abi: ERC4626Abi,
       functionName: 'redeem',
       args: Object.values(params),
     }),
-    [amountIn, chainId, params, tokenOut?.address]
+    [params, tokenIn]
   );
 
   if (shares === '*' || shares === '{amount}')
