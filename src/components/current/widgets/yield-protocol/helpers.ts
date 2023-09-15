@@ -1,34 +1,27 @@
-import { BigNumber, BigNumberish, Contract, PayableOverrides, Signer, ethers } from 'ethers';
+import { TransactionBase, encodeFunctionData } from 'viem';
 import { Address } from 'wagmi';
-import { getContract } from 'wagmi/actions';
 import ladleAbi from './contracts/abis/Ladle';
 import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule';
 import contractAddresses, { ContractNames } from './contracts/config';
-import { LadleActions, ModuleActions } from './operations';
 
 export interface ICallData {
-  args: (string | BigNumberish | boolean)[];
-  operation: string;
-  targetContract?: Contract;
-  fnName?: string;
+  call: `0x${string}`;
   ignoreIf?: boolean;
-  overrides?: PayableOverrides;
+  value?: bigint;
 }
 
 /**
  * Encode all function calls to ladle.batch()
  * @params calls array of ICallData
- * @returns {Promise<PopulatedTransaction | undefined>}
+ * @returns {TransactionBase | undefined}
  */
-export const getSendParams = async ({
+export const getSendParams = ({
   calls,
-  signer,
   chainId,
 }: {
   calls: ICallData[];
-  signer: Signer;
   chainId: number;
-}) => {
+}): Partial<TransactionBase> | undefined => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
   if (!ladleAddress) {
@@ -36,56 +29,23 @@ export const getSendParams = async ({
     return undefined;
   }
 
-  const ladle = getContract({
-    address: ladleAddress,
-    abi: ladleAbi,
-    signerOrProvider: signer,
-  });
-
   /* filter out any ignored calls */
-  const filteredCalls = calls.filter((c) => !c.ignoreIf);
-  console.log('Yield Protocol Batch multicall: ', filteredCalls);
+  const args = calls.filter((c) => !c.ignoreIf).map((c) => c.call);
+  console.log('Yield Protocol Batch multicall: ', args);
 
-  /* Encode each of the calls or pre-encoded route calls */
-  const encodedCalls = filteredCalls.map((call) => {
-    /* 'pre-encode' routed calls if required */
-    if (call.operation === LadleActions.Fn.ROUTE || call.operation === LadleActions.Fn.MODULE) {
-      if (call.fnName && call.targetContract) {
-        const encodedFn = call.targetContract.interface.encodeFunctionData(call.fnName, call.args);
-
-        if (call.operation === LadleActions.Fn.ROUTE)
-          return ladle.interface.encodeFunctionData(LadleActions.Fn.ROUTE, [
-            call.targetContract.address,
-            encodedFn,
-          ]);
-
-        if (call.operation === LadleActions.Fn.MODULE)
-          return ladle.interface.encodeFunctionData(LadleActions.Fn.MODULE, [
-            call.targetContract.address,
-            encodedFn,
-          ]);
-      }
-      throw new Error('Function name and contract target required for routing/module interaction');
-    }
-
-    return ladle.interface.encodeFunctionData(call.operation, call.args);
-  });
-
-  /* calculate the eth value sent */
-  const value = await getCallValue(calls);
-
-  return await ladle.populateTransaction.batch(encodedCalls as `0x${string}`[], {
-    value,
-  });
+  return {
+    to: ladleAddress,
+    value: getCallValue(calls),
+    input: encodeFunctionData({
+      abi: ladleAbi,
+      functionName: 'batch',
+      args: [args],
+    }),
+  };
 };
 
-const getCallValue = async (calls: ICallData[]) =>
-  calls.reduce(async (_sum, call) => {
-    const sum = await _sum;
-    const value = await call.overrides?.value;
-
-    return call.ignoreIf || !value ? sum.add(ethers.constants.Zero) : sum.add(value);
-  }, Promise.resolve(ethers.constants.Zero));
+const getCallValue = (calls: ICallData[]) =>
+  calls.reduce((sum, { ignoreIf, value }) => (ignoreIf || !value ? sum : sum + value), BigInt(0));
 
 /**
  * Handles wrapping eth specific to Yield Protocol
@@ -98,55 +58,62 @@ const getCallValue = async (calls: ICallData[]) =>
 export const getWrapEthCallData = ({
   to,
   value,
-  signer,
   chainId = 1,
 }: {
   to?: Address;
-  value: BigNumber;
-  signer: Signer;
+  value: bigint;
   chainId: number;
 }): ICallData[] => {
   const address = contractAddresses.addresses.get(chainId)?.get(ContractNames.WRAP_ETHER_MODULE);
   if (!address)
     throw new Error('Wrap Ether Module address not found; possibly on an unsupported chain');
 
-  const targetContract = getContract({
-    address: address,
-    abi: wrapEtherModuleAbi,
-    signerOrProvider: signer,
-  });
+  if (to) {
+    const wrapEncoded = encodeFunctionData({
+      abi: wrapEtherModuleAbi,
+      functionName: 'wrap',
+      args: [to, value],
+    });
 
-  return to
-    ? [
-        {
-          operation: LadleActions.Fn.MODULE,
-          fnName: 'wrap',
-          args: [to, value] as ModuleActions.Args.WRAP_ETHER_MODULE,
-          targetContract,
-          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
-          overrides: { value },
-        },
-      ]
-    : [
-        {
-          operation: LadleActions.Fn.JOIN_ETHER,
-          args: ['0x303000000000'] as LadleActions.Args.JOIN_ETHER,
-          ignoreIf: value.lte(ethers.constants.Zero), // ignores if value is 0 or negative
-          overrides: { value },
-        },
-      ];
+    return [
+      {
+        call: encodeFunctionData({
+          abi: ladleAbi,
+          functionName: 'moduleCall',
+          args: [address, wrapEncoded],
+        }),
+        value,
+        ignoreIf: value <= BigInt(0),
+      },
+    ];
+  }
+
+  return [
+    {
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'joinEther',
+        args: ['0x303000000000'],
+      }),
+      value,
+      ignoreIf: value <= BigInt(0),
+    },
+  ];
 };
 
 export const getUnwrapEthCallData = ({
   value,
   to,
 }: {
-  value: BigNumber;
+  value: bigint;
   to: Address;
 }): ICallData[] => [
   {
-    operation: LadleActions.Fn.EXIT_ETHER,
-    args: [to] as LadleActions.Args.EXIT_ETHER,
-    ignoreIf: value.eq(ethers.constants.Zero),
+    call: encodeFunctionData({
+      abi: ladleAbi,
+      functionName: 'exitEther',
+      args: [to],
+    }),
+    ignoreIf: value <= BigInt(0),
   },
 ];
