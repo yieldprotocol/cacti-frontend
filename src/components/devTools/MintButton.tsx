@@ -1,8 +1,6 @@
-//@ts-nocheck
 import { useEffect, useState } from 'react';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork, usePublicClient} from 'wagmi';
 import useBalance from '../cactiComponents/hooks/useBalance';
 import { Button } from '../shared/Button';
 
@@ -12,7 +10,7 @@ export const MintButton = () => {
   const [isVisible, setVisible] = useState(false);
   const { chain } = useNetwork();
   const { refetch } = useBalance();
-  const provider = useProvider();
+  const provider = usePublicClient();
 
   useEffect(() => {
     if (!address || chain?.id != 1) setVisible(false);
