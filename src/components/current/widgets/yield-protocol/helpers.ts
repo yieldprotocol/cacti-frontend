@@ -1,4 +1,4 @@
-import { TransactionBase, encodeFunctionData } from 'viem';
+import { TransactionBase, TransactionRequestBase, encodeFunctionData } from 'viem';
 import { Address } from 'wagmi';
 import ladleAbi from './contracts/abis/Ladle';
 import wrapEtherModuleAbi from './contracts/abis/WrapEtherModule';
@@ -12,16 +12,20 @@ export interface ICallData {
 
 /**
  * Encode all function calls to ladle.batch()
+ * @params account
  * @params calls array of ICallData
- * @returns {TransactionBase | undefined}
+ * @params chain id
+ * @returns {Partial<TransactionBase> | undefined}
  */
 export const getSendParams = ({
+  account,
   calls,
   chainId,
 }: {
+  account: Address;
   calls: ICallData[];
   chainId: number;
-}): Partial<TransactionBase> | undefined => {
+}): TransactionRequestBase | undefined => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
 
   if (!ladleAddress) {
@@ -34,9 +38,10 @@ export const getSendParams = ({
   console.log('Yield Protocol Batch multicall: ', args);
 
   return {
+    from: account,
     to: ladleAddress,
     value: getCallValue(calls),
-    input: encodeFunctionData({
+    data: encodeFunctionData({
       abi: ladleAbi,
       functionName: 'batch',
       args: [args],

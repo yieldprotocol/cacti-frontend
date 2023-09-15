@@ -142,7 +142,7 @@ const borrowClose = ({ account, vault, chainId }: BorrowCloseProps) => {
     vault,
     chainId,
   });
-  return calls ? getSendParams({ calls, chainId }) : undefined;
+  return calls ? getSendParams({ account, calls, chainId }) : undefined;
 };
 
 export default borrowClose;
