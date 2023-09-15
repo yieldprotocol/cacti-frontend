@@ -7,7 +7,6 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ResponseGrid } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import SettingsContext from '@/contexts/SettingsContext';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useForkTools from '@/hooks/useForkTools';
@@ -15,7 +14,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue, toTitleCase } from '@/utils';
 import Cauldron from '../../contracts/abis/Cauldron';
 import contractAddresses, { ContractNames } from '../../contracts/config';
-import useVault, { YieldVault } from '../../hooks/useVault';
+import useVault from '../../hooks/useVault';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 
 // should be generalized and only needed as reference once for all components
@@ -42,7 +41,7 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
   const publicClient = usePublicClient();
 
   const { address: account } = useAccount();
-  const { data: borrowToken, isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
+  const { isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
   const { data: borrowTokenToUse } = useToken(borrowTokenIsEth ? 'WETH' : borrowTokenSymbol);
   const label = `
         ${toTitleCase(action)} ${borrowTokenSymbol} borrow position on ${toTitleCase(projectName)}`;
