@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import {
@@ -9,7 +8,7 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createConfig, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
@@ -44,7 +43,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     },
   } as Chain;
 
-  const { chains, provider } = configureChains(
+  const { chains, publicClient } = configureChains(
     [mainnetFork, goerli, zkSyncTestnet],
     [publicProvider()]
   );
@@ -55,10 +54,10 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     chains,
   });
 
-  const wagmiClient = createClient({
+  const wagmiConfig = createConfig({
     autoConnect: true,
     connectors,
-    provider,
+    publicClient,
   });
 
   const getSiweMessageOptions: GetSiweMessageOptions = () => ({
@@ -98,7 +97,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     address: string | `0x${string}` | undefined;
     size: number;
   }) => {
-    const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+    const { data: ensImage } = useEnsAvatar();
     return ensImage ? (
       <img alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
     ) : (
@@ -107,7 +106,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   };
 
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       {useSiwe && (
         <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}
