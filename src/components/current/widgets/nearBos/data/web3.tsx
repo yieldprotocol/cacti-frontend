@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import ls from "local-storage";
 // import icon from "../images/near_social_icon.svg";
 
-import { EIP1193Provider, EIP1193ProviderRpcError } from "viem";
+import { EIP1193Provider } from "viem";
+import { useEthersProvider } from "@/utils/ethersPolyfill";
+import { JsonRpcProvider } from "near-api-js/lib/providers";
 
 // const web3onboardKey = "web3-onboard:connectedWallets";
 
@@ -227,9 +229,12 @@ import { EIP1193Provider, EIP1193ProviderRpcError } from "viem";
 //     // accountCenter: "#near-social-web3-account",
 //   },
 // });
-
-const defaultEthersProviderContext = {
-  provider: undefined ,
+interface EthersProviderContext {
+  provider?: any;
+  useConnectWallet: any; 
+  setChain:any;
+}
+const defaultEthersProviderContext: EthersProviderContext = {
   useConnectWallet: () => [{}], // [{ wallet, connecting }, connect, disconnect]
   setChain: ()=> null,
 };
@@ -260,8 +265,8 @@ export const useEthersProviderContext = singletonHook(
       defaultEthersProviderContext
     );
 
-    const provider:any = getProvider();
-  
+    const provider = useEthersProvider();
+   
     const useConnectWallet = () => [
       { wallet: 
         {
@@ -271,7 +276,7 @@ export const useEthersProviderContext = singletonHook(
         },   
         connecting: false },
       ()=>console.log('connect'),
-      disconnect,
+      ()=>console.log('disconnect'),
     ]; // [{ wallet, connecting }, connect, disconnect]    
 
     useEffect(() => {
