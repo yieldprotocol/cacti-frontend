@@ -3,7 +3,6 @@ import { Address } from 'wagmi';
 import ladleAbi from '../../contracts/abis/Ladle';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
-import { LadleActions } from '../../operations';
 
 interface BorrowProps {
   account: Address;

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UnsignedTransaction } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
+import { TransactionRequestBase } from 'viem';
 import { Address } from 'wagmi';
 import {
   ActionResponse,
@@ -42,7 +43,7 @@ export interface YieldGraphResSeriesEntity {
 
 export interface YieldSeriesEntity extends YieldGraphResSeriesEntity {
   maturity_: string;
-  sendParams: UnsignedTransaction | undefined;
+  sendParams: TransactionRequestBase | undefined;
 }
 
 export interface YieldGraphRes {

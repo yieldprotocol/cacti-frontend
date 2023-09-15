@@ -1,17 +1,16 @@
-import { BigNumber, Signer, ethers } from 'ethers';
+import { encodeFunctionData } from 'viem';
 import { Address } from 'wagmi';
 import { getContract } from 'wagmi/actions';
+import ladleAbi from '../../contracts/abis/Ladle';
 import poolAbi from '../../contracts/abis/Pool';
 import { ICallData, getSendParams, getWrapEthCallData } from '../../helpers';
-import { LadleActions, RoutedActions } from '../../operations';
 
 interface LendProps {
   account: Address | undefined;
-  input: BigNumber;
+  input: bigint;
   poolAddress: Address;
   baseAddress: Address;
   isEthBase: boolean;
-  signer: Signer;
   chainId: number;
 }
 
@@ -33,42 +32,40 @@ const _lend = ({
   poolAddress,
   baseAddress,
   isEthBase,
-  signer,
   chainId,
 }: LendProps): ICallData[] | undefined => {
-  if (!signer) {
-    console.error('Signer not found');
-    return undefined;
-  }
-
   const poolContract = getContract({
     address: poolAddress,
     abi: poolAbi,
-    signerOrProvider: signer,
   });
-
-  if (!poolContract) {
-    console.error('Pool contract not found');
-    return undefined;
-  }
 
   return [
     ...getWrapEthCallData({
       to: poolAddress,
-      value: isEthBase ? input : ethers.constants.Zero,
-      signer,
+      value: isEthBase ? input : BigInt(0),
       chainId,
     }), // wrap eth to the pool if required
     {
-      operation: LadleActions.Fn.TRANSFER,
-      args: [baseAddress, poolAddress, input] as LadleActions.Args.TRANSFER,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'transfer',
+        args: [baseAddress, poolAddress, input],
+      }),
       ignoreIf: isEthBase,
     },
     {
-      operation: LadleActions.Fn.ROUTE,
-      args: [account, ethers.constants.Zero] as RoutedActions.Args.SELL_BASE, // TODO handle slippage more gracefully
-      fnName: RoutedActions.Fn.SELL_BASE,
-      targetContract: poolContract,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'route',
+        args: [
+          poolAddress,
+          encodeFunctionData({
+            abi: poolAbi,
+            functionName: 'sellBase',
+            args: [account!, BigInt(0)],
+          }),
+        ],
+      }),
       ignoreIf: false,
     },
   ];
@@ -83,7 +80,6 @@ const lend = async ({
   poolAddress,
   baseAddress,
   isEthBase,
-  signer,
   chainId,
 }: LendProps) => {
   const lendCallData = _lend({
@@ -92,10 +88,11 @@ const lend = async ({
     poolAddress,
     baseAddress,
     isEthBase,
-    signer,
     chainId,
   });
-  return lendCallData ? await getSendParams({ calls: lendCallData, signer, chainId }) : undefined;
+  return lendCallData
+    ? getSendParams({ account: account!, calls: lendCallData, chainId })
+    : undefined;
 };
 
 export default lend;

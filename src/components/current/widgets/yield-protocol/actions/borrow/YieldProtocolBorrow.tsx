@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { Address, useContractRead } from 'wagmi';
@@ -139,7 +138,7 @@ const YieldProtocolBorrow = ({
     };
   }, [_collateralAmount, collateralTokenIsEth, collateralTokenToUse?.address, joinAddress]);
 
-  const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: BigNumber) => {
+  const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: bigint) => {
     try {
       const fyTokenOut = await readContract({
         address: poolAddress,
@@ -148,10 +147,10 @@ const YieldProtocolBorrow = ({
         args: [borrowAmount],
       });
 
-      return fyTokenOut.mul(101).div(100); // 1% slippage
+      return (fyTokenOut * BigInt(101)) / BigInt(100); // 1% slippage
     } catch (e) {
       console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', 'could not read buyBasePreview');
-      return ethers.constants.Zero; // TODO not kosher;
+      return BigInt(0); // TODO not kosher;
     }
   }, []);
 
