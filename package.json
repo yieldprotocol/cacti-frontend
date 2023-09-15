@@ -34,7 +34,7 @@
     "@near-wallet-selector/nightly": "^8.5.1",
     "@near-wallet-selector/sender": "^8.5.1",
     "@next/font": "13.1.2",
-    "@rainbow-me/rainbowkit": "^0.12.0",
+    "@rainbow-me/rainbowkit": "latest",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
