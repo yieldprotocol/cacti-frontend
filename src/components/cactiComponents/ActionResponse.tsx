@@ -5,7 +5,7 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/ou
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
-import { TransactionReceipt } from 'viem';
+import { TransactionReceipt, TransactionRequestBase } from 'viem';
 import { UsePrepareContractWriteConfig, useAccount } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -51,7 +51,7 @@ type Action = {
 export type ActionResponseProps = {
   txParams: UsePrepareContractWriteConfig | undefined;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: any | undefined; // unsigned transaction type without ethers?
+  sendParams?: TransactionRequestBase | undefined;
   label?: string; // label to show on button
   description?: string; // tx description (for wallet )
   disabled?: boolean;
