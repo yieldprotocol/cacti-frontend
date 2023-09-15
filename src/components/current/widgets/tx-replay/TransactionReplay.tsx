@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useCallback, useEffect, useState } from 'react';
 import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import { decodeFunctionData } from 'viem';

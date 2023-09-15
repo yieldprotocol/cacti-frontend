@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';

@@ -44,10 +44,6 @@ export const BuyNft = ({
   // Simulate tx to re-verify if the NFT is for sale
   const { isError } = usePrepareContractWrite({
     ...tx,
-    overrides: {
-      ...tx.overrides,
-      gasLimit: undefined,
-    },
   });
 
   const notForSale = !isForSale || isError;

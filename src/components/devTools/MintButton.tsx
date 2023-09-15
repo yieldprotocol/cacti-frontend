@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';

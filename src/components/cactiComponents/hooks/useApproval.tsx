@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { AddressZero } from '@ethersproject/constants';

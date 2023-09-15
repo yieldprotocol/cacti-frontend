@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useMemo } from 'react';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils.js';

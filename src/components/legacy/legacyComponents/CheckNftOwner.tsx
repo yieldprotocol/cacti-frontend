@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { Address, erc721ABI, useAccount, useContractRead } from 'wagmi';

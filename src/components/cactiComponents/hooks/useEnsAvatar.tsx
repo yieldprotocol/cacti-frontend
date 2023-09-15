@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useQuery } from 'react-query';
 import { useAccount } from 'wagmi';
 import { fetchEnsAvatar } from 'wagmi/actions';

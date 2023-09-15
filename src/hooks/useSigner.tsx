@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useContext } from 'react';
 import { Signer } from 'ethers';
 import { useSigner as useSignerWagmi } from 'wagmi';

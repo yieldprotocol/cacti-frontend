@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect } from 'react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import {

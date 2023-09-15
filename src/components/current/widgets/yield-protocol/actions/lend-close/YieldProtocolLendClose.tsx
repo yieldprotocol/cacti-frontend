@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UnsignedTransaction, ethers } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils.js';

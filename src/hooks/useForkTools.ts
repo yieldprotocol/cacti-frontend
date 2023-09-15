@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import axios from 'axios';

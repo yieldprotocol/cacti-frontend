@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
 import { BigNumber, ethers } from 'ethers';

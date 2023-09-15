@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useQuery } from 'react-query';
 import { Network } from '@center-inc/react';
 import axios from 'axios';

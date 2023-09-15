@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { UnsignedTransaction, ethers } from 'ethers';

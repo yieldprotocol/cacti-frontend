@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';

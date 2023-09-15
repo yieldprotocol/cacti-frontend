@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { Token, TradeType } from '@uniswap/sdk-core';

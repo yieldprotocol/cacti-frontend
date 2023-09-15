@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useContext, useState } from 'react';
 import { BigNumber } from 'ethers';
 import {

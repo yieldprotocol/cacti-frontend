@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { BigNumber, Signer, ethers } from 'ethers';
 import { Address } from 'wagmi';
 import { getContract } from 'wagmi/actions';

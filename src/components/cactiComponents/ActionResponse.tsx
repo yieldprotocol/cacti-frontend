@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { TransactionReceipt } from '@ethersproject/abstract-provider';

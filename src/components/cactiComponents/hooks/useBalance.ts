@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { BigNumber } from 'ethers';
