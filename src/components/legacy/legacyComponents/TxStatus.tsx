@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useWaitForTransaction } from 'wagmi';
 import { WidgetError } from '@/components/legacy/legacyWidgets/helpers';
+import { Button } from '@/components/shared/Button';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Spinner } from '@/utils';
-import { Button } from '@/components/shared/Button';
 
 interface Props {
   hash: `0x${string}`;

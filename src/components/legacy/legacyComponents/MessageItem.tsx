@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
+import Avatar from '@/components/shared/Avatar';
+import { Message, useChatContext } from '@/contexts/ChatContext';
 import { FeedbackButton } from './FeedbackButton';
 import { MessageTranslator } from './MessageTranslator';
 import { SystemMessage } from './SystemMessage';
 import { UserMessage } from './UserMessage';
-import { Message, useChatContext } from '@/contexts/ChatContext';
-import Avatar from '@/components/shared/Avatar';
 
 export const MessageItemWrap = ({ actor, children }: { actor: string; children: ReactNode }) => {
   return (

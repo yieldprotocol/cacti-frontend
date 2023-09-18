@@ -1,13 +1,13 @@
 import { FunctionComponent, ReactNode } from 'react';
 import { ActionResponse, ActionResponseProps } from './ActionResponse';
 import { DoubleLineResponse } from './DoubleLineResponse';
+import { ErrorResponse } from './ErrorResponse';
 import { HeaderResponse } from './HeaderResponse';
 import { IconResponse } from './IconResponse';
 import { ImageResponse, ImageResponseProps } from './ImageResponse';
 import { ListResponse } from './ListResponse';
 import { SingleLineResponse } from './SingleLineResponse';
 import { TextResponse } from './TextResponse';
-import { ErrorResponse } from './ErrorResponse';
 
 export enum CactiResponse {
   TextResponse = 'TextResponse',
@@ -46,5 +46,5 @@ export {
   ListResponse,
   ActionResponse,
   ImageResponse,
-  ErrorResponse
+  ErrorResponse,
 };

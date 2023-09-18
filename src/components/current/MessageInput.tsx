@@ -141,7 +141,9 @@ const MessageInput = () => {
           <CustomConnectButton />
         </div>
       ) : (
-        <div className="flex w-full justify-center animate-pulse text-sm text-white/30">Waiting for Cacti connection ...</div>
+        <div className="flex w-full animate-pulse justify-center text-sm text-white/30">
+          Waiting for Cacti connection ...
+        </div>
       )}
     </>
   );

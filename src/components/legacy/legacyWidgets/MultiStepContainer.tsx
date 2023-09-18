@@ -1,4 +1,4 @@
-import {  useEffect } from 'react';
+import { useEffect } from 'react';
 import { useChatContext } from '../../../contexts/ChatContext';
 import { SendTransaction } from './SendTransaction';
 import { WidgetError } from './helpers';
