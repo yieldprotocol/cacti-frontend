@@ -24,13 +24,13 @@ const useYieldProtocol = () => {
       collateralTokenIsEth,
       maxAmountToBorrow,
     }: {
-      borrowAmount: BigNumber;
-      collateralAmount: BigNumber;
-      seriesEntityId: string;
-      ilkId: string;
+      borrowAmount: bigint;
+      collateralAmount: bigint;
+      seriesEntityId: `0x${string}`;
+      ilkId: `0x${string}`;
       borrowTokenIsEth: boolean;
       collateralTokenIsEth: boolean;
-      maxAmountToBorrow: BigNumber;
+      maxAmountToBorrow: bigint;
     }) => {
       if (!account) {
         console.error('Account not found');
@@ -50,7 +50,6 @@ const useYieldProtocol = () => {
         vaultId: undefined,
         borrowTokenIsEth,
         collateralTokenIsEth,
-        signer,
         chainId,
         maxAmountToBorrow,
       });

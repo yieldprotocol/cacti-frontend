@@ -179,8 +179,8 @@ const YieldProtocolBorrow = ({
       return await borrow({
         borrowAmount: _borrowAmount.value,
         collateralAmount: _collateralAmount.value,
-        seriesEntityId: seriesEntity.id,
-        ilkId,
+        seriesEntityId: seriesEntity.id as Address,
+        ilkId: ilkId as Address,
         borrowTokenIsEth,
         collateralTokenIsEth,
         maxAmountToBorrow,
