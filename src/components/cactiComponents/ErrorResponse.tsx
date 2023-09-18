@@ -44,7 +44,14 @@ export const ErrorResponse = (props: ErrorResponseProps): JSX.Element => {
                 <Markdown>{props.error}</Markdown>
               </div>
               <div className="flex w-full justify-center">
-                <button className={buttonStyle}> Submit Bug Report </button>
+                <a
+                  className={buttonStyle}
+                  href={`https://discord.gg/hu8zVcBty6`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Submit Bug Report on Discord
+                </a>
               </div>
             </Disclosure.Panel>
           </>
