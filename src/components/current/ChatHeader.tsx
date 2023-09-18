@@ -5,8 +5,8 @@ import { useMutationDeleteChat } from '@/api/chats/mutations';
 import { useMutationDeleteSharedSession } from '@/api/shares/mutations';
 import { useChatContext } from '@/contexts/ChatContext';
 import useThread from '@/hooks/useThread';
-import InputWrap from './InputWrap';
 import SkeletonWrap from '../shared/SkeletonWrap';
+import InputWrap from './InputWrap';
 
 interface TooltipProps {
   children: ReactNode;

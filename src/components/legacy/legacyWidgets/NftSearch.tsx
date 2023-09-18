@@ -1,7 +1,7 @@
 import { useCollectionSearch } from '@center-inc/react';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
-import { NftCollectionContainer } from './NftCollectionContainer';
 import Grid from '../legacyComponents/Grid';
+import { NftCollectionContainer } from './NftCollectionContainer';
 
 export const NftSearch = ({ query }: { query: string }) => {
   const { results, loading, error } = useCollectionSearch({

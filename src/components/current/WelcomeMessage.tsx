@@ -19,7 +19,9 @@ const WelcomeBox = ({ onClick, children }: { onClick?: () => void; children: Rea
       text-white text-opacity-70 md:p-2 ${onClickClasses} center w-full`}
       onClick={onClick}
     >
-      <p className="m-0 flex min-h-[48px] items-center justify-center font-light text-base ">&rdquo;{children}&rdquo;</p>
+      <p className="m-0 flex min-h-[48px] items-center justify-center text-base font-light ">
+        &rdquo;{children}&rdquo;
+      </p>
     </div>
   );
 };
@@ -32,9 +34,7 @@ const WelcomeMessage = () => {
   const { sendMessage } = useChatContext();
   return (
     <div className="h-full place-items-center ">
-
       <div className="mx-auto w-full max-w-4xl space-y-20">
-
         <Image src={cactiImage} alt="CactiChat" className="mx-auto" width={400} height={300} />
 
         <div className="grid grid-cols-1 gap-20 p-4 sm:grid-cols-3">
@@ -58,7 +58,9 @@ const WelcomeMessage = () => {
             <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
               Swap 0.1 ETH for DAI on Uniswap
             </WelcomeBox>
-            <WelcomeBox onClick={() => sendMessage('Borrow 1000 USDC on yield Protocol with ETH collateral')}>
+            <WelcomeBox
+              onClick={() => sendMessage('Borrow 1000 USDC on yield Protocol with ETH collateral')}
+            >
               Borrow 1000 USDC on yield Protocol with ETH collateral
             </WelcomeBox>
             <WelcomeBox onClick={() => sendMessage('Register the name [domain-name].eth on ENS')}>
