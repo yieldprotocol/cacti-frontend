@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UnsignedTransaction } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
 import { TransactionRequestBase } from 'viem';
@@ -238,7 +237,7 @@ const SingleItem = ({
   item: YieldSeriesEntity;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
+  sendParams: TransactionRequestBase | undefined;
 }) => {
   const lendAPR = item.fyToken.pools[0].lendAPR;
   return +lendAPR > 0 ? ( // only show if there is an APR; this implicitly checks liquidity in the pool (it would be more accurate to check maxBaseOut of the pool against the user input, but wanted to minimize requests)
