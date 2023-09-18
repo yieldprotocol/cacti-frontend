@@ -198,17 +198,17 @@ const SingleItem = ({
     ? formatUnits(baseAmountToUse, item.baseAsset.decimals)
     : '0';
 
-  const getSendParams = useCallback(async () => {
+  const getSendParams = useCallback(() => {
     if (!fyTokenValueOfBase) {
       console.error('No fyToken value of base');
       return;
     }
 
-    return await lendClose({
+    return lendClose({
       fyTokenAmount: fyTokenValueOfBase,
       fyTokenAddress,
       poolAddress,
-      seriesEntityId: item.id,
+      seriesEntityId: item.id as `0x${string}`,
       seriesEntityIsMature: item.maturity < NOW,
       isEthBase: item.baseAsset.symbol === 'WETH',
     });
