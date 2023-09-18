@@ -1,10 +1,9 @@
-import { AddressZero } from '@ethersproject/constants';
-import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
+import { parseUnits, zeroAddress } from 'viem';
+import { erc20ABI, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import { parseUnits } from 'viem';
 
 interface TransferWidgetProps {
   tokenSymbol: string;
@@ -26,7 +25,7 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
   const approval = {
     approvalAmount: amount,
     tokenAddress: token!.address as `0x${string}`,
-    spender: AddressZero as `0x${string}`,
+    spender: zeroAddress,
     skipApproval: true,
   };
 
