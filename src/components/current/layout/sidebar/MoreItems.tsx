@@ -45,7 +45,7 @@ const MoreItems = () => {
       <MoreItem
         icon={<DiscordIcon />}
         label="Discord"
-        action={() => navigateToExternalUrl('https://github.com/yieldprotocol/chatweb3-backend')}
+        action={() => navigateToExternalUrl('https://discord.gg/hu8zVcBty6')}
       />
       <MoreItem
         icon={<TwitterIcon />}

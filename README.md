@@ -7,7 +7,7 @@
     <br />
     <a href="https://twitter.com/yield">Twitter</a>
     ·
-    <a href="https://discord.gg/JAFfDj5">Discord</a>
+    <a href="https://discord.gg/hu8zVcBty6">Discord</a>
     ·
     <a href="https://github.com/yieldprotocol/cacti-backend/issues">Report a Bug</a>
   </p>
