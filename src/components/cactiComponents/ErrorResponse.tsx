@@ -48,7 +48,7 @@ export const ErrorResponse = (props: ErrorResponseProps): JSX.Element => {
               <div className="p-4 font-mono text-xs">
                 <Markdown>{props.error}</Markdown>
               </div>
-              <div className="flex w-full justify-center text-black">
+              <div className="flex w-full justify-center gap-2 ">
                 <form name="bug-report" method="POST" data-netlify="true">
                   <input type="hidden" name="form-name" value="bug-report" />
                   <input type="hidden" name="name" id="yourname" value={address} />
@@ -57,7 +57,21 @@ export const ErrorResponse = (props: ErrorResponseProps): JSX.Element => {
                     Submit Bug Report
                   </button>
                 </form>
+
+                <a
+                  className={buttonStyle}
+                  href={`https://discord.gg/hu8zVcBty6`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Get help on Discord
+                </a>
+
+
+
               </div>
+
+
             </Disclosure.Panel>
           </>
         )}
