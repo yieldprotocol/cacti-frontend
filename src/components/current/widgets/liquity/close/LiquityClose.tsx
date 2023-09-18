@@ -8,7 +8,6 @@ import {
   ListResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
-import useSigner from '@/hooks/useSigner';
 import { walletClientToSigner } from '@/utils/ethersAdapter';
 
 interface LiquityCloseData {
