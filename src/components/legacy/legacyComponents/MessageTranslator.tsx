@@ -16,7 +16,6 @@ import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/Sh
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { shortenAddress } from '@/utils';
-import { BuyNFT } from '../legacyWidgets/BuyNFT';
 import {
   NftAttributes,
   NftCollectionAttributes,
