@@ -140,18 +140,6 @@ export const Widgetize = (widget: Widget) => {
           </ActionPanel>
         );
       }
-      case 'buy-nft': {
-        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
-        return (
-          <ActionPanel
-            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
-            msg={inputString}
-            direction="col"
-          >
-            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
-          </ActionPanel>
-        );
-      }
 
       // Re-enable this temporarily for fallback
       case 'nft-collection-container': {
