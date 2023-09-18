@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import request from 'graphql-request';
 import useSWR from 'swr';
+import { TransactionRequestBase } from 'viem';
 import { Address, useContractRead } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
@@ -256,7 +257,7 @@ const SingleItem = ({
   item: YieldSeriesEntity;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
+  sendParams: TransactionRequestBase | undefined;
 }) => {
   return (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">
