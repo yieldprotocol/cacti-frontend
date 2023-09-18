@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Address, useAccount } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
-import useSigner from '@/hooks/useSigner';
 import borrowCloseHelper from '../actions/borrow-close/helpers';
 import borrowHelper from '../actions/borrow/helpers';
 import lendCloseHelper from '../actions/lend-close/helpers';
@@ -10,11 +9,10 @@ import { YieldVault } from './useVault';
 
 const useYieldProtocol = () => {
   const chainId = useChainId();
-  const signer = useSigner();
   const { address: account } = useAccount();
 
   const borrow = useCallback(
-    async ({
+    ({
       borrowAmount,
       collateralAmount,
       seriesEntityId,
@@ -36,7 +34,7 @@ const useYieldProtocol = () => {
         return undefined;
       }
 
-      return await borrowHelper({
+      return borrowHelper({
         account,
         borrowAmount,
         collateralAmount,
@@ -69,7 +67,7 @@ const useYieldProtocol = () => {
   );
 
   const lend = useCallback(
-    async ({
+    ({
       tokenInAddress,
       amount,
       poolAddress,
@@ -79,20 +77,25 @@ const useYieldProtocol = () => {
       amount: bigint;
       poolAddress: Address;
       isEthBase: boolean;
-    }) =>
-      await lendHelper({
+    }) => {
+      if (!account) {
+        console.error('Account not found');
+        return undefined;
+      }
+      return lendHelper({
         account,
         input: amount,
         poolAddress,
         baseAddress: tokenInAddress,
         isEthBase,
         chainId,
-      }),
+      });
+    },
     [account, chainId]
   );
 
   const lendClose = useCallback(
-    async ({
+    ({
       fyTokenAmount,
       fyTokenAddress,
       poolAddress,
@@ -103,11 +106,16 @@ const useYieldProtocol = () => {
       fyTokenAmount: bigint;
       fyTokenAddress: Address;
       poolAddress: Address;
-      seriesEntityId: string;
+      seriesEntityId: `0x${string}`;
       seriesEntityIsMature: boolean;
       isEthBase: boolean;
-    }) =>
-      await lendCloseHelper({
+    }) => {
+      if (!account) {
+        console.error('Account not found');
+        return undefined;
+      }
+
+      return lendCloseHelper({
         account,
         fyTokenAmount,
         fyTokenAddress,
@@ -116,7 +124,8 @@ const useYieldProtocol = () => {
         seriesEntityIsMature,
         isEthBase,
         chainId,
-      }),
+      });
+    },
     [account, chainId]
   );
 
