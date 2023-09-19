@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { parseUnits } from 'viem';
+import { useAccount, useNetwork, useSwitchNetwork, useWalletClient } from 'wagmi';
 import { goerli, mainnet, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
+import { walletClientToSigner } from '@/utils/ethersAdapter';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import ZKSyncActionResponse from './ZKSyncActionResponse';
 
-export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
-export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
+export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigInt(12);
+export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigInt(10);
 
 interface ZKSyncProps {
   tokenSymbol: string;
@@ -53,6 +53,8 @@ const stateToLabel = {
 
 // Implementation based on example in doc: https://era.zksync.io/docs/dev/how-to/send-message-l2-l1.html#example
 const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
+  const { data: walletClient } = useWalletClient();
+  const { address: account } = useAccount();
   const defaultLabel = `Withdraw ${userAmount} ${tokenSymbol.toUpperCase()} from zkSync`;
   const [label, setLabel] = useState(defaultLabel);
   const [txHash, setTxHash] = useState('');
@@ -66,7 +68,6 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     try {
       setDisabled(true);
       const isETH = tokenSymbol.toUpperCase() === 'ETH';
-      const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
 
       // --- Step 1: Check and request user to change wallet network to zkSync depending on env --- //
       let tokenProfile;
@@ -96,10 +97,10 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       // --- Step 2: Initiate withdraw from zksync --- //
 
-      const zkSyncWalletProvider = new zksync.Web3Provider(browserWallet);
-      const zkSyncSigner = zkSyncWalletProvider.getSigner();
+      const signer = walletClientToSigner(walletClient!);
+      const zkSyncSigner = new zksync.Signer(signer, zkSyncJsonRpcProvider);
       const inputCleaned = cleanValue(userAmount.toString(), tokenProfile?.decimals);
-      const bridgeAmount = parseUnits(inputCleaned!, tokenProfile?.decimals);
+      const bridgeAmount = parseUnits(inputCleaned!, tokenProfile?.decimals!);
 
       let bridgeAddress;
       if (!isETH) {
@@ -130,9 +131,8 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       // --- Step 4: Finalize tx on L1 --- //
 
-      const ethersWalletProvider = new ethers.providers.Web3Provider(browserWallet);
       const zkSyncL1Signer = zksync.L1Signer.from(
-        ethersWalletProvider.getSigner(),
+        walletClientToSigner(walletClient!),
         zkSyncJsonRpcProvider
       );
 
@@ -155,7 +155,7 @@ const ZKSyncWithdraw = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     } finally {
       setDisabled(false);
     }
-  }, [chain?.id, defaultLabel, switchNetworkAsync, tokenSymbol, userAmount]);
+  }, [chain?.id, defaultLabel, switchNetworkAsync, tokenSymbol, userAmount, walletClient]);
 
   return (
     <ConnectFirst>
