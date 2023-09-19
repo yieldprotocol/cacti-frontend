@@ -1,4 +1,4 @@
-import { Widget } from '../experimental_/MessageTranslator_';
+import { Widget } from '../current/MessageTranslator';
 import { ResponseWrap } from './helpers/layout';
 
 interface TableHeader {

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import Skeleton from '@/components/SkeletonWrap';
 import { findTokenBySymbol } from '@/utils';
+import SkeletonWrap from '../shared/SkeletonWrap';
 import { InlineChip } from './InlineChip';
 import { ResponseWrap } from './helpers/layout';
 
@@ -46,18 +46,18 @@ export const DoubleLineResponse = (props: any) => {
                 <InlineChip label={token?.symbol} image={token?.logoURI} />
               </div>
               <div className="text-xl text-white/70 ">
-                {amount ? amount : <Skeleton width={50} />}
+                {amount ? amount : <SkeletonWrap width={50} />}
               </div>
             </div>
 
             {/* Calculated values/ exncahnge rates */}
             <div className="flex items-center justify-between text-sm text-white/70">
               <div className="px-1 py-2">
-                $ {tokenValueInUsd ? tokenValueInUsd : <Skeleton width={50} />}
+                $ {tokenValueInUsd ? tokenValueInUsd : <SkeletonWrap width={50} />}
               </div>
 
               <div className="px-1 py-2">
-                $ {amountValueInUsd ? amountValueInUsd : <Skeleton width={50} />}
+                $ {amountValueInUsd ? amountValueInUsd : <SkeletonWrap width={50} />}
               </div>
             </div>
           </div>

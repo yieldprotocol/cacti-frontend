@@ -29,11 +29,11 @@ The Cacti frontend is a web-based interface where users can seamlessly interact 
 
 **Widget Commands**: Central to Cacti's extensible design are the Widget Commands. These commands act as functions that an LLM can call to display an interaction dialogue box, allowing users to engage in web3 actions or access data seamlessly. The Widget Commands can be expanded upon, allowing for a broad array of functions catered to the user's needs.
 
-**Eval**: Cacti employs a flexible evaluation framework that is crucial for developers wishing to assess the performance of added widgets. This includes features like hard-coded testing, automatic evaluations, and evaluations via manually annotated test samples that can be input via a CSV file. 
+**Eval**: Cacti employs a flexible evaluation framework that is crucial for developers wishing to assess the performance of added widgets. This includes features like hard-coded testing, automatic evaluations, and evaluations via manually annotated test samples that can be input via a CSV file.
 
 **Chat Context**: All dialog boxes can add information to the chat context, enabling the LLM use context added by previous widget commands to execute a later command effectively, enhancing the overall user experience.
 
-**Configurable Chat Modules**: Chat modules can be configured to permit the use of alternative LLMs, fine-tuned LLMs, alternate prompts to LLMs, etc. Different chat modules can be used just by using a modified URL. This allows for easy testing of potential improvements to the chat modes and new features. 
+**Configurable Chat Modules**: Chat modules can be configured to permit the use of alternative LLMs, fine-tuned LLMs, alternate prompts to LLMs, etc. Different chat modules can be used just by using a modified URL. This allows for easy testing of potential improvements to the chat modes and new features.
 
 **Streaming Support**: Cacti supports streaming from LLM models, providing users with real-time updates. The system can sensibly handle widget commands included in the LLM stream, ensuring smooth and intuitive interactions.
 
@@ -44,7 +44,6 @@ The Cacti frontend is a web-based interface where users can seamlessly interact 
 **Wallet-based Authentication**: Cacti uses wallet-based authentication specifically for web3 wallets like MetaMask. This provides a secure means of identification and ensures the secure execution of web3 transactions.
 
 **Transaction Handling**: Cacti is designed to handle web3 transactions on Ethereum or Layer 2 solutions (L2s). It abstracts away the complexity of transaction handling from the integrator. All the integrator needs to do is pass the transaction details, and Cacti takes care of the rest, ensuring a user-friendly experience for those engaging with web3 protocols.
-
 
 ## Getting Started
 

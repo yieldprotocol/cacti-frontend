@@ -1,6 +1,6 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { Markdown } from '../experimental_/Markdown';
+import { Markdown } from '../current/Markdown';
 import { ResponseTitle, ResponseWrap } from './helpers/layout';
 
 const textStyle = 'text-base text-white text-opacity-70 gap-1 ';

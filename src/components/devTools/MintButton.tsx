@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { useAccount, useNetwork, useProvider } from 'wagmi';
-import { Button } from '@/components/Button';
 import useBalance from '../cactiComponents/hooks/useBalance';
+import { Button } from '../shared/Button';
 
 export const MintButton = () => {
   const { address } = useAccount();
@@ -11,7 +11,7 @@ export const MintButton = () => {
   const [isVisible, setVisible] = useState(false);
   const { chain } = useNetwork();
   const { refetch } = useBalance();
-  const provider = useProvider() as JsonRpcProvider;
+  const provider = useProvider();
 
   useEffect(() => {
     if (!address || chain?.id != 1) setVisible(false);
@@ -24,6 +24,7 @@ export const MintButton = () => {
       ethers.utils.parseEther('10').toHexString(), // hex encoded wei amount
     ];
     setLoading(true);
+    // @ts-ignore
     await provider.send('tenderly_addBalance', params);
     await refetch();
     setLoading(false);

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import Skeleton from '@/components/SkeletonWrap';
 import useToken from '@/hooks/useToken';
 import { Token } from '@/types';
+import SkeletonWrap from '../shared/SkeletonWrap';
 import { InlineChip } from './InlineChip';
 import { ResponseWrap } from './helpers/layout';
 
@@ -27,7 +27,7 @@ export const SingleLineResponse = (props: SingleLineResponseProps) => {
           <div className="flex items-center justify-between p-2">
             <InlineChip label={token?.symbol} image={token?.logoURI} />
             <div className="text-xl">
-              {props.value !== '<pending>' ? props.value : <Skeleton width={50} />}
+              {props.value !== '<pending>' ? props.value : <SkeletonWrap width={50} />}
             </div>
           </div>
         )}

@@ -22,7 +22,7 @@ const useBalance = (
     queryKey: ['balance', account, tokenAddress, erc1155TokenId, chainId],
     queryFn: async () => {
       if (!account) {
-        console.error('account is required to fetch balance');
+        console.log('Account is required to fetch balance.');
         return;
       }
 
