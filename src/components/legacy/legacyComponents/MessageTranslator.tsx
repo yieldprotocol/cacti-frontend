@@ -11,7 +11,6 @@ import {
   NftCollectionTraitsContainer,
 } from '@/components/legacy/legacyWidgets/NftCollectionContainer';
 import { Price } from '@/components/legacy/legacyWidgets/Price';
-import { TransferWidget } from '@/components/legacy/legacyWidgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
@@ -22,7 +21,6 @@ import {
   NftsWithAttributes,
 } from '../legacyWidgets/NftAttributes';
 import { NftSearch } from '../legacyWidgets/NftSearch';
-import { SendTransactionWithReplayMsg } from '../legacyWidgets/SendTransactionWithReplayMsg';
 import { YieldFarmWidget } from '../legacyWidgets/YieldFarm';
 import { YieldRowContainer } from '../legacyWidgets/YieldRowContainer';
 import { ActionPanel } from '../legacyWidgets/helpers/ActionPanel';
@@ -257,30 +255,6 @@ export const Widgetize = (widget: Widget) => {
       //     </table>
       //   );
       // }
-
-      case 'tx-payload-for-sending-container': {
-        const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
-          JSON.parse(args);
-
-        return (
-          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <SendTransactionWithReplayMsg
-                  {...{
-                    userRequestStatus,
-                    tx,
-                    isApprovalTx,
-                    errorMsg,
-                    parsedUserRequest,
-                    description,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
-      }
 
       // case 'multistep-payload-container': {
       //   const {
