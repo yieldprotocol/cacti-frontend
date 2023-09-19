@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
-import { BigNumber, ethers } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils.js';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork, useWalletClient } from 'wagmi';
 import { goerli, mainnet, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
 import { HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
+import { walletClientToSigner } from '@/utils/ethersAdapter';
 import { cleanValue, findTokenBySymbol } from '../../../../utils';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 import ZKSyncActionResponse from './ZKSyncActionResponse';
 
-export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigNumber.from(12);
-export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigNumber.from(10);
+export const L1_FEE_ESTIMATION_COEF_NUMERATOR = BigInt(12);
+export const L1_FEE_ESTIMATION_COEF_DENOMINATOR = BigInt(10);
 
 interface ZKSyncProps {
   tokenSymbol: string;
@@ -41,6 +41,8 @@ const stateToLabel = {
 // Implementation based on example in doc: https://era.zksync.io/docs/reference/concepts/bridging/bridging-asset.html#deposits-to-l2
 const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
   const defaultLabel = `Bridge ${userAmount} ${tokenSymbol.toUpperCase()} to zkSync`;
+  const { data: walletClient } = useWalletClient();
+  const { address: account } = useAccount();
 
   const [label, setLabel] = useState(defaultLabel);
   const [txHash, setTxHash] = useState('');
@@ -54,10 +56,9 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     try {
       setDisabled(true);
       const isETH = tokenSymbol.toUpperCase() === 'ETH';
-      const browserWallet = window.ethereum as ethers.providers.ExternalProvider;
 
       let bridgeToken;
-      let zkSyncJsonRpcProvider;
+      let zkSyncJsonRpcProvider: zksync.Provider;
 
       // --- Step 1: Check and request user to change wallet network to Goerli/Mainnet depending on env --- //
       if (process.env.NODE_ENV === 'production') {
@@ -82,10 +83,10 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
 
       // --- Step 2: Initiate bridge to zkSync --- //
 
-      const browserWalletProvider = new ethers.providers.Web3Provider(browserWallet);
-
-      const ethSigner = browserWalletProvider.getSigner();
-      const zkSyncSigner = zksync.L1Signer.from(ethSigner, zkSyncJsonRpcProvider);
+      const zkSyncSigner = zksync.L1Signer.from(
+        walletClientToSigner(walletClient!),
+        zkSyncJsonRpcProvider
+      );
 
       const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
       const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
@@ -93,7 +94,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       setLabel(stateToLabel[ZKSyncDepositState.CONFIRM_L1_TX]);
 
       const depositHandle = await zkSyncSigner.deposit({
-        to: await ethSigner.getAddress(),
+        to: account,
         token: isETH ? zksync.utils.ETH_ADDRESS : (bridgeToken?.address as `0x${string}`),
         amount: bridgeAmount,
         approveERC20: isETH ? false : true,
@@ -113,7 +114,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
     } finally {
       setDisabled(false);
     }
-  }, [chain?.id, defaultLabel, switchNetworkAsync, tokenSymbol, userAmount]);
+  }, [account, chain?.id, defaultLabel, switchNetworkAsync, tokenSymbol, userAmount, walletClient]);
 
   return (
     <ConnectFirst>
