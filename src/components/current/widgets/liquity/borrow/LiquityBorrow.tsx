@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { EthersLiquity } from '@liquity/lib-ethers';
 import { Address, TransactionRequestBase } from 'viem';
-import { useWalletClient } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
