@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { parseUnits } from 'viem';
 import { useAccount, useNetwork, useSwitchNetwork, useWalletClient } from 'wagmi';
 import { goerli, mainnet, zkSync as zkSyncMain, zkSyncTestnet } from 'wagmi/chains';
 import * as zksync from 'zksync-web3';
@@ -89,7 +89,7 @@ const ZKSyncDeposit = ({ tokenSymbol, userAmount }: ZKSyncProps) => {
       );
 
       const inputCleaned = cleanValue(userAmount.toString(), bridgeToken?.decimals);
-      const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals);
+      const bridgeAmount = parseUnits(inputCleaned!, bridgeToken?.decimals!);
 
       setLabel(stateToLabel[ZKSyncDepositState.CONFIRM_L1_TX]);
 
