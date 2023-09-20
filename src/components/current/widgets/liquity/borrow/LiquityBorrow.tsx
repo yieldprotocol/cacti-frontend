@@ -10,7 +10,7 @@ import {
 } from '@/components/cactiComponents';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import { walletClientToSigner } from '@/utils/ethersAdapter';
+import { useEthersSigner, walletClientToSigner } from '@/utils/ethersAdapter';
 
 interface BorrowProps {
   borrowAmount: string;
@@ -18,8 +18,7 @@ interface BorrowProps {
 }
 
 const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
-  const { data: walletClient } = useWalletClient();
-  const signer = walletClient ? walletClientToSigner(walletClient) : undefined;
+  const signer = useEthersSigner();
   const { data: borrowToken } = useToken('LUSD');
   const { data: collateralToken } = useToken('ETH');
   const borrowCleaned = cleanValue(borrowAmount, borrowToken?.decimals);
