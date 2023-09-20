@@ -1,6 +1,6 @@
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { formatEther } from 'ethers/lib/utils.js';
+import { formatEther } from 'viem';
 import { abbreviateHash, cleanValue } from '@/utils';
 import useBalance from '../cactiComponents/hooks/useBalance';
 import useEnsName from '../cactiComponents/hooks/useEnsName';
