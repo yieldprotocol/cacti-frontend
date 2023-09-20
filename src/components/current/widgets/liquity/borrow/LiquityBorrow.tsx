@@ -10,7 +10,7 @@ import {
 } from '@/components/cactiComponents';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import { useEthersSigner, walletClientToSigner } from '@/utils/ethersAdapter';
+import { useEthersSigner } from '@/utils/ethersAdapter';
 
 interface BorrowProps {
   borrowAmount: string;
