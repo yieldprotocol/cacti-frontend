@@ -11,7 +11,7 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createClient, mainnet, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
@@ -50,7 +50,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   } as Chain;
 
   const { chains, provider } = configureChains(
-    [mainnetFork, goerli, zkSyncTestnet],
+    [mainnet],
     [publicProvider()]
   );
 
