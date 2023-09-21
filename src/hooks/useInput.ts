@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
+import { formatUnits, parseUnits } from 'viem';
 import { cleanValue } from '@/utils';
 import useToken from './useToken';
-import { formatUnits, parseUnits } from 'viem';
 
 type Input = {
   value: bigint | undefined;
@@ -17,11 +17,7 @@ type Input = {
  * @param transform
  * @returns {Input}
  */
-const useInput = (
-  input: string,
-  tokenSymbol: string,
-  mutate?: (inputBN: bigint) => bigint
-) => {
+const useInput = (input: string, tokenSymbol: string, mutate?: (inputBN: bigint) => bigint) => {
   const { data: token } = useToken(tokenSymbol);
 
   return useMemo((): Input | undefined => {
@@ -31,7 +27,16 @@ const useInput = (
     }
 
     const { decimals } = token;
-    const inputCleaned = cleanValue(input, decimals);
+
+    let inputCleaned: string | undefined;
+
+    try {
+      inputCleaned = cleanValue(input, decimals);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+
     const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
     if (!inputBN) return { value: undefined, formatted: undefined, decimals: decimals };
 
