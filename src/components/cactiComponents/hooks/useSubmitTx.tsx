@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { TransactionReceipt, TransactionRequestBase } from 'viem';
+import { TransactionReceipt, TransactionRequestBase, encodeFunctionData } from 'viem';
 import {
   UsePrepareContractWriteConfig,
   usePrepareContractWrite,
@@ -48,9 +48,15 @@ const useSubmitTx = (
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig, isError: isPrepareError } = usePrepareSendTransaction({
-    ...(writeConfig.request ?? sendParams),
-    // gasLimit: sendParams?.gasLimit || 500000  TODO add in gas limti?
-    enabled: true,
+    ...(writeConfig.request
+      ? {
+          to: writeConfig.request.address,
+          data: encodeFunctionData({
+            ...writeConfig.request,
+          }),
+          value: writeConfig.request.value,
+        }
+      : sendParams),
     onError: (e) => console.log('prepare send error', e),
   });
 

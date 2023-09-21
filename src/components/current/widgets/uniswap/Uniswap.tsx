@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
-import { formatUnits, parseUnits } from 'viem';
-import { Address, UsePrepareContractWriteConfig, useAccount } from 'wagmi';
+import { TransactionRequestBase, formatUnits, parseUnits } from 'viem';
+import { Address, UsePrepareContractWriteConfig, useAccount, usePublicClient } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -28,6 +28,7 @@ interface UniswapProps {
 
 const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
   const chainId = useChainId();
+  const publicClient = usePublicClient();
 
   const { address: recipient } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
@@ -64,6 +65,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const [amountOut_, setAmountOut_] = useState<string>();
   const [amountOutMinimum, setAmountOutMinimum] = useState<bigint>();
   const [amountOutMinimum_, setAmountOutMinimum_] = useState<string>();
+
+  const [txParams, setTxParams] = useState<UsePrepareContractWriteConfig>();
+  console.log('🦄 ~ file: Uniswap.tsx:70 ~ Uniswap ~ txParams:', txParams);
 
   useEffect(() => {
     if (!quote) {
@@ -139,7 +143,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     return {
       tokenIn: tokenInChecked.address,
       tokenOut: tokenOutChecked.address,
-      fee: BigInt(3000),
+      fee: 3000,
       recipient,
       amountIn: input.value,
       amountOutMinimum,
@@ -147,16 +151,21 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     };
   }, [amountOutMinimum, input?.value, recipient, tokenInChecked, tokenOutChecked]);
 
-  const txParams = useMemo<UsePrepareContractWriteConfig>(
-    () => ({
-      address: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
-      abi: SwapRouter02Abi,
-      functionName: 'exactInputSingle',
-      args: args as any, // TODO figure out why typre aren't working
-      value: tokenInIsETH ? input?.value : BigInt(0),
-    }),
-    [args, chainId, input?.value, tokenInIsETH]
-  );
+  useEffect(() => {
+    if (!args) return console.error('No args');
+
+    (async () => {
+      const res = await publicClient.simulateContract({
+        address: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
+        abi: SwapRouter02Abi,
+        functionName: 'exactInputSingle',
+        args: [args],
+        value: tokenInIsETH ? input?.value : BigInt(0),
+      });
+
+      return setTxParams(res.request);
+    })();
+  }, [args, chainId, input?.value, publicClient, tokenInIsETH]);
 
   const label = useMemo(() => {
     if (!input) {
