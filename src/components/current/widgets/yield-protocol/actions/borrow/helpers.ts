@@ -1,21 +1,20 @@
-import { BigNumber, Signer, ethers } from 'ethers';
+import { encodeFunctionData } from 'viem';
 import { Address } from 'wagmi';
+import ladleAbi from '../../contracts/abis/Ladle';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData, getWrapEthCallData } from '../../helpers';
-import { LadleActions } from '../../operations';
 
 interface BorrowProps {
   account: Address;
-  borrowAmount: BigNumber;
-  collateralAmount: BigNumber;
-  seriesEntityId: string;
-  ilkId: string;
-  vaultId: string | undefined; // can be undefined if no vault is already built
+  borrowAmount: bigint;
+  collateralAmount: bigint;
+  seriesEntityId: `0x${string}`;
+  ilkId: `0x${string}`;
+  vaultId: `0x${string}` | undefined; // can be undefined if no vault is already built
   borrowTokenIsEth: boolean;
   collateralTokenIsEth: boolean;
-  signer: Signer;
   chainId: number;
-  maxAmountToBorrow: BigNumber;
+  maxAmountToBorrow: bigint;
 }
 const BLANK_VAULT = '0x000000000000000000000000';
 
@@ -29,7 +28,6 @@ const BLANK_VAULT = '0x000000000000000000000000';
  * @param vaultId
  * @param borrowTokenIsEth
  * @param collateralTokenIsEth
- * @param signer
  * @param chainId
  * @param maxAmountToBorrow
  *
@@ -44,7 +42,6 @@ const _borrow = ({
   vaultId,
   borrowTokenIsEth,
   collateralTokenIsEth,
-  signer,
   chainId,
   maxAmountToBorrow,
 }: BorrowProps): ICallData[] | undefined => {
@@ -59,31 +56,36 @@ const _borrow = ({
 
   return [
     ...getWrapEthCallData({
-      value: collateralTokenIsEth ? collateralAmount : ethers.constants.Zero,
-      signer,
+      value: collateralTokenIsEth ? collateralAmount : BigInt(0),
       chainId,
     }),
 
     /* If vault is null, build a new vault, else ignore */
     {
-      operation: LadleActions.Fn.BUILD,
-      args: [seriesEntityId, ilkId, '0'] as LadleActions.Args.BUILD,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'build',
+        args: [seriesEntityId, ilkId, 0],
+      }),
       ignoreIf: !!vaultId, // Don't need to build a vault if it's already built
     },
 
     {
-      operation: LadleActions.Fn.SERVE,
-      args: [
-        vaultId ?? BLANK_VAULT,
-        serveToAddress,
-        collateralAmount,
-        borrowAmount,
-        maxAmountToBorrow,
-      ] as LadleActions.Args.SERVE, // TODO handle slippage more gracefully
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'serve',
+        args: [
+          vaultId ?? BLANK_VAULT,
+          serveToAddress,
+          collateralAmount,
+          borrowAmount,
+          maxAmountToBorrow,
+        ],
+      }),
     },
     ...getUnwrapEthCallData({
       to: account,
-      value: borrowTokenIsEth ? borrowAmount : ethers.constants.Zero,
+      value: borrowTokenIsEth ? borrowAmount : BigInt(0),
     }),
   ];
 };
@@ -100,7 +102,6 @@ const borrow = async ({
   vaultId,
   borrowTokenIsEth,
   collateralTokenIsEth,
-  signer,
   chainId,
   maxAmountToBorrow,
 }: BorrowProps) => {
@@ -113,13 +114,10 @@ const borrow = async ({
     vaultId,
     borrowTokenIsEth,
     collateralTokenIsEth,
-    signer,
     chainId,
     maxAmountToBorrow,
   });
-  return borrowCallData
-    ? await getSendParams({ calls: borrowCallData, signer, chainId })
-    : undefined;
+  return borrowCallData ? getSendParams({ account, calls: borrowCallData, chainId }) : undefined;
 };
 
 export default borrow;

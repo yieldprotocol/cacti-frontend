@@ -1,10 +1,9 @@
-import { AddressZero } from '@ethersproject/constants';
+import { parseUnits, zeroAddress } from 'viem';
 import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { SEND_ETH_FNNAME } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { ConnectFirst } from '../helpers/ConnectFirst';
-import { parseUnits } from 'viem';
 
 interface TransferWidgetProps {
   tokenSymbol: string;
@@ -13,6 +12,7 @@ interface TransferWidgetProps {
 }
 
 const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => {
+  const { address: account } = useAccount();
   const { isETH, data: token } = useToken(tokenSymbol);
   const amount = parseUnits(amtString, token?.decimals!);
 
@@ -26,7 +26,7 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
   const approval = {
     approvalAmount: amount,
     tokenAddress: token!.address as `0x${string}`,
-    spender: AddressZero as `0x${string}`,
+    spender: zeroAddress,
     skipApproval: true,
   };
 
@@ -59,7 +59,11 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
         label={`Transfer ${amtString || ''} ${tokenSymbol}`}
         txParams={tx}
         approvalParams={approval}
-        sendParams={isETH && receiverAddress ? { to: receiverAddress, value: amount } : undefined}
+        sendParams={
+          isETH && receiverAddress
+            ? { to: receiverAddress, value: amount, from: account! }
+            : undefined
+        }
       />
     </ConnectFirst>
   );

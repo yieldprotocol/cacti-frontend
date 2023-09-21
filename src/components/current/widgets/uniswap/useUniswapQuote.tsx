@@ -7,6 +7,7 @@ import SettingsContext from '@/contexts/SettingsContext';
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { publicClientToProvider } from '@/utils/ethersAdapter';
 
 interface UseUniswapQuoteProps {
   baseTokenSymbol: string;
@@ -22,6 +23,7 @@ interface UseUniswapQuoteRes {
 const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUniswapQuoteProps) => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
+  const provider = publicClientToProvider(publicClient);
 
   const { isETH: baseTokenIsEth } = useToken(baseTokenSymbol);
   const { isETH: quoteTokenIsEth } = useToken(quoteTokenSymbol);
@@ -36,7 +38,7 @@ const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUnisw
 
   const router = new AlphaRouter({
     chainId,
-    provider: publicClient as any, // TODO: convert public client to ethers provider
+    provider,
   });
 
   const getQuote = async (): Promise<UseUniswapQuoteRes | undefined> => {

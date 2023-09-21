@@ -1,4 +1,5 @@
 import { UnsignedTransaction } from 'ethers';
+import { Address, TransactionRequestBase } from 'viem';
 import useEnsAvatar from '@/components/cactiComponents/hooks/useEnsAvatar';
 import useEnsName from '@/components/cactiComponents/hooks/useEnsName';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
@@ -27,11 +28,12 @@ export const SingleStepContainer = ({
     return <WidgetError>{errorMsg}</WidgetError>;
   }
 
-  const unsignedTx: UnsignedTransaction = {
-    to: tx?.to,
-    data: tx?.data,
-    value: tx?.value,
-    gasLimit: tx?.gas,
+  const unsignedTx: TransactionRequestBase = {
+    from: tx?.from as Address,
+    to: tx?.to as Address,
+    data: tx?.data as Address,
+    value: BigInt(tx?.value || 0),
+    gas: BigInt(tx?.gas || 0),
   };
 
   return (

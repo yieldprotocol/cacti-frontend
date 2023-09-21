@@ -173,14 +173,6 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
     [vault]
   );
 
-  useEffect(() => {
-    (async () => {
-      if (!activeVault) return;
-      const sendParams = await borrowClose({ vault });
-      setSendParams(sendParams);
-    })();
-  }, [activeVault, vault]); // intentionally not including borrowClose cuz of infinite render issue; TODO make more kosher
-
   return isLoading ? (
     <Skeleton />
   ) : activeVault ? (
@@ -197,7 +189,7 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
-          sendParams={sendParams}
+          sendParams={borrowClose({ vault })}
           txParams={undefined}
           skipBalanceCheck={vault.borrowToken?.symbol === 'WETH'}
         />
