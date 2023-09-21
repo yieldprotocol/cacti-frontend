@@ -8,7 +8,7 @@ const ForkButton = () => {
   const { isForkedEnv } = settings;
 
   const setIsFork = (val: boolean) => {
-    changeSetting(Setting.FORKED_ENV, val);
+    changeSetting(Setting.IS_FORKED_ENV, val);
   };
 
   return (

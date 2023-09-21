@@ -64,7 +64,11 @@ const CustomConnectButton = () => {
               if (chain.unsupported) {
                 return (
                   <button onClick={openChainModal} type="button">
-                    <div className="text-xs text-red-500">Wrong network</div>
+                    <div
+                      className={`flex items-center justify-center text-xs text-red-500/70 ${buttonStyle}`}
+                    >
+                      Wrong Network
+                    </div>
                   </button>
                 );
               }

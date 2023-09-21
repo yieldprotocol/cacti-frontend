@@ -14,7 +14,7 @@ const HeaderContainer = ({
   const { pathname } = useRouter();
   return (
     <div
-      className={`sticky top-0 z-40 flex gap-x-4 p-4 pt-6 text-white/70 sm:gap-x-6 ${
+      className={`sticky top-0 z-40 flex gap-x-4 p-4 pt-6 text-white/70 sm:gap-x-6 items-center ${
         pathname !== '/' ? 'bg-gray-secondary' : ''
       }`}
     >

@@ -1,5 +1,5 @@
-import { ReadyState } from 'react-use-websocket';
 import { useChatContext } from '@/contexts/ChatContext';
+import { ReadyState } from 'react-use-websocket';
 import ConnectionStatus from './ConnectionStatus';
 
 const AccountStatus = () => {

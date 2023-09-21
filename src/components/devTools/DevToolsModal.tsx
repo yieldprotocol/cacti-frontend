@@ -91,7 +91,7 @@ export const DevToolsModal = ({ openState, handleClose }: Props) => {
                         <ForkButton />
                         <CurrentForkInfo />
                         <MintButton />
-                        <ChangeForkId />
+                        {/* <ChangeForkId /> */}
                       </div>
                     </div>
 

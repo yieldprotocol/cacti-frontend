@@ -5,12 +5,13 @@ import {
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
 import copy from 'copy-to-clipboard';
+import { useNetwork } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 import { Button } from '../shared/Button';
 
 export const CurrentForkInfo = () => {
   const {
-    settings: { isForkedEnv, forkEnvUrl },
+    settings: { isForkedEnv, forkEnvUrl, forkId },
   } = useContext(SettingsContext);
   const [tenderlyUrl, setTenderlyUrl] = useState<string>(forkEnvUrl);
   const [copied, setCopied] = useState<boolean>(false);
@@ -39,22 +40,20 @@ export const CurrentForkInfo = () => {
     window.open(tenderlyUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const { chain } = useNetwork();
+
   return (
-    <div>
-      <div className="border">
-        <div
-          className={`p-2 text-left text-xs ${
-            isForkedEnv ? 'bg-green-300' : 'bg-red-300'
-          } bg-red-300`}
-        >
-          {isForkedEnv ? 'Current forked environment' : 'Default fork'}
+     isForkedEnv ? <div className="border rounded-lg">
+        <div className={`bg-green-300 p-2 text-left text-xs`}>
+          <div> Chain Id: {chain?.id} </div>
+          <div> Mocking Chain Id: {chain!.id.toString().slice(6)} </div>
         </div>
-        <div className="overflow-x-scroll p-4 font-mono text-xs">{forkEnvUrl}</div>
+        <div className="p-4 font-mono text-xs">{forkId}</div>
         <div className="flex gap-2 p-2 text-xs ">
           <Button onClick={copyUrl} disabled={copied}>
             <div className="flex gap-2 text-[0.75em]">
               <div className="w-4">{copied ? <CheckCircleIcon /> : <DocumentDuplicateIcon />} </div>
-              Copy url
+              Copy URL
             </div>
           </Button>
           <Button onClick={goToTenderly} disabled={!forkEnvUrl}>
@@ -66,7 +65,6 @@ export const CurrentForkInfo = () => {
             </div>
           </Button>
         </div>
-      </div>
-    </div>
+      </div> : null
   );
 };

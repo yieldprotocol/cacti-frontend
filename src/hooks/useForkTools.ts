@@ -21,9 +21,7 @@ const useForkTools = (id?: string): ForkTools => {
   const { settings } = useContext(SettingsContext);
   const { isForkedEnv, forkId } = settings;
 
-  const forkUrl = id
-    ? `https://rpc.tenderly.co/fork/${id}`
-    : `https://rpc.tenderly.co/fork/${forkId}`;
+  const forkUrl = `https://rpc.tenderly.co/fork/${ id ?? forkId }`
 
   /* parameters from wagmi */
   const { address: account } = useAccount();
@@ -40,7 +38,12 @@ const useForkTools = (id?: string): ForkTools => {
     const currentBlockNumber = await provider.getBlockNumber();
     const resp = await axios.post(
       forkAPI,
-      { network_id: 1, block_number: currentBlockNumber },
+      { network_id: 1, 
+        block_number: currentBlockNumber,
+        chain_config: { 
+          chain_id: 1277971
+        }
+      },
       {
         headers: {
           'X-Access-Key': process.env.NEXT_PUBLIC_TENDERLY_ACCESS_KEY as string,
