@@ -13,6 +13,7 @@ import {
 import { ResponseGrid, ResponseTitle } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useBalance from '@/components/cactiComponents/hooks/useBalance';
+import SkeletonWrap from '@/components/shared/SkeletonWrap';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
@@ -22,7 +23,6 @@ import contractAddresses, { ContractNames } from '../../contracts/config';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 import { nameFromMaturity } from '../../utils';
 import { NOW, YieldGraphRes, YieldGraphResSeriesEntity } from '../lend/YieldProtocolLend';
-import SkeletonWrap from '@/components/shared/SkeletonWrap';
 
 interface InputProps {
   baseTokenSymbol: string;

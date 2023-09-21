@@ -8,10 +8,10 @@ import {
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
-import { Spinner } from '../../../utils';
-import { WidgetError } from './helpers';
 import { Button } from '@/components/shared/Button';
+import { Spinner } from '../../../utils';
 import { TxStatus } from '../legacyComponents/TxStatus';
+import { WidgetError } from './helpers';
 
 interface SendTransactionProps {
   tx: { from: string; to: string; value: string; data: string; gas: string } | null;

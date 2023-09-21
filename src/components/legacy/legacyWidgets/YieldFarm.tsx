@@ -10,14 +10,14 @@ import {
 } from 'wagmi';
 import { CompoundV2USDCAbi } from '@/abi/CompoundV2USDC';
 import { WidgetError } from '@/components/legacy/legacyWidgets/helpers';
+import { Button } from '@/components/shared/Button';
 import useToken from '@/hooks/useToken';
 import { Project, Token } from '@/types';
 import { findProjectByName } from '@/utils';
+import ApproveTokens from '../legacyComponents/ApproveTokens';
+import { TxStatus } from '../legacyComponents/TxStatus';
 import { ActionPanel } from './helpers/ActionPanel';
 import { ConnectFirst } from './helpers/ConnectFirst';
-import ApproveTokens from '../legacyComponents/ApproveTokens';
-import { Button } from '@/components/shared/Button';
-import { TxStatus } from '../legacyComponents/TxStatus';
 
 // NOTE: For Demo, only support depositing USDC into Compound
 // Compound-V2 USDC cToken address

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { MessageItem, MessageItemWrap } from './MessageItem';
-import { useChatContext } from '@/contexts/ChatContext';
 import Avatar from '@/components/shared/Avatar';
+import { useChatContext } from '@/contexts/ChatContext';
+import { MessageItem, MessageItemWrap } from './MessageItem';
 
 export const MessageList = () => {
   const {

@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 import { useAsset, useCollection } from '@center-inc/react';
 import axios from 'axios';
-import Grid from '../legacyComponents/Grid';
 import { NftAssetContainer } from '@/components/legacy/legacyWidgets/NftAssetContainer';
 import { NftCollectionTraitsContainer } from '@/components/legacy/legacyWidgets/NftCollectionContainer';
 import { Spinner } from '@/utils';
 import { ETHEREUM_NETWORK } from '@/utils/constants';
+import Grid from '../legacyComponents/Grid';
 
 interface Props {
   nftAddress: string;
