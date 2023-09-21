@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
 import { parseEther } from 'viem';
 import { Address, UsePrepareContractWriteConfig } from 'wagmi';
 import stethAbi from '@/abi/steth';
