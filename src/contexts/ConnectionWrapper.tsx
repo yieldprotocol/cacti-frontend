@@ -4,6 +4,7 @@ import { useQueryClient } from 'react-query';
 import { AppProps } from 'next/app';
 import {
   AvatarComponent,
+  DisclaimerComponent,
   RainbowKitProvider,
   darkTheme,
   getDefaultWallets,
@@ -107,6 +108,15 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     );
   };
 
+  const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
+    <Text>
+      By connecting my wallet, I agree to the{' '}
+      <Link href="https://cacti.finance/terms/">Terms of Service</Link> and acknowledge I have
+      read and understand the protocol{' '}
+      <Link href="https://cacti.finance/privacy/">Privacy Policy</Link>.
+    </Text>
+  );
+
   return (
     <WagmiConfig config={wagmiConfig}>
       {useSiwe && (
@@ -117,6 +127,10 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
           getSignoutCallback={getSignoutCallback}
         >
           <RainbowKitProvider
+            appInfo={{
+              appName: 'Cacti',
+              disclaimer: Disclaimer,
+            }}
             chains={chains}
             theme={
               experimentalUi
@@ -125,6 +139,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
             }
             showRecentTransactions={true}
             avatar={CustomAvatar}
+            modalSize="compact"
           >
             {children}
           </RainbowKitProvider>
@@ -133,6 +148,10 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
 
       {!useSiwe && (
         <RainbowKitProvider
+          appInfo={{
+            appName: 'Cacti',
+            disclaimer: Disclaimer,
+          }}
           chains={chains}
           theme={
             experimentalUi
@@ -141,6 +160,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
           }
           showRecentTransactions={true}
           avatar={CustomAvatar}
+          modalSize="compact"
         >
           {children}
         </RainbowKitProvider>

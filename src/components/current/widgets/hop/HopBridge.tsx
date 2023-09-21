@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Hop } from '@hop-protocol/sdk';
+import { CanonicalToken, ChainSlug } from '@hop-protocol/sdk/dist/src/constants';
 import { TransactionRequestBase, decodeFunctionData } from 'viem';
-import { erc20ABI, usePublicClient } from 'wagmi';
-import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
+import { erc20ABI } from 'wagmi';
+import {
+  ActionResponse,
+  ErrorResponse,
+  HeaderResponse,
+  SingleLineResponse,
+} from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { useEthersSigner } from '@/utils/ethersAdapter';
 
 interface HopBridgeProps {
   inputString: string;
@@ -15,23 +22,60 @@ interface HopBridgeProps {
 }
 
 const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgeProps) => {
-  const _fromChain = fromChain === 'ethereum-mainnet' ? 'mainnet' : fromChain;
-  const publicClient = usePublicClient();
+  const _fromChain = fromChain === 'ethereum-mainnet' ? 'mainnet' : fromChain.toLowerCase();
+  const _toChain = toChain === 'ethereum-mainnet' ? 'mainnet' : toChain.toLowerCase();
+
+  const signer = useEthersSigner();
   const { data: tokenIn } = useToken(tokenSymbol);
   const input = useInput(inputString, tokenIn?.symbol!);
   const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
   const [sendParams, setSendParams] = useState<TransactionRequestBase>();
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
+
+  // TODO simple check to see if the chain is potentially supported; not all chains with chain slugs are supported within hop though (i.e.: zksync is unsupported)
+  const isSupportedChain = (name: string) =>
+    name === 'mainnet' ||
+    Object.keys(ChainSlug)
+      .map((s) => s.toLowerCase())
+      .includes(name.toLowerCase());
+
+  const isSupportedToken = (symbol: string) =>
+    Object.keys(CanonicalToken).includes(symbol.toUpperCase());
 
   useEffect(() => {
     (async () => {
-      if (!input?.value) return console.error('No value to bridge');
+      setError(null);
+
+      if (!isSupportedChain(_fromChain)) {
+        return setError(
+          `Unsupported from chain. Available chains: ${Object.keys(ChainSlug).join(', ')}`
+        );
+      }
+
+      if (!isSupportedChain(_toChain)) {
+        return setError(
+          `Unsupported to chain. Available chains: ${Object.keys(ChainSlug).join(', ')}`
+        );
+      }
+
+      if (!isSupportedToken(tokenSymbol)) {
+        return setError(
+          `Unsupported token. Available tokens: ${Object.keys(CanonicalToken).join(', ')}`
+        );
+      }
+
+      if (!input?.value) {
+        setError('Please provide a value to bridge');
+        return console.error('No value to bridge');
+      }
 
       try {
-        const hop = new Hop(_fromChain, publicClient as any); // TODO fix this
+        // mainnet is the network we use for all bridge operations
+        const hop = new Hop('mainnet', signer);
         const bridge = hop.bridge(tokenSymbol);
 
         const needsApproval = await bridge.needsApproval(input.value, _fromChain);
+
         if (needsApproval) {
           const { data } = await bridge.populateSendApprovalTx(input.value, _fromChain);
           const { args } = decodeFunctionData({ abi: erc20ABI, data });
@@ -44,31 +88,30 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
           });
         }
 
-        // TODO get the relevant to chain from hop
-        const req = await bridge.populateSendTx(input?.value, _fromChain, toChain);
-        setSendParams({ ...req, gas: 10_000_000 }); // TODO figure out a better way to handle gas limits on forks
+        const req = await bridge.populateSendTx(input.value, _fromChain, _toChain);
+        setSendParams({ ...req, gas: BigInt(10_000_000) }); // TODO figure out a better way to handle gas limits on forks
       } catch (e) {
-        setError(e as string);
-        console.error('An error occurred:', e);
+        setError((e as Error).message);
+        console.error(e);
       }
     })();
-  }, [_fromChain, input?.value, toChain, tokenIn?.address, tokenSymbol]); // TODO signer is causing infinite loop
+  }, [_fromChain, input?.value, _toChain, tokenIn?.address, tokenSymbol]); // TODO signer is causing infinite loop
 
   return (
     <>
       <HeaderResponse
-        text={`Bridge ${tokenSymbol} from ${_fromChain} to ${toChain} using Hop Protocol`}
+        text={`Bridge ${tokenSymbol} from ${_fromChain} to ${_toChain} using Hop Protocol`}
+        altUrl={`https://app.hop.exchange/`}
       />
+      {error && (
+        <ErrorResponse text={`An error occurred while preparing the transaction`} error={error} />
+      )}
       <SingleLineResponse tokenSymbol={tokenSymbol} value={input?.formatted} />
       <ActionResponse
-        label={
-          error ??
-          `Bridge ${input?.formatted || ''} ${tokenSymbol} from ${_fromChain} to ${toChain}`
-        }
+        label={`Bridge ${input?.formatted || ''} ${tokenSymbol} from ${_fromChain} to ${_toChain}`}
         approvalParams={approvalParams}
         txParams={undefined}
         sendParams={sendParams}
-        disabled={!!error}
       />
     </>
   );

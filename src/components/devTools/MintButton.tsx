@@ -24,7 +24,7 @@ export const MintButton = () => {
       ethers.utils.parseEther('10').toHexString(), // hex encoded wei amount
     ];
     setLoading(true);
-    //@ts-ignore
+    // @ts-ignore
     await provider.send('tenderly_addBalance', params);
     await refetch();
     setLoading(false);
