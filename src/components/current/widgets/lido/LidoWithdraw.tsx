@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
-import { parseEther } from 'viem';
+import { parseEther, zeroAddress } from 'viem';
 import { Address, UsePrepareContractWriteConfig } from 'wagmi';
 import stethAbi from '@/abi/steth';
 import {
   ActionResponse,
+  ErrorResponse,
   HeaderResponse,
   IconResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
+import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
@@ -18,34 +20,30 @@ interface LidoProps {
 
 const LidoWithdraw = ({ inputString }: LidoProps) => {
   const { data: tokenIn } = useToken('STETH');
-  const { data: tokenOut } = useToken('ETH');
+  const input = useInput(inputString, tokenIn?.symbol!);
 
-  const inputCleaned = useMemo(
-    () => cleanValue(inputString.toString(), tokenIn?.decimals),
-    [inputString, tokenIn?.decimals]
-  );
-
-  const tx: UsePrepareContractWriteConfig = useMemo(
+  const tx = useMemo<UsePrepareContractWriteConfig>(
     () => ({
-      address: tokenOut?.address as Address | undefined,
+      address: tokenIn?.address,
       abi: stethAbi,
-      functionName: 'submit',
-      args: ['0x0000000000000000000000000000000000000000'],
-      value: parseEther(inputCleaned!),
+      functionName: 'submit', // TODO figure out withdraw function
+      args: [zeroAddress],
+      value: input?.value,
     }),
-    [inputCleaned, tokenOut?.address]
+    [input?.value, tokenIn?.address]
   );
 
   return (
     <>
       <HeaderResponse text="Withdraw stETH from Lido for ETH" />
+      {!input && <ErrorResponse text="Invalid input" error="Invalid input" />}
       <ResponseRow>
-        <SingleLineResponse tokenSymbol="STETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="STETH" value={input?.formatted} />
         <IconResponse icon="forward" />
         <SingleLineResponse tokenSymbol="ETH" />
       </ResponseRow>
       <ActionResponse
-        label={`Withdraw ${inputCleaned || ''} ${tokenIn?.symbol || ''} from Lido`}
+        label={`Withdraw ${input?.formatted || ''} ${tokenIn?.symbol || ''} from Lido`}
         approvalParams={undefined}
         txParams={tx}
       />
