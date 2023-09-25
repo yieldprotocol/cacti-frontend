@@ -186,6 +186,7 @@ export const Widget = (props: WidgetProps) => {
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
+      slippage={parsedArgs[4]}
     />
   );
 
