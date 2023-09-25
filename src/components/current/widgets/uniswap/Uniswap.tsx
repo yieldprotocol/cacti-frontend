@@ -26,10 +26,13 @@ interface UniswapProps {
   tokenOutSymbol: string;
   inputAmount: string;
   slippage: string;
+  buyOrSellAmount: 'BUYAMOUNT' | 'SELLAMOUNT';
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage }: UniswapProps) => {
+const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, buyOrSellAmount }: UniswapProps) => {
   const chainId = useChainId();
+
+  const isBuying = buyOrSellAmount === 'BUYAMOUNT';
 
   const { address: recipient } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
