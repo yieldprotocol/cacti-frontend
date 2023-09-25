@@ -42,15 +42,15 @@ const useApproval = (params: ApprovalBasicParams) => {
     queryFn: async () => {
       if (!spender) {
         console.error(`Spender not found for approval`);
-        return;
+        return {};
       }
 
       // is eth
       if (!tokenAddress) {
-        return;
+        return {};
       }
 
-      const config = await prepareWriteContract({
+      const {request} = await prepareWriteContract({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'approve',
@@ -58,12 +58,12 @@ const useApproval = (params: ApprovalBasicParams) => {
         chainId,
       });
 
-      return config;
+      return request;
     },
     refetchOnWindowFocus: false,
   });
 
-  const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config!);
+  const { write: approveTx, data, isLoading: isWaitingOnUser } = useContractWrite(config || {});
 
   const {
     isError,
