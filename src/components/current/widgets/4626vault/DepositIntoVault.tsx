@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { Address, useAccount } from 'wagmi';
-import ERC4626Abi from '@/abi/erc4626ABI.json';
+import { parseUnits } from 'viem';
+import { Address, UsePrepareContractWriteConfig, useAccount } from 'wagmi';
+import ERC4626Abi from '@/abi/erc4626ABI';
 import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -52,12 +50,15 @@ export const DepositVault = ({ depositToken, amount, vault }: DepositVaultProps)
   //TODO: Get the vault address
 
   const inputCleaned = cleanValue(amount.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals!);
 
-  const params: DepositVaultParams = {
-    assets: amountIn.toString(),
-    receiver: receiver!,
-  };
+  const params = useMemo(
+    (): DepositVaultParams => ({
+      assets: amountIn.toString(),
+      receiver: receiver!,
+    }),
+    [amountIn, receiver]
+  );
 
   const vaultAddresss = getVaultAddress(vault, depositToken) as `0x${string}`;
 
@@ -68,17 +69,17 @@ export const DepositVault = ({ depositToken, amount, vault }: DepositVaultProps)
       approvalAmount: amountIn,
       spender: vaultAddresss,
     }),
-    [amountIn, chainId, tokenIn]
+    [amountIn, tokenIn?.address, vaultAddresss]
   );
 
   const tx = useMemo(
-    (): TxBasicParams => ({
+    (): UsePrepareContractWriteConfig => ({
       address: vaultAddresss,
       abi: ERC4626Abi,
       functionName: 'deposit',
       args: Object.values(params),
     }),
-    [amountIn, chainId, params, tokenOut?.address]
+    [params, vaultAddresss]
   );
 
   if (amount === '*' || amount === '{amount}')
@@ -94,7 +95,6 @@ export const DepositVault = ({ depositToken, amount, vault }: DepositVaultProps)
         label={`Deposit ${inputCleaned || ''} ${tokenInSymbol || ''} on vault`}
         txParams={tx}
         approvalParams={approval}
-        // disabled={true}
       />
     </ConnectFirst>
   );

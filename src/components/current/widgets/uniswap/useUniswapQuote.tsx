@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { Token, TradeType } from '@uniswap/sdk-core';
 import { AlphaRouter, CurrencyAmount } from '@uniswap/smart-order-router';
-import { useProvider } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 import useChainId from '@/hooks/useChainId';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { useEthersProvider } from '@/utils/ethersAdapter';
 
 interface UseUniswapQuoteProps {
   baseTokenSymbol: string;
@@ -22,7 +22,8 @@ interface UseUniswapQuoteRes {
 
 const useUniswapQuote = ({ baseTokenSymbol, quoteTokenSymbol, amount }: UseUniswapQuoteProps) => {
   const chainId = useChainId();
-  const provider = useProvider();
+  const provider = useEthersProvider();
+
   const { isETH: baseTokenIsEth } = useToken(baseTokenSymbol);
   const { isETH: quoteTokenIsEth } = useToken(quoteTokenSymbol);
   const { data: baseTokenToUse } = useToken(baseTokenIsEth ? 'WETH' : baseTokenSymbol);

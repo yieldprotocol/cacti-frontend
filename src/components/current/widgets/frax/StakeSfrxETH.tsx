@@ -1,8 +1,7 @@
-import { parseUnits } from 'ethers/lib/utils.js';
-import { useAccount } from 'wagmi';
-import frxEthMinterAbi from '@/abi/frxETHMinter.json';
+import { parseEther } from 'viem';
+import { UsePrepareContractWriteConfig, useAccount } from 'wagmi';
+import frxEthMinterAbi from '@/abi/frxETHMinter';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import { ConnectFirst } from '../helpers/ConnectFirst';
 
 interface StakedFraxEtherProps {
@@ -11,16 +10,16 @@ interface StakedFraxEtherProps {
 }
 
 const StakeSfrxEth = ({ receiver, value }: StakedFraxEtherProps) => {
-  const amount = parseUnits(value, 18);
+  const amount = parseEther(value);
 
   const { address: account } = useAccount();
 
-  const tx: TxBasicParams = {
+  const tx: UsePrepareContractWriteConfig = {
     address: '0xbAFA44EFE7901E04E39Dad13167D089C559c1138', // frxETHMinter address
     abi: frxEthMinterAbi, // frxETHMinter abi
     functionName: 'submitAndDeposit',
     args: [receiver ?? account],
-    overrides: { value: amount },
+    value: amount,
   };
 
   return (

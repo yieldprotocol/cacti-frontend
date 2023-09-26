@@ -13,7 +13,7 @@ const useEnsAvatar = () => {
     queryFn: async () =>
       address &&
       (await fetchEnsAvatar({
-        address,
+        name: address, // TODO check this! ?
         chainId,
       })),
     refetchOnWindowFocus: false,

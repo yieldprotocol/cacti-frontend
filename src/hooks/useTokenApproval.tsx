@@ -1,101 +1,61 @@
-//@ts-nocheck
-import { useContext, useState } from 'react';
-import { BigNumber } from 'ethers';
 import {
   erc20ABI,
   useAccount,
-  useContract,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
 import useBalance from '@/components/cactiComponents/hooks/useBalance';
-import SettingsContext from '@/contexts/SettingsContext';
-import useForkTools from '@/hooks/useForkTools';
-import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
-import { cleanValue } from '@/utils';
 
 const useTokenApproval = (
   address: `0x${string}`,
-  amount: BigNumber,
+  amount: bigint,
   spenderAddress: `0x${string}`
 ) => {
   const { data: token } = useToken(undefined, address);
-
-  const amountToUse = BigNumber.from(cleanValue(amount.toString(), token?.decimals));
-  const [hash, setHash] = useState<`0x${string}`>();
-  const [txPending, setTxPending] = useState(false);
-
-  const signer = useSigner();
   const { address: account } = useAccount();
 
   // Get allowance amount
   const { data: allowanceAmount, refetch: refetchAllowance } = useContractRead({
-    address: address as `0x${string}`,
+    address: address,
     abi: erc20ABI,
     functionName: 'allowance',
     args: [account!, spenderAddress],
   });
 
-  /* Get the useForkSettings the settings context */
-  const {
-    settings: { isForkedEnv },
-  } = useContext(SettingsContext);
-
-  // for using in fork env
-  const contract = useContract({ address, abi: erc20ABI, signerOrProvider: signer });
   const { config: tokenConfig } = usePrepareContractWrite({
     address,
     abi: erc20ABI,
     functionName: 'approve',
-    args: [spenderAddress, amountToUse],
+    args: [spenderAddress, amount],
   });
 
-  const { writeAsync: approvalWriteAsync } = useContractWrite(tokenConfig);
+  const { writeAsync: approvalWriteAsync, data: writeData } = useContractWrite(tokenConfig);
   const { data: balance } = useBalance(token?.address);
-
-  const approve = async () => {
-    setTxPending(true);
-
-    try {
-      if (isForkedEnv) {
-        const tx = await contract?.approve(spenderAddress, amountToUse);
-        setHash(tx?.hash as `0x${string}`);
-      } else {
-        const tx = await approvalWriteAsync?.();
-        setHash(tx?.hash);
-      }
-    } catch (error) {
-      console.log('user rejected approval');
-      setTxPending(false);
-    }
-
-    setTxPending(false);
-  };
 
   const {
     data,
     isError: txError,
-    isLoading,
+    isLoading: txPending,
     isSuccess: txSuccess,
   } = useWaitForTransaction({
-    hash,
+    hash: writeData?.hash,
     onSuccess: () => refetchAllowance(),
   });
 
   return {
-    approve,
+    approve: approvalWriteAsync,
     data,
-    txPending: txPending || isLoading,
+    txPending,
     txError,
     txSuccess,
-    hash,
+    hash: writeData?.hash,
     allowanceAmount,
-    hasAllowance: allowanceAmount?.gte(amount),
+    hasAllowance: allowanceAmount! >= amount,
     refetchAllowance,
-    hasBalance: balance?.gte(amount),
+    hasBalance: balance! >= amount,
   };
 };
 

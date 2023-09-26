@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { ethers } from 'ethers';
+import { zeroAddress } from 'viem';
 import { Address } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
 import { Token } from '@/types';
@@ -10,7 +10,7 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
 
   const getTokenIsETH = useCallback(
     (tokenSymbol?: string, tokenAddress?: string) =>
-      tokenSymbol === 'ETH' || tokenAddress === ethers.constants.AddressZero,
+      tokenSymbol === 'ETH' || tokenAddress === zeroAddress,
     []
   );
 
@@ -18,7 +18,7 @@ const useToken = (tokenSymbol?: string, tokenAddress?: Address) => {
     (tokenSymbol?: string, tokenAddress?: Address): Token | undefined => {
       if (getTokenIsETH(tokenSymbol, tokenAddress))
         return {
-          address: ethers.constants.AddressZero,
+          address: zeroAddress,
           symbol: 'ETH',
           decimals: 18,
           logoURI:

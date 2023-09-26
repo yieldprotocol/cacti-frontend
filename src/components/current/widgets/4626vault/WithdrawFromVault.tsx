@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { Address, useAccount } from 'wagmi';
-import ERC4626Abi from '@/abi/erc4626ABI.json';
+import { parseUnits } from 'viem';
+import { Address, UsePrepareContractWriteConfig, useAccount } from 'wagmi';
+import ERC4626Abi from '@/abi/erc4626ABI';
 import { ActionResponse, HeaderResponse, TextResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -52,12 +50,15 @@ export const WithdrawVault = ({ withdrawToken, amount, vault }: WithdrawVaultPro
   //TODO: Get the vault address
 
   const inputCleaned = cleanValue(amount.toString(), tokenIn?.decimals);
-  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals);
+  const amountIn = parseUnits(inputCleaned!, tokenIn?.decimals!);
 
-  const params: WithdrawVaultParams = {
-    assets: amountIn.toString(),
-    receiver: receiver!,
-  };
+  const params = useMemo(
+    (): WithdrawVaultParams => ({
+      assets: amountIn.toString(),
+      receiver: receiver!,
+    }),
+    [amountIn, receiver]
+  );
 
   const vaultAddresss = getVaultAddress(vault, withdrawToken) as `0x${string}`;
 
@@ -68,17 +69,17 @@ export const WithdrawVault = ({ withdrawToken, amount, vault }: WithdrawVaultPro
       approvalAmount: amountIn,
       spender: vaultAddresss,
     }),
-    [amountIn, chainId, tokenIn]
+    [amountIn, tokenIn?.address, vaultAddresss]
   );
 
   const tx = useMemo(
-    (): TxBasicParams => ({
+    (): UsePrepareContractWriteConfig => ({
       address: vaultAddresss,
       abi: ERC4626Abi,
       functionName: 'withdraw',
       args: Object.values(params),
     }),
-    [amountIn, chainId, params, tokenOut?.address]
+    [params, vaultAddresss]
   );
 
   if (amount === '*' || amount === '{amount}')
@@ -94,7 +95,6 @@ export const WithdrawVault = ({ withdrawToken, amount, vault }: WithdrawVaultPro
         label={`Withdraw ${inputCleaned || ''} ${tokenInSymbol || ''} on vault`}
         txParams={tx}
         approvalParams={approval}
-        // disabled={true}
       />
     </ConnectFirst>
   );

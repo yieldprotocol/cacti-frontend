@@ -1,11 +1,11 @@
 //@ts-nocheck
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 import { fetchBalance, readContract } from 'wagmi/actions';
 import erc1155ABI from '@/abi/erc1155ABI';
 import useChainId from '@/hooks/useChainId';
+import { zeroAddress } from 'viem';
 
 /**
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
@@ -13,7 +13,7 @@ import useChainId from '@/hooks/useChainId';
  */
 const useBalance = (
   tokenAddress?: `0x${string}`,
-  compareAmount?: BigNumber,
+  compareAmount?: bigint,
   erc1155TokenId?: string
 ) => {
   const chainId = useChainId();
@@ -27,8 +27,8 @@ const useBalance = (
         return;
       }
 
-      // fetch native balance
-      if (!tokenAddress) {
+      // fetch native balsance
+      if (!tokenAddress || tokenAddress === zeroAddress) {
         return (
           await fetchBalance({
             address: account,
@@ -43,7 +43,7 @@ const useBalance = (
           chainId,
           abi: erc1155ABI,
           functionName: 'balanceOf',
-          args: [account, BigNumber.from(erc1155TokenId)],
+          args: [account, BigInt(erc1155TokenId) ],
         });
         return erc1155Bal;
       }
@@ -65,10 +65,10 @@ const useBalance = (
   useEffect(() => {
     if (compareAmount && data) {
       setComparisons({
-        isZero: data.isZero(),
-        isGTEcompared: data.gte(compareAmount),
-        isEQcompared: data.eq(compareAmount),
-        isLTcompared: data.lt(compareAmount),
+        isZero: data === BigInt(0),
+        isGTEcompared: data >= compareAmount,
+        isEQcompared: data === compareAmount,
+        isLTcompared: data < compareAmount,
       });
     }
   }, [compareAmount, data, erc1155TokenId]);

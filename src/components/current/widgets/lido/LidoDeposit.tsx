@@ -1,57 +1,49 @@
 import { useMemo } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
-import { Address } from 'wagmi';
-import stethAbi from '@/abi/steth.json';
+import { zeroAddress } from 'viem';
+import { Address, UsePrepareContractWriteConfig } from 'wagmi';
+import stethAbi from '@/abi/steth';
 import {
   ActionResponse,
+  ErrorResponse,
   HeaderResponse,
   IconResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
+import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import { cleanValue } from '@/utils';
 
 interface LidoProps {
-  inputString: string;
+  inputString: number;
 }
 
 const LidoDeposit = ({ inputString }: LidoProps) => {
   const { data: tokenIn } = useToken('ETH');
   const { data: tokenOut } = useToken('STETH');
+  const input = useInput(inputString.toString(), tokenIn?.symbol!);
 
-  const inputCleaned = useMemo(
-    () => cleanValue(inputString.toString(), tokenIn?.decimals),
-    [inputString, tokenIn?.decimals]
-  );
-  const value = useMemo(() => {
-    return parseUnits(inputCleaned!, tokenIn?.decimals);
-  }, [inputCleaned, tokenIn?.decimals]);
-
-  const tx: TxBasicParams = useMemo(
+  const tx = useMemo<UsePrepareContractWriteConfig>(
     () => ({
       address: tokenOut?.address as Address | undefined,
       abi: stethAbi,
       functionName: 'submit',
-      args: ['0x0000000000000000000000000000000000000000'],
-      overrides: {
-        value,
-      },
+      args: [zeroAddress],
+      value: input?.value,
     }),
-    [tokenOut?.address, value]
+    [input?.value, tokenOut?.address]
   );
 
   return (
     <>
       <HeaderResponse text="Deposit ETH into Lido for stETH" />
+      {!input && <ErrorResponse text="Invalid input" error="Invalid input" />}
       <ResponseRow>
-        <SingleLineResponse tokenSymbol="ETH" value={inputCleaned} />
+        <SingleLineResponse tokenSymbol="ETH" value={input?.formatted} />
         <IconResponse icon="forward" />
         <SingleLineResponse tokenSymbol="stETH" />
       </ResponseRow>
       <ActionResponse
-        label={`Deposit ${inputCleaned || ''} ${tokenIn?.symbol || ''} into Lido`}
+        label={`Deposit ${input?.formatted || ''} ${tokenIn?.symbol || ''} into Lido`}
         approvalParams={undefined}
         txParams={tx}
       />

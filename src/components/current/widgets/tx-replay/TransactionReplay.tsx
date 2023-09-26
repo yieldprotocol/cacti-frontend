@@ -1,8 +1,7 @@
 //@ts-nocheck
 import React, { useCallback, useEffect, useState } from 'react';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
-import { decodeFunctionData } from 'viem';
-import { Address, useTransaction } from 'wagmi';
+import { TransactionRequestBase, decodeFunctionData, encodeFunctionData, getAddress } from 'viem';
+import { Address, useAccount, useTransaction } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import SkeletonWrap from '@/components/shared/SkeletonWrap';
 import useAbi from '@/hooks/useAbi';
@@ -13,16 +12,17 @@ interface TransactionReplayProps {
 }
 
 const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
+  const { address: account } = useAccount();
   const { data, isLoading } = useTransaction({ hash: txHash });
-  const { data: abi } = useAbi(data?.to as Address | undefined);
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const { data: abi } = useAbi(data?.to);
+  const [sendParams, setSendParams] = useState<TransactionRequestBase>();
   const [isError, setIsError] = useState(false);
 
   const explorerUrl = `https://etherscan.io/tx/${txHash}`;
 
   // State to hold editable fields, stored as strings for simplicity
   const [decoded, setDecoded] = useState<{
-    to?: string;
+    to: Address;
     value: string;
     functionName?: string;
     args?: {
@@ -34,7 +34,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
 
   // handle decoding the transaction data
   const handleDecode = useCallback(() => {
-    if (!data) return console.log('no data');
+    if (!data?.input || !data.to) return console.log('no data');
     if (!abi) {
       console.log('no abi, is possibly an eth/native currency transfer');
       return setDecoded({
@@ -49,7 +49,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     let functionName: string;
 
     try {
-      const decoded = decodeFunctionData({ abi, data: data.data as Address });
+      const decoded = decodeFunctionData({ abi, data: data.input });
       args = decoded.args as string[];
       functionName = decoded.functionName;
     } catch (e) {
@@ -111,7 +111,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     }
     // handle changing the to param
     if (name === 'to') {
-      setDecoded((d) => d && { ...d, to: value });
+      setDecoded((d) => d && { ...d, to: getAddress(value) });
       return;
     }
 
@@ -127,16 +127,16 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
     });
   };
 
-  const getSendParams = useCallback((): UnsignedTransaction | undefined => {
+  const getSendParams = useCallback((): TransactionRequestBase | undefined => {
     if (!decoded) {
       console.error('Decoded data is missing');
       return;
     }
 
     // Initialize a transaction object
-    let transaction: Partial<UnsignedTransaction> = {
+    let transaction: Partial<TransactionRequestBase> = {
       to: decoded.to,
-      value: BigNumber.from(decoded.value),
+      value: BigInt(decoded.value),
     };
 
     // If it's a simple transfer
@@ -156,15 +156,13 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
           return arg.value;
         }) || [];
 
-      // Create the function signature
-      const functionTypes = decoded.args.map((arg) => arg.type).join(',');
-      const functionSignature = `${decoded.functionName}(${functionTypes})`;
-
-      // Create the encoded data field for contract interaction
-      const iface = new ethers.utils.Interface(abi);
       try {
         // Encode the function data
-        const data = iface.encodeFunctionData(functionSignature, convertedArgs);
+        const data = encodeFunctionData({
+          abi,
+          functionName: decoded.functionName,
+          args: convertedArgs,
+        });
         transaction.data = data;
         // Now, you can populate the transaction object and pass it to ActionResponse
       } catch (e) {
@@ -172,8 +170,8 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
       }
     }
 
-    setSendParams(transaction);
-  }, [abi, decoded]);
+    setSendParams({ from: account!, ...transaction });
+  }, [abi, account, decoded]);
 
   useEffect(() => {
     getSendParams();
@@ -206,7 +204,7 @@ const TransactionReplay = ({ txHash }: TransactionReplayProps) => {
                   />
                 </div>
               ))}
-              {BigNumber.from(decoded.value)?.gt(ethers.constants.Zero) && decoded.to && (
+              {BigInt(decoded.value) > BigInt(0) && decoded.to && (
                 <>
                   <div className="mb-4">
                     <label htmlFor={'to'} className="block font-medium text-gray-400">

@@ -1,9 +1,8 @@
 //@ts-nocheck
 import { useEffect, useMemo, useState } from 'react';
 import { SWAP_ROUTER_02_ADDRESSES } from '@uniswap/smart-order-router';
-import { BigNumber, ethers } from 'ethers';
-import { UnsignedTransaction, formatUnits, parseUnits } from 'ethers/lib/utils.js';
-import { Address, useAccount, useContract } from 'wagmi';
+import { TransactionRequestBase, formatUnits, parseUnits } from 'viem';
+import { Address, UsePrepareContractWriteConfig, useAccount, usePublicClient } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
@@ -26,10 +25,14 @@ interface UniswapProps {
   tokenInSymbol: string;
   tokenOutSymbol: string;
   inputAmount: string;
+  slippage: string;
+  transactionKeyword: 'BUYAMOUNT' | 'SELLAMOUNT';
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
+const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, transactionKeyword }: UniswapProps) => {
   const chainId = useChainId();
+  const publicClient = usePublicClient();
+  const isBuying = transactionKeyword === 'BUYAMOUNT';
 
   const { address: recipient } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
@@ -37,11 +40,10 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
   const input = useInput(inputAmount, tokenInChecked?.symbol!);
-  const slippage = 2.0; // in percentage terms
-  const getSlippageAdjustedAmount = (amount: BigNumber) =>
-    BigNumber.from(amount)
-      .mul(10000 - slippage * 100)
-      .div(10000);
+
+const slippage_ = +slippage || 0.5; // in percentage terms
+  const getSlippageAdjustedAmount = (amount: bigint) =>
+    (amount * BigInt(10000 - slippage_ * 100)) / BigInt(10000);
 
   // token out quote for amount in
   const { data: quote } = useUniswapQuote({
@@ -64,10 +66,13 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     amount: undefined,
   });
 
-  const [amountOut, setAmountOut] = useState<BigNumber>();
+  const [amountOut, setAmountOut] = useState<bigint>();
   const [amountOut_, setAmountOut_] = useState<string>();
-  const [amountOutMinimum, setAmountOutMinimum] = useState<BigNumber>();
+  const [amountOutMinimum, setAmountOutMinimum] = useState<bigint>();
   const [amountOutMinimum_, setAmountOutMinimum_] = useState<string>();
+
+  const [txParams, setTxParams] = useState<UsePrepareContractWriteConfig>();
+  console.log('🦄 ~ file: Uniswap.tsx:70 ~ Uniswap ~ txParams:', txParams);
 
   useEffect(() => {
     if (!quote) {
@@ -116,12 +121,6 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
     };
   }, [chainId, input?.value, tokenIn, tokenInIsETH]);
 
-  // get swap router contract
-  const contract = useContract({
-    address: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
-    abi: SwapRouter02Abi,
-  });
-
   // args for func
   const args = useMemo(() => {
     if (!tokenInChecked) {
@@ -150,47 +149,28 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       tokenIn: tokenInChecked.address,
       tokenOut: tokenOutChecked.address,
       fee: 3000,
-      recipient: recipient,
+      recipient,
       amountIn: input.value,
       amountOutMinimum,
-      sqrtPriceLimitX96: BigNumber.from(0),
+      sqrtPriceLimitX96: BigInt(0),
     };
-  }, [amountOutMinimum, input, recipient, tokenInChecked, tokenOutChecked]);
-
-  const value = useMemo(() => {
-    if (!input) {
-      console.error('No input');
-      return;
-    }
-    return tokenInIsETH ? input.value : ethers.constants.Zero;
-  }, [input, tokenInIsETH]);
-
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  }, [amountOutMinimum, input?.value, recipient, tokenInChecked, tokenOutChecked]);
 
   useEffect(() => {
+    if (!args) return console.error('No args');
+
     (async () => {
-      if (!contract) {
-        console.log('No contract yet');
-        return;
-      }
-
-      if (!args) {
-        console.log('No args yet');
-        return;
-      }
-
-      if (!value) {
-        console.log('No value yet');
-        return;
-      }
-
-      const sendParams = await contract.populateTransaction.exactInputSingle(args, {
-        value,
+      const res = await publicClient.simulateContract({
+        address: SWAP_ROUTER_02_ADDRESSES(chainId) as Address,
+        abi: SwapRouter02Abi,
+        functionName: 'exactInputSingle',
+        args: [args],
+        value: tokenInIsETH ? input?.value : BigInt(0),
       });
 
-      setSendParams(sendParams);
+      return setTxParams(res.request);
     })();
-  }, [args, contract, value]);
+  }, [args, chainId, input?.value, publicClient, tokenInIsETH]);
 
   const label = useMemo(() => {
     if (!input) {
@@ -251,18 +231,13 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ListResponse
         title="Breakdown"
         data={[
-          ['Slippage', `${slippage}%`],
+          ['Slippage', `${slippage_}%`],
           ['Minimum swap', cleanValue(amountOutMinimum_, 2)],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
         collapsible
       />
-      <ActionResponse
-        label={label}
-        approvalParams={approval}
-        txParams={undefined}
-        sendParams={sendParams}
-      />
+      <ActionResponse label={label} approvalParams={approval} txParams={txParams} />
     </ConnectFirst>
   );
 };

@@ -1,7 +1,6 @@
 //@ts-nocheck
 import { useContext } from 'react';
-import { Signer } from 'ethers';
-import { useSigner as useSignerWagmi } from 'wagmi';
+import { useWalletClient } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 import useForkTools from '@/hooks/useForkTools';
 
@@ -10,10 +9,10 @@ const useSigner = () => {
   const { settings } = useContext(SettingsContext);
   const { isForkedEnv } = settings;
 
-  const { data: wagmiSigner } = useSignerWagmi();
+  const { data } = useWalletClient();
   const { signer: forkSigner } = useForkTools();
 
-  return isForkedEnv ? forkSigner : (wagmiSigner as Signer);
+  return isForkedEnv ? forkSigner : data;
 };
 
 export default useSigner;
