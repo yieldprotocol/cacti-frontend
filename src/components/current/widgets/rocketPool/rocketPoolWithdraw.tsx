@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Address, UsePrepareContractWriteConfig } from 'wagmi';
-import stethAbi from '@/abi/steth';
 import {
   ActionResponse,
   HeaderResponse,
@@ -10,6 +9,7 @@ import {
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
+import rETHAbi from '@/abi/rETH';
 
 interface RethProps {
   inputString: string;
@@ -26,10 +26,10 @@ const RethWithdraw = ({ inputString }: RethProps) => {
 
   const tx: UsePrepareContractWriteConfig = useMemo(
     () => ({
-      address: tokenOut?.address as Address | undefined,
-      abi: stethAbi,
-      functionName: 'submit',
-      args: ['0x0000000000000000000000000000000000000000'],
+      address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
+      abi: rETHAbi,
+      functionName: 'burn',
+      args: [],
     }),
     [tokenOut?.address]
   );
