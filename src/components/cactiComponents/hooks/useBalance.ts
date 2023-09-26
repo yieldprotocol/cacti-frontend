@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 import { fetchBalance, readContract } from 'wagmi/actions';
 import erc1155ABI from '@/abi/erc1155ABI';
 import useChainId from '@/hooks/useChainId';
+import { zeroAddress } from 'viem';
 
 /**
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
@@ -26,8 +26,8 @@ const useBalance = (
         return;
       }
 
-      // fetch native balance
-      if (!tokenAddress) {
+      // fetch native balsance
+      if (!tokenAddress || tokenAddress === zeroAddress) {
         return (
           await fetchBalance({
             address: account,

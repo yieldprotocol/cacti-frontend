@@ -33,7 +33,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
 
   const mainnetFork = {
     id: 1,
-    name: 'Mainnet Fork',
+    name: 'mainnet',
     network: 'mainnet',
     nativeCurrency: {
       decimals: 18,

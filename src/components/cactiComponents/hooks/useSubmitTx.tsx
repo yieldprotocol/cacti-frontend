@@ -43,7 +43,7 @@ const useSubmitTx = (
   /* prepare a write transaction */
   const { config: writeConfig } = usePrepareContractWrite({
     ...params,
-    onError: (e) => console.log('prepare contract write error', e),
+    onError: (e) => console.log('Prepare contract write error', e),
   });
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
@@ -57,7 +57,7 @@ const useSubmitTx = (
           value: writeConfig.request.value,
         }
       : sendParams),
-    onError: (e) => console.log('prepare send error', e),
+    onError: (e) => console.log('Prepare send error', e),
   });
 
   /* usePrepped data to run write or send transactions */

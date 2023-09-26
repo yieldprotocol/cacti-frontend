@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { Signer } from 'ethers';
 import { useWalletClient } from 'wagmi';
 import SettingsContext from '@/contexts/SettingsContext';
 import useForkTools from '@/hooks/useForkTools';

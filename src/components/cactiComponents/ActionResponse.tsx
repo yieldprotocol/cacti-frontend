@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
-import { TransactionReceipt, TransactionRequestBase } from 'viem';
+import { TransactionReceipt, TransactionRequestBase, formatUnits, zeroAddress } from 'viem';
 import { UsePrepareContractWriteConfig, useAccount } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
@@ -49,9 +47,9 @@ type Action = {
 };
 
 export type ActionResponseProps = {
-  txParams: UsePrepareContractWriteConfig | undefined;
-  approvalParams: ApprovalBasicParams | undefined;
-  sendParams?: TransactionRequestBase | undefined;
+  txParams?: UsePrepareContractWriteConfig;
+  approvalParams?: ApprovalBasicParams;
+  sendParams?: TransactionRequestBase;
   label?: string; // label to show on button
   description?: string; // tx description (for wallet )
   disabled?: boolean;
@@ -81,15 +79,15 @@ export const ActionResponse = ({
   const _approvalParams = useMemo<ApprovalBasicParams>(
     () =>
       approvalParams || {
-        tokenAddress: AddressZero,
-        spender: AddressZero,
+        tokenAddress: zeroAddress,
+        spender: zeroAddress,
         approvalAmount: BigInt(0),
         skipApproval: true, // NOTE: approval is skipped if no approval params are passed in
       },
     [approvalParams]
   );
   const { data: token } = useToken(undefined, _approvalParams.tokenAddress);
-  const amountFmt = formatUnits(_approvalParams.approvalAmount.toString(), token?.decimals);
+  const amountFmt = formatUnits(_approvalParams.approvalAmount, token!.decimals);
 
   /** Check for the approval. If no approvalParams, hasAllowance === true and approveTx == undefined  */
   const {

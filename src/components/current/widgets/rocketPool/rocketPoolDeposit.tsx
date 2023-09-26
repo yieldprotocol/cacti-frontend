@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
 import { parseEther } from 'viem';
 import { UsePrepareContractWriteConfig } from 'wagmi';
 import rETHAbi from '@/abi/rETH';

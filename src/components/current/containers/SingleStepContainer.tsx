@@ -1,4 +1,3 @@
-import { UnsignedTransaction } from 'ethers';
 import { Address, TransactionRequestBase } from 'viem';
 import useEnsAvatar from '@/components/cactiComponents/hooks/useEnsAvatar';
 import useEnsName from '@/components/cactiComponents/hooks/useEnsName';
