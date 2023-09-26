@@ -186,7 +186,7 @@ export const Widget = (props: WidgetProps) => {
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
-      buyOrSellAmount={parsedArgs[2]} // BUYAMOUNT or SELLAMOUNT
+      transactionKeyword={parsedArgs[2]} // BUYAMOUNT or SELLAMOUNT
       slippage={parsedArgs[4]}
     />
   );
