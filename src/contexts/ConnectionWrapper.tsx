@@ -11,8 +11,9 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Chain, WagmiConfig, configureChains, createClient, mainnet, useEnsAvatar } from 'wagmi';
-import { goerli, zkSyncTestnet } from 'wagmi/chains';
+
+import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
+import { arbitrum, goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
@@ -49,8 +50,17 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     },
   } as Chain;
 
+  const arbitrumFork = {
+    ...arbitrum,
+    name: 'Arbitrum One Fork',
+    rpcUrls: {
+      public: { http: [arbitrum.rpcUrls.public.http[0]] },
+      default: { http: [process.env.ARBITRUM_FORK_URL] },
+    },
+  } as Chain;
+
   const { chains, provider } = configureChains(
-    [mainnet],
+    [mainnetFork, goerli, zkSyncTestnet, arbitrumFork],
     [publicProvider()]
   );
 
