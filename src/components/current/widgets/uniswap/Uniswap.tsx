@@ -24,11 +24,14 @@ interface UniswapProps {
   tokenInSymbol: string;
   tokenOutSymbol: string;
   inputAmount: string;
+  slippage: string;
+  transactionKeyword: 'BUYAMOUNT' | 'SELLAMOUNT';
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) => {
+const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, transactionKeyword }: UniswapProps) => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
+  const isBuying = transactionKeyword === 'BUYAMOUNT';
 
   const { address: recipient } = useAccount();
   const { data: tokenIn, isETH: tokenInIsETH } = useToken(tokenInSymbol);
@@ -36,9 +39,10 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
   const input = useInput(inputAmount, tokenInChecked?.symbol!);
-  const slippage = 2.0; // in percentage terms
+
+const slippage_ = +slippage || 0.5; // in percentage terms
   const getSlippageAdjustedAmount = (amount: bigint) =>
-    (amount * BigInt(10000 - slippage * 100)) / BigInt(10000);
+    (amount * BigInt(10000 - slippage_ * 100)) / BigInt(10000);
 
   // token out quote for amount in
   const { data: quote } = useUniswapQuote({
@@ -226,7 +230,7 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount }: UniswapProps) =
       <ListResponse
         title="Breakdown"
         data={[
-          ['Slippage', `${slippage}%`],
+          ['Slippage', `${slippage_}%`],
           ['Minimum swap', cleanValue(amountOutMinimum_, 2)],
           ['Route', `${tokenInSymbol}-${tokenOutSymbol}`],
         ]}
