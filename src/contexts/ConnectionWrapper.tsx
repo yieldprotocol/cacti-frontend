@@ -1,7 +1,5 @@
-import { ReactNode, useContext } from 'react';
+import { useContext } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useQueryClient } from 'react-query';
-import { AppProps } from 'next/app';
 import {
   AvatarComponent,
   DisclaimerComponent,
@@ -11,9 +9,8 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { Chain, WagmiConfig, configureChains, createClient, mainnet, useEnsAvatar } from 'wagmi';
+import { Chain, WagmiConfig, configureChains, createConfig, useEnsAvatar } from 'wagmi';
 import { goerli, zkSyncTestnet } from 'wagmi/chains';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
@@ -21,14 +18,12 @@ import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/r
 import SettingsContext from './SettingsContext';
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
-  const queryClient = useQueryClient();
 
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
     `https://rpc.tenderly.co/fork/${process.env.NEXT_PUBLIC_TENDERLY_FORK_ID}`
   );
-  console.log('🦄 ~ file: ConnectionWrapper.tsx:29 ~ ConnectionWrapper ~ forkUrl:', forkUrl);
 
   const {
     settings: { experimentalUi },
@@ -36,7 +31,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
 
   const mainnetFork = {
     id: 1,
-    name: 'Mainnet Fork',
+    name: 'mainnet',
     network: 'mainnet',
     nativeCurrency: {
       decimals: 18,
@@ -49,8 +44,8 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     },
   } as Chain;
 
-  const { chains, provider } = configureChains(
-    [mainnet],
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
+    [mainnetFork, goerli, zkSyncTestnet],
     [publicProvider()]
   );
 
@@ -60,10 +55,10 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     chains,
   });
 
-  const wagmiClient = createClient({
+  const wagmiConfig = createConfig({
     autoConnect: true,
     connectors,
-    provider,
+    publicClient,
   });
 
   const getSiweMessageOptions: GetSiweMessageOptions = () => ({
@@ -103,7 +98,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     address: string | `0x${string}` | undefined;
     size: number;
   }) => {
-    const { data: ensImage } = useEnsAvatar({ address: address as `0x${string}` });
+    const { data: ensImage } = useEnsAvatar();
     return ensImage ? (
       <img alt="avatar" src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
     ) : (
@@ -121,7 +116,7 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   );
 
   return (
-    <WagmiConfig client={wagmiClient}>
+    <WagmiConfig config={wagmiConfig}>
       {useSiwe && (
         <RainbowKitSiweNextAuthProvider
           getCustomNonce={getCustomNonce}

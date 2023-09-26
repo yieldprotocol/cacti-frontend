@@ -24,7 +24,6 @@ const HeaderContainer = ({
       </button>
 
       <div className="h-full w-full ">{children}</div>
-
       <div className="hidden min-w-[200px] md:block">
         <CustomConnectButton />
       </div>

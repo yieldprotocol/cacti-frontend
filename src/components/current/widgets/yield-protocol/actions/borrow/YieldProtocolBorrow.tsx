@@ -1,7 +1,8 @@
+//@ts-nocheck
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BigNumber, UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
+import { TransactionRequestBase } from 'viem';
 import { Address, useContractRead } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
@@ -139,7 +140,7 @@ const YieldProtocolBorrow = ({
     };
   }, [_collateralAmount, collateralTokenIsEth, collateralTokenToUse?.address, joinAddress]);
 
-  const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: BigNumber) => {
+  const getMaxBorrowAmount = useCallback(async (poolAddress: Address, borrowAmount: bigint) => {
     try {
       const fyTokenOut = await readContract({
         address: poolAddress,
@@ -148,10 +149,10 @@ const YieldProtocolBorrow = ({
         args: [borrowAmount],
       });
 
-      return fyTokenOut.mul(101).div(100); // 1% slippage
+      return (fyTokenOut * BigInt(101)) / BigInt(100); // 1% slippage
     } catch (e) {
       console.log('🦄 ~ file: YieldProtocolBorrow.tsx:139 ~ e:', 'could not read buyBasePreview');
-      return ethers.constants.Zero; // TODO not kosher;
+      return BigInt(0); // TODO not kosher;
     }
   }, []);
 
@@ -180,8 +181,8 @@ const YieldProtocolBorrow = ({
       return await borrow({
         borrowAmount: _borrowAmount.value,
         collateralAmount: _collateralAmount.value,
-        seriesEntityId: seriesEntity.id,
-        ilkId,
+        seriesEntityId: seriesEntity.id as Address,
+        ilkId: ilkId as Address,
         borrowTokenIsEth,
         collateralTokenIsEth,
         maxAmountToBorrow,
@@ -257,7 +258,7 @@ const SingleItem = ({
   item: YieldSeriesEntity;
   label: string;
   approvalParams: ApprovalBasicParams | undefined;
-  sendParams: UnsignedTransaction | undefined;
+  sendParams: TransactionRequestBase | undefined;
 }) => {
   return (
     <SingleLineResponse tokenSymbol={item.baseAsset.symbol} className="flex justify-between">

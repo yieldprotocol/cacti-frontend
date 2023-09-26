@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
-import { UnsignedTransaction } from 'ethers';
+import { Address, TransactionReceipt, TransactionRequestBase } from 'viem';
 import { useChatContext } from '@/contexts/ChatContext';
 import { ActionResponse, HeaderResponse } from '../../cactiComponents';
 import { WidgetError } from '../widgets/helpers';
@@ -123,11 +122,12 @@ export const UserActionTxType = ({
     sendStepResult('error', `Transaction failed`, receipt?.transactionHash || '');
   };
 
-  const unsignedTx: UnsignedTransaction = {
-    to: tx?.to,
-    data: tx?.data,
-    value: tx?.value,
-    gasLimit: tx?.gas,
+  const unsignedTx: TransactionRequestBase = {
+    from: tx?.from as Address,
+    to: tx?.to as Address,
+    data: tx?.data as Address,
+    value: BigInt(tx?.value || 0),
+    gas: BigInt(tx?.gas || 0),
   };
 
   const stepDescription =

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { parseUnits } from 'ethers/lib/utils.js';
-import rETHAbi from '@/abi/rETH.json';
+import { parseEther } from 'viem';
+import { UsePrepareContractWriteConfig } from 'wagmi';
+import rETHAbi from '@/abi/rETH';
 import {
   ActionResponse,
   HeaderResponse,
@@ -8,7 +9,6 @@ import {
   SingleLineResponse,
 } from '@/components/cactiComponents';
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
-import { TxBasicParams } from '@/components/cactiComponents/hooks/useSubmitTx';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 
@@ -23,21 +23,16 @@ const RethDeposit = ({ inputString }: RethProps) => {
     () => cleanValue(inputString.toString(), tokenIn?.decimals),
     [inputString, tokenIn?.decimals]
   );
-  const value = useMemo(() => {
-    return parseUnits(inputCleaned!, tokenIn?.decimals);
-  }, [inputCleaned, tokenIn?.decimals]);
 
-  const tx: TxBasicParams = useMemo(
+  const tx: UsePrepareContractWriteConfig = useMemo(
     () => ({
       address: '0xDD3f50F8A6CafbE9b31a427582963f465E745AF8',
       abi: rETHAbi,
       functionName: 'deposit',
       args: [],
-      overrides: {
-        value,
-      },
+      value: parseEther(inputCleaned!),
     }),
-    [value]
+    [inputCleaned]
   );
 
   return (

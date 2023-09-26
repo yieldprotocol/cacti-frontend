@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { EthersLiquity } from '@liquity/lib-ethers';
-import { UnsignedTransaction, formatUnits } from 'ethers/lib/utils.js';
-import { useAccount } from 'wagmi';
+import { Address, TransactionRequestBase, formatEther, formatUnits } from 'viem';
+import { useAccount, useWalletClient } from 'wagmi';
 import {
   ActionResponse,
   HeaderResponse,
   ListResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
-import useSigner from '@/hooks/useSigner';
+import { walletClientToSigner } from '@/utils/ethersAdapter';
 
 interface LiquityCloseData {
   collateral: string;
@@ -17,8 +17,9 @@ interface LiquityCloseData {
 
 const LiquityClose = () => {
   const { address: account } = useAccount();
-  const signer = useSigner();
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const { data: walletClient } = useWalletClient();
+  const signer = walletClient ? walletClientToSigner(walletClient) : undefined;
+  const [sendParams, setSendParams] = useState<TransactionRequestBase>();
   const [data, setData] = useState<LiquityCloseData>();
 
   useEffect(() => {
@@ -27,11 +28,22 @@ const LiquityClose = () => {
       const liquity = await EthersLiquity.connect(signer);
       const trove = await liquity.getTrove(account);
       const collateral = trove.collateral.bigNumber;
-      const collateral_ = formatUnits(collateral, 18); // ether decimals
+      const collateral_ = formatEther(BigInt(collateral.toString())); // ether decimals
       const debt = trove.debt.bigNumber;
-      const debt_ = formatUnits(debt, 18); // LUSD decimals
+      const debt_ = formatUnits(BigInt(debt.toString()), 18); // LUSD decimals
       const { rawPopulatedTransaction: params } = await liquity.populate.closeTrove();
-      setSendParams(params);
+      if (!params.from) {
+        console.error('No connected address found');
+        return;
+      }
+
+      setSendParams({
+        to: params.to as Address | undefined,
+        data: params.data as Address | undefined,
+        from: params.from as Address,
+        value: BigInt(params.value?.toString() || 0),
+      });
+
       setData({ collateral: collateral_, debt: debt_ });
     })();
   }, [signer, account]);

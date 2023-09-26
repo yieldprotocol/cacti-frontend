@@ -1,4 +1,4 @@
-[
+export default[
   {
     "inputs": [
       {
@@ -2255,4 +2255,4 @@
     "name": "OrdersMatched",
     "type": "event"
   }
-]
+] as const

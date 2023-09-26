@@ -11,19 +11,16 @@ import {
   NftCollectionTraitsContainer,
 } from '@/components/legacy/legacyWidgets/NftCollectionContainer';
 import { Price } from '@/components/legacy/legacyWidgets/Price';
-import { TransferWidget } from '@/components/legacy/legacyWidgets/Transfer';
 import { SharedStateContextProvider, useSharedStateContext } from '@/contexts/SharedStateContext';
 import useParseMessage from '@/hooks/useParseMessage';
 import useToken from '@/hooks/useToken';
 import { shortenAddress } from '@/utils';
-import { BuyNFT } from '../legacyWidgets/BuyNFT';
 import {
   NftAttributes,
   NftCollectionAttributes,
   NftsWithAttributes,
 } from '../legacyWidgets/NftAttributes';
 import { NftSearch } from '../legacyWidgets/NftSearch';
-import { SendTransactionWithReplayMsg } from '../legacyWidgets/SendTransactionWithReplayMsg';
 import { YieldFarmWidget } from '../legacyWidgets/YieldFarm';
 import { YieldRowContainer } from '../legacyWidgets/YieldRowContainer';
 import { ActionPanel } from '../legacyWidgets/helpers/ActionPanel';
@@ -138,18 +135,6 @@ export const Widgetize = (widget: Widget) => {
         return (
           <ActionPanel header={`Query for ${query} NFTs`} msg={inputString} direction="col">
             <NftSearch {...{ query }} />
-          </ActionPanel>
-        );
-      }
-      case 'buy-nft': {
-        const [buyNftAddress, buyTokenID] = parseArgsStripQuotes(args);
-        return (
-          <ActionPanel
-            header={`Buy NFTs ${shortenAddress(buyNftAddress)} ${buyTokenID}`}
-            msg={inputString}
-            direction="col"
-          >
-            <BuyNFT nftAddress={buyNftAddress} tokenId={buyTokenID} />
           </ActionPanel>
         );
       }
@@ -270,30 +255,6 @@ export const Widgetize = (widget: Widget) => {
       //     </table>
       //   );
       // }
-
-      case 'tx-payload-for-sending-container': {
-        const { userRequestStatus, parsedUserRequest, tx, isApprovalTx, errorMsg, description } =
-          JSON.parse(args);
-
-        return (
-          <ActionPanel header={description} msg={inputString} key={inputString} centerTitle={true}>
-            <div className="flex w-[100%] justify-end">
-              <ConnectFirst>
-                <SendTransactionWithReplayMsg
-                  {...{
-                    userRequestStatus,
-                    tx,
-                    isApprovalTx,
-                    errorMsg,
-                    parsedUserRequest,
-                    description,
-                  }}
-                />
-              </ConnectFirst>
-            </div>
-          </ActionPanel>
-        );
-      }
 
       // case 'multistep-payload-container': {
       //   const {

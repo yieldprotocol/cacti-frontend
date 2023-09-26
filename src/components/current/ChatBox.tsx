@@ -6,6 +6,7 @@ import MessageList from './MessageList';
 // Use experimental components
 import ShareChatModal from './ShareChatModal';
 import WelcomeMessage from './WelcomeMessage';
+import NearWidget from './widgets/nearBos/NearWidget';
 
 const ChatBox = () => {
   const { isLoading } = useQueryChats();
@@ -15,6 +16,7 @@ const ChatBox = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-auto">
+
       {/* chat sharing modal*/}
       <ShareChatModal id={id as string} />
 

@@ -1,24 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { CallOverrides, Overrides, PayableOverrides, UnsignedTransaction } from 'ethers';
+import { TransactionReceipt, TransactionRequestBase, encodeFunctionData } from 'viem';
 import {
+  UsePrepareContractWriteConfig,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
 } from 'wagmi';
 import useBalance from './useBalance';
-
-export type TxBasicParams = {
-  address?: `0x${string}`;
-  abi?: any;
-  functionName?: string;
-  args?: any[];
-  overrides?: PayableOverrides | Overrides | CallOverrides;
-  enabled?: boolean;
-};
 
 /**
  * random UUID for any send transactions -(it is a random UUID so that it is unlikely to clash with any other contract fnName).
@@ -36,8 +27,8 @@ export const SEND_ETH_FNNAME = '8bb05f0e-05ed-11ee-be56-0242ac120002';
  * @param description description of tx for wallet
  */
 const useSubmitTx = (
-  params?: TxBasicParams,
-  sendParams?: UnsignedTransaction,
+  params?: UsePrepareContractWriteConfig,
+  sendParams?: TransactionRequestBase,
   onSuccess?: (receipt?: TransactionReceipt) => void,
   onError?: (receipt?: TransactionReceipt) => void,
   description?: string
@@ -52,14 +43,21 @@ const useSubmitTx = (
   /* prepare a write transaction */
   const { config: writeConfig } = usePrepareContractWrite({
     ...params,
-    onError: (e) => console.log('prepare contract write error', e),
+    onError: (e) => console.log('Prepare contract write error', e),
   });
 
   /* prepare a send transaction if the fnName matches the SEND_TRANSACTION unique id */
   const { config: sendConfig, isError: isPrepareError } = usePrepareSendTransaction({
-    request: { ...(writeConfig.request ?? sendParams), gasLimit: sendParams?.gasLimit || 500000 },
-    enabled: true,
-    onError: (e) => console.log('prepare send error', e),
+    ...(writeConfig.request
+      ? {
+          to: writeConfig.request.address,
+          data: encodeFunctionData({
+            ...writeConfig.request,
+          }),
+          value: writeConfig.request.value,
+        }
+      : sendParams),
+    onError: (e) => console.log('Prepare send error', e),
   });
 
   /* usePrepped data to run write or send transactions */

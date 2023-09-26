@@ -1,14 +1,15 @@
+//@ts-nocheck
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import useSWRImmutable from 'swr/immutable';
-import { useAccount, useProvider } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import useBalance from '@/components/cactiComponents/hooks/useBalance';
 import SettingsContext from '@/contexts/SettingsContext';
 
 type ForkTools = {
-  forkTimestamp: number | undefined;
+  forkTimestamp: bigint | undefined;
   forkStartBlock: number | string | undefined;
   createNewFork: () => Promise<string>;
   fillEther: () => Promise<void>;
@@ -28,7 +29,7 @@ const useForkTools = (id?: string): ForkTools => {
   /* parameters from wagmi */
   const { address: account } = useAccount();
   const { refetch } = useBalance();
-  const provider = useProvider();
+  const provider = usePublicClient();
   const forkProvider = useMemo(
     () => (forkUrl ? new ethers.providers.JsonRpcProvider(forkUrl) : undefined),
     [forkUrl]
@@ -53,8 +54,8 @@ const useForkTools = (id?: string): ForkTools => {
   const getForkTimestamp = useCallback(async () => {
     if (!isForkedEnv || !provider) return;
     try {
-      const { timestamp } = await provider.getBlock('latest');
-      console.log('Updated Forked Blockchain time: ', new Date(timestamp * 1000));
+      const { timestamp } = await provider.getBlock();
+      console.log('Updated Forked Blockchain time: ', timestamp);
       return timestamp;
     } catch (e) {
       console.log('Error getting latest timestamp', e);

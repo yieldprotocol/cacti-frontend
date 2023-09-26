@@ -1,5 +1,5 @@
+//@ts-nocheck
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
 import { Address, erc721ABI, useAccount, useContractRead } from 'wagmi';
 import { shortenAddress } from '@/utils';
 import useBalance from '../../cactiComponents/hooks/useBalance';
@@ -17,7 +17,7 @@ export const NftOwner = ({ nftAddress, tokenId }: Props) => {
     address: nftAddress as `0x${string}`,
     abi: erc721ABI,
     functionName: 'ownerOf',
-    args: [BigNumber.from(tokenId)],
+    args: [BigInt(tokenId)],
     watch: true,
   });
 

@@ -1,30 +1,18 @@
 import { useCallback } from 'react';
-import { BigNumber, BigNumberish, Contract, PayableOverrides } from 'ethers';
 import { Address, useAccount } from 'wagmi';
 import useChainId from '@/hooks/useChainId';
-import useSigner from '@/hooks/useSigner';
 import borrowCloseHelper from '../actions/borrow-close/helpers';
 import borrowHelper from '../actions/borrow/helpers';
 import lendCloseHelper from '../actions/lend-close/helpers';
 import lendHelper from '../actions/lend/helpers';
 import { YieldVault } from './useVault';
 
-export interface ICallData {
-  args: (string | BigNumberish | boolean)[];
-  operation: string;
-  targetContract?: Contract;
-  fnName?: string;
-  ignoreIf?: boolean;
-  overrides?: PayableOverrides;
-}
-
 const useYieldProtocol = () => {
   const chainId = useChainId();
-  const signer = useSigner();
   const { address: account } = useAccount();
 
   const borrow = useCallback(
-    async ({
+    ({
       borrowAmount,
       collateralAmount,
       seriesEntityId,
@@ -33,24 +21,20 @@ const useYieldProtocol = () => {
       collateralTokenIsEth,
       maxAmountToBorrow,
     }: {
-      borrowAmount: BigNumber;
-      collateralAmount: BigNumber;
-      seriesEntityId: string;
-      ilkId: string;
+      borrowAmount: bigint;
+      collateralAmount: bigint;
+      seriesEntityId: `0x${string}`;
+      ilkId: `0x${string}`;
       borrowTokenIsEth: boolean;
       collateralTokenIsEth: boolean;
-      maxAmountToBorrow: BigNumber;
+      maxAmountToBorrow: bigint;
     }) => {
       if (!account) {
         console.error('Account not found');
         return undefined;
       }
-      if (!signer) {
-        console.error('Signer not found');
-        return undefined;
-      }
 
-      return await borrowHelper({
+      return borrowHelper({
         account,
         borrowAmount,
         collateralAmount,
@@ -59,67 +43,59 @@ const useYieldProtocol = () => {
         vaultId: undefined,
         borrowTokenIsEth,
         collateralTokenIsEth,
-        signer,
         chainId,
         maxAmountToBorrow,
       });
     },
-    [account, chainId, signer]
+    [account, chainId]
   );
 
   const borrowClose = useCallback(
-    async ({ vault }: { vault: YieldVault }) => {
+    ({ vault }: { vault: YieldVault }) => {
       if (!account) {
         console.error('Account not found');
         return undefined;
       }
-      if (!signer) {
-        console.error('Signer not found');
-        return undefined;
-      }
 
-      return await borrowCloseHelper({
+      return borrowCloseHelper({
         account,
         vault,
-        signer,
         chainId,
       });
     },
-    [account, chainId, signer]
+    [account, chainId]
   );
 
   const lend = useCallback(
-    async ({
+    ({
       tokenInAddress,
       amount,
       poolAddress,
       isEthBase,
     }: {
       tokenInAddress: Address;
-      amount: BigNumber;
+      amount: bigint;
       poolAddress: Address;
       isEthBase: boolean;
     }) => {
-      if (!signer) {
-        console.error('Signer not found');
+      if (!account) {
+        console.error('Account not found');
         return undefined;
       }
-
-      return await lendHelper({
+      return lendHelper({
         account,
         input: amount,
         poolAddress,
         baseAddress: tokenInAddress,
         isEthBase,
-        signer,
         chainId,
       });
     },
-    [account, chainId, signer]
+    [account, chainId]
   );
 
   const lendClose = useCallback(
-    async ({
+    ({
       fyTokenAmount,
       fyTokenAddress,
       poolAddress,
@@ -127,19 +103,19 @@ const useYieldProtocol = () => {
       seriesEntityIsMature,
       isEthBase,
     }: {
-      fyTokenAmount: BigNumber;
+      fyTokenAmount: bigint;
       fyTokenAddress: Address;
       poolAddress: Address;
-      seriesEntityId: string;
+      seriesEntityId: `0x${string}`;
       seriesEntityIsMature: boolean;
       isEthBase: boolean;
     }) => {
-      if (!signer) {
-        console.error('Signer not found');
+      if (!account) {
+        console.error('Account not found');
         return undefined;
       }
 
-      return await lendCloseHelper({
+      return lendCloseHelper({
         account,
         fyTokenAmount,
         fyTokenAddress,
@@ -147,11 +123,10 @@ const useYieldProtocol = () => {
         seriesEntityId,
         seriesEntityIsMature,
         isEthBase,
-        signer,
         chainId,
       });
     },
-    [account, chainId, signer]
+    [account, chainId]
   );
 
   return { lend, borrow, lendClose, borrowClose };

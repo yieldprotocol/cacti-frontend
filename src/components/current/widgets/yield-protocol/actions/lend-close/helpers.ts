@@ -1,20 +1,18 @@
-import { BigNumber, Signer, ethers } from 'ethers';
+import { encodeFunctionData } from 'viem';
 import { Address } from 'wagmi';
-import { getContract } from 'wagmi/actions';
+import ladleAbi from '../../contracts/abis/Ladle';
 import poolAbi from '../../contracts/abis/Pool';
 import contractAddresses, { ContractNames } from '../../contracts/config';
 import { ICallData, getSendParams, getUnwrapEthCallData } from '../../helpers';
-import { LadleActions, RoutedActions } from '../../operations';
 
 interface LendCloseProps {
-  account: Address | undefined;
-  fyTokenAmount: BigNumber;
+  account: Address;
+  fyTokenAmount: bigint;
   fyTokenAddress: Address;
   poolAddress: Address;
-  seriesEntityId: string;
+  seriesEntityId: `0x${string}`;
   seriesEntityIsMature: boolean;
   isEthBase: boolean;
-  signer: Signer;
   chainId: number;
 }
 
@@ -27,12 +25,11 @@ interface LendCloseProps {
  * @param seriesEntityId
  * @param seriesEntityIsMature
  * @param isEthBase
- * @param signer
  * @param chainId
  *
  * @returns {ICallData[] | undefined}
  */
-const _lendClose = async ({
+const _lendClose = ({
   account,
   fyTokenAmount,
   fyTokenAddress,
@@ -40,62 +37,59 @@ const _lendClose = async ({
   seriesEntityId,
   seriesEntityIsMature,
   isEthBase,
-  signer,
   chainId,
-}: LendCloseProps): Promise<ICallData[] | undefined> => {
-  if (!signer) {
-    console.error('Signer not found');
-    return undefined;
-  }
+}: LendCloseProps): ICallData[] | undefined => {
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
-
-  const poolContract = getContract({
-    address: poolAddress,
-    abi: poolAbi,
-    signerOrProvider: signer,
-  });
-
-  if (!poolContract) {
-    console.error('Pool contract not found');
+  if (!ladleAddress) {
+    console.error('Ladle address not found; possibly on an unsupported chain');
     return undefined;
   }
 
   // select destination based on if mature
   const transferToAddress = seriesEntityIsMature ? fyTokenAddress : poolAddress;
   const receiverAddress = isEthBase ? ladleAddress : account;
+  const sellFYTokenEncoded = encodeFunctionData({
+    abi: poolAbi,
+    functionName: 'sellFYToken',
+    args: [receiverAddress, BigInt(0)],
+  });
 
   return [
     {
-      operation: LadleActions.Fn.TRANSFER,
-      args: [fyTokenAddress, transferToAddress, fyTokenAmount] as LadleActions.Args.TRANSFER,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'transfer',
+        args: [transferToAddress, transferToAddress, fyTokenAmount],
+      }),
     },
 
     /* BEFORE MATURITY */
     {
-      operation: LadleActions.Fn.ROUTE,
-      args: [receiverAddress, ethers.constants.Zero] as RoutedActions.Args.SELL_FYTOKEN, // TODO handle slippage
-      fnName: RoutedActions.Fn.SELL_FYTOKEN,
-      targetContract: poolContract,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'route',
+        args: [poolAddress, sellFYTokenEncoded],
+      }),
       ignoreIf: seriesEntityIsMature,
     },
-
     /* AFTER MATURITY */
     {
-      operation: LadleActions.Fn.REDEEM,
-      args: [seriesEntityId, receiverAddress, fyTokenAmount] as LadleActions.Args.REDEEM,
+      call: encodeFunctionData({
+        abi: ladleAbi,
+        functionName: 'redeem',
+        args: [seriesEntityId, receiverAddress, fyTokenAmount],
+      }),
       ignoreIf: !seriesEntityIsMature,
     },
 
-    ...(isEthBase
-      ? getUnwrapEthCallData({ value: ethers.constants.One, to: receiverAddress! })
-      : []), // will unwrap all eth in the ladle, so value does not matter here (just has to be greater than 0)
+    ...(isEthBase ? getUnwrapEthCallData({ value: BigInt(1), to: receiverAddress }) : []), // will unwrap all eth in the ladle, so value does not matter here (just has to be greater than 0)
   ];
 };
 
 /**
  * Returns the send params for closing a lend position (selling fyToken for base)
  */
-const lendClose = async ({
+const lendClose = ({
   account,
   fyTokenAmount,
   fyTokenAddress,
@@ -103,10 +97,9 @@ const lendClose = async ({
   seriesEntityId,
   seriesEntityIsMature,
   isEthBase,
-  signer,
   chainId,
 }: LendCloseProps) => {
-  const calls = await _lendClose({
+  const calls = _lendClose({
     account,
     fyTokenAmount,
     fyTokenAddress,
@@ -114,10 +107,9 @@ const lendClose = async ({
     seriesEntityId,
     seriesEntityIsMature,
     isEthBase,
-    signer,
     chainId,
   });
-  return calls ? await getSendParams({ calls, signer, chainId }) : undefined;
+  return calls ? getSendParams({ calls, chainId, account }) : undefined;
 };
 
 export default lendClose;

@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { EthersLiquity } from '@liquity/lib-ethers';
-import { UnsignedTransaction } from 'ethers/lib/utils.js';
+import { Address, TransactionRequestBase } from 'viem';
 import {
   ActionResponse,
   HeaderResponse,
   ListResponse,
   SingleLineResponse,
 } from '@/components/cactiComponents';
-import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
+import { useEthersSigner } from '@/utils/ethersAdapter';
 
 interface BorrowProps {
   borrowAmount: string;
@@ -17,7 +17,7 @@ interface BorrowProps {
 }
 
 const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
-  const signer = useSigner();
+  const signer = useEthersSigner();
   const { data: borrowToken } = useToken('LUSD');
   const { data: collateralToken } = useToken('ETH');
   const borrowCleaned = cleanValue(borrowAmount, borrowToken?.decimals);
@@ -25,7 +25,7 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
   const borrowLUSD = isNaN(+borrowCleaned!) ? 0 : +borrowCleaned!;
   const depositCollateral = isNaN(+collateralCleaned!) ? 0 : +collateralCleaned!;
 
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [sendParams, setSendParams] = useState<TransactionRequestBase>();
 
   useEffect(() => {
     (async () => {
@@ -35,7 +35,18 @@ const LiquityBorrow = ({ borrowAmount, collateralAmount }: BorrowProps) => {
         borrowLUSD,
         depositCollateral,
       });
-      setSendParams(params);
+
+      if (!params.from) {
+        console.error('No connected address found');
+        return;
+      }
+
+      setSendParams({
+        to: params.to as Address | undefined,
+        data: params.data as Address | undefined,
+        from: params.from as Address,
+        value: BigInt(params.value?.toString() || 0),
+      });
     })();
   }, [signer, borrowLUSD, depositCollateral]);
 

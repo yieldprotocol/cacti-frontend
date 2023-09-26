@@ -1,13 +1,13 @@
+//@ts-nocheck
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { UnsignedTransaction, ethers } from 'ethers';
 import request from 'graphql-request';
 import useSWR from 'swr';
-import { useAccount, useContract, useProvider } from 'wagmi';
+import { TransactionBase } from 'viem';
+import { useAccount, usePublicClient } from 'wagmi';
 import { ActionResponse, HeaderResponse, SingleLineResponse } from '@/components/cactiComponents';
 import { ResponseGrid } from '@/components/cactiComponents/helpers/layout';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
-import SettingsContext from '@/contexts/SettingsContext';
 // CUSTOM IMPORTS
 import useChainId from '@/hooks/useChainId';
 import useForkTools from '@/hooks/useForkTools';
@@ -15,7 +15,7 @@ import useToken from '@/hooks/useToken';
 import { cleanValue, toTitleCase } from '@/utils';
 import Cauldron from '../../contracts/abis/Cauldron';
 import contractAddresses, { ContractNames } from '../../contracts/config';
-import useVault, { YieldVault } from '../../hooks/useVault';
+import useVault from '../../hooks/useVault';
 import useYieldProtocol from '../../hooks/useYieldProtocol';
 
 // should be generalized and only needed as reference once for all components
@@ -39,10 +39,11 @@ export const getQuery = (address: string) =>
 const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: InputProps) => {
   /* generic hook usage (not to be touched when creating from example) */
   const chainId = useChainId();
+  const publicClient = usePublicClient();
+
   const { address: account } = useAccount();
-  const { data: borrowToken, isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
+  const { isETH: borrowTokenIsEth } = useToken(borrowTokenSymbol);
   const { data: borrowTokenToUse } = useToken(borrowTokenIsEth ? 'WETH' : borrowTokenSymbol);
-  const provider = useProvider();
   const label = `
         ${toTitleCase(action)} ${borrowTokenSymbol} borrow position on ${toTitleCase(projectName)}`;
   const { forkStartBlock } = useForkTools();
@@ -52,7 +53,7 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
   const [data, setData] = useState<{
     vaults:
       | {
-          id: `0x${string}`;
+          id: `0x${string}` | undefined;
         }[]
       | undefined;
   }>();
@@ -68,12 +69,6 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
   );
 
   const cauldronAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.CAULDRON);
-  // cauldron ethers contract
-  const cauldron = useContract({
-    address: cauldronAddress!,
-    abi: Cauldron,
-    signerOrProvider: provider,
-  });
 
   const getVaults = useCallback(async () => {
     if (!seriesEntityIdsRes) {
@@ -86,33 +81,29 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
       return;
     }
 
-    // get cauldron
-    if (!cauldron) {
-      console.error('No cauldron');
-      return;
-    }
-
     // get relevant vaults based on series ids
-    const filter = cauldron.filters.VaultBuilt(null, account, null, null);
-    let vaults = undefined;
+    const filter = await publicClient.createContractEventFilter({
+      address: cauldronAddress,
+      abi: Cauldron,
+      eventName: 'VaultBuilt',
+      args: {
+        vaultId: null,
+        owner: account,
+        seriesId: null,
+      },
+      fromBlock: BigInt(forkStartBlock?.toString() || 0),
+    });
 
-    try {
-      vaults = (await cauldron.queryFilter(filter, forkStartBlock)) as unknown as {
-        args: { seriesId: `0x${string}`; vaultId: `0x${string}` };
-      }[];
-    } catch (e) {
-      console.log('🦄 ~ file: YieldProtocolBorrowClose.tsx:104 ~ getVaults ~ e:', e);
-      return;
-    }
+    const vaultLogs = await publicClient.getFilterLogs({ filter });
 
     // filter for relevant series ids
-    const filtered = vaults.filter(({ args }) =>
-      seriesEntityIdsRes.seriesEntities.map((s) => s.id).includes(args.seriesId)
+    const filtered = vaultLogs.filter(({ args }) =>
+      seriesEntityIdsRes.seriesEntities.map((s) => s.id).includes(args.seriesId!)
     );
 
     // only need the vault id
     return filtered.map(({ args }) => ({ id: args.vaultId, seriesId: args.seriesId }));
-  }, [account, cauldron, forkStartBlock, seriesEntityIdsRes]);
+  }, [account, cauldronAddress, forkStartBlock, publicClient, seriesEntityIdsRes]);
 
   useEffect(() => {
     (async () => {
@@ -137,7 +128,7 @@ const YieldProtocolBorrowClose = ({ borrowTokenSymbol, action, projectName }: In
       <ResponseGrid className="grid gap-1">
         {data?.vaults?.length &&
           data.vaults.map((v) => {
-            return <SingleVault key={v.id} vaultId={v.id} />;
+            return v.id ? <SingleVault key={v.id} vaultId={v.id} /> : null;
           })}
       </ResponseGrid>
     </>
@@ -148,7 +139,7 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
   const chainId = useChainId();
   const { borrowClose } = useYieldProtocol();
   const { data: vault, isLoading } = useVault({ vaultId });
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [sendParams, setSendParams] = useState<TransactionBase>();
   const label = `Close Borrow ${vault?.seriesEntity.maturity_}`;
 
   const ladleAddress = contractAddresses.addresses.get(chainId)?.get(ContractNames.LADLE);
@@ -170,23 +161,18 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
 
     return {
       spender: ladleAddress,
-      approvalAmount: vault?.accruedArt.mul(110).div(100), // 10% buffer: TODO make more kosher
+      approvalAmount: (BigInt(vault?.accruedArt.toString()) * BigInt(110)) / BigInt(100), // 10% buffer: TODO make more kosher
       tokenAddress: vault.borrowToken?.address!,
     };
   }, [ladleAddress, vault]);
 
+  // TODO impr
   const activeVault = useMemo(
-    () => vault.art?.gt(ethers.constants.Zero) || vault.ink?.gt(ethers.constants.Zero),
+    () =>
+      BigInt(vault.art?.toString() || '0') > BigInt(0) ||
+      BigInt(vault.ink?.toString() || '0') > BigInt(0),
     [vault]
   );
-
-  useEffect(() => {
-    (async () => {
-      if (!activeVault) return;
-      const sendParams = await borrowClose({ vault });
-      setSendParams(sendParams);
-    })();
-  }, [activeVault, vault]); // intentionally not including borrowClose cuz of infinite render issue; TODO make more kosher
 
   return isLoading ? (
     <Skeleton />
@@ -204,7 +190,7 @@ const SingleVault = ({ vaultId }: { vaultId: `0x${string}` }) => {
         <ActionResponse
           label={label}
           approvalParams={approvalParams}
-          sendParams={sendParams}
+          sendParams={borrowClose({ vault })}
           txParams={undefined}
           skipBalanceCheck={vault.borrowToken?.symbol === 'WETH'}
         />
