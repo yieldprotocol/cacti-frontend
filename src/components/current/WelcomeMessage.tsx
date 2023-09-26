@@ -35,11 +35,17 @@ const WelcomeMessage = () => {
   return (
     <div className="h-full place-items-center ">
       <div className="mx-auto w-full max-w-4xl space-y-20">
-        <Image src={cactiImage} alt="CactiChat" className="mx-auto" width={400} height={300} />
+        <div className="flex w-full justify-center">
+          <div className="w-[50%]">
+            <Image src={cactiImage} alt="CactiChat" className="mx-auto" />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 gap-20 p-4 sm:grid-cols-3">
           <WelcomeColumn>
-            <Cactus1 className="h-16" />
+            <div className="w-[20%] sm:w-[40%] ">
+              <Cactus1 className="h-16" />
+            </div>
             <WelcomeBoxSubtitle> Explore NFTs </WelcomeBoxSubtitle>
             <WelcomeBox onClick={() => sendMessage('Browse some cheetah nft collections')}>
               Browse some [cheetah] NFT collections
@@ -53,7 +59,9 @@ const WelcomeMessage = () => {
           </WelcomeColumn>
 
           <WelcomeColumn>
-            <Cactus2 className="h-16" />
+          <div className="w-[20%] sm:w-[40%] ">
+              <Cactus2 className="h-16" />
+            </div>
             <WelcomeBoxSubtitle>Interact with protocols</WelcomeBoxSubtitle>
             <WelcomeBox onClick={() => sendMessage('Swap 0.1 ETH for DAI on Uniswap')}>
               Swap 0.1 ETH for DAI on Uniswap
@@ -69,7 +77,9 @@ const WelcomeMessage = () => {
           </WelcomeColumn>
 
           <WelcomeColumn>
-            <Cactus3 className="h-16" />
+          <div className="w-[20%] sm:w-[40%] ">
+              <Cactus3 className="h-16" />
+            </div>
             {/* <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" /> */}
             <WelcomeBoxSubtitle>Query the Network</WelcomeBoxSubtitle>
             <WelcomeBox onClick={() => sendMessage('What is the price of ETH in terms of USD')}>
