@@ -15,6 +15,7 @@ import { SingleStepContainer } from './containers/SingleStepContainer';
 import { StreamingContainer } from './containers/StreamingContainer';
 import DepositVault from './widgets/4626vault/DepositIntoVault';
 import WithdrawVault from './widgets/4626vault/WithdrawFromVault';
+import CodeRunner from './widgets/code-runner/CodeRunner';
 import DepositDSR from './widgets/dsr/DepositDSR';
 import RedeemDSR from './widgets/dsr/RedeemDSR';
 import StakeSfrxEth from './widgets/frax/StakeSfrxETH';
@@ -322,6 +323,8 @@ export const Widget = (props: WidgetProps) => {
       toChain={parsedArgs[3]}
     />
   );
+
+  widgets.set('generate-js-code', <CodeRunner codeString={parsedArgs[0]} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {
