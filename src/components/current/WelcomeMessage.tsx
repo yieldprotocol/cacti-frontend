@@ -37,7 +37,7 @@ const WelcomeMessage = () => {
       <div className="mx-auto w-full max-w-4xl space-y-20">
         <div className="flex w-full justify-center">
           <div className="w-[50%]">
-            <Image src={cactiImage} alt="CactiChat" className="mx-auto" />
+            <Image src={cactiImage} alt="CactiChat" className="mx-auto" priority />
           </div>
         </div>
 
