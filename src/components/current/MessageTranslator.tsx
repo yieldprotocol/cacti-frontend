@@ -5,6 +5,8 @@ import { parseMessage } from '@/utils/parse-message';
 import { ErrorResponse, TextResponse } from '../cactiComponents';
 import { ImageVariant } from '../cactiComponents/ImageResponse';
 import { TableResponse } from '../cactiComponents/TableResponse';
+import ArbitrumDeposit from '../experimental_/widgets/arbitrum/ArbitrumDeposit';
+import ArbitrumWithdraw from '../experimental_/widgets/arbitrum/ArbitrumWithdraw';
 import { Widgetize } from '../legacy/legacyComponents/MessageTranslator';
 import Avatar from '../shared/Avatar';
 import { FeedbackButton } from './FeedbackButton';
@@ -186,6 +188,8 @@ export const Widget = (props: WidgetProps) => {
       tokenInSymbol={parsedArgs[0]}
       tokenOutSymbol={parsedArgs[1]}
       inputAmount={parsedArgs[3]}
+      transactionKeyword={parsedArgs[2]} // BUYAMOUNT or SELLAMOUNT
+      slippage={parsedArgs[4]}
     />
   );
 
@@ -228,7 +232,6 @@ export const Widget = (props: WidgetProps) => {
       assetsToShow={6}
     />
   );
-
   widgets.set(
     'yield-protocol-lend',
     <YieldProtocolLend
@@ -281,23 +284,20 @@ export const Widget = (props: WidgetProps) => {
     'zksync-deposit',
     <ZKSyncDeposit tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-
   widgets.set(
     'zksync-withdraw',
     <ZKSyncWithdraw tokenSymbol={parsedArgs[0]} userAmount={parsedArgs[1]} />
   );
-  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
   widgets.set(
     'liquity-borrow',
     <LiquityBorrow borrowAmount={parsedArgs[0]} collateralAmount={parsedArgs[1]} />
   );
   widgets.set('liquity-close', <LiquityClose />);
-
   widgets.set('deposit-eth-lido', <LidoDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-lido', <LidoWithdraw inputString={parsedArgs} />);
-
   widgets.set('deposit-eth-reth', <RethDeposit inputString={parsedArgs} />);
   widgets.set('withdraw-eth-reth', <RethWithdraw inputString={parsedArgs} />);
+  widgets.set('stake-sfrxeth', <StakeSfrxEth receiver={parsedArgs[0]} value={parsedArgs[1]} />);
 
   widgets.set('savings-dai-deposit', <DepositDSR depositAmount={parsedArgs[0]} />);
 
@@ -321,6 +321,15 @@ export const Widget = (props: WidgetProps) => {
       fromChain={parsedArgs[2]}
       toChain={parsedArgs[3]}
     />
+  );
+
+  widgets.set(
+    'arbitrum-deposit',
+    <ArbitrumDeposit tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} />
+  );
+  widgets.set(
+    'arbitrum-withdraw',
+    <ArbitrumWithdraw tokenSymbol={parsedArgs[0]} amtString={parsedArgs[1]} />
   );
 
   /* If available, return the widget in the widgets map */

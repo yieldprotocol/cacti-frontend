@@ -16,7 +16,7 @@ type Input = {
  * @param input
  * @param tokenSymbol
  * @param transform
- * @returns {Input}
+ * @returns {Input | undefined}
  */
 const useInput = (
   input: string,

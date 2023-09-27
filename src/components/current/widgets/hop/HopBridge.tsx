@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Hop } from '@hop-protocol/sdk';
+import { config } from '@hop-protocol/sdk/dist/src/config';
 import { CanonicalToken, ChainSlug } from '@hop-protocol/sdk/dist/src/constants';
 import { Interface, UnsignedTransaction } from 'ethers/lib/utils';
 import { erc20ABI } from 'wagmi';
@@ -100,6 +101,10 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
     })();
   }, [_fromChain, input?.value, _toChain, tokenIn?.address, tokenSymbol]); // TODO signer is causing infinite loop
 
+  // find the chain id of the from chain using the hop sdk config
+  // using the `fromSlug`(returns the Chain) property of Chain doesn't return the chain id, so using the below methodology instead
+  const fromChainId = config.chains.mainnet[_fromChain].chainId as number | undefined;
+
   return (
     <>
       <HeaderResponse
@@ -115,6 +120,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
         approvalParams={approvalParams}
         txParams={undefined}
         sendParams={sendParams}
+        chainId={fromChainId}
       />
     </>
   );

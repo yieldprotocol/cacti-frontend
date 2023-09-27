@@ -5,9 +5,9 @@ import { AddressZero } from '@ethersproject/constants';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BigNumber, UnsignedTransaction } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils.js';
+import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import tw from 'tailwind-styled-components';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
@@ -60,6 +60,7 @@ export type ActionResponseProps = {
   stepper?: boolean;
   onSuccess?: (receipt?: TransactionReceipt) => void;
   onError?: (receipt?: TransactionReceipt) => void;
+  chainId?: number;
 };
 
 /**
@@ -77,8 +78,13 @@ export const ActionResponse = ({
   skipBalanceCheck,
   onSuccess,
   onError,
+  chainId = 1,
 }: ActionResponseProps) => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { chains, switchNetworkAsync } = useSwitchNetwork();
+  const wrongChain = !!chainId && chain?.id !== chainId;
+
   const _approvalParams = useMemo<ApprovalBasicParams>(
     () =>
       approvalParams || {
@@ -138,17 +144,17 @@ export const ActionResponse = ({
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
     if (_approvalParams === undefined) return setHasEnoughBalance(true);
-    if (sendParams?.value! >= ethBal!) {
+    if (BigNumber.from(sendParams?.value || '0').gt(BigNumber.from(ethBal || '0')))
       return setHasEnoughBalance(false);
-    }
 
     // check approval token balance
-    if (balance && _approvalParams?.approvalAmount)
+    if (balance && _approvalParams?.approvalAmount) {
       setHasEnoughBalance(balance.gte(_approvalParams.approvalAmount));
+    }
   }, [_approvalParams, balance, ethBal, sendParams?.value, skipBalanceCheck]);
 
   /**
-   * BUTTON FLOW:
+   * BUTTON FLOW for approvals and transactions:
    * Update all the local states on tx/approval status changes.
    **/
   useEffect(() => {
@@ -251,7 +257,25 @@ export const ActionResponse = ({
     submitTx,
     token?.symbol,
     disabled,
+    wrongChain,
+    chains,
+    switchNetworkAsync,
+    chainId,
   ]);
+
+  // handle chain changes if on the wrong chain
+  useEffect(() => {
+    if (!wrongChain) return;
+
+    const correctChainName = chains.find((c) => c.id === chainId)?.name;
+    setButtonLabel(
+      correctChainName && switchNetworkAsync ? `Switch to ${correctChainName}` : `Unsupported Chain`
+    );
+    return (
+      switchNetworkAsync &&
+      setAction({ name: 'switch', fn: async () => await switchNetworkAsync(chainId) })
+    );
+  }, [chainId, chains, state, switchNetworkAsync, wrongChain]);
 
   /* Set the styling based on the state (Note: always diasbled if 'disabled' from props) */
   const extraStyle = stylingByState[disabled ? ActionResponseState.DISABLED : state];
