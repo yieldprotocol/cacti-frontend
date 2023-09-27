@@ -11,7 +11,6 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-
 import { Chain, WagmiConfig, configureChains, createClient, useEnsAvatar } from 'wagmi';
 import { arbitrum, goerli, zkSyncTestnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -124,9 +123,8 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
   const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
     <Text>
       By connecting my wallet, I agree to the{' '}
-      <Link href="https://cacti.finance/terms/">Terms of Service</Link> and acknowledge I have
-      read and understand the protocol{' '}
-      <Link href="https://cacti.finance/privacy/">Privacy Policy</Link>.
+      <Link href="https://cacti.finance/terms/">Terms of Service</Link> and acknowledge I have read
+      and understand the protocol <Link href="https://cacti.finance/privacy/">Privacy Policy</Link>.
     </Text>
   );
 
