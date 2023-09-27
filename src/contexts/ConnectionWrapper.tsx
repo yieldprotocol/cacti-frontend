@@ -11,17 +11,15 @@ import {
   lightTheme,
 } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-
 import { Chain, WagmiConfig, configureChains, createConfig, useEnsAvatar } from 'wagmi';
 import { arbitrum, goerli, zkSyncTestnet } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
-import { publicProvider } from 'wagmi/providers/public'
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
-
   /* Use a fork url cached in the browser localStorage, else use the .env value */
   const [forkUrl] = useCachedState(
     'forkUrl',
@@ -47,17 +45,16 @@ const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
     },
   } as Chain;
 
+  const arbitrumFork = {
+    ...arbitrum,
+    name: 'Arbitrum One Fork',
+    rpcUrls: {
+      public: { http: [arbitrum.rpcUrls.public.http[0]] },
+      default: { http: [process.env.ARBITRUM_FORK_URL] },
+    },
+  } as Chain;
 
-const arbitrumFork = {
-  ...arbitrum,
-  name: 'Arbitrum One Fork',
-  rpcUrls: {
-    public: { http: [arbitrum.rpcUrls.public.http[0]] },
-    default: { http: [process.env.ARBITRUM_FORK_URL] },
-  },
-} as Chain;
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
     [mainnetFork, goerli, zkSyncTestnet, arbitrumFork],
     [publicProvider()]
   );

@@ -1,7 +1,7 @@
+import { formatEther, parseEther } from 'viem';
 import projectListJson from '@/utils/ProjectList.json';
 import tokenListJson from '@/utils/TokenList.json';
 import { Project, Token } from '../types';
-import { formatEther, parseEther } from 'viem';
 
 export const shortenAddress = (address: string) => address.slice(0, 6) + '...' + address.slice(-4);
 
@@ -12,7 +12,7 @@ export const findTokenBySymbol = (symbol: string, chainId: number) =>
 export const findTokenByAddress = (address: string, chainId: number) =>
   tokenListJson.tokens.find(
     (token) => token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
-   ) as Token | undefined;
+  ) as Token | undefined;
 export const formatToEther = (amount: string) => formatEther(BigInt(amount));
 export const formatToWei = (amount: string) => parseEther(amount).toString();
 

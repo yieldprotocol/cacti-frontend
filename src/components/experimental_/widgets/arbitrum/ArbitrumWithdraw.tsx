@@ -6,9 +6,9 @@ import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { unsignedTxToTxRequestBase, useEthersProvider } from '@/utils/ethersAdapter';
 import { L2_CHAIN_ID } from './ArbitrumDeposit';
 import ArbSys from './abi/ArbSys';
-import { unsignedTxToTxRequestBase, useEthersProvider } from '@/utils/ethersAdapter';
 
 interface ArbitrumWithdrawProps {
   tokenSymbol: string;
@@ -80,7 +80,7 @@ const ArbitrumWithdraw = ({ tokenSymbol, amtString }: ArbitrumWithdrawProps) => 
         label={`Withdraw ${amount?.formatted} ${tokenSymbol} from Arbitrum`}
         txParams={undefined}
         approvalParams={undefined}
-        sendParams={ unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!) }
+        sendParams={unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!)}
       />
     </>
   );

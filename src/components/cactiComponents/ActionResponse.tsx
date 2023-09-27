@@ -2,11 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
 import tw from 'tailwind-styled-components';
 import { TransactionReceipt, TransactionRequestBase, formatUnits, zeroAddress } from 'viem';
-import { useAccount, useNetwork, useSwitchNetwork, UsePrepareContractWriteConfig, } from 'wagmi';
-
+import { UsePrepareContractWriteConfig, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import { ActionStepper } from './ActionStepper';
@@ -143,8 +141,7 @@ export const ActionResponse = ({
 
     // explicitly showing approvalParams === undefined for clarity - as oppposed to !approvalParams
     if (_approvalParams === undefined) return setHasEnoughBalance(true);
-    if (BigInt(sendParams?.value || '0') > BigInt(ethBal || '0'))
-      return setHasEnoughBalance(false);
+    if (BigInt(sendParams?.value || '0') > BigInt(ethBal || '0')) return setHasEnoughBalance(false);
 
     // check approval token balance
     if (balance && _approvalParams?.approvalAmount)

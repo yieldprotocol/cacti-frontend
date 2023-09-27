@@ -2,13 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk';
 import { BigNumber, UnsignedTransaction } from 'ethers';
 import { Interface } from 'ethers/lib/utils.js';
-import { erc20ABI, useAccount, usePrepareContractWrite} from 'wagmi';
+import { erc20ABI, useAccount, usePrepareContractWrite } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
-import Inbox from './abi/Inbox';
 import { unsignedTxToTxRequestBase, useEthersProvider } from '@/utils/ethersAdapter';
+import Inbox from './abi/Inbox';
 
 interface ArbitrumDepositETHProps {
   tokenSymbol: string;
@@ -112,7 +112,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
         label={`Deposit ${amount?.formatted || ''} ${tokenSymbol} to Arbitrum`}
         txParams={undefined}
         approvalParams={erc20ApprovalParams}
-        sendParams={ unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!) }
+        sendParams={unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!)}
       />
     </>
   );

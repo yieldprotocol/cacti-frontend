@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
+import { zeroAddress } from 'viem';
 import { erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { prepareWriteContract } from 'wagmi/actions';
 import useChainId from '@/hooks/useChainId';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
 import useAllowance from './useAllowance';
-import { zeroAddress } from 'viem';
 
 export type ApprovalBasicParams = {
   approvalAmount: bigint;
@@ -21,7 +21,7 @@ const validateAddress = (addr: `0x${string}`): `0x${string}` | undefined =>
 const useApproval = (params: ApprovalBasicParams) => {
   const chainId = useChainId();
   const { approvalAmount, tokenAddress: _tokenAddress, spender: _spender } = params;
-  
+
   const tokenAddress = validateAddress(_tokenAddress);
   const spender = validateAddress(_spender);
 
@@ -41,7 +41,7 @@ const useApproval = (params: ApprovalBasicParams) => {
   // Prepare the approval transaction - doesn't run if address or spender is undefined
   const { data: config, isError: isPrepareError } = useQuery({
     queryKey: ['prepareApprove', tokenAddress, spender, chainId],
-    queryFn: async () => {   
+    queryFn: async () => {
       // case: invalid spender
       if (!spender) {
         console.warn(`Spender not found for approval`);
@@ -53,7 +53,7 @@ const useApproval = (params: ApprovalBasicParams) => {
         return;
       }
 
-      const {request} = await prepareWriteContract({
+      const { request } = await prepareWriteContract({
         address: tokenAddress,
         abi: erc20ABI,
         functionName: 'approve',

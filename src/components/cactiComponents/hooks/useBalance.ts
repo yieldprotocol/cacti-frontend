@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { fetchBalance, readContract } from 'wagmi/actions';
 import erc1155ABI from '@/abi/erc1155ABI';
 import useChainId from '@/hooks/useChainId';
-import { zeroAddress } from 'viem';
 
 /**
  * @description gets the balance of a an account for a token address, or if no address is specified, get's eth balance
@@ -42,7 +42,7 @@ const useBalance = (
           chainId,
           abi: erc1155ABI,
           functionName: 'balanceOf',
-          args: [account, BigInt(erc1155TokenId) ],
+          args: [account, BigInt(erc1155TokenId)],
         });
         return erc1155Bal;
       }

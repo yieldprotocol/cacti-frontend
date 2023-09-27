@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { parseUnits} from 'viem';
+import { parseUnits } from 'viem';
 import { erc20ABI, useAccount, useEnsAddress } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import useToken from '@/hooks/useToken';
@@ -47,8 +47,8 @@ const Transfer = ({ tokenSymbol, amtString, receiver }: TransferWidgetProps) => 
       />
       <ActionResponse
         label={`Transfer ${amtString || ''} ${tokenSymbol}`}
-        txParams={ isETH ? undefined : tx}
-        approvalParams={undefined} // approval shouldn't be required? 
+        txParams={isETH ? undefined : tx}
+        approvalParams={undefined} // approval shouldn't be required?
         sendParams={isETH ? { to: receiverAddress, value: amount, from: account! } : undefined}
       />
     </ConnectFirst>

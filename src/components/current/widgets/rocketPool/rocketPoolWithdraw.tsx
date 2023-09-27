@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Address, UsePrepareContractWriteConfig } from 'wagmi';
+import rETHAbi from '@/abi/rETH';
 import {
   ActionResponse,
   HeaderResponse,
@@ -9,7 +10,6 @@ import {
 import { ResponseRow } from '@/components/cactiComponents/helpers/layout';
 import useToken from '@/hooks/useToken';
 import { cleanValue } from '@/utils';
-import rETHAbi from '@/abi/rETH';
 
 interface RethProps {
   inputString: string;

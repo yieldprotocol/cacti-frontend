@@ -46,7 +46,7 @@ const Uniswap = ({
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
   const input = useInput(inputAmount, tokenInChecked?.symbol!);
 
-const slippage_ = +slippage || 0.5; // in percentage terms
+  const slippage_ = +slippage || 0.5; // in percentage terms
   const getSlippageAdjustedAmount = (amount: bigint) =>
     (amount * BigInt(10000 - slippage_ * 100)) / BigInt(10000);
 
