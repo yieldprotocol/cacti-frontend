@@ -15,7 +15,7 @@ type Input = {
  * @param input
  * @param tokenSymbol
  * @param transform
- * @returns {Input}
+ * @returns {Input | undefined}
  */
 const useInput = (input: string, tokenSymbol: string, mutate?: (inputBN: bigint) => bigint) => {
   const { data: token } = useToken(tokenSymbol);
