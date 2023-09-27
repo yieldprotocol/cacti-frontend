@@ -13,13 +13,12 @@ import {
 import axios from 'axios';
 
 import { Chain, WagmiConfig, configureChains, createConfig, useEnsAvatar } from 'wagmi';
-import { goerli, zkSyncTestnet, arbitrum } from 'wagmi/chains';
-
-import { publicProvider } from 'wagmi/providers/public';
+import { arbitrum, goerli, zkSyncTestnet } from 'wagmi/chains';
 import useCachedState from '@/hooks/useCachedState';
 import { getBackendApiUrl } from '@/utils/backend';
 import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from '@/utils/rainbowSIWEmod';
 import SettingsContext from './SettingsContext';
+import { publicProvider } from 'wagmi/providers/public'
 
 const ConnectionWrapper = ({ children, useSiwe = true }: any) => {
 
@@ -123,9 +122,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
     <Text>
       By connecting my wallet, I agree to the{' '}
-      <Link href="https://cacti.finance/terms/">Terms of Service</Link> and acknowledge I have
-      read and understand the protocol{' '}
-      <Link href="https://cacti.finance/privacy/">Privacy Policy</Link>.
+      <Link href="https://cacti.finance/terms/">Terms of Service</Link> and acknowledge I have read
+      and understand the protocol <Link href="https://cacti.finance/privacy/">Privacy Policy</Link>.
     </Text>
   );
 

@@ -40,7 +40,6 @@ export const NftAsset = ({
   price,
   attributes,
 }: NftAssetProps) => {
-
   const backendUrl = getBackendApiUrl();
 
   return (

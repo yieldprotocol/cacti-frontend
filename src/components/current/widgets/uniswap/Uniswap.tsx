@@ -28,7 +28,13 @@ interface UniswapProps {
   transactionKeyword: 'BUYAMOUNT' | 'SELLAMOUNT';
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, transactionKeyword }: UniswapProps) => {
+const Uniswap = ({
+  tokenInSymbol,
+  tokenOutSymbol,
+  inputAmount,
+  slippage,
+  transactionKeyword,
+}: UniswapProps) => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
   const isBuying = transactionKeyword === 'BUYAMOUNT';
