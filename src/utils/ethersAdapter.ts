@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { type WalletClient } from '@wagmi/core';
-import { providers } from 'ethers';
+import { UnsignedTransaction, providers } from 'ethers';
 import { type PublicClient, usePublicClient, useWalletClient } from 'wagmi';
+import { TransactionRequestBase } from 'viem';
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -38,4 +39,15 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
     () => (walletClient ? walletClientToSigner(walletClient) : undefined),
     [walletClient]
   );
+}
+
+export const unsignedTxToTxRequestBase = (unsignedTx: UnsignedTransaction, from:`0x${string}` ): TransactionRequestBase => {
+  return {
+    data: unsignedTx.data as `0x${string}`,
+    from,
+    gas: BigInt(unsignedTx.gasLimit!.toString()),
+    nonce: unsignedTx.nonce,
+    to: unsignedTx.to as `0x${string}`,
+    value: BigInt(unsignedTx.value!.toString()),
+  }
 }
