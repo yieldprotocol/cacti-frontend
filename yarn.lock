@@ -9473,7 +9473,7 @@ __metadata:
     tailwindcss: ^3.2.4
     typescript: ^5.2.2
     viem: ^1.10.13
-    wagmi: ^1.4.1
+    wagmi: ^1.4.2
     zksync-web3: ^0.14.3
   languageName: unknown
   linkType: soft
@@ -22515,7 +22515,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^1.4.1":
+"wagmi@npm:^1.4.2":
   version: 1.4.2
   resolution: "wagmi@npm:1.4.2"
   dependencies:
