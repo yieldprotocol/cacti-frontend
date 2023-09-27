@@ -37,7 +37,7 @@ const WelcomeMessage = () => {
       <div className="mx-auto w-full max-w-4xl space-y-20">
         <div className="flex w-full justify-center">
           <div className="w-[50%]">
-            <Image src={cactiImage} alt="CactiChat" className="mx-auto" />
+            <Image src={cactiImage} alt="CactiChat" className="mx-auto" priority />
           </div>
         </div>
 
@@ -59,7 +59,7 @@ const WelcomeMessage = () => {
           </WelcomeColumn>
 
           <WelcomeColumn>
-          <div className="w-[20%] sm:w-[40%] ">
+            <div className="w-[20%] sm:w-[40%] ">
               <Cactus2 className="h-16" />
             </div>
             <WelcomeBoxSubtitle>Interact with protocols</WelcomeBoxSubtitle>
@@ -77,7 +77,7 @@ const WelcomeMessage = () => {
           </WelcomeColumn>
 
           <WelcomeColumn>
-          <div className="w-[20%] sm:w-[40%] ">
+            <div className="w-[20%] sm:w-[40%] ">
               <Cactus3 className="h-16" />
             </div>
             {/* <ExclamationTriangleIcon className="mt-3 h-12 text-gray-300" /> */}

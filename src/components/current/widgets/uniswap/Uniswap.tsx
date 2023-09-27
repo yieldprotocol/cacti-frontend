@@ -29,7 +29,13 @@ interface UniswapProps {
   transactionKeyword: 'BUYAMOUNT' | 'SELLAMOUNT';
 }
 
-const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, transactionKeyword }: UniswapProps) => {
+const Uniswap = ({
+  tokenInSymbol,
+  tokenOutSymbol,
+  inputAmount,
+  slippage,
+  transactionKeyword,
+}: UniswapProps) => {
   const chainId = useChainId();
   const isBuying = transactionKeyword === 'BUYAMOUNT';
 
@@ -39,9 +45,9 @@ const Uniswap = ({ tokenInSymbol, tokenOutSymbol, inputAmount, slippage, transac
   const { data: tokenInChecked } = useToken(tokenInIsETH ? 'WETH' : tokenInSymbol);
   const { data: tokenOutChecked } = useToken(tokenOutIsETH ? 'WETH' : tokenOutSymbol);
   const input = useInput(inputAmount, tokenInChecked?.symbol!);
-  
+
   const slippage_ = +slippage || 0.5; // in percentage terms
-  
+
   const getSlippageAdjustedAmount = (amount: BigNumber) =>
     BigNumber.from(amount)
       .mul(10000 - slippage_ * 100)
