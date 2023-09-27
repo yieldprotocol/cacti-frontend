@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils.js';
+import { formatUnits, parseUnits } from 'viem';
 import { cleanValue } from '@/utils';
 import useToken from './useToken';
 
 type Input = {
-  value: BigNumber | undefined;
+  value: bigint | undefined;
   formatted: string | undefined;
   decimals: number;
 };
@@ -18,11 +17,7 @@ type Input = {
  * @param transform
  * @returns {Input | undefined}
  */
-const useInput = (
-  input: string,
-  tokenSymbol: string,
-  mutate?: (inputBN: BigNumber) => BigNumber
-) => {
+const useInput = (input: string, tokenSymbol: string, mutate?: (inputBN: bigint) => bigint) => {
   const { data: token } = useToken(tokenSymbol);
 
   return useMemo((): Input | undefined => {
@@ -32,7 +27,16 @@ const useInput = (
     }
 
     const { decimals } = token;
-    const inputCleaned = cleanValue(input, decimals);
+
+    let inputCleaned: string | undefined;
+
+    try {
+      inputCleaned = cleanValue(input, decimals);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+
     const inputBN = inputCleaned ? parseUnits(inputCleaned, decimals) : undefined;
     if (!inputBN) return { value: undefined, formatted: undefined, decimals: decimals };
 

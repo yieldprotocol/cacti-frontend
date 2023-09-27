@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { formatEther, parseEther } from 'viem';
 import projectListJson from '@/utils/ProjectList.json';
 import tokenListJson from '@/utils/TokenList.json';
 import { Project, Token } from '../types';
@@ -13,8 +13,8 @@ export const findTokenByAddress = (address: string, chainId: number) =>
   tokenListJson.tokens.find(
     (token) => token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
   ) as Token | undefined;
-export const formatToEther = (amount: string) => utils.formatEther(amount);
-export const formatToWei = (amount: string) => utils.parseEther(amount).toString();
+export const formatToEther = (amount: string) => formatEther(BigInt(amount));
+export const formatToWei = (amount: string) => parseEther(amount).toString();
 
 export const findProjectByName = (name: string): Project | undefined => {
   // Project/Protocol list derived from Defillama - https://api.llama.fi/protocols

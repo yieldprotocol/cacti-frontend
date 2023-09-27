@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Hop } from '@hop-protocol/sdk';
 import { config } from '@hop-protocol/sdk/dist/src/config';
 import { CanonicalToken, ChainSlug } from '@hop-protocol/sdk/dist/src/constants';
-import { Interface, UnsignedTransaction } from 'ethers/lib/utils';
+import { TransactionRequestBase, decodeFunctionData } from 'viem';
 import { erc20ABI } from 'wagmi';
 import {
   ActionResponse,
@@ -12,8 +12,8 @@ import {
 } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
-import useSigner from '@/hooks/useSigner';
 import useToken from '@/hooks/useToken';
+import { useEthersSigner } from '@/utils/ethersAdapter';
 
 interface HopBridgeProps {
   inputString: string;
@@ -26,11 +26,11 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
   const _fromChain = fromChain === 'ethereum-mainnet' ? 'mainnet' : fromChain.toLowerCase();
   const _toChain = toChain === 'ethereum-mainnet' ? 'mainnet' : toChain.toLowerCase();
 
-  const signer = useSigner();
+  const signer = useEthersSigner();
   const { data: tokenIn } = useToken(tokenSymbol);
   const input = useInput(inputString, tokenIn?.symbol!);
   const [approvalParams, setApprovalParams] = useState<ApprovalBasicParams>();
-  const [sendParams, setSendParams] = useState<UnsignedTransaction>();
+  const [sendParams, setSendParams] = useState<TransactionRequestBase>();
   const [error, setError] = useState<string | null>(null);
 
   // TODO simple check to see if the chain is potentially supported; not all chains with chain slugs are supported within hop though (i.e.: zksync is unsupported)
@@ -79,11 +79,8 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
 
         if (needsApproval) {
           const { data } = await bridge.populateSendApprovalTx(input.value, _fromChain);
-
-          const erc20Interface = new Interface(erc20ABI);
-
-          const parsed = erc20Interface.parseTransaction({ data });
-          const spender = parsed.args[0];
+          const { args } = decodeFunctionData({ abi: erc20ABI, data });
+          const spender = args?.[0]!;
 
           setApprovalParams({
             approvalAmount: input.value,
@@ -93,7 +90,7 @@ const HopBridge = ({ inputString, tokenSymbol, toChain, fromChain }: HopBridgePr
         }
 
         const req = await bridge.populateSendTx(input.value, _fromChain, _toChain);
-        setSendParams({ ...req, gasLimit: 10_000_000 }); // TODO figure out a better way to handle gas limits on forks
+        setSendParams({ ...req, gas: BigInt(10_000_000) }); // TODO figure out a better way to handle gas limits on forks
       } catch (e) {
         setError((e as Error).message);
         console.error(e);

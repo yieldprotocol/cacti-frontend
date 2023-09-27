@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import useTokenApproval from '@/hooks/useTokenApproval';
 import { Token } from '@/types';
 import SubmitButton from '../legacyWidgets/common/SubmitButton';
@@ -9,7 +8,7 @@ const ApproveTokens = ({
   spenderAddress,
 }: {
   token: Token;
-  amount: BigNumber;
+  amount: bigint;
   spenderAddress: `0x${string}`;
 }) => {
   // Get approval ready
@@ -26,7 +25,7 @@ const ApproveTokens = ({
       isError={txError || !hasBalance}
       isLoading={txPending}
       disabled={!approve || txPending || !hasBalance || txError}
-      onClick={approve}
+      onClick={() => (approve ? approve() : null)}
       label={
         !hasBalance
           ? 'Insufficient balance'

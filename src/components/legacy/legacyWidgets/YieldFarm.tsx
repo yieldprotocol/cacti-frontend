@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils.js';
+import { parseUnits } from 'viem';
 import {
   erc20ABI,
   useAccount,
@@ -24,7 +23,7 @@ import { ConnectFirst } from './helpers/ConnectFirst';
 const compoundUSDCAddress = '0x39AA39c021dfbaE8faC545936693aC917d5E7563';
 const supportedProjects = {
   compound: {
-    getWriteConfig: (token: Token, amount: BigNumber) => {
+    getWriteConfig: (token: Token, amount: bigint) => {
       return {
         address: compoundUSDCAddress,
         abi: CompoundV2USDCAbi,
@@ -38,7 +37,7 @@ interface YieldFarmProps {
   project: Project | undefined;
   network: string;
   token: Token;
-  amount: BigNumber;
+  amount: bigint;
 }
 
 const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
@@ -64,8 +63,8 @@ const YieldFarm = ({ project, network, token, amount }: YieldFarmProps) => {
   });
 
   useEffect(() => {
-    balance && setHasBalance(BigNumber.from(balance).gte(amount));
-    allowanceAmount && setHasAllowance(BigNumber.from(allowanceAmount).gte(amount));
+    balance && setHasBalance(balance > amount);
+    allowanceAmount && setHasAllowance(allowanceAmount >= amount);
   }, [balance, allowanceAmount, amount, isApprovalSuccess, walletAddress]);
 
   // For Demo, only support depositing USDC into Compound
@@ -106,7 +105,7 @@ const DepositTokens = ({
 }: {
   project: Project;
   token: Token;
-  amount: BigNumber;
+  amount: bigint;
 }) => {
   const prepareContractWriteConfig = (supportedProjects as any)[project.id].getWriteConfig(
     token,
@@ -152,7 +151,7 @@ export const YieldFarmWidget = ({
 }: YieldFarmWidgetProps) => {
   const { getToken } = useToken();
   const token = getToken(tokenSymbol);
-  const amount = parseUnits(amtString, token?.decimals);
+  const amount = parseUnits(amtString, token?.decimals!);
 
   const project = findProjectByName(projectName);
   return (

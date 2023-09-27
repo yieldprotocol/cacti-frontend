@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Erc20Bridger, getL1Network, getL2Network } from '@arbitrum/sdk';
-import { UnsignedTransaction } from 'ethers';
-import { useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
+import { BigNumber, UnsignedTransaction } from 'ethers';
+import { useAccount, usePrepareContractWrite } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { unsignedTxToTxRequestBase, useEthersProvider } from '@/utils/ethersAdapter';
 import { L2_CHAIN_ID } from './ArbitrumDeposit';
 import ArbSys from './abi/ArbSys';
 
@@ -17,8 +18,8 @@ interface ArbitrumWithdrawProps {
 const ARBSYS_CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000064';
 
 const ArbitrumWithdraw = ({ tokenSymbol, amtString }: ArbitrumWithdrawProps) => {
-  const l1Provider = useProvider({ chainId: 1 });
-  const l2Provider = useProvider({ chainId: L2_CHAIN_ID });
+  const l1Provider = useEthersProvider({ chainId: 1 });
+  const l2Provider = useEthersProvider({ chainId: L2_CHAIN_ID });
   const { data: token, isETH } = useToken(tokenSymbol);
   const amount = useInput(amtString, token?.symbol!);
   const { address: account } = useAccount();
@@ -30,7 +31,7 @@ const ArbitrumWithdraw = ({ tokenSymbol, amtString }: ArbitrumWithdrawProps) => 
     abi: ArbSys,
     functionName: 'withdrawEth',
     args: [account!],
-    overrides: { value: amount?.value },
+    value: amount?.value,
   });
 
   // handle erc20 withdraw
@@ -48,7 +49,7 @@ const ArbitrumWithdraw = ({ tokenSymbol, amtString }: ArbitrumWithdrawProps) => 
       try {
         const req = await erc20Bridger.getWithdrawalRequest({
           erc20l1Address: token.address,
-          amount: amount.value,
+          amount: BigNumber.from(amount.value),
           destinationAddress: account,
           from: account,
         });
@@ -79,7 +80,7 @@ const ArbitrumWithdraw = ({ tokenSymbol, amtString }: ArbitrumWithdrawProps) => 
         label={`Withdraw ${amount?.formatted} ${tokenSymbol} from Arbitrum`}
         txParams={undefined}
         approvalParams={undefined}
-        sendParams={sendParams}
+        sendParams={unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!)}
       />
     </>
   );

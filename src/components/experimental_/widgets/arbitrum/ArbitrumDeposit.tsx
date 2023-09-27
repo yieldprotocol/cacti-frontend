@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Erc20Bridger, getL2Network } from '@arbitrum/sdk';
-import { UnsignedTransaction } from 'ethers';
+import { BigNumber, UnsignedTransaction } from 'ethers';
 import { Interface } from 'ethers/lib/utils.js';
-import { erc20ABI, useAccount, usePrepareContractWrite, useProvider } from 'wagmi';
+import { erc20ABI, useAccount, usePrepareContractWrite } from 'wagmi';
 import { ActionResponse, HeaderResponse } from '@/components/cactiComponents';
 import { ApprovalBasicParams } from '@/components/cactiComponents/hooks/useApproval';
 import useInput from '@/hooks/useInput';
 import useToken from '@/hooks/useToken';
+import { unsignedTxToTxRequestBase, useEthersProvider } from '@/utils/ethersAdapter';
 import Inbox from './abi/Inbox';
 
 interface ArbitrumDepositETHProps {
@@ -19,8 +20,9 @@ const INBOX_CONTRACT_ADDRESS = '0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f';
 export const L2_CHAIN_ID = 42161;
 
 const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) => {
-  const l1Provider = useProvider({ chainId: 1 });
-  const l2Provider = useProvider({ chainId: L2_CHAIN_ID });
+  const l1Provider = useEthersProvider({ chainId: 1 });
+  const l2Provider = useEthersProvider({ chainId: L2_CHAIN_ID });
+
   const { data: token, isETH } = useToken(tokenSymbol.toUpperCase());
   const { address: account } = useAccount();
   const amount = useInput(amtString, token?.symbol!);
@@ -33,7 +35,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
     address: INBOX_CONTRACT_ADDRESS,
     abi: Inbox,
     functionName: 'depositEth',
-    overrides: { value: amount?.value },
+    value: amount?.value,
     enabled: isETH,
   });
 
@@ -58,7 +60,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
         const { data } = await erc20Bridger.getApproveTokenRequest({
           l1Provider,
           erc20L1Address: token.address,
-          amount: amount.value,
+          amount: BigNumber.from(amount.value),
         });
 
         // get the spender address
@@ -83,7 +85,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
           l1Provider,
           l2Provider,
           erc20L1Address: token.address,
-          amount: amount.value,
+          amount: BigNumber.from(amount.value),
           from: account,
         });
 
@@ -110,7 +112,7 @@ const ArbitrumDeposit = ({ tokenSymbol, amtString }: ArbitrumDepositETHProps) =>
         label={`Deposit ${amount?.formatted || ''} ${tokenSymbol} to Arbitrum`}
         txParams={undefined}
         approvalParams={erc20ApprovalParams}
-        sendParams={sendParams}
+        sendParams={unsignedTxToTxRequestBase(sendParams as UnsignedTransaction, account!)}
       />
     </>
   );

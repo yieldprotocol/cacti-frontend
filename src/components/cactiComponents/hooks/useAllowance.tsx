@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { Address, erc20ABI, useAccount, useContract } from 'wagmi';
+import { Address, erc20ABI, useAccount } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 import useChainId from '@/hooks/useChainId';
 
