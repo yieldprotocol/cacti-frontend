@@ -15,14 +15,13 @@ import { setupSender } from '@near-wallet-selector/sender';
 import { Widget as BosWidget } from 'near-social-vm';
 import { EthersProviderContext, useAccount, useInitNear, useNear, utils } from 'near-social-vm';
 import { EIP1193Provider, EIP1193ProviderRpcError } from 'viem';
+// import { getProvider, disconnect, watchProvider } from '@wagmi/core'
+import { useWalletClient } from 'wagmi';
 import { ResponseWrap } from '@/components/cactiComponents/helpers/layout';
 import { useEthersProviderContext } from './data/web3';
 // import Big from "big.js";
 // import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from './data/widgets';
-// import { getProvider, disconnect, watchProvider } from '@wagmi/core'
-
-import {useWalletClient} from 'wagmi';
 
 interface NearWidgetProps {
   nearUser: string;
@@ -187,27 +186,31 @@ function NearWidget(props: NearWidgetProps) {
   //   };
   // };
 
-  const { data: walletClient, isError, isLoading } = useWalletClient()
+  const { data: walletClient, isError, isLoading } = useWalletClient();
 
   const useConnectWallet = () => [
-    { wallet: 
-      {
+    {
+      wallet: {
         label: 'default',
         getIcon: () => Promise.resolve(''),
         getInterface: walletClient,
-      }, 
-      connecting: false },
-    ()=> console.log('connect'),
-    ()=> console.log('disconnect'),
-  ]; // Retun: [{ wallet, connecting }, connect, disconnect] 
+      },
+      connecting: false,
+    },
+    () => console.log('connect'),
+    () => console.log('disconnect'),
+  ]; // Retun: [{ wallet, connecting }, connect, disconnect]
 
   const ethersProviderContext = {
-      provider: walletClient,
-      useConnectWallet,
-      setChain: () => null,
+    provider: walletClient,
+    useConnectWallet,
+    setChain: () => null,
   };
 
   return (
+    // <iframe
+    //   srcDoc='
+    // <div>
     <EthersProviderContext.Provider value={ethersProviderContext}>
       <ResponseWrap>
         <div className="relative inline-block overflow-hidden bg-white text-black/70">
@@ -215,6 +218,8 @@ function NearWidget(props: NearWidgetProps) {
         </div>
       </ResponseWrap>
     </EthersProviderContext.Provider>
+    // </div>'
+    // ></iframe>
   );
 }
 

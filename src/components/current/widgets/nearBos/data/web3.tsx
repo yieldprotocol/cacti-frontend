@@ -1,12 +1,11 @@
 import { singletonHook } from "react-singleton-hook";
 import { useEffect, useState } from "react";
 
-import ls from "local-storage";
-// import icon from "../images/near_social_icon.svg";
+// import ls from "local-storage";
+import icon from "../images/near_social_icon.svg";
 
-import { EIP1193Provider } from "viem";
 import { useEthersProvider } from "@/utils/ethersPolyfill";
-import { JsonRpcProvider } from "near-api-js/lib/providers";
+// import { JsonRpcProvider } from "near-api-js/lib/providers";
 
 // const web3onboardKey = "web3-onboard:connectedWallets";
 
@@ -239,23 +238,23 @@ const defaultEthersProviderContext: EthersProviderContext = {
   setChain: ()=> null,
 };
 
-interface WalletModule {
-  label: string;
-  getIcon: () => Promise<string>;
-  getInterface: (helpers: any) => Promise<WalletInterface>;
-}
-type WalletInterface = {
-  provider: EIP1193Provider;
-  instance?: unknown;
-};
-const walletModuleShim = (provider: EIP1193Provider): WalletModule => {
-  const label = 'default';
-  return {
-    label,
-    getIcon: () => Promise.resolve(''),
-    getInterface: () => Promise.resolve({ provider }),
-  };
-};
+// interface WalletModule {
+//   label: string;
+//   getIcon: () => Promise<string>;
+//   getInterface: (helpers: any) => Promise<WalletInterface>;
+// }
+// type WalletInterface = {
+//   provider: EIP1193Provider;
+//   instance?: unknown;
+// };
+// const walletModuleShim = (provider: EIP1193Provider): WalletModule => {
+//   const label = 'default';
+//   return {
+//     label,
+//     getIcon: () => Promise.resolve(''),
+//     getInterface: () => Promise.resolve({ provider }),
+//   };
+// };
 
 export const useEthersProviderContext = singletonHook(
   defaultEthersProviderContext,
@@ -271,7 +270,7 @@ export const useEthersProviderContext = singletonHook(
       { wallet: 
         {
           label: 'default',
-          getIcon: () => Promise.resolve(''),
+          getIcon: () => icon,
           getInterface: () => Promise.resolve({ provider }),
         },   
         connecting: false },
