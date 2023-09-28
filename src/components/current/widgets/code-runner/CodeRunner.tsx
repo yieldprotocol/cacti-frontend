@@ -36,7 +36,7 @@ const CodeRunner = ({ codeString }: CodeRunnerProps) => {
       <SyntaxHighlighter language="javascript" style={style}>
         {codeString.trim()}
       </SyntaxHighlighter>
-      <Button onClick={() => executeCode}>Submit</Button>
+      <Button onClick={executeCode}>Submit</Button>
     </div>
   );
 };
