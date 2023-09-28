@@ -16,11 +16,9 @@ const CodeRunner = ({ codeString }: CodeRunnerProps) => {
     try {
       // handle async funcs
       const wrappedCode = `(async (provider, signer) => { return ${codeString}; })(provider, signer)`;
-
       // Caution: using eval is generally not safe.
       // TODO make sure the codeString can be trusted.
       const result = await eval(wrappedCode);
-      console.log('🦄 ~ file: CodeRunner.tsx:23 ~ executeCode ~ result:', result);
 
       if (typeof result === 'function') {
         const res = await result(provider, signer);
