@@ -324,7 +324,7 @@ export const Widget = (props: WidgetProps) => {
     />
   );
 
-  widgets.set('generate-js-code', <CodeRunner codeString={parsedArgs[0]} />);
+  widgets.set('code-container', <CodeRunner codeString={parsedArgs.code} />);
 
   /* If available, return the widget in the widgets map */
   if (widgets.has(fnName)) {

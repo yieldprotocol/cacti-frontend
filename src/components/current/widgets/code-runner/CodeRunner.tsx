@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula as style } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
-// import prettier from 'prettier';
+import { Button } from '@/components/shared/Button';
 
 interface CodeRunnerProps {
   codeString: string;
 }
 
 const CodeRunner = ({ codeString }: CodeRunnerProps) => {
-  const [formattedCode, setFormattedCode] = useState(codeString);
-
   const executeCode = async () => {
     try {
       // handle async funcs
@@ -21,30 +17,20 @@ const CodeRunner = ({ codeString }: CodeRunnerProps) => {
       const result = await eval(wrappedCode);
 
       if (typeof result === 'function') {
-        result();
+        const res = result();
+        console.log('res', res);
       }
     } catch (e) {
       console.error('An error occurred:', e);
     }
   };
 
-  useEffect(() => {
-    const formatCode = async () => {
-      // const formattedCode = await prettier.format(codeString, {
-      //   parser: 'babel',
-      // });
-      setFormattedCode(codeString);
-    };
-
-    formatCode();
-  }, [codeString]);
-
   return (
     <div>
       <SyntaxHighlighter language="javascript" style={style}>
-        {formattedCode}
+        {codeString.trim()}
       </SyntaxHighlighter>
-      <button onClick={executeCode}>Execute</button>
+      <Button action={executeCode}>Submit</Button>
     </div>
   );
 };
